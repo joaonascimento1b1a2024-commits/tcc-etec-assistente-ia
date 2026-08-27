@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | Assistente IA ETEC</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <main class="login-page">
+        <!-- Área das logos institucionais. -->
+        <header class="brand" aria-label="ETEC e Centro Paula Souza">
+            <!-- Logo da ETEC Sylvio de Mattos Carvalho. -->
+            <img class="brand-etec custom-alt" src="../Arquivos Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" alt="Logo ETEC Sylvio de Mattos Carvalho">
+            <!-- Logos do Centro Paula Souza e do Governo do Estado de São Paulo. -->
+            <img class="brand-governo custom-alt" src="../Arquivos Universais/logos_cps_governo_com_slogan_horizontal_br.png"alt="Logo Centro Paula Souza e Governo do Estado de São Paulo">
+        </header>
+
+        <!-- Container que reúne o título e o formulário de login. -->
+        <section class="login-container" aria-labelledby="login-title">
+            <!-- Título e subtítulo apresentados no topo do formulário. -->
+            <div class="login-heading">
+                <h1 id="login-title">Bem-vindo</h1>
+                <p>Crie sua conta</p>
+            </div>
+
+            <!-- Formulário que reúne os dados necessários para entrar na conta. -->
+            <!--Action manda para o arquivo as informações-->
+            <form class="login-form" action="#" method="post">
+                <!-- Campo para colocar o nome completo. -->
+                <div class="field-group">
+                    <label for="name">Nome Completo</label>
+                    <input id="name" name="nome" placeholder="Seu nome" autocomplete="name" type="text" required>
+                </div>
+                <!-- Campo para o usuário informar e-mail ou CPF. -->
+                <div class="field-group">
+                    <label for="identifier">E-mail ou CPF</label>
+                    <input id="identifier" name="identifier" type="text" placeholder="Seu@email.com" autocomplete="username" required>
+                </div>
+
+                <!-- Campo protegido para a senha do usuário. -->
+                <div class="field-group">
+                    <label for="password">Senha</label>
+                    <input id="password" name="password" type="password" placeholder="************" autocomplete="current-password" required>
+                </div>
+
+                <!-- Campo protegido para confirmar a senha informada. -->
+                <div class="field-group">
+                    <label for="confirm-password">Confirmar senha</label>
+                    <input id="confirm-password" name="confirm-password" type="password" placeholder="************" autocomplete="new-password" required>
+                </div>
+
+                <!-- Texto de aceite dos termos necessários para criar a conta. -->
+                <p class="terms">Eu aceito os <a href="#terms-of-use">Termos de Uso</a> e a <a href="#privacy-policy">Política de Privacidade</a></p>
+
+                <!-- Envia o formulário de login. -->
+                <button class="login-button" type="submit">Entrar</button>
+
+                <!-- Separador visual entre o login comum e o login com Google. -->
+                <div class="divider" aria-hidden="true">
+                    <span></span>
+                    <small>ou continue com</small>
+                    <span></span>
+                </div>
+
+                <!-- Botão reservado para autenticação com uma conta Google. -->
+                <button class="google-button" type="button">
+                    <img class="google-icon custom-alt" src="../Arquivos Universais/Google Logo.webp" alt="Logo do google" >
+                    <span>Google</span>
+                </button>
+
+            </form>
+        </section>
+    </main>
+
+</body>
+
+</html>

@@ -10,24 +10,104 @@ body{
 
 #corpo{
     color: #ffffff;
+    /*Evita que o texto encoste nas laterais quando aberto no celular */
+    padding: 0 50px;
 }
 
 #principal{
     font-weight: bold;
     color: white;
-    border-radius: 10px;
     font-family: Arial, Helvetica, sans-serif;
-    /* 1. Limita a largura do espaço. Ajuste o valor como achar melhor */
-    max-width: 400px; /* Pode usar px (ex: 800px) ou porcentagem (ex: 50%) */
+    /* 1. Limita a largura do espaço*/
+    max-width: 450px;
     
     /* 2. Centraliza a div horizontalmente na tela*/
     margin: 0.1 auto; 
     
-    /* 3. Evita que o texto encoste nas laterais quando aberto no celular */
-    padding: 0 20px; 
-    
-    /* 4. Garante que palavras gigantes ou links não quebrem o layout (Segurança extra) */
+    /* 3. Garante que palavras gigantes ou links não quebrem o layout */
     word-wrap: break-word;
+}
+
+#principal h1 {
+    /*Tamanho do título, */
+    font-size: clamp(2.5rem, 5vw, 3rem);
+
+}
+
+#corpo p {
+    /*Delimita quando o parágrafo quebra*/
+    max-width: 430px;
+    /*Tamanho do parágrafo*/
+    font-size: clamp(1.3rem, 2.5vw, 1.1rem);
+    line-height: 1.45;
+    margin: 18px 0 0;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.hero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 22px;
+    border-radius: 6px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.hero-button-primary {
+    color: #ffffff;
+    background-color: #ff0000;
+}
+
+.hero-button-primary:hover {
+    background-color: #e60000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.45);
+    transform: translateY(-2px);
+}
+
+.hero-button-secondary {
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    background-color: transparent;
+}
+
+.hero-button-secondary:hover {
+    color: #ff0000;
+    border-color: #ff0000;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+    #principal {
+        max-width: none;
+        padding: 0 16px;
+    }
+
+    #principal h1 {
+        font-size: clamp(1.8rem, 9vw, 2.3rem);
+    }
+
+    #corpo p {
+        padding: 0 16px;
+    }
+
+    .hero-actions {
+        padding: 0 16px;
+    }
+
+    .hero-button {
+        flex: 1 1 100%;
+    }
 }
 
 /* Container do Header */
@@ -89,6 +169,10 @@ body{
 /* Hover nos links */
 .nav-link:hover {
     color: #e60000;                  /* Troca para vermelho ao passar o mouse */
+}
+
+.logoEtec{
+    color: #ffffff;
 }
 
 /* Container que segura as logos */

@@ -1,0 +1,309 @@
+/* Faz todos os elementos incluírem bordas e preenchimentos no tamanho total definido. */
+* {
+    box-sizing: border-box;
+}
+
+/* Garante que a página ocupe toda a altura disponível e remove margens padrão. */
+html,
+/* Define a cor base, a largura mínima e a cor dos textos. */
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-width: 320px;
+    background: #050608;
+    color: #ffffff;
+}
+
+/* Cria a área de tela cheia com o fundo da página de login. */
+.login-page {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #050608 url("Arquivos/fundo 7.png") center center / cover no-repeat;
+}
+
+.custom-alt{
+    color: #ffffff;
+}
+
+/* Posiciona as logos no canto superior direito. */
+.brand {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+/* Define o tamanho e o encaixe da logo da ETEC. */
+.brand-etec {
+    display: block;
+    /*Padding da Imagem*/
+    width: 89px;
+    height: 63px;
+    object-fit: contain;
+}
+
+/* Define o tamanho e o encaixe das logos do Centro Paula Souza e do Governo. */
+.brand-governo {
+    display: block;
+    /*Padding da imagem*/
+    width: 145px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Controla a largura e o posicionamento do conteúdo do login. */
+.login-container {
+    width: min(283px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 48px 0 24px;
+}
+
+/* Centraliza o título e o subtítulo. */
+.login-heading {
+    text-align: center;
+}
+
+/* Estiliza o título principal da página. */
+.login-heading h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.25rem);
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+/* Estiliza o subtítulo abaixo do título. */
+.login-heading p {
+    margin: 7px 0 0;
+    color: #bdbdbd;
+    font-size: 1rem;
+    line-height: 1.2;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* Define a distância entre o cabeçalho e os campos do formulário. */
+.login-form {
+    margin-top: 42px;
+}
+
+/* Separa verticalmente os grupos de campo consecutivos. */
+.field-group + .field-group {
+    margin-top: 15px;
+}
+
+/* Padroniza o tamanho dos textos menores do formulário. */
+.field-group label,
+.remember-me,
+.form-options a,
+.create-account {
+    font-size: 0.7rem;
+}
+
+/* Organiza e destaca os textos dos rótulos dos campos. */
+.field-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+/* Estiliza os campos de texto e senha, sem afetar a caixa de seleção. */
+.field-group input:not([type="checkbox"]) {
+    display: block;
+    width: 100%;
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    outline: none;
+    color: #ffffff;
+    background: rgba(16, 15, 17, 0.62);
+    font: inherit;
+    font-size: 0.73rem;
+}
+
+/* Define a aparência do texto de exemplo dentro dos campos. */
+.field-group input:not([type="checkbox"])::placeholder {
+    color: #767176;
+    opacity: 1;
+}
+
+/* Destaca o campo que está sendo selecionado pelo usuário. */
+.field-group input:not([type="checkbox"]):focus {
+    border-color: #ff1010;
+    box-shadow: 0 0 0 2px rgba(255, 16, 16, 0.18);
+}
+
+/* Organiza a caixa de lembrança e o link de recuperação na mesma linha. */
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+/* Alinha a caixa de seleção com o texto correspondente. */
+.remember-me {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* Controla o tamanho da caixa de seleção. */
+.remember-me input {
+    width: 11px;
+    height: 11px;
+    margin: 0;
+    accent-color: #ffffff;
+}
+
+/* Define a cor dos links de recuperação e cadastro. */
+.form-options a,
+.create-account a {
+    color: #ff1010;
+    text-decoration: none;
+}
+
+/* Sublinha os links quando o cursor passa sobre eles. */
+.form-options a:hover,
+.create-account a:hover {
+    text-decoration: underline;
+}
+
+/* Posiciona e estiliza o texto de aceite dos termos da conta. */
+.terms {
+    margin: 14px 0 0;
+    color: #ffffff;
+    font-size: 0.65rem;
+    line-height: 1.3;
+    text-align: center;
+}
+
+/* Destaca os links dos termos e da política de privacidade. */
+.terms a {
+    color: #ff1010;
+    text-decoration: none;
+}
+
+/* Sublinha os links dos termos quando o cursor passa sobre eles. */
+.terms a:hover {
+    text-decoration: underline;
+}
+
+/* Compartilha tamanho e aparência base entre os botões. */
+.login-button,
+.google-button {
+    width: 100%;
+    height: 34px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+/* Estiliza o botão principal de entrada. */
+.login-button {
+    margin-top: 28px;
+    border: 1px solid #ff1010;
+    color: #ffffff;
+    background: #ff1010;
+    font-weight: 700;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Altera a cor e adiciona brilho ao botão principal no hover. */
+.login-button:hover {
+    background: #df0000;
+    box-shadow: 0 0 16px rgba(255, 0, 0, 0.35);
+}
+
+/* Monta o separador com linhas e o texto central. */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 17px 0;
+    color: #ffffff;
+}
+
+/* Define a aparência das linhas laterais do separador. */
+.divider span {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.45);
+}
+
+/* Mantém o texto do separador em uma única linha. */
+.divider small {
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+/* Organiza o ícone e o texto do botão de login com Google. */
+.google-button {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid #d9d9d9;
+    color: #ffffff;
+    background: rgba(16, 15, 17, 0.42);
+    transition: background 0.2s ease;
+}
+
+/* Clareia o botão Google quando o cursor passa sobre ele. */
+.google-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Logo do Google */
+.google-icon {
+    height: 20px;
+    width: 20px;
+}
+
+/* Centraliza o texto de criação de conta abaixo dos botões. */
+.create-account {
+    margin: 12px 0 0;
+    text-align: center;
+}
+
+/* Mantém o link de cadastro com o mesmo tamanho do texto ao redor. */
+.create-account a {
+    font-size: inherit;
+}
+
+/* Ajusta logos e espaçamento para telas com até 600px de largura. */
+@media (max-width: 600px) {
+    .brand {
+        top: 14px;
+        right: 12px;
+        gap: 8px;
+        transform: scale(0.82);
+        transform-origin: top right;
+    }
+
+    .login-container {
+        padding-top: 112px;
+    }
+}
+
+/* Reduz ainda mais o conteúdo em telas muito estreitas. */
+@media (max-width: 380px) {
+    .login-container {
+        width: calc(100% - 28px);
+    }
+
+    .brand {
+        transform: scale(0.7);
+    }
+}
