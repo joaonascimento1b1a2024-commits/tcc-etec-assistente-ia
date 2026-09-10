@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Assistente IA ETEC</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <main class="login-page">
+        <!-- Área das logos institucionais. -->
+        <header class="brand" aria-label="ETEC e Centro Paula Souza">
+            <!-- Logo da ETEC Sylvio de Mattos Carvalho. -->
+            <img class="brand-etec custom-alt" src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" alt="Logo ETEC Sylvio de Mattos Carvalho">
+            <!-- Logos do Centro Paula Souza e do Governo do Estado de São Paulo. -->
+            <img class="brand-governo custom-alt" src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"alt="Logo Centro Paula Souza e Governo do Estado de São Paulo">
+        </header>
+
+        <!-- Container que reúne o título e o formulário de login. -->
+        <section class="login-container" aria-labelledby="login-title">
+            <!-- Título e subtítulo apresentados no topo do formulário. -->
+            <div class="login-heading">
+                <h1 id="login-title">Bem-vindo</h1>
+                <p>Faça login para continuar</p>
+            </div>
+
+            <!-- Formulário que reúne os dados necessários para entrar na conta. -->
+            <!--Action manda para o arquivo as informações-->
+            <form class="login-form" action="#" method="post">
+                <!-- Campo para o usuário informar e-mail ou CPF. -->
+                <div class="field-group">
+                    <label for="identifier">E-mail ou CPF</label>
+                    <input id="identifier" name="identifier" type="text" placeholder="Seu@email.com" autocomplete="username" required>
+                </div>
+
+                <!-- Campo protegido para a senha do usuário. -->
+                <div class="field-group">
+                    <label for="password">Senha</label>
+                    <input id="password" name="password" type="password" placeholder="************" autocomplete="current-password" required>
+                </div>
+
+                <!-- Opções para manter a sessão e recuperar uma senha esquecida. -->
+                <div class="form-options">
+                    <!-- Caixa que permite salvar a preferência de lembrar do usuário. -->
+                    <label class="remember-me" for="remember">
+                        <input id="remember" name="remember" type="checkbox" checked>
+                        <span>Lembrar de mim</span>
+                    </label>
+                    <!-- Link reservado para o fluxo de recuperação de senha. -->
+                    <a href="#forgot-password">Esqueci minha senha</a>
+                </div>
+
+                <!-- Envia o formulário de login. -->
+                <button class="login-button" type="submit">Entrar</button>
+
+                <!-- Separador visual entre o login comum e o login com Google. -->
+                <div class="divider" aria-hidden="true">
+                    <span></span>
+                    <small>ou continue com</small>
+                    <span></span>
+                </div>
+
+                <!-- Botão reservado para autenticação com uma conta Google. -->
+                <button class="google-button" type="button">
+                    <img class="google-icon custom-alt" src="../Arquivos-Universais/Google Logo.webp" alt="Logo do google" >
+                    <span>Google</span>
+                </button>
+
+                <!-- Link reservado para o cadastro de uma nova conta. -->
+                <p class="create-account">Não tem uma conta? <a href="../Criar-Conta/index1.html">Criar Conta</a></p>
+            </form>
+        </section>
+    </main>
+
+</body>
+
+</html>

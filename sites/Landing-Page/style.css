@@ -1,0 +1,287 @@
+/* Faz o dimensionamento dos elementos considerar bordas e preenchimentos. */
+* {
+    box-sizing: border-box;
+}
+
+/* Remove margens padrão e garante que a tela ocupe toda a altura disponível. */
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+/* Define o fundo da página e evita que o conteúdo fique estreito demais. */
+body{
+    min-width: 320px;
+    background-color: black;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('arquivos/fundo1_landingPage.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Mantém o conteúdo afastado das bordas e limita a largura de leitura. */
+#corpo{
+    color: #ffffff;
+    width: 100%;
+    max-width: 760px;
+    padding: clamp(48px, 9vh, 100px) clamp(16px, 5vw, 50px) 48px;
+}
+
+/* Define a largura máxima do bloco do título e mantém seu alinhamento à esquerda. */
+#principal{
+    font-weight: bold;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    /* 1. Limita a largura do espaço*/
+    max-width: 450px;
+    
+    margin: 0;
+    
+    /* 3. Garante que palavras gigantes ou links não quebrem o layout */
+    word-wrap: break-word;
+}
+
+#principal h1 {
+    /* Usa um tamanho fluido para o título se adaptar à largura da tela. */
+    font-size: clamp(2.5rem, 5vw, 3rem);
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* Define a largura de leitura e o espaçamento do texto de apoio. */
+#corpo p {
+    max-width: 430px;
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    line-height: 1.45;
+    margin: 18px 0 0;
+}
+
+/* Organiza os botões e permite que eles quebrem linha quando necessário. */
+.hero-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    max-width: 430px;
+    flex-wrap: wrap;
+}
+
+/* Mantém os botões centralizados internamente e com área de toque confortável. */
+.hero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 22px;
+    border-radius: 6px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.hero-button-primary {
+    color: #ffffff;
+    background-color: #ff0000;
+}
+
+.hero-button-primary:hover {
+    background-color: #e60000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.45);
+    transform: translateY(-2px);
+}
+
+.hero-button-secondary {
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    background-color: transparent;
+}
+
+.hero-button-secondary:hover {
+    color: #ff0000;
+    border-color: #ff0000;
+    transform: translateY(-2px);
+}
+
+/* Ajusta o conteúdo principal para tablets e celulares. */
+@media (max-width: 768px) {
+    /* Diminui o espaçamento lateral do conteúdo em telas menores. */
+    #corpo {
+        max-width: 680px;
+        padding-top: clamp(36px, 8vh, 72px);
+    }
+}
+
+/* Ajusta a composição para celulares estreitos. */
+@media (max-width: 600px) {
+    /* Remove espaçamentos duplicados dos elementos internos no celular. */
+    #principal {
+        max-width: none;
+        padding: 0;
+    }
+
+    #principal h1 {
+        font-size: clamp(1.8rem, 9vw, 2.3rem);
+    }
+
+    #corpo p {
+        padding: 0;
+    }
+
+    /* Faz cada botão ocupar uma linha para facilitar o toque. */
+    .hero-actions {
+        width: 100%;
+        padding: 0;
+    }
+
+    .hero-button {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
+
+/* Reduz pequenos detalhes para telas muito estreitas. */
+@media (max-width: 360px) {
+    /* Diminui a distância entre os itens da navegação. */
+    .nav-menu {
+        gap: 12px 16px;
+    }
+
+    /* Evita que o botão de acesso fique largo demais. */
+    .btn-acessar {
+        padding: 9px 16px;
+    }
+}
+
+/* Container do header em telas maiores. */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px clamp(16px, 3vw, 32px);
+    background-color: transparent; /* Mantém o fundo escuro da página */
+}
+
+/*   1. BOTÃO "ACESSAR" (Botão Destaque)*/
+
+.btn-acessar {
+    background-color: #e60000;       /* Vermelho vibrante da ETEC */
+    color: #ffffff;                  /* Texto branco */
+    padding: 10px 22px;              /* Espaçamento interno: [Cima/Baixo] [Lados] */
+    border-radius: 6px;              /* Arredondamento suave dos cantos */
+    font-size: 0.9rem;               /* Tamanho da fonte */
+    font-weight: 700;                /* Texto em negrito */
+    text-decoration: none;           /* Remove o sublinhado do link */
+    display: inline-block;
+    transition: all 0.3s ease;       /* Transição suave ao passar o mouse */
+}
+
+/* Efeito Hover (ao passar o mouse por cima do botão) */
+.btn-acessar:hover {
+    background-color: #ff1a1a;       /* Fica ligeiramente mais claro */
+    box-shadow: 0 0 15px rgba(230, 0, 0, 0.6); /* Efeito de brilho neon vermelho */
+    transform: translateY(-2px);     /* Sobe 2px para dar efeito de clique/elevação */
+}
+
+/* Efeito ao clicar no botão */
+.btn-acessar:active {
+    transform: translateY(0);        /* Volta para a posição original */
+}
+
+/*    2. LINKS DE NAVEGAÇÃO (Início, Sobre, Serviços) */
+.nav-menu {
+    display: flex;
+    gap: clamp(16px, 3vw, 30px);     /* Distância fluida entre os itens */
+    align-items: center;
+}
+
+.nav-link {
+    color: #ffffff;                  /* Cor branca padrão */
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Estado Ativo (O link "Início" que já vem em vermelho) */
+.nav-link.active {
+    color: #e60000;
+    font-weight: 700;
+}
+
+/* Hover nos links */
+.nav-link:hover {
+    color: #e60000;                  /* Troca para vermelho ao passar o mouse */
+}
+
+.logoEtec{
+    color: #ffffff;
+}
+
+/* Container que segura as logos */
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 20px); /* Define o espaço fluido entre as logos */
+    min-width: 0;
+}
+
+/* Regra que diminui e padroniza o tamanho das logos */
+.logo-group img {
+    height: 60px; /* <--Valor para ajustar o tamanho*/
+    width: auto;  /* Mantém a proporção original para não esticar ou amassar */
+    object-fit: contain; /* Garante o encaixe perfeito */
+}
+
+/* Reaplica os ajustes do cabeçalho depois das regras gerais para preservar a responsividade. */
+@media (max-width: 768px) {
+    /* Permite que o cabeçalho se reorganize quando a largura diminui. */
+    .header {
+        flex-wrap: wrap;
+        gap: 18px 24px;
+        padding: 16px clamp(16px, 5vw, 32px);
+    }
+
+    /* Reduz o tamanho das logos em telas menores. */
+    .logo-group {
+        gap: clamp(12px, 2vw, 20px);
+    }
+
+    .logo-group img {
+        height: clamp(44px, 8vw, 56px);
+        max-width: 100%;
+    }
+
+    /* Permite que os links ocupem mais de uma linha se necessário. */
+    .nav-menu {
+        gap: 14px 22px;
+        flex-wrap: wrap;
+    }
+}
+
+/* Centraliza o cabeçalho e os links em celulares. */
+@media (max-width: 600px) {
+    .header {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo-group {
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    .nav-menu {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* Reduz o espaço entre os links em telas muito estreitas. */
+@media (max-width: 360px) {
+    .nav-menu {
+        gap: 12px 16px;
+    }
+}
