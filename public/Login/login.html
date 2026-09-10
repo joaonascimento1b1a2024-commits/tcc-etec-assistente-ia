@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Assistente IA ETEC</title>
+
+    <!-- Arquivo responsável pelos estilos visuais da página. -->
+    <link rel="stylesheet" href="style.css">
+
+    <!--
+        O atributo type="module" permite importar os módulos oficiais do Firebase.
+        O atributo defer aguarda o carregamento do HTML antes de executar o script.
+    -->
+    <script type="module" src="login.js" defer></script>
+</head>
+
+<body>
+    <main class="login-page">
+
+        <!-- Área das logos institucionais. -->
+        <header class="brand" aria-label="ETEC e Centro Paula Souza">
+
+            <!-- Logo da ETEC Sylvio de Mattos Carvalho. -->
+            <img class="brand-etec custom-alt"
+                src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
+                alt="Logo ETEC Sylvio de Mattos Carvalho">
+
+            <!-- Logos do Centro Paula Souza e do Governo do Estado de São Paulo. -->
+            <img class="brand-governo custom-alt"
+                src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
+                alt="Logo Centro Paula Souza e Governo do Estado de São Paulo">
+        </header>
+
+        <!-- Container que reúne o título e o formulário de login. -->
+        <section class="login-container" aria-labelledby="login-title">
+
+            <!-- Título e subtítulo apresentados no topo do formulário. -->
+            <div class="login-heading">
+                <h1 id="login-title">Bem-vindo</h1>
+                <p>Faça login para continuar</p>
+            </div>
+
+            <!--
+                Formulário de login.
+                O JavaScript impede o envio tradicional e autentica o usuário
+                por meio do Firebase Authentication.
+            -->
+            <form class="login-form" novalidate>
+
+                <!--
+                    Campo de e-mail usado pelo Firebase Authentication.
+                    O CPF ainda não está implementado como identificador de login.
+                -->
+                <div class="field-group">
+                    <label for="identifier">E-mail</label>
+                    <input id="identifier" name="identifier" type="email" placeholder="seu@email.com"
+                        autocomplete="username" required>
+                </div>
+
+                <!-- Campo protegido para a senha do usuário. -->
+                <div class="field-group">
+                    <label for="password">Senha</label>
+                    <input id="password" name="password" type="password" placeholder="************"
+                        autocomplete="current-password" required>
+                </div>
+
+                <!-- Opções para manter a sessão e recuperar uma senha esquecida. -->
+                <div class="form-options">
+
+                    <!--
+                        Quando marcado, o login permanece salvo no navegador.
+                        Quando desmarcado, a sessão dura somente até fechar a aba.
+                    -->
+                    <label class="remember-me" for="remember">
+                        <input id="remember" name="remember" type="checkbox" checked>
+                        <span>Lembrar de mim</span>
+                    </label>
+
+                    <!-- O login.js envia o e-mail de recuperação ao clicar neste link. -->
+                    <a href="#forgot-password">Esqueci minha senha</a>
+                </div>
+
+                <!--
+                    Área usada pelo JavaScript para mostrar mensagens de erro,
+                    sucesso ou instruções de recuperação de senha.
+                -->
+                <p id="form-message" class="form-message" role="status" aria-live="polite" hidden></p>
+
+                <!-- Botão que dispara a autenticação por e-mail e senha. -->
+                <button class="login-button" type="submit">Entrar</button>
+
+                <!-- Separador visual entre o login comum e o login com Google. -->
+                <div class="divider" aria-hidden="true">
+                    <span></span>
+                    <small>ou continue com</small>
+                    <span></span>
+                </div>
+
+                <!-- Botão de autenticação com uma conta Google. -->
+                <button class="google-button" type="button">
+                    <img class="google-icon custom-alt" src="../Arquivos-Universais/Google Logo.webp"
+                        alt="Logo do Google">
+                    <span>Google</span>
+                </button>
+
+                <!-- Link para a página de criação de uma nova conta. -->
+                <p class="create-account">
+                    Não tem uma conta?
+                    <a href="../Criar-Conta/cadastro.html">Criar conta</a>
+                </p>
+
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

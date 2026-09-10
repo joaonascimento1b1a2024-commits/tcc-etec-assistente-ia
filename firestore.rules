@@ -1,11 +1,17 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Regra: Apenas usuários logados (autenticados) podem ler ou escrever no banco
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+
+    // Cada usuário só pode acessar o próprio perfil.
+    match /users/{userId} {
+      // Permite criar o próprio documento durante o cadastro.
+      allow create: if request.auth != null
+                    && request.auth.uid == userId;
+
+      // Permite ler, alterar ou excluir somente o próprio documento.
+      allow read, update, delete: if request.auth != null
+                                  && request.auth.uid == userId;
     }
-    
   }
 }

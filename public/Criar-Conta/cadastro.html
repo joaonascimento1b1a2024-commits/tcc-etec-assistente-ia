@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | Assistente IA ETEC</title>
+
+    <!-- Arquivo responsável pelos estilos visuais da página. -->
+    <link rel="stylesheet" href="style.css">
+
+    <!--
+        O atributo type="module" permite que o script.js utilize os módulos
+        oficiais do Firebase importados pela CDN.
+        O atributo defer faz o script aguardar o carregamento do HTML.
+    -->
+    <script type="module" src="script.js" defer></script>
+</head>
+
+<body>
+    <main class="login-page">
+
+        <!-- Área das logos institucionais. -->
+        <header class="brand" aria-label="ETEC e Centro Paula Souza">
+
+            <!-- Logo da ETEC Sylvio de Mattos Carvalho. -->
+            <img class="brand-etec custom-alt"
+                src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
+                alt="Logo ETEC Sylvio de Mattos Carvalho">
+
+            <!-- Logos do Centro Paula Souza e do Governo do Estado de São Paulo. -->
+            <img class="brand-governo custom-alt"
+                src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
+                alt="Logo Centro Paula Souza e Governo do Estado de São Paulo">
+        </header>
+
+        <!-- Container que reúne o título e o formulário de cadastro. -->
+        <section class="login-container" aria-labelledby="login-title">
+
+            <!-- Título e subtítulo apresentados no topo do formulário. -->
+            <div class="login-heading">
+                <h1 id="login-title">Bem-vindo</h1>
+                <p>Crie sua conta</p>
+            </div>
+
+            <!--
+                Formulário de cadastro.
+                O JavaScript cancela o envio tradicional e envia os dados
+                para o Firebase Authentication e o Cloud Firestore.
+            -->
+            <form class="login-form" novalidate>
+
+                <!-- Campo para o usuário informar o nome completo. -->
+                <div class="field-group">
+                    <label for="name">Nome completo</label>
+                    <input id="name" name="nome" type="text" placeholder="Seu nome" autocomplete="name" required>
+                </div>
+
+                <!--
+                    Campo de e-mail usado pelo Firebase Authentication.
+                    O Firebase exige um e-mail válido para o cadastro por senha.
+                -->
+                <div class="field-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" name="email" type="email" placeholder="seu@email.com" autocomplete="email"
+                        required>
+                </div>
+
+                <!--
+                    Campo protegido para a senha do usuário.
+                    A senha será administrada pelo Firebase Authentication.
+                    Ela não deve ser gravada no Firestore.
+                -->
+                <div class="field-group">
+                    <label for="password">Senha</label>
+                    <input id="password" name="password" type="password" placeholder="Mínimo de 6 caracteres"
+                        autocomplete="new-password" minlength="6" required>
+                </div>
+
+                <!-- Campo protegido para confirmar a senha informada. -->
+                <div class="field-group">
+                    <label for="confirm-password">Confirmar senha</label>
+                    <input id="confirm-password" name="confirm-password" type="password" placeholder="Repita sua senha"
+                        autocomplete="new-password" minlength="6" required>
+                </div>
+
+                <!--
+                    Checkbox obrigatório para aceite dos termos.
+                    O atributo required impede o envio sem o aceite.
+                -->
+                <label class="terms">
+                    <input type="checkbox" name="terms" required>
+                    Eu aceito os
+                    <a href="#terms-of-use">Termos de Uso</a>
+                    e a
+                    <a href="#privacy-policy">Política de Privacidade</a>.
+                </label>
+
+                <!--
+                    Área usada pelo JavaScript para mostrar mensagens de erro
+                    ou confirmação de cadastro realizado com sucesso.
+                -->
+                <p id="form-message" class="form-message" role="status" aria-live="polite" hidden></p>
+
+                <!--
+                    Botão que dispara o cadastro por e-mail e senha.
+                    O script.js captura este envio e chama o Firebase.
+                -->
+                <button class="login-button" type="submit">Criar conta</button>
+
+                <!-- Separador visual entre o cadastro comum e o cadastro Google. -->
+                <div class="divider" aria-hidden="true">
+                    <span></span>
+                    <p>ou continue com</p>
+                    <span></span>
+                </div>
+
+                <!--
+                    Botão de autenticação com uma conta Google.
+                    O script.js utiliza signInWithPopup para abrir o login Google.
+                -->
+                <button class="google-button" type="button">
+                    <img class="google-icon custom-alt" src="../Arquivos-Universais/Google Logo.webp"
+                        alt="Logo do Google">
+                    <span>Google</span>
+                </button>
+
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>
