@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assistente ETEC IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="home.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="school-logo"><strong>Etec</strong><span>Sylvio de Mattos<br />Carvalho</span><small>Matão</small></div>
+    <button class="new-chat" id="newChat">+ Novo chat</button>
+    <nav aria-label="Menu principal">
+      <a class="nav-link active" href="#inicio" data-page="home"><span>⌂</span> Início</a>
+      <a class="nav-link" href="#conversas" data-page="chat"><span>▤</span> Conversas</a>
+      <a class="nav-link" href="#avisos"><span>♧</span> Avisos</a>
+      <a class="nav-link" href="#servicos"><span>▱</span> Serviços</a>
+      <a class="nav-link" href="#configuracoes"><span>⚙</span> Configurações</a>
+    </nav>
+  </aside>
+  <main class="app-content">
+    <header class="topbar">
+      <div class="assistant-brand"><span class="assistant-avatar">🤖</span><span>Assistente ETEC IA</span></div>
+      <div class="profile"><img id="profileImage" alt="Foto de perfil" /><span id="profileName">João Victor</span></div>
+    </header>
+    <section class="home-screen" id="homeScreen">
+      <div class="welcome"><h1>Olá, João!</h1><p>Como posso ajudar você hoje?</p></div>
+      <div class="feature-cards">
+        <button class="feature-card" data-message="Quero solicitar documentos e declarações."><b class="card-icon">▰</b><span><strong>Solicitar documentos</strong><small>Peça documentos e declarações</small></span></button>
+        <button class="feature-card" data-message="Quero consultar o calendário acadêmico."><b class="card-icon">▣</b><span><strong>Calendário acadêmico</strong><small>Datas importantes e eventos</small></span></button>
+        <button class="feature-card" data-message="Preciso de informações sobre matrícula."><b class="card-icon">▱</b><span><strong>Matrícula</strong><small>Informações sobre matrícula</small></span></button>
+      </div>
+      <div class="home-suggestions">
+        <button data-message="Como faço para renovar minha matrícula?">Como faço para renovar minha matrícula?</button>
+        <button data-message="Quais documentos preciso para me matricular?">Quais documentos preciso para me matricular?</button>
+        <button data-message="Quais os horários de atendimento da secretaria?">Quais os horários de atendimento da secretaria?</button>
+      </div>
+    </section>
+    <section class="chat-screen hidden" id="chatScreen" aria-live="polite">
+      <div class="messages" id="messages"></div>
+      <div class="chat-suggestions">
+        <button data-message="Como faço a matrícula?">Como faço a matrícula?</button>
+        <button data-message="Qual é o horário de funcionamento?">Horário de funcionamento</button>
+        <button data-message="Quero falar com um atendente.">Falar com atendente</button>
+      </div>
+    </section>
+    <form class="message-form" id="messageForm">
+      <label class="sr-only" for="messageInput">Sua mensagem</label>
+      <input id="messageInput" type="text" autocomplete="off" placeholder="Digite sua mensagem..." maxlength="700" />
+      <button class="attachment" type="button" aria-label="Anexar arquivo" title="Anexar arquivo (em breve)">⌕</button>
+      <button class="send" type="submit" aria-label="Enviar mensagem">→</button>
+    </form>
+  </main>
+  <script src="home.js"></script>
+</body>
+</html>

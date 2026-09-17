@@ -54,7 +54,7 @@ function firebaseErrorMessage(error) {
 
 async function redirectAfterLogin() {
     // Troque pelo caminho real da página protegida do seu sistema.
-    window.location.href = "../index.html";
+    window.location.href = "../Pagina-Inicial/pagina-in.html";
 }
 
 form.addEventListener("submit", async (event) => {

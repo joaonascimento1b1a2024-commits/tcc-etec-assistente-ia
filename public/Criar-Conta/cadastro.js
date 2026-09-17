@@ -90,7 +90,7 @@ form.addEventListener("submit", async (event) => {
         showMessage("Conta criada com sucesso!", "success");
         form.reset();
         // Redirecione para a área logada quando essa página existir:
-        // window.location.href = "login.html";
+        window.location.href = "../Login/login.html";
     } catch (error) {
         console.error(error);
         showMessage(firebaseErrorMessage(error));
