@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Define os caracteres, a largura da tela e o título da aba. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços | Assistente ETEC IA</title>
+    <!-- Mantém a mesma fonte utilizada nas outras páginas da área logada. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="servicos.css">
+    <!-- Executa o script após o HTML para configurar o destino do botão. -->
+    <script src="servicos.js" defer></script>
+</head>
+<body>
+    <!-- Permite pular o menu quando a navegação é feita pelo teclado. -->
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+    <!-- Menu lateral consistente com as páginas Home e Avisos. -->
+    <aside class="sidebar">
+        <a class="school-logo" href="../Home/home.html" aria-label="ETEC — página inicial">
+            <strong>Etec</strong>
+            <span>Sylvio de Mattos<br>Carvalho</span>
+            <small>Matão</small>
+        </a>
+        <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
+        <nav aria-label="Menu principal">
+            <a href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
+            <button type="button" disabled title="Em breve"><span aria-hidden="true">▤</span> Conversas</button>
+            <a href="../Avisos/avisos.html"><span aria-hidden="true">♧</span> Avisos</a>
+            <a href="servicos.html" aria-current="page"><span aria-hidden="true">▱</span> Serviços</a>
+            <a href=""><span aria-hidden="true">⚙</span> Configurações</a>
+        </nav>
+    </aside>
+
+    <!-- Duas colunas no computador; apresentação e instruções empilhadas no celular. -->
+    <main id="conteudo" class="services-content" tabindex="-1">
+        <div class="services-layout">
+            <section class="intro" aria-labelledby="services-title">
+                <h1 id="services-title">Continue sua Conversa<br>com a <span>IA da secretaria</span></h1>
+                <p class="description">Para a sua comodidade, você pode continuar o atendimento diretamente no WhatsApp.</p>
+
+                <!-- Benefícios apresentados na referência visual. -->
+                <ul class="benefits">
+                    <li>Atendimento rápido e prático</li>
+                    <li>Disponível 24 horas</li>
+                    <li>Suas informações seguras</li>
+                </ul>
+
+                <!-- O link só é habilitado quando um número válido está configurado. -->
+                <div class="whatsapp-action">
+                    <a href="" id="whatsapp-link" class="whatsapp-button" role="link" tabindex="-1" aria-describedby="whatsapp-help whatsapp-status">Inicie sua conversa no WhatsApp</a>
+                    <p id="whatsapp-help" class="helper">Você será direcionado para o WhatsApp para iniciar sua conversa.</p>
+                    <noscript><p class="helper">Ative o JavaScript para abrir o atendimento pelo WhatsApp.</p></noscript>
+                </div>
+            </section>
+
+            <!-- Lista ordenada acessível que explica o redirecionamento e o atendimento. -->
+            <section class="instructions" aria-labelledby="instructions-title">
+                <h2 id="instructions-title">Como funciona?</h2>
+                <ol class="steps">
+                    <li>
+                        <span class="step-number" aria-hidden="true">1</span>
+                        <div><h3>Clique no botão ao lado</h3><p>Você será direcionado para a conversa da IA no WhatsApp.</p></div>
+                    </li>
+                    <li>
+                        <span class="step-number" aria-hidden="true">2</span>
+                        <div><h3>Inicie a conversa</h3><p>Envie sua mensagem normalmente para a IA da secretaria.</p></div>
+                    </li>
+                    <li>
+                        <span class="step-number" aria-hidden="true">3</span>
+                        <div><h3>Receba respostas</h3><p>A IA irá entender sua dúvida e responder rapidamente.</p></div>
+                    </li>
+                </ol>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

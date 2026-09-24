@@ -3,6 +3,33 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Permissão administrativa emitida pelo servidor via Firebase Admin SDK.
+    // Não depende do documento /users, que pode ser editado pelo próprio usuário.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Contrato compartilhado com Logado/Avisos/avisos.js e o futuro painel administrativo.
+    function validNotice() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['titulo', 'descricao', 'categoria', 'publicado', 'criadoEm'])
+        && data.keys().hasOnly(['titulo', 'descricao', 'categoria', 'publicado', 'criadoEm', 'atualizadoEm'])
+        && data.titulo is string && data.titulo.size() > 0 && data.titulo.size() <= 150
+        && data.descricao is string && data.descricao.size() > 0 && data.descricao.size() <= 5000
+        && data.categoria in ['matricula', 'provas', 'feriado', 'evento', 'geral']
+        && data.publicado is bool && data.criadoEm is timestamp
+        && (!('atualizadoEm' in data) || data.atualizadoEm is timestamp);
+    }
+
+    // Alunos autenticados consultam apenas publicados. Administradores também leem rascunhos.
+    match /avisos/{avisoId} {
+      allow read: if request.auth != null && (resource.data.publicado == true || isAdmin());
+      allow create: if isAdmin() && validNotice() && request.resource.data.criadoEm == request.time;
+      allow update: if isAdmin() && validNotice()
+                    && request.resource.data.criadoEm == resource.data.criadoEm;
+      allow delete: if isAdmin();
+    }
+
     // Cada usuário só pode acessar o próprio perfil.
     match /users/{userId} {
       // Permite criar o próprio documento durante o cadastro.
