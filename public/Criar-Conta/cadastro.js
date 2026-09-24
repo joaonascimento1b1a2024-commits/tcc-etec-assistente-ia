@@ -115,6 +115,7 @@ googleButton.addEventListener("click", async () => {
             { merge: true },
         );
         showMessage("Cadastro com Google concluído!", "success");
+        window.location.href = "../Logado/Home/home.html";
     } catch (error) {
         console.error(error);
         showMessage(firebaseErrorMessage(error));
