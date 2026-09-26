@@ -50,19 +50,18 @@
                 <span>Assistente ETEC IA</span>
             </div>
 
-            <!-- home.js preenche a foto e o nome quando encontra um perfil Google. -->
-            <div class="profile">
-                <img id="profileImage" alt="Foto de perfil" />
-                <span id="profileName">João Victor</span>
-            </div>
+            <!-- Foto e nome formam um único link, acessível também pelo teclado. -->
+            <a class="profile" id="profileLink" href="../Configurações Aluno/configAl.html" aria-label="Abrir configurações da conta">
+                <img id="profileImage" alt="" hidden />
+                <span id="profileName">Carregando perfil...</span>
+            </a>
         </header>
 
         <!-- Tela exibida inicialmente e ao selecionar Novo chat. -->
         <section class="home-screen" id="homeScreen">
-            <!-- Saudação estática; estes textos são definidos diretamente no HTML. -->
+            <!-- O JavaScript personaliza a saudação com o primeiro nome da conta. -->
             <div class="welcome">
-                <!--Mudar para o nome do usuário-->
-                <h1>Olá, João!</h1>
+                <h1 id="welcomeName">Olá!</h1>
                 <p>Como posso ajudar você hoje?</p>
             </div>
 

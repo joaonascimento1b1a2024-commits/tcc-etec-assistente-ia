@@ -159,6 +159,8 @@ nav {
 
 /* Recorta a foto do perfil em círculo e define borda e fundo. */
 .profile img {
+    /* Impede que a foto seja comprimida quando o nome for longo. */
+    flex-shrink: 0;
     height: 36px;
     width: 36px;
     border-radius: 50%;
@@ -167,10 +169,28 @@ nav {
     background: linear-gradient(135deg,#f6ba70,#654b36);
 }
 
-/* Define o tamanho do texto do perfil. */
+/* Torna o conjunto foto e nome clicável sem ultrapassar o cabeçalho. */
 .profile {
     font-size: 12px;
+    min-width: 0;
+    max-width: 45%;
+    min-height: 44px;
+    color: #d4d4d4;
+    text-decoration: none;
+    border-radius: 6px;
+    padding: 0 4px;
 }
+
+/* Encurta apenas visualmente os nomes longos; o nome completo fica no título do link. */
+.profile #profileName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Destaca a ação ao passar o mouse e ao navegar pelo teclado. */
+.profile:hover { background: #292929; }
+.profile:focus-visible { outline: 2px solid #ff3737; outline-offset: 2px; }
 
 /* Organiza a tela de boas-vindas e limita sua largura a 630px. */
 .home-screen {
