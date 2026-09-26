@@ -1,3 +1,7 @@
+/* Indica o estado real do salvamento sem ocupar a área dos balões. */
+.chat-status { width: 100%; max-width: 630px; margin: 12px auto; color: #ccc; font-size: 12px; overflow-wrap: anywhere; }
+.message-form button:disabled, [data-message]:disabled { opacity: .5; cursor: wait; }
+
 /* Cores reutilizáveis da interface. As propriedades var(...) consultam estes valores. */
 :root {
     --red: #ff0909;

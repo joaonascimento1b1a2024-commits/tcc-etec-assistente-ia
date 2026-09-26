@@ -11,6 +11,19 @@ const messageInput = document.querySelector('#messageInput');
 const newChat = document.querySelector('#newChat');
 const profileImage = document.querySelector('#profileImage');
 
+// A conversa só aceita envios após restaurar a sessão e abrir o histórico solicitado.
+let conversationStore = null;
+let conversationId = new URLSearchParams(window.location.search).get('conversa');
+let sending = false;
+let sessionVersion = 0;
+const chatStatus = document.querySelector('#chatStatus');
+function lockComposer(locked) {
+    messageInput.disabled = locked;
+    messageForm.querySelector('[type="submit"]').disabled = locked;
+    document.querySelectorAll('[data-message]').forEach(button => button.disabled = locked);
+}
+lockComposer(true);
+
 // ============================================================
 // 2. Perfil do usuário
 // ============================================================
@@ -60,7 +73,11 @@ async function loadAuthenticatedProfile() {
             appId: '1:767501525275:web:9153a051a817504f64b3be',
         });
         // Aguarda a restauração da sessão e acompanha alterações da conta autenticada.
-        authSDK.onAuthStateChanged(authSDK.getAuth(app), user => {
+        authSDK.onAuthStateChanged(authSDK.getAuth(app), async user => {
+            const version = ++sessionVersion;
+            conversationStore = null;
+            messages.replaceChildren();
+            lockComposer(true);
             if (!user) {
                 profileName.textContent = 'Minha conta';
                 profileImage.src = defaultAvatar;
@@ -69,6 +86,23 @@ async function loadAuthenticatedProfile() {
                 return;
             }
             renderProfile(user);
+            try {
+                const { createConversationStore } = await import('../Conversas/conversation-store.js');
+                const store = await createConversationStore(app, user.uid);
+                const saved = conversationId ? await store.open(conversationId) : null;
+                if (version !== sessionVersion) return;
+                conversationStore = store;
+                if (saved) {
+                    showChat();
+                    for (const message of saved.mensagens) addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
+                }
+                chatStatus.textContent = 'As mensagens são salvas na sua conta. A IA ainda não está conectada.';
+                lockComposer(false);
+            } catch (error) {
+                if (version !== sessionVersion) return;
+                chatStatus.textContent = 'Não foi possível abrir o histórico. Verifique a conexão e as permissões ou inicie um novo chat.';
+                console.error('Falha ao abrir conversa:', error.code || error.message);
+            }
         }, handleProfileError);
     } catch (error) {
         handleProfileError(error);
@@ -77,6 +111,8 @@ async function loadAuthenticatedProfile() {
 
 // Mantém o acesso às configurações mesmo se houver falha ao consultar a sessão.
 function handleProfileError(error) {
+    lockComposer(true);
+    chatStatus.textContent = 'Não foi possível conectar à conta. Recarregue a página para tentar novamente.';
     profileName.textContent = 'Minha conta';
     profileImage.src = defaultAvatar;
     profileLink.title = 'Não foi possível carregar o perfil. Abra as configurações ou recarregue a página.';
@@ -125,28 +161,46 @@ function addMessage(text, sender) {
 }
 
 // ============================================================
-// 4. Envio de mensagens e resposta demonstrativa
+// 4. Persistência das mensagens do usuário
 // ============================================================
 
-// Simula uma resposta após 350 milissegundos.
-// Ainda não há chamada a um serviço de inteligência artificial.
-function demoReply() {
-    window.setTimeout(() =>
-        addMessage('Recebi sua mensagem! A conexão com a IA será adicionada em breve. Enquanto isso, você pode escolher uma das opções abaixo ou iniciar um novo chat.', 'bot'),
-        350
-    );
-}
-
-// Remove espaços nas extremidades e ignora mensagens vazias.
-// Depois, abre a conversa, exibe o texto, limpa o campo e agenda a resposta.
-function sendMessage(text) {
+// Só apresenta o envio como salvo após a confirmação do banco. Em caso de erro,
+// mantém o texto para uma nova tentativa e não fabrica respostas da IA.
+async function sendMessage(text) {
     const cleanText = text.trim();
-    if (!cleanText) return;
-
-    showChat();
-    addMessage(cleanText, 'user');
-    messageInput.value = '';
-    demoReply();
+    if (!cleanText || sending || !conversationStore) return;
+    const version = sessionVersion;
+    sending = true;
+    lockComposer(true);
+    newChat.disabled = true;
+    messageInput.value = cleanText;
+    chatStatus.textContent = 'Salvando mensagem...';
+    try {
+        const id = await conversationStore.append(conversationId, cleanText);
+        if (version !== sessionVersion) return;
+        conversationId = id;
+        window.history.replaceState(null, '', `?conversa=${encodeURIComponent(id)}`);
+        // O banco já confirmou o envio: uma falha de releitura não deve duplicá-lo.
+        messageInput.value = '';
+        // Reconsulta o documento para incluir mensagens enviadas por outras abas.
+        const saved = await conversationStore.open(id);
+        if (version !== sessionVersion) return;
+        messages.replaceChildren();
+        showChat();
+        for (const message of saved.mensagens) addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
+        messageInput.value = '';
+        chatStatus.textContent = 'Mensagem salva. A resposta e o título pela IA aguardam a integração do projeto.';
+    } catch (error) {
+        if (version !== sessionVersion) return;
+        chatStatus.textContent = error.code ? 'Falha de conexão ou permissão. Confira o histórico antes de reenviar.' : error.message;
+    } finally {
+        sending = false;
+        newChat.disabled = false;
+        if (version === sessionVersion) {
+            lockComposer(false);
+            messageInput.focus();
+        }
+    }
 }
 
 // ============================================================
@@ -165,16 +219,8 @@ document.querySelectorAll('[data-message]').forEach(button =>
     button.addEventListener('click', () => sendMessage(button.dataset.message))
 );
 
-// Limpa as mensagens exibidas, retorna à tela inicial, destaca Início
-// no menu e coloca o cursor no campo para começar outra conversa.
+// Abre uma conversa nova sem apagar nenhuma conversa anterior.
 newChat.addEventListener('click', () => {
-    messages.replaceChildren();
-    homeScreen.classList.remove('hidden');
-    chatScreen.classList.add('hidden');
-
-    document.querySelectorAll('.nav-link').forEach(link =>
-        link.classList.toggle('active', link.dataset.page === 'home')
-    );
-
-    messageInput.focus();
+    // A navegação limpa apenas a seleção; o histórico já salvo não é apagado.
+    window.location.assign('home.html');
 });

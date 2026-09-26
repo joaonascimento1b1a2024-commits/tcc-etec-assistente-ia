@@ -29,12 +29,10 @@
         <!-- O JavaScript usa este ID para limpar as mensagens e voltar à tela inicial. -->
         <button class="new-chat" id="newChat">+ Novo chat</button>
 
-        <!-- data-page identifica o item destacado pelo JavaScript.
-             Os links com # são âncoras; este arquivo ainda não implementa
-             a abertura de telas pelo clique nestas opções do menu. -->
+        <!-- data-page identifica o item destacado; Conversas abre o histórico salvo. -->
         <nav aria-label="Menu principal">
             <a class="nav-link active" href="home.html" data-page="home"><span>⌂</span> Início</a>
-            <a class="nav-link" href="#conversas" data-page="chat"><span>▤</span> Conversas</a>
+            <a class="nav-link" href="../Conversas/conversas.html" data-page="chat"><span>▤</span> Conversas</a>
             <a class="nav-link" href="../Avisos/avisos.html"><span>♧</span> Avisos</a>
             <a class="nav-link" href="../Serviços/servicos.html"><span>▱</span> Serviços</a>
             <a class="nav-link" href="../Configurações Aluno/configAl.html"><span>⚙</span> Configurações</a>
@@ -115,6 +113,8 @@
         </section>
 
         <!-- Formulário compartilhado pelas duas telas; o JavaScript trata o envio. -->
+        <!-- Informa conexão, salvamento e falhas sem confundir uma demonstração com resposta real. -->
+        <p id="chatStatus" role="status" class="chat-status">Conectando à sua conta...</p>
         <form class="message-form" id="messageForm">
             <!-- Rótulo acessível a leitores de tela, oculto visualmente pelo CSS. -->
             <label class="sr-only" for="messageInput">Sua mensagem</label>

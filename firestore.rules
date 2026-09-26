@@ -30,6 +30,27 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Histórico privado: o UID vem da sessão, nunca de um campo editável do perfil.
+    // Um documento reúne título e mensagens para que a exclusão seja completa.
+    match /users/{userId}/conversas/{conversationId} {
+      function owner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function validConversation() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['titulo', 'tituloOrigem', 'mensagens', 'criadoEm', 'atualizadoEm'])
+          && data.keys().hasOnly(['titulo', 'tituloOrigem', 'mensagens', 'criadoEm', 'atualizadoEm'])
+          && data.titulo is string && data.titulo.size() > 0 && data.titulo.size() <= 100
+          && data.tituloOrigem in ['provisorio', 'manual']
+          && data.mensagens is list && data.mensagens.size() > 0 && data.mensagens.size() <= 100
+          && data.criadoEm is timestamp && data.atualizadoEm == request.time;
+      }
+      allow read, delete: if owner();
+      allow create: if owner() && validConversation() && request.resource.data.criadoEm == request.time;
+      allow update: if owner() && validConversation()
+        && request.resource.data.criadoEm == resource.data.criadoEm;
+    }
+
     // Cada usuário só pode acessar o próprio perfil.
     match /users/{userId} {
       // Permite criar o próprio documento durante o cadastro.
