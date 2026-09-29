@@ -1,50 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Avisos publicados: o JavaScript preenche os cartões a partir do Firestore. -->
 <html lang="pt-BR">
-<head>
-    <!-- Codificação, adaptação a celulares e fontes compartilhadas com a área logada. -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avisos | Assistente ETEC IA</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="avisos.css">
-    <script src="avisos.js" type="module"></script>
-</head>
-<body>
-    <!-- Atalho de teclado para pular o menu e acessar os avisos. -->
-    <a class="skip-link" href="#conteudo">Ir para os avisos</a>
-    <aside class="sidebar">
-        <a class="school-logo" href="../Home/home.html" aria-label="ETEC — início">
-            <strong>Etec</strong><span>Sylvio de Mattos<br>Carvalho</span><small>Matão</small>
-        </a>
-        <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
-        <!-- Destinos ainda não implementados ficam desabilitados, sem links quebrados. -->
-        <nav aria-label="Menu principal">
-            <a href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
-            <a href="../Conversas/conversas.html"><span aria-hidden="true">▤</span> Conversas</a>
-            <a href="avisos.html" aria-current="page"><span aria-hidden="true">♧</span> Avisos</a>
-            <a href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
-            <a href="../Configurações Aluno/configAl.html"><span aria-hidden="true">⚙</span> Configurações</a>
-        </nav>
-    </aside>
-    <main id="conteudo" class="content" tabindex="-1">
-        <header><h1>Avisos</h1><p>Fique por dentro das novidades</p></header>
-        <!-- O JavaScript comunica o estado da consulta sem anunciar toda a lista novamente. -->
-        <div class="notice-area">
-            <p id="status" role="status" aria-live="polite">Carregando avisos...</p>
-            <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
-            <a id="login" class="retry" href="../../Login/login.html" hidden>Entrar na minha conta</a>
-            <ul id="noticeList" class="notice-list" aria-label="Avisos da escola" aria-busy="true"></ul>
-            <noscript>Ative o JavaScript para consultar os avisos da escola.</noscript>
-        </div>
-    </main>
-    <!-- Estrutura reaproveitada para cada documento retornado pelo Firestore. -->
-    <template id="noticeTemplate">
-        <li><article class="notice-card">
-            <div class="notice-icon" aria-hidden="true"></div>
-            <div class="notice-copy"><h2></h2><p></p></div>
-        </article></li>
-    </template>
-</body>
+    <head>
+        <!-- Codificação, adaptação a celulares e fontes compartilhadas com a área logada. -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Avisos | Assistente ETEC IA</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="avisos.css" />
+        <script src="avisos.js" type="module"></script>
+    </head>
+    <body>
+        <!-- Atalho de teclado para pular o menu e acessar os avisos. -->
+        <a class="skip-link" href="#conteudo">Ir para os avisos</a>
+        <aside class="sidebar">
+            <a class="school-logo" href="../Home/home.html" aria-label="ETEC — início">
+                <strong>Etec</strong><span>Sylvio de Mattos<br />Carvalho</span><small>Matão</small>
+            </a>
+            <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
+            <!-- Destinos ainda não implementados ficam desabilitados, sem links quebrados. -->
+            <nav aria-label="Menu principal">
+                <a href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
+                <a href="../Conversas/conversas.html"
+                    ><span aria-hidden="true">▤</span> Conversas</a
+                >
+                <a href="avisos.html" aria-current="page"
+                    ><span aria-hidden="true">♧</span> Avisos</a
+                >
+                <a href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
+                <a href="../Configurações Aluno/configAl.html"
+                    ><span aria-hidden="true">⚙</span> Configurações</a
+                >
+            </nav>
+        </aside>
+        <main id="conteudo" class="content" tabindex="-1">
+            <header>
+                <h1>Avisos</h1>
+                <p>Fique por dentro das novidades</p>
+            </header>
+            <!-- O JavaScript comunica o estado da consulta sem anunciar toda a lista novamente. -->
+            <div class="notice-area">
+                <p id="status" role="status" aria-live="polite">Carregando avisos...</p>
+                <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
+                <a id="login" class="retry" href="../../Login/login.html" hidden
+                    >Entrar na minha conta</a
+                >
+                <ul
+                    id="noticeList"
+                    class="notice-list"
+                    aria-label="Avisos da escola"
+                    aria-busy="true"></ul>
+                <noscript>Ative o JavaScript para consultar os avisos da escola.</noscript>
+            </div>
+        </main>
+        <!-- Estrutura reaproveitada para cada documento retornado pelo Firestore. -->
+        <template id="noticeTemplate">
+            <li>
+                <article class="notice-card">
+                    <div class="notice-icon" aria-hidden="true"></div>
+                    <div class="notice-copy">
+                        <h2></h2>
+                        <p></p>
+                    </div>
+                </article>
+            </li>
+        </template>
+    </body>
 </html>

@@ -1,43 +1,39 @@
 {
-  "firestore": {
-    "database": "(default)",
-    "location": "southamerica-east1",
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "disallowLegacyRuntimeConfig": true,
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
-    }
-  ],
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
-  "emulators": {
-    "auth": {
-      "port": 9099
-    },
     "firestore": {
-      "port": 8080
+        "database": "(default)",
+        "location": "southamerica-east1",
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
     },
+    "functions": [
+        {
+            "source": "functions",
+            "codebase": "default",
+            "disallowLegacyRuntimeConfig": true,
+            "predeploy": [
+                "npm --prefix \"$RESOURCE_DIR\" run lint",
+                "npm --prefix \"$RESOURCE_DIR\" run build"
+            ]
+        }
+    ],
     "hosting": {
-      "port": 5000
+        "public": "public",
+        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     },
-    "ui": {
-      "enabled": true,
-      "port": 4000
-    },
-    "singleProjectMode": true
-  }
+    "emulators": {
+        "auth": {
+            "port": 9099
+        },
+        "firestore": {
+            "port": 8080
+        },
+        "hosting": {
+            "port": 5000
+        },
+        "ui": {
+            "enabled": true,
+            "port": 4000
+        },
+        "singleProjectMode": true
+    }
 }

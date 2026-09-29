@@ -1,3 +1,5 @@
+// Regras de análise estática das Cloud Functions.
+// São independentes das convenções do JavaScript executado no navegador.
 module.exports = {
   root: true,
   env: {
@@ -12,22 +14,21 @@ module.exports = {
     "google",
     "plugin:@typescript-eslint/recommended",
   ],
+  // Lê os projetos TypeScript para validar os arquivos de servidor.
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: ["tsconfig.json", "tsconfig.dev.json"],
     sourceType: "module",
   },
   ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-    "/generated/**/*", // Ignore generated files.
+    "/lib/**/*", // Ignora a saída compilada: o código-fonte fica em src.
+    "/generated/**/*", // Ignora arquivos produzidos por outras ferramentas.
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ["@typescript-eslint", "import"],
+  // Mantém as convenções já adotadas pelo backend: aspas duplas e dois espaços.
   rules: {
-    "quotes": ["error", "double"],
+    quotes: ["error", "double"],
     "import/no-unresolved": 0,
-    "indent": ["error", 2],
+    indent: ["error", 2],
   },
 };

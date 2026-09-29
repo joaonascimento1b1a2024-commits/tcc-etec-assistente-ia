@@ -1,47 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Landing Page pública: apresentação do assistente e acesso ao login. -->
 <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="./Landing-Page/style.css" />
+        <script src="./Landing-Page/script.js"></script>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./Landing-Page/style.css">
-    <script src="./Landing-Page/script.js"></script>
-</head>
+    <body>
+        <!-- Cabeçalho com as logos institucionais e os links de navegação. -->
+        <header class="header">
+            <div class="logo-group">
+                <img
+                    class="logoEtec"
+                    src="./Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
+                    alt="logo etec Sylvio de Mattos Cavalho" />
+                <img
+                    class="logoEtec"
+                    src="./Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
+                    alt="logo Centro Paula Souza e Governo do estado de São Paulo" />
+            </div>
+            <!-- Links de navegação -->
+            <nav class="nav-menu">
+                <!-- Links com # ainda são marcadores, sem destino de seção configurado. -->
+                <a href="#" class="nav-link active">Início</a>
+                <a href="#" class="nav-link">Sobre</a>
+                <a href="#" class="nav-link">Serviços</a>
+                <a href="#" class="btn-acessar">Acessar</a>
+            </nav>
+        </header>
 
-<body>
-    <!-- Cabeçalho com as logos institucionais e os links de navegação. -->
-    <header class="header">
-        <div class="logo-group">
-            <img class="logoEtec" src="./Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" alt="logo etec Sylvio de Mattos Cavalho">
-            <img class="logoEtec" src="./Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png" alt="logo Centro Paula Souza e Governo do estado de São Paulo">
-        </div>
-        <!-- Links de navegação -->
-        <nav class="nav-menu">
-            <!--Alterar os href para os links definitivos-->
-            <a href="#" class="nav-link active">Início</a>
-            <a href="#" class="nav-link">Sobre</a>
-            <a href="#" class="nav-link">Serviços</a>
-            <a href="#" class="btn-acessar">Acessar</a>
-        </nav>
-        
-    </header>
-
-    <!-- Conteúdo principal da página inicial. -->
-    <div id="corpo">
-        <div id="principal">
-            <h1>Tire suas dúvidas<br>sem segundos.<br>A <span style="color: red;">IA</span> da secretaria<br>da <span style="color: red;">ETEC</span></h1>
-        </div>
-        <div>
-            <p>Um assistente inteligente que responde perguntas acadêmicas, orienta alunos e facilita o atendimento da secretaria escolar.</p>
-            <div class="hero-actions">
-                <!--Alterar os href para os links definitivos-->
-                <a href="./Login/login.html" class="hero-button hero-button-primary">Começar agora →</a> <!--link teporário (apagar comentário depois)-->
-                <a href="#" class="hero-button hero-button-secondary">Ver como funciona</a>
+        <!-- Conteúdo principal da página inicial. -->
+        <div id="corpo">
+            <div id="principal">
+                <h1>
+                    Tire suas dúvidas<br />sem segundos.<br />A
+                    <span style="color: red">IA</span> da secretaria<br />da
+                    <span style="color: red">ETEC</span>
+                </h1>
+            </div>
+            <div>
+                <p>
+                    Um assistente inteligente que responde perguntas acadêmicas, orienta alunos e
+                    facilita o atendimento da secretaria escolar.
+                </p>
+                <div class="hero-actions">
+                    <!-- A ação principal abre o login; o segundo link aguarda uma seção de destino. -->
+                    <a href="./Login/login.html" class="hero-button hero-button-primary"
+                        >Começar agora →</a
+                    >
+                    <a href="#" class="hero-button hero-button-secondary">Ver como funciona</a>
+                </div>
             </div>
         </div>
-    </div>
-
-</body>
-
-</html> 
+    </body>
+</html>

@@ -1,7 +1,8 @@
-// login.html — autenticação com Firebase Authentication via CDN
-// Use a mesma configuração do Firebase utilizada no script.js do cadastro.
+// Login: autentica por e-mail/senha ou Google e verifica o cargo antes de abrir a Home.
+// 1. Dependências: SDK oficial do Firebase e encaminhamento compartilhado por cargo.
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { entrarNaAreaLogada } from '../Logado/acesso.js';
 import {
     getAuth,
     setPersistence,
@@ -11,65 +12,69 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     sendPasswordResetEmail,
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 
+// 2. Conexão com o projeto. A configuração web é pública; as regras protegem os dados.
 const firebaseConfig = {
-    apiKey: "AIzaSyCjKDPXTG8PUp8T4aY5qSQ8KbWut5EdZKU",
-    authDomain: "tcc-ia-d8891.firebaseapp.com",
-    projectId: "tcc-ia-d8891",
-    storageBucket: "tcc-ia-d8891.firebasestorage.app",
-    messagingSenderId: "767501525275",
-    appId: "1:767501525275:web:9153a051a817504f64b3be",
+    apiKey: 'AIzaSyCjKDPXTG8PUp8T4aY5qSQ8KbWut5EdZKU',
+    authDomain: 'tcc-ia-d8891.firebaseapp.com',
+    projectId: 'tcc-ia-d8891',
+    storageBucket: 'tcc-ia-d8891.firebasestorage.app',
+    messagingSenderId: '767501525275',
+    appId: '1:767501525275:web:9153a051a817504f64b3be',
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const form = document.querySelector(".login-form");
-const googleButton = document.querySelector(".google-button");
-const message = document.querySelector("#form-message");
+// 3. Elementos do formulário e mensagens acessíveis de retorno.
+const form = document.querySelector('.login-form');
+const googleButton = document.querySelector('.google-button');
+const message = document.querySelector('#form-message');
 const submitButton = form.querySelector('button[type="submit"]');
-const rememberCheckbox = document.querySelector("#remember");
+const rememberCheckbox = document.querySelector('#remember');
 const forgotPasswordLink = document.querySelector('a[href="#forgot-password"]');
 
-function showMessage(text, type = "error") {
+function showMessage(text, type = 'error') {
     message.textContent = text;
     message.className = `form-message ${type}`;
     message.hidden = false;
 }
 
+// Traduz erros conhecidos sem diferenciar conta inexistente de senha incorreta.
 function firebaseErrorMessage(error) {
     const messages = {
-        "auth/invalid-credential": "E-mail ou senha incorretos.",
-        "auth/invalid-email": "Informe um e-mail válido.",
-        "auth/user-not-found": "E-mail ou senha incorretos.",
-        "auth/wrong-password": "E-mail ou senha incorretos.",
-        "auth/user-disabled": "Esta conta foi desativada.",
-        "auth/popup-closed-by-user": "A janela do Google foi fechada.",
-        "auth/popup-blocked": "O navegador bloqueou a janela do Google.",
-        "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase.",
+        'auth/invalid-credential': 'E-mail ou senha incorretos.',
+        'auth/invalid-email': 'Informe um e-mail válido.',
+        'auth/user-not-found': 'E-mail ou senha incorretos.',
+        'auth/wrong-password': 'E-mail ou senha incorretos.',
+        'auth/user-disabled': 'Esta conta foi desativada.',
+        'auth/popup-closed-by-user': 'A janela do Google foi fechada.',
+        'auth/popup-blocked': 'O navegador bloqueou a janela do Google.',
+        'auth/unauthorized-domain': 'Este domínio não está autorizado no Firebase.',
     };
-    return messages[error.code] || "Não foi possível fazer login. Tente novamente.";
+    return messages[error.code] || 'Não foi possível fazer login. Tente novamente.';
 }
 
 async function redirectAfterLogin() {
-    // Troque pelo caminho real da página protegida do seu sistema.
-    window.location.href = "../Pagina-Inicial/pagina-in.html";
+    // Confirma o cargo no banco antes de entrar; a Home é compartilhada pelos dois cargos.
+    await entrarNaAreaLogada(auth.currentUser);
 }
 
-form.addEventListener("submit", async (event) => {
+// 4. Login por senha: impede recarga, aplica a persistência escolhida e autentica.
+form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const email = form.identifier.value.trim().toLowerCase();
     const password = form.password.value;
 
-    if (!email.includes("@")) {
-        showMessage("Para este login, informe um e-mail válido. CPF ainda não está habilitado.");
+    if (!email.includes('@')) {
+        showMessage('Para este login, informe um e-mail válido. CPF ainda não está habilitado.');
         return;
     }
 
     submitButton.disabled = true;
-    submitButton.textContent = "Entrando...";
+    submitButton.textContent = 'Entrando...';
     message.hidden = true;
 
     try {
@@ -77,9 +82,7 @@ form.addEventListener("submit", async (event) => {
         // Sem a opção, a sessão termina quando a aba/navegador é encerrado.
         await setPersistence(
             auth,
-            rememberCheckbox.checked
-                ? browserLocalPersistence
-                : browserSessionPersistence,
+            rememberCheckbox.checked ? browserLocalPersistence : browserSessionPersistence,
         );
 
         await signInWithEmailAndPassword(auth, email, password);
@@ -88,20 +91,19 @@ form.addEventListener("submit", async (event) => {
         console.error(error);
         showMessage(firebaseErrorMessage(error));
         submitButton.disabled = false;
-        submitButton.textContent = "Entrar";
+        submitButton.textContent = 'Entrar';
     }
 });
 
-googleButton.addEventListener("click", async () => {
+// 5. Login Google: o Firebase abre a autorização e administra a sessão.
+googleButton.addEventListener('click', async () => {
     googleButton.disabled = true;
     message.hidden = true;
 
     try {
         await setPersistence(
             auth,
-            rememberCheckbox.checked
-                ? browserLocalPersistence
-                : browserSessionPersistence,
+            rememberCheckbox.checked ? browserLocalPersistence : browserSessionPersistence,
         );
 
         await signInWithPopup(auth, new GoogleAuthProvider());
@@ -113,20 +115,21 @@ googleButton.addEventListener("click", async () => {
     }
 });
 
-forgotPasswordLink.addEventListener("click", async (event) => {
+// 6. Recuperação de senha: solicita ao Firebase o envio do link por e-mail.
+forgotPasswordLink.addEventListener('click', async (event) => {
     event.preventDefault();
 
     const email = form.identifier.value.trim().toLowerCase();
 
-    if (!email.includes("@")) {
-        showMessage("Digite seu e-mail no campo acima para receber o link de recuperação.");
+    if (!email.includes('@')) {
+        showMessage('Digite seu e-mail no campo acima para receber o link de recuperação.');
         form.identifier.focus();
         return;
     }
 
     try {
         await sendPasswordResetEmail(auth, email);
-        showMessage("Enviamos um link de recuperação para o seu e-mail.", "success");
+        showMessage('Enviamos um link de recuperação para o seu e-mail.', 'success');
     } catch (error) {
         console.error(error);
         showMessage(firebaseErrorMessage(error));

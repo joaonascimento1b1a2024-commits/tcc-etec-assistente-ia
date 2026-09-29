@@ -1,6 +1,20 @@
+/* Home/chat: estados de envio, menu lateral, perfil, mensagens e responsividade. */
+/* A ordem das regras é intencional: estilos posteriores podem substituir os anteriores. */
+
 /* Indica o estado real do salvamento sem ocupar a área dos balões. */
-.chat-status { width: 100%; max-width: 630px; margin: 12px auto; color: #ccc; font-size: 12px; overflow-wrap: anywhere; }
-.message-form button:disabled, [data-message]:disabled { opacity: .5; cursor: wait; }
+.chat-status {
+    width: 100%;
+    max-width: 630px;
+    margin: 12px auto;
+    color: #ccc;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+.message-form button:disabled,
+[data-message]:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
 
 /* Cores reutilizáveis da interface. As propriedades var(...) consultam estes valores. */
 :root {
@@ -23,12 +37,13 @@ body {
     min-height: 100vh;
     background: #050505;
     color: var(--text);
-    font-family: Poppins,Arial,sans-serif;
+    font-family: Poppins, Arial, sans-serif;
     font-size: 13px;
 }
 
 /* Faz botões e campos usarem a mesma fonte do restante da página. */
-button, input {
+button,
+input {
     font: inherit;
 }
 
@@ -63,7 +78,7 @@ button {
     display: block;
     color: #6d7880;
     font-size: 38px;
-    line-height: .8;
+    line-height: 0.8;
     letter-spacing: -2px;
 }
 
@@ -126,7 +141,9 @@ nav {
     min-height: 100vh;
     margin-left: 186px;
     padding: 0 36px 14px;
-    background: linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,.7)), url("fundo 3.png") center/cover fixed;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.7)),
+        url('fundo 3.png') center/cover fixed;
     display: flex;
     flex-direction: column;
 }
@@ -144,7 +161,8 @@ nav {
 }
 
 /* Agrupa horizontalmente os elementos do assistente e do perfil. */
-.assistant-brand,.profile {
+.assistant-brand,
+.profile {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -170,7 +188,7 @@ nav {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #c9c4d7;
-    background: linear-gradient(135deg,#f6ba70,#654b36);
+    background: linear-gradient(135deg, #f6ba70, #654b36);
 }
 
 /* Torna o conjunto foto e nome clicável sem ultrapassar o cabeçalho. */
@@ -193,8 +211,13 @@ nav {
 }
 
 /* Destaca a ação ao passar o mouse e ao navegar pelo teclado. */
-.profile:hover { background: #292929; }
-.profile:focus-visible { outline: 2px solid #ff3737; outline-offset: 2px; }
+.profile:hover {
+    background: #292929;
+}
+.profile:focus-visible {
+    outline: 2px solid #ff3737;
+    outline-offset: 2px;
+}
 
 /* Organiza a tela de boas-vindas e limita sua largura a 630px. */
 .home-screen {
@@ -222,7 +245,7 @@ nav {
 /* Distribui os três atalhos de atendimento em colunas. */
 .feature-cards {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin: 50px 12px auto;
 }
@@ -238,8 +261,8 @@ nav {
     gap: 20px;
     border: 2px solid #282828;
     border-radius: 8px;
-    background: rgba(24,24,24,.94);
-    transition: .2s;
+    background: rgba(24, 24, 24, 0.94);
+    transition: 0.2s;
 }
 
 /* Destaca o cartão e o eleva levemente ao passar o cursor. */
@@ -281,10 +304,11 @@ nav {
 }
 
 /* Compartilha bordas, cores e dimensões dos botões de perguntas sugeridas. */
-.home-suggestions button,.chat-suggestions button {
+.home-suggestions button,
+.chat-suggestions button {
     color: #ececec;
     text-align: left;
-    background: rgba(13,13,13,.72);
+    background: rgba(13, 13, 13, 0.72);
     border: 1px solid #777;
     border-radius: 9px;
     height: 32px;
@@ -293,7 +317,8 @@ nav {
 }
 
 /* Destaca a borda das sugestões quando o cursor passa sobre elas. */
-.home-suggestions button:hover,.chat-suggestions button:hover {
+.home-suggestions button:hover,
+.chat-suggestions button:hover {
     border-color: #ff2222;
 }
 
@@ -307,7 +332,7 @@ nav {
     border-radius: 11px;
     overflow: hidden;
     display: flex;
-    background: rgba(10,10,10,.82);
+    background: rgba(10, 10, 10, 0.82);
 }
 
 /* Permite que o campo ocupe o espaço disponível na barra de mensagem. */
@@ -328,7 +353,8 @@ nav {
 }
 
 /* Define o estilo comum dos botões de anexo e envio. */
-.attachment,.send {
+.attachment,
+.send {
     width: 36px;
     border: 0;
     border-left: 1px solid #777;
@@ -427,7 +453,7 @@ nav {
 /* Distribui as sugestões da conversa em três colunas. */
 .chat-suggestions {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
     margin: 0 0 22px;
 }
@@ -445,14 +471,13 @@ nav {
     padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
 }
 
 /* Regras para telas de até 720px: menu compacto, cartões empilhados e conversa adaptada. */
-@media (max-width:720px) {
-
+@media (max-width: 720px) {
     /* Reduz a largura e o preenchimento do menu lateral. */
     .sidebar {
         width: 64px;
@@ -465,7 +490,8 @@ nav {
     }
 
     /* Oculta os textos complementares da escola. */
-    .school-logo span,.school-logo small {
+    .school-logo span,
+    .school-logo small {
         display: none;
     }
 
@@ -476,7 +502,7 @@ nav {
 
     /* Exibe o símbolo + no botão de nova conversa. */
     .new-chat::after {
-        content: "+";
+        content: '+';
         font-size: 20px;
     }
 
@@ -529,5 +555,4 @@ nav {
     .profile span {
         display: none;
     }
-
 }

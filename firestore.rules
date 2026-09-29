@@ -3,13 +3,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Permissão administrativa emitida pelo servidor via Firebase Admin SDK.
-    // Não depende do documento /users, que pode ser editado pelo próprio usuário.
+    // O cargo fica separado do perfil editável. Somente um administrador existente
+    // pode promover outro pelo site; o primeiro é cadastrado pelo console Firebase.
     function isAdmin() {
-      return request.auth != null && request.auth.token.admin == true;
+      return request.auth != null
+        && exists(/databases/$(database)/documents/administradores/$(request.auth.uid))
+        && get(/databases/$(database)/documents/administradores/$(request.auth.uid)).data.ativo == true;
     }
 
-    // Contrato compartilhado com Logado/Avisos/avisos.js e o futuro painel administrativo.
+    match /administradores/{userId} {
+      // Cada pessoa consulta o próprio cargo, mesmo quando o documento não existe.
+      allow get: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow list: if false;
+      allow create: if isAdmin()
+        && exists(/databases/$(database)/documents/users/$(userId))
+        && request.resource.data.keys().hasAll(['ativo', 'promovidoPor', 'criadoEm'])
+        && request.resource.data.keys().hasOnly(['ativo', 'promovidoPor', 'criadoEm'])
+        && request.resource.data.ativo == true
+        && request.resource.data.promovidoPor == request.auth.uid
+        && request.resource.data.criadoEm == request.time;
+      // Revogações e reativações ficam no console, não no perfil nem no formulário.
+      allow update, delete: if false;
+    }
+
+    // Contrato compartilhado pela leitura de Avisos e pelo formulário das configurações administrativas.
     function validNotice() {
       let data = request.resource.data;
       return data.keys().hasAll(['titulo', 'descricao', 'categoria', 'publicado', 'criadoEm'])
@@ -23,7 +40,7 @@ service cloud.firestore {
 
     // Alunos autenticados consultam apenas publicados. Administradores também leem rascunhos.
     match /avisos/{avisoId} {
-      allow read: if request.auth != null && (resource.data.publicado == true || isAdmin());
+      allow read: if request.auth != null && (isAdmin() || resource.data.publicado == true);
       allow create: if isAdmin() && validNotice() && request.resource.data.criadoEm == request.time;
       allow update: if isAdmin() && validNotice()
                     && request.resource.data.criadoEm == resource.data.criadoEm;
@@ -53,6 +70,9 @@ service cloud.firestore {
 
     // Cada usuário só pode acessar o próprio perfil.
     match /users/{userId} {
+      // Permite ao administrador conferir um perfil pelo UID antes de promovê-lo.
+      // Não dá acesso às conversas nem permite listar todos os perfis.
+      allow get: if isAdmin();
       // Permite criar o próprio documento durante o cadastro.
       allow create: if request.auth != null
                     && request.auth.uid == userId;

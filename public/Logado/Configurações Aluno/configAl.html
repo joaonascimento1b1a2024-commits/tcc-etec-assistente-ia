@@ -1,81 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Configurações do aluno: perfil, segurança, preferências e saída da conta. -->
 <html lang="pt-BR" data-theme="dark">
-<head>
-    <!-- Define caracteres, tamanho da tela e identificação da página. -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações | Assistente ETEC IA</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="configAl.css">
-    <script src="configAl.js" type="module"></script>
-</head>
-<body>
-    <a class="skip-link" href="#conteudo">Ir para as configurações</a>
-    <!-- Navegação compartilhada visualmente com a área logada. -->
-    <aside class="sidebar">
-        <a class="school-logo" href="../Home/home.html" aria-label="ETEC — início">
-            <strong>Etec</strong><span>Sylvio de Mattos<br>Carvalho</span><small>Matão</small>
-        </a>
-        <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
-        <nav aria-label="Menu principal">
-            <a href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
-            <!-- A tela de histórico ainda não foi implementada. -->
-            <a href="../Conversas/conversas.html"><span aria-hidden="true">▤</span> Conversas</a>
-            <a href="../Avisos/avisos.html"><span aria-hidden="true">♧</span> Avisos</a>
-            <a href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
-            <a href="configAl.html" aria-current="page"><span aria-hidden="true">⚙</span> Configurações</a>
-        </nav>
-    </aside>
+    <head>
+        <!-- Define caracteres, tamanho da tela e identificação da página. -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Configurações | Assistente ETEC IA</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="configAl.css" />
+        <script src="configAl.js" type="module"></script>
+    </head>
+    <body data-role="aluno">
+        <a class="skip-link" href="#conteudo">Ir para as configurações</a>
+        <!-- Navegação compartilhada visualmente com a área logada. -->
+        <aside class="sidebar">
+            <a class="school-logo" href="../Home/home.html" aria-label="ETEC — início">
+                <strong>Etec</strong><span>Sylvio de Mattos<br />Carvalho</span><small>Matão</small>
+            </a>
+            <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
+            <nav aria-label="Menu principal">
+                <a href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
+                <!-- Histórico privado das conversas desta conta. -->
+                <a href="../Conversas/conversas.html"
+                    ><span aria-hidden="true">▤</span> Conversas</a
+                >
+                <a href="../Avisos/avisos.html"><span aria-hidden="true">♧</span> Avisos</a>
+                <a href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
+                <a href="configAl.html" aria-current="page"
+                    ><span aria-hidden="true">⚙</span> Configurações</a
+                >
+            </nav>
+        </aside>
 
-    <main class="content" id="conteudo" tabindex="-1">
-        <header><h1>Configurações</h1><p>Gerencie suas preferências</p></header>
-        <!-- O conteúdo privado só aparece após confirmar a sessão do Firebase. -->
-        <div class="settings">
-            <p id="page-status" class="feedback" role="status" aria-live="polite">Verificando sua conta...</p>
-            <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
-            <noscript>Ative o JavaScript para gerenciar sua conta.</noscript>
+        <main class="content" id="conteudo" tabindex="-1">
+            <header>
+                <h1>Configurações</h1>
+                <p>Gerencie suas preferências</p>
+            </header>
+            <!-- O conteúdo privado só aparece após confirmar a sessão do Firebase. -->
+            <div class="settings">
+                <p id="page-status" class="feedback" role="status" aria-live="polite">
+                    Verificando sua conta...
+                </p>
+                <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
+                <noscript>Ative o JavaScript para gerenciar sua conta.</noscript>
 
-            <div id="account-settings" hidden>
-                <!-- Dados somente para leitura, obtidos do provedor Google ou da conta Firebase. -->
-                <section aria-labelledby="profile-title">
-                    <h2 id="profile-title">Perfil</h2>
-                    <dl class="panel profile">
-                        <div><dt>Nome</dt><dd id="profile-name">—</dd></div>
-                        <div><dt>E-mail</dt><dd id="profile-email">—</dd></div>
-                    </dl>
-                </section>
+                <div id="account-settings" hidden>
+                    <!-- Dados somente para leitura, obtidos do provedor Google ou da conta Firebase. -->
+                    <section aria-labelledby="profile-title">
+                        <h2 id="profile-title">Perfil</h2>
+                        <dl class="panel profile">
+                            <div>
+                                <dt>Nome</dt>
+                                <dd id="profile-name">—</dd>
+                            </div>
+                            <div>
+                                <dt>E-mail</dt>
+                                <dd id="profile-email">—</dd>
+                            </div>
+                        </dl>
+                    </section>
 
-                <section aria-labelledby="security-title">
-                    <h2 id="security-title">Segurança</h2>
-                    <!-- Envia um link ao e-mail autenticado; a senha não é manipulada nesta página. -->
-                    <button id="reset-password" class="panel action" type="button" disabled aria-describedby="password-help">Alterar senha</button>
-                    <p id="password-help" class="help">Receba por e-mail um link para alterar a senha de acesso ao site.</p>
-                    <p id="password-status" class="feedback" role="status" aria-live="polite" hidden></p>
-                </section>
+                    <section aria-labelledby="security-title">
+                        <h2 id="security-title">Segurança</h2>
+                        <!-- Envia um link ao e-mail autenticado; a senha não é manipulada nesta página. -->
+                        <button
+                            id="reset-password"
+                            class="panel action"
+                            type="button"
+                            disabled
+                            aria-describedby="password-help">
+                            Alterar senha
+                        </button>
+                        <p id="password-help" class="help">
+                            Receba por e-mail um link para alterar a senha de acesso ao site.
+                        </p>
+                        <p
+                            id="password-status"
+                            class="feedback"
+                            role="status"
+                            aria-live="polite"
+                            hidden></p>
+                    </section>
 
-                <section aria-labelledby="preferences-title">
-                    <h2 id="preferences-title">Preferências</h2>
-                    <div class="panel preferences">
-                        <!-- Seleção nativa acessível: aplica o tema imediatamente nesta tela. -->
-                        <div class="preference-row">
-                            <label for="theme">Tema</label>
-                            <select id="theme" disabled><option value="dark">Escuro</option><option value="light">Claro</option></select>
+                    <section aria-labelledby="preferences-title">
+                        <h2 id="preferences-title">Preferências</h2>
+                        <div class="panel preferences">
+                            <!-- Seleção nativa acessível: aplica o tema imediatamente nesta tela. -->
+                            <div class="preference-row">
+                                <label for="theme">Tema</label>
+                                <select id="theme" disabled>
+                                    <option value="dark">Escuro</option>
+                                    <option value="light">Claro</option>
+                                </select>
+                            </div>
+                            <!-- Escolha explícita: novas contas começam sem adesão a e-mails de avisos. -->
+                            <div class="preference-row">
+                                <label for="email-notifications"
+                                    >Notificações <small>Avisos por e-mail</small></label
+                                >
+                                <select id="email-notifications" disabled>
+                                    <option value="false">Desativadas</option>
+                                    <option value="true">Ativadas</option>
+                                </select>
+                            </div>
                         </div>
-                        <!-- Escolha explícita: novas contas começam sem adesão a e-mails de avisos. -->
-                        <div class="preference-row">
-                            <label for="email-notifications">Notificações <small>Avisos por e-mail</small></label>
-                            <select id="email-notifications" disabled><option value="false">Desativadas</option><option value="true">Ativadas</option></select>
-                        </div>
-                    </div>
-                    <p id="preference-status" class="feedback" role="status" aria-live="polite" hidden></p>
-                </section>
+                        <p
+                            id="preference-status"
+                            class="feedback"
+                            role="status"
+                            aria-live="polite"
+                            hidden></p>
+                    </section>
 
-                <!-- Encerra a sessão Firebase antes de retornar à página de login. -->
-                <button id="logout" class="panel action logout" type="button" disabled>Sair da conta</button>
+                    <!-- Encerra a sessão Firebase antes de retornar à página de login. -->
+                    <button id="logout" class="panel action logout" type="button" disabled>
+                        Sair da conta
+                    </button>
+                </div>
             </div>
-        </div>
-    </main>
-</body>
+        </main>
+    </body>
 </html>

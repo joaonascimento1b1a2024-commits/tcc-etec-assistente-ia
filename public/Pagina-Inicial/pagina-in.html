@@ -1,50 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Página de apresentação: benefícios do atendimento e prévia estática do chat. -->
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Assistente Inteligente da Secretaria - ETEC Sylvio de Mattos Carvalho.">
-  <title>Assistente Inteligente | ETEC</title>
-  <link rel="stylesheet" href="pagina-in.css">
-</head>
-<body>
-  <!-- A imagem fornecida fica no fundo; todo o conteúdo é mantido acessível sobre ela. -->
-  <main class="page-shell">
-    <header class="brand-bar" aria-label="Identidade institucional">
-      <!-- Logos oficiais fornecidos para a ETEC, Centro Paula Souza e Governo de São Paulo. -->
-      <img class="logo logo-etec" src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" alt="ETEC Sylvio de Mattos Carvalho">
-      <img class="logo logo-cps" src="../Arquivos-Universais/logo_cps_versao_br.png" alt="Centro Paula Souza">
-      <img class="logo logo-government" src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png" alt="Centro Paula Souza e Governo do Estado de São Paulo">
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Assistente Inteligente da Secretaria - ETEC Sylvio de Mattos Carvalho." />
+        <title>Assistente Inteligente | ETEC</title>
+        <link rel="stylesheet" href="pagina-in.css" />
+    </head>
+    <body>
+        <!-- A imagem fornecida fica no fundo; todo o conteúdo é mantido acessível sobre ela. -->
+        <main class="page-shell">
+            <header class="brand-bar" aria-label="Identidade institucional">
+                <!-- Logos oficiais fornecidos para a ETEC, Centro Paula Souza e Governo de São Paulo. -->
+                <img
+                    class="logo logo-etec"
+                    src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
+                    alt="ETEC Sylvio de Mattos Carvalho" />
+                <img
+                    class="logo logo-cps"
+                    src="../Arquivos-Universais/logo_cps_versao_br.png"
+                    alt="Centro Paula Souza" />
+                <img
+                    class="logo logo-government"
+                    src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
+                    alt="Centro Paula Souza e Governo do Estado de São Paulo" />
+            </header>
 
-    <!-- Apresentação e benefícios do assistente. -->
-    <section class="intro" aria-labelledby="page-title">
-      <h1 id="page-title">Assistente Inteligente<br>da <span>Secretaria</span></h1>
-      <p class="intro-text">Respostas, informações precisas<br>e atendimento eficiente para todo o público escolar.</p>
+            <!-- Apresentação e benefícios do assistente. -->
+            <section class="intro" aria-labelledby="page-title">
+                <h1 id="page-title">Assistente Inteligente<br />da <span>Secretaria</span></h1>
+                <p class="intro-text">
+                    Respostas, informações precisas<br />e atendimento eficiente para todo o público
+                    escolar.
+                </p>
 
-      <div class="benefits" id="beneficios" aria-label="Benefícios do assistente">
-        <article><h2>Atendimento 24h</h2><p>Sempre disponível para ajudar você.</p></article>
-        <article><h2>Informações confiáveis</h2><p>Dados oficiais da ETEC sempre atualizados.</p></article>
-        <article><h2>Fácil e intuitivo</h2><p>Interações simples para todos os usuários.</p></article>
-      </div>
+                <div class="benefits" id="beneficios" aria-label="Benefícios do assistente">
+                    <article>
+                        <h2>Atendimento 24h</h2>
+                        <p>Sempre disponível para ajudar você.</p>
+                    </article>
+                    <article>
+                        <h2>Informações confiáveis</h2>
+                        <p>Dados oficiais da ETEC sempre atualizados.</p>
+                    </article>
+                    <article>
+                        <h2>Fácil e intuitivo</h2>
+                        <p>Interações simples para todos os usuários.</p>
+                    </article>
+                </div>
 
-      <div class="actions">
-        <a class="button primary" href="../Logado/Home/home.html">Conversar agora</a>
-        <a class="button secondary" href="#beneficios">Saiba mais</a>
-      </div>
-    </section>
+                <div class="actions">
+                    <a class="button primary" href="../Logado/Home/home.html">Conversar agora</a>
+                    <a class="button secondary" href="#beneficios">Saiba mais</a>
+                </div>
+            </section>
 
-    <!-- Simulação visual do chat; os links podem ser conectados ao sistema posteriormente. -->
-    <section class="chat-card" id="chat" aria-label="Demonstração do Assistente Inteligente">
-      <div class="message">Olá!<br>Sou o assistente virtual da<br>ETEC Sylvio de Mattos Carvalho.<br>Como posso ajudar você hoje?</div>
-      <div class="suggestions" aria-label="Perguntas sugeridas">
-        <a href="../Logado/Home/home.html">Como faço minha matrícula?</a>
-        <a href="../Logado/Home/home.html">Horários de funcionamento</a>
-        <a href="../Logado/Home/home.html">Cursos disponíveis</a>
-        <a href="../Logado/Home/home.html">Falar com atendente</a>
-        <a class="wide" href="../Logado/Home/home.html">Digite a sua pergunta</a>
-      </div>
-    </section>
-  </main>
-</body>
+            <!-- Prévia estática do chat: os links abrem a Home, mas não enviam perguntas automaticamente. -->
+            <section
+                class="chat-card"
+                id="chat"
+                aria-label="Demonstração do Assistente Inteligente">
+                <div class="message">
+                    Olá!<br />Sou o assistente virtual da<br />ETEC Sylvio de Mattos Carvalho.<br />Como
+                    posso ajudar você hoje?
+                </div>
+                <div class="suggestions" aria-label="Perguntas sugeridas">
+                    <a href="../Logado/Home/home.html">Como faço minha matrícula?</a>
+                    <a href="../Logado/Home/home.html">Horários de funcionamento</a>
+                    <a href="../Logado/Home/home.html">Cursos disponíveis</a>
+                    <a href="../Logado/Home/home.html">Falar com atendente</a>
+                    <a class="wide" href="../Logado/Home/home.html">Digite a sua pergunta</a>
+                </div>
+            </section>
+        </main>
+    </body>
 </html>

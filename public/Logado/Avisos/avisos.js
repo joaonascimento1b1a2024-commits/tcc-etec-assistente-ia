@@ -9,17 +9,17 @@
 // criadoEm: Timestamp do Firestore (usar serverTimestamp() ao criar)
 // atualizadoEm: Timestamp opcional
 // A criação pertence ao painel administrativo. Esta página somente lê.
-// A permissão admin deve ser atribuída via Firebase Admin SDK em ambiente
-// confiável (custom claim admin: true), nunca pelo navegador ou perfil /users.
+// A permissão vem de administradores/{UID}.ativo, protegido pelas regras.
+// Campos como admin/cargo em /users nunca concedem acesso administrativo.
 
 // Configuração pública do mesmo projeto utilizado no login e cadastro.
 const firebaseConfig = {
-    apiKey: "AIzaSyCjKDPXTG8PUp8T4aY5qSQ8KbWut5EdZKU",
-    authDomain: "tcc-ia-d8891.firebaseapp.com",
-    projectId: "tcc-ia-d8891",
-    storageBucket: "tcc-ia-d8891.firebasestorage.app",
-    messagingSenderId: "767501525275",
-    appId: "1:767501525275:web:9153a051a817504f64b3be",
+    apiKey: 'AIzaSyCjKDPXTG8PUp8T4aY5qSQ8KbWut5EdZKU',
+    authDomain: 'tcc-ia-d8891.firebaseapp.com',
+    projectId: 'tcc-ia-d8891',
+    storageBucket: 'tcc-ia-d8891.firebasestorage.app',
+    messagingSenderId: '767501525275',
+    appId: '1:767501525275:web:9153a051a817504f64b3be',
 };
 
 // Referências à lista, ao modelo de cartão e às ações de recuperação.
@@ -33,9 +33,11 @@ let unsubscribeAuth;
 
 // Ícones locais: nenhum HTML recebido do banco é interpretado.
 const icons = {
-    matricula: 'M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3 M9 2h6v4H9z',
+    matricula:
+        'M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3 M9 2h6v4H9z',
     provas: 'M12 5v16 M12 5C9 2 5 2 2 3v16c4-1 7-1 10 2 3-3 6-3 10-2V3c-3-1-7-1-10 2',
-    feriado: 'M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2 M7 2v5 M17 2v5 M3 10h18',
+    feriado:
+        'M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2 M7 2v5 M17 2v5 M3 10h18',
     evento: 'M12 2a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M8 15l-1 7 5-3 5 3-1-7',
     geral: 'M5 3h14v18H5z M8 8h8 M8 12h8 M8 16h5',
 };
@@ -86,54 +88,82 @@ async function start() {
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js'),
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js'),
         ]);
-        const app = appSDK.getApps().length ? appSDK.getApp() : appSDK.initializeApp(firebaseConfig);
+        const app = appSDK.getApps().length
+            ? appSDK.getApp()
+            : appSDK.initializeApp(firebaseConfig);
         const db = dbSDK.getFirestore(app);
 
         // Aguarda a sessão real do Firebase; dados do localStorage não autenticam a consulta.
-        unsubscribeAuth = authSDK.onAuthStateChanged(authSDK.getAuth(app), (user) => {
-            unsubscribeNotices?.();
-            unsubscribeNotices = undefined;
-            list.replaceChildren();
-            login.hidden = Boolean(user);
-            if (!user) {
-                showStatus('Entre na sua conta para acompanhar os avisos da escola.');
-                return;
-            }
-
-            showStatus('Carregando avisos...', { loading: true });
-            // O filtro corresponde às regras: alunos não recebem rascunhos administrativos.
-            const noticesQuery = dbSDK.query(
-                dbSDK.collection(db, 'avisos'),
-                dbSDK.where('publicado', '==', true),
-            );
-            unsubscribeNotices = dbSDK.onSnapshot(noticesQuery, { includeMetadataChanges: true }, (snapshot) => {
-                // Ordena no navegador para dispensar índice composto: mais recentes primeiro.
-                const notices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-                    .filter(data => typeof data.titulo === 'string' && typeof data.descricao === 'string')
-                    .sort((a, b) => (b.criadoEm?.toMillis?.() || 0) - (a.criadoEm?.toMillis?.() || 0));
-                const fragment = document.createDocumentFragment();
-                notices.forEach(data => fragment.append(createCard(data)));
-                list.replaceChildren(fragment);
-
-                // Não confunde cache vazio com confirmação de que o banco está vazio.
-                if (snapshot.metadata.fromCache) {
-                    showStatus(notices.length
-                        ? 'Exibindo avisos salvos. Aguardando atualização da conexão.'
-                        : 'Aguardando conexão para consultar os avisos.', { canRetry: true });
-                } else {
-                    showStatus(notices.length ? '' : 'Nenhum aviso publicado no momento.');
-                }
-            }, (error) => {
+        unsubscribeAuth = authSDK.onAuthStateChanged(
+            authSDK.getAuth(app),
+            (user) => {
+                unsubscribeNotices?.();
+                unsubscribeNotices = undefined;
                 list.replaceChildren();
-                console.error('Falha ao consultar avisos:', error.code);
-                showStatus(error.code === 'permission-denied'
-                    ? 'Não foi possível acessar os avisos. Entre novamente ou procure a administração.'
-                    : 'Não foi possível carregar os avisos. Verifique a conexão e tente novamente.', { canRetry: true });
-            });
-        }, () => showStatus('Não foi possível verificar sua sessão.', { canRetry: true }));
+                login.hidden = Boolean(user);
+                if (!user) {
+                    showStatus('Entre na sua conta para acompanhar os avisos da escola.');
+                    return;
+                }
+
+                showStatus('Carregando avisos...', { loading: true });
+                // O filtro corresponde às regras: alunos não recebem rascunhos administrativos.
+                const noticesQuery = dbSDK.query(
+                    dbSDK.collection(db, 'avisos'),
+                    dbSDK.where('publicado', '==', true),
+                );
+                unsubscribeNotices = dbSDK.onSnapshot(
+                    noticesQuery,
+                    { includeMetadataChanges: true },
+                    (snapshot) => {
+                        // Ordena no navegador para dispensar índice composto: mais recentes primeiro.
+                        const notices = snapshot.docs
+                            .map((doc) => ({ id: doc.id, ...doc.data() }))
+                            .filter(
+                                (data) =>
+                                    typeof data.titulo === 'string' &&
+                                    typeof data.descricao === 'string',
+                            )
+                            .sort(
+                                (a, b) =>
+                                    (b.criadoEm?.toMillis?.() || 0) -
+                                    (a.criadoEm?.toMillis?.() || 0),
+                            );
+                        const fragment = document.createDocumentFragment();
+                        notices.forEach((data) => fragment.append(createCard(data)));
+                        list.replaceChildren(fragment);
+
+                        // Não confunde cache vazio com confirmação de que o banco está vazio.
+                        if (snapshot.metadata.fromCache) {
+                            showStatus(
+                                notices.length
+                                    ? 'Exibindo avisos salvos. Aguardando atualização da conexão.'
+                                    : 'Aguardando conexão para consultar os avisos.',
+                                { canRetry: true },
+                            );
+                        } else {
+                            showStatus(notices.length ? '' : 'Nenhum aviso publicado no momento.');
+                        }
+                    },
+                    (error) => {
+                        list.replaceChildren();
+                        console.error('Falha ao consultar avisos:', error.code);
+                        showStatus(
+                            error.code === 'permission-denied'
+                                ? 'Não foi possível acessar os avisos. Entre novamente ou procure a administração.'
+                                : 'Não foi possível carregar os avisos. Verifique a conexão e tente novamente.',
+                            { canRetry: true },
+                        );
+                    },
+                );
+            },
+            () => showStatus('Não foi possível verificar sua sessão.', { canRetry: true }),
+        );
     } catch (error) {
         console.error('Falha ao iniciar a página de avisos:', error.code || error.message);
-        showStatus('Não foi possível conectar. Verifique sua conexão e tente novamente.', { canRetry: true });
+        showStatus('Não foi possível conectar. Verifique sua conexão e tente novamente.', {
+            canRetry: true,
+        });
     }
 }
 

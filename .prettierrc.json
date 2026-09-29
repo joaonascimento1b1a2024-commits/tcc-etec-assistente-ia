@@ -1,0 +1,15 @@
+{
+    "tabWidth": 4,
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "htmlWhitespaceSensitivity": "css",
+    "bracketSameLine": true,
+    "endOfLine": "lf",
+    "overrides": [
+        {
+            "files": "functions/**/*.{js,ts,json}",
+            "options": { "tabWidth": 2, "singleQuote": false, "bracketSpacing": false }
+        }
+    ]
+}

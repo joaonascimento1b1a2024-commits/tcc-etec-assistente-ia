@@ -1,35 +1,165 @@
+/* Histórico: complementa home.css com cartões, ações e diálogos responsivos. */
+/* A ordem das regras é intencional: estilos posteriores podem substituir os anteriores. */
+
 /* O histórico reaproveita a identidade da Home sem alterar seus estilos. */
-.history-content { min-height: 100dvh; padding: clamp(20px, 4vw, 60px); }
-.history-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.history-heading h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); }
-.history-heading p, .history-note, .conversation-preview, .conversation-date { color: #c4c4c4; }
-.history-note { font-size: .8rem; margin-bottom: 24px; }
-.primary-action, .sidebar .new-chat { display: inline-block; text-decoration: none; text-align: center; background: #e00000; color: white; border: 0; border-radius: 7px; padding: 12px 18px; cursor: pointer; }
-.sidebar .new-chat { height: auto; min-height: 44px; }
-.conversation-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
-.conversation-card { min-width: 0; background: #1b1b1bed; border: 1px solid #383838; border-radius: 14px; padding: 22px; display: flex; align-items: center; gap: 20px; }
-.conversation-link { flex: 1; min-width: 0; color: white; text-decoration: none; }
-.conversation-link h2 { font-size: 1.1rem; margin: 0 0 8px; overflow-wrap: anywhere; }
-.conversation-preview { margin: 0 0 10px; overflow-wrap: anywhere; white-space: pre-wrap; }
-.conversation-date { font-size: .75rem; }
-.conversation-actions, .dialog-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.conversation-actions button, .dialog-actions button { font: inherit; min-height: 44px; cursor: pointer; padding: 8px 12px; border-radius: 6px; }
-.conversation-actions button, #cancelDialog { border: 1px solid #666; background: #222; color: white; }
-.conversation-actions .delete-action { color: #ff9999; }
+.history-content {
+    min-height: 100dvh;
+    padding: clamp(20px, 4vw, 60px);
+}
+.history-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+.history-heading h1 {
+    margin: 0;
+    font-size: clamp(26px, 4vw, 36px);
+}
+.history-heading p,
+.history-note,
+.conversation-preview,
+.conversation-date {
+    color: #c4c4c4;
+}
+.history-note {
+    font-size: 0.8rem;
+    margin-bottom: 24px;
+}
+.primary-action,
+.sidebar .new-chat {
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    background: #e00000;
+    color: white;
+    border: 0;
+    border-radius: 7px;
+    padding: 12px 18px;
+    cursor: pointer;
+}
+.sidebar .new-chat {
+    height: auto;
+    min-height: 44px;
+}
+.conversation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+}
+.conversation-card {
+    min-width: 0;
+    background: #1b1b1bed;
+    border: 1px solid #383838;
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.conversation-link {
+    flex: 1;
+    min-width: 0;
+    color: white;
+    text-decoration: none;
+}
+.conversation-link h2 {
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+}
+.conversation-preview {
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+.conversation-date {
+    font-size: 0.75rem;
+}
+.conversation-actions,
+.dialog-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.conversation-actions button,
+.dialog-actions button {
+    font: inherit;
+    min-height: 44px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+.conversation-actions button,
+#cancelDialog {
+    border: 1px solid #666;
+    background: #222;
+    color: white;
+}
+.conversation-actions .delete-action {
+    color: #ff9999;
+}
 /* Contorno visível garante navegação pelo teclado; texto longo não estoura o cartão. */
-:is(a, button, input):focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
-button:disabled { opacity: .5; cursor: wait; }
-dialog { width: min(440px, calc(100% - 32px)); box-sizing: border-box; background: #191919; color: #fff; border: 1px solid #555; border-radius: 14px; padding: 24px; }
-dialog::backdrop { background: #000b; }
-dialog h2 { margin-top: 0; }
-dialog input { width: 100%; box-sizing: border-box; padding: 12px; margin-top: 10px; color: white; background: #292929; border: 1px solid #888; border-radius: 6px; }
-#dialogError { color: #ffaaaa; }
+:is(a, button, input):focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+dialog {
+    width: min(440px, calc(100% - 32px));
+    box-sizing: border-box;
+    background: #191919;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 14px;
+    padding: 24px;
+}
+dialog::backdrop {
+    background: #000b;
+}
+dialog h2 {
+    margin-top: 0;
+}
+dialog input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-top: 10px;
+    color: white;
+    background: #292929;
+    border: 1px solid #888;
+    border-radius: 6px;
+}
+#dialogError {
+    color: #ffaaaa;
+}
 /* Em celulares, ações ficam abaixo do título e continuam com área de toque confortável. */
 @media (max-width: 720px) {
-    .history-heading, .conversation-card { align-items: stretch; flex-direction: column; }
-    .history-content { padding: 20px 14px; }
-    .conversation-card { padding: 16px; }
-    .conversation-actions button { flex: 1; }
-    .sidebar .new-chat { font-size: 0; padding: 12px 0; }
-    .sidebar .new-chat::before { content: '+'; font-size: 20px; }
+    .history-heading,
+    .conversation-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .history-content {
+        padding: 20px 14px;
+    }
+    .conversation-card {
+        padding: 16px;
+    }
+    .conversation-actions button {
+        flex: 1;
+    }
+    .sidebar .new-chat {
+        font-size: 0;
+        padding: 12px 0;
+    }
+    .sidebar .new-chat::before {
+        content: '+';
+        font-size: 20px;
+    }
 }

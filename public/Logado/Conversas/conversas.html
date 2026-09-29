@@ -1,44 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Histórico particular: abrir, renomear ou excluir conversas e iniciar uma nova. -->
 <html lang="pt-BR">
-<head>
-    <!-- A largura acompanha o dispositivo; os estilos básicos reutilizam o menu da Home. -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas conversas | Assistente ETEC</title>
-    <link rel="stylesheet" href="../Home/home.css">
-    <link rel="stylesheet" href="conversas.css">
-</head>
-<body>
-    <!-- Links reais permitem navegar também usando teclado ou abrindo outra aba. -->
-    <aside class="sidebar">
-        <div class="school-logo"><strong>Etec</strong><span>Sylvio de Mattos<br>Carvalho</span><small>Matão</small></div>
-        <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
-        <nav aria-label="Menu principal">
-            <a class="nav-link" href="../Home/home.html"><span aria-hidden="true">⌂</span> Início</a>
-            <a class="nav-link active" href="conversas.html" aria-current="page"><span aria-hidden="true">▤</span> Conversas</a>
-            <a class="nav-link" href="../Avisos/avisos.html"><span aria-hidden="true">♧</span> Avisos</a>
-            <a class="nav-link" href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
-            <a class="nav-link" href="../Configurações Aluno/configAl.html"><span aria-hidden="true">⚙</span> Configurações</a>
-        </nav>
-    </aside>
-    <main class="app-content history-content">
-        <header class="history-heading"><div><h1>Conversas</h1><p>Continue de onde parou.</p></div><a class="primary-action" href="../Home/home.html">+ Nova mensagem</a></header>
-        <!-- Os estados de carregamento, vazio e erro são anunciados sem mover o foco. -->
-        <p id="historyStatus" role="status">Carregando suas conversas...</p>
-        <p class="history-note">Os títulos provisórios usam a primeira mensagem. A geração pela IA aguarda a integração do projeto.</p>
-        <ul id="conversationList" class="conversation-list" aria-label="Conversas salvas"></ul>
-    </main>
-    <!-- Um diálogo compartilhado permite renomear ou confirmar a exclusão permanente. -->
-    <dialog id="conversationDialog" aria-labelledby="dialogTitle">
-        <form id="dialogForm">
-            <h2 id="dialogTitle"></h2>
-            <p id="dialogDescription"></p>
-            <label id="titleLabel" for="titleInput">Título da conversa</label>
-            <input id="titleInput" maxlength="100" autocomplete="off">
-            <p id="dialogError" role="alert"></p>
-            <div class="dialog-actions"><button type="button" id="cancelDialog">Cancelar</button><button type="submit" id="confirmDialog" class="primary-action">Salvar</button></div>
-        </form>
-    </dialog>
-    <script type="module" src="conversas.js"></script>
-</body>
+    <head>
+        <!-- A largura acompanha o dispositivo; os estilos básicos reutilizam o menu da Home. -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Minhas conversas | Assistente ETEC</title>
+        <link rel="stylesheet" href="../Home/home.css" />
+        <link rel="stylesheet" href="conversas.css" />
+    </head>
+    <body>
+        <!-- Links reais permitem navegar também usando teclado ou abrindo outra aba. -->
+        <aside class="sidebar">
+            <div class="school-logo">
+                <strong>Etec</strong><span>Sylvio de Mattos<br />Carvalho</span><small>Matão</small>
+            </div>
+            <a class="new-chat" href="../Home/home.html">+ Novo chat</a>
+            <nav aria-label="Menu principal">
+                <a class="nav-link" href="../Home/home.html"
+                    ><span aria-hidden="true">⌂</span> Início</a
+                >
+                <a class="nav-link active" href="conversas.html" aria-current="page"
+                    ><span aria-hidden="true">▤</span> Conversas</a
+                >
+                <a class="nav-link" href="../Avisos/avisos.html"
+                    ><span aria-hidden="true">♧</span> Avisos</a
+                >
+                <a class="nav-link" href="../Serviços/servicos.html"
+                    ><span aria-hidden="true">▱</span> Serviços</a
+                >
+                <a class="nav-link" href="../Configurações Aluno/configAl.html"
+                    ><span aria-hidden="true">⚙</span> Configurações</a
+                >
+            </nav>
+        </aside>
+        <main class="app-content history-content">
+            <header class="history-heading">
+                <div>
+                    <h1>Conversas</h1>
+                    <p>Continue de onde parou.</p>
+                </div>
+                <a class="primary-action" href="../Home/home.html">+ Nova mensagem</a>
+            </header>
+            <!-- Os estados de carregamento, vazio e erro são anunciados sem mover o foco. -->
+            <p id="historyStatus" role="status">Carregando suas conversas...</p>
+            <p class="history-note">
+                Os títulos provisórios usam a primeira mensagem. A geração pela IA aguarda a
+                integração do projeto.
+            </p>
+            <ul id="conversationList" class="conversation-list" aria-label="Conversas salvas"></ul>
+        </main>
+        <!-- Um diálogo compartilhado permite renomear ou confirmar a exclusão permanente. -->
+        <dialog id="conversationDialog" aria-labelledby="dialogTitle">
+            <form id="dialogForm">
+                <h2 id="dialogTitle"></h2>
+                <p id="dialogDescription"></p>
+                <label id="titleLabel" for="titleInput">Título da conversa</label>
+                <input id="titleInput" maxlength="100" autocomplete="off" />
+                <p id="dialogError" role="alert"></p>
+                <div class="dialog-actions">
+                    <button type="button" id="cancelDialog">Cancelar</button
+                    ><button type="submit" id="confirmDialog" class="primary-action">Salvar</button>
+                </div>
+            </form>
+        </dialog>
+        <script type="module" src="conversas.js"></script>
+    </body>
 </html>

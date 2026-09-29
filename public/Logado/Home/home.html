@@ -1,137 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Home compartilhada: perfil, sugestões e conversa persistida da conta autenticada. -->
 <html lang="pt-BR">
+    <head>
+        <!-- Define a codificação de caracteres e adapta a página à largura do dispositivo. -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Assistente ETEC IA</title>
 
-<head>
-    <!-- Define a codificação de caracteres e adapta a página à largura do dispositivo. -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assistente ETEC IA</title>
+        <!-- Antecipa a conexão com o Google Fonts e carrega os pesos usados da fonte Poppins. -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            rel="stylesheet" />
 
-    <!-- Antecipa a conexão com o Google Fonts e carrega os pesos usados da fonte Poppins. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <!-- Carrega os estilos desta página, incluindo os ajustes para telas menores. -->
+        <link rel="stylesheet" href="home.css" />
+    </head>
 
-    <!-- Carrega os estilos desta página, incluindo os ajustes para telas menores. -->
-    <link rel="stylesheet" href="home.css" />
-</head>
-
-<body>
-    <!-- Menu lateral: identificação da escola, nova conversa e opções de navegação. -->
-    <aside class="sidebar">
-        <!-- Identificação da escola construída com texto e formatada pelo CSS. -->
-        <div class="school-logo">
-            <strong>Etec</strong>
-            <span>Sylvio de Mattos<br/>Carvalho</span>
-            <small>Matão</small>
-        </div>
-
-        <!-- O JavaScript usa este ID para limpar as mensagens e voltar à tela inicial. -->
-        <button class="new-chat" id="newChat">+ Novo chat</button>
-
-        <!-- data-page identifica o item destacado; Conversas abre o histórico salvo. -->
-        <nav aria-label="Menu principal">
-            <a class="nav-link active" href="home.html" data-page="home"><span>⌂</span> Início</a>
-            <a class="nav-link" href="../Conversas/conversas.html" data-page="chat"><span>▤</span> Conversas</a>
-            <a class="nav-link" href="../Avisos/avisos.html"><span>♧</span> Avisos</a>
-            <a class="nav-link" href="../Serviços/servicos.html"><span>▱</span> Serviços</a>
-            <a class="nav-link" href="../Configurações Aluno/configAl.html"><span>⚙</span> Configurações</a>
-        </nav>
-    </aside>
-
-    <!-- Área principal: cabeçalho, tela inicial, conversa e barra de mensagem. -->
-    <main class="app-content">
-        <!-- Cabeçalho com a identificação do assistente e os dados do perfil. -->
-        <header class="topbar">
-            <div class="assistant-brand">
-                <span class="assistant-avatar">🤖</span>
-                <span>Assistente ETEC IA</span>
+    <body>
+        <!-- Menu lateral: identificação da escola, nova conversa e opções de navegação. -->
+        <aside class="sidebar">
+            <!-- Identificação da escola construída com texto e formatada pelo CSS. -->
+            <div class="school-logo">
+                <strong>Etec</strong>
+                <span>Sylvio de Mattos<br />Carvalho</span>
+                <small>Matão</small>
             </div>
 
-            <!-- Foto e nome formam um único link, acessível também pelo teclado. -->
-            <a class="profile" id="profileLink" href="../Configurações Aluno/configAl.html" aria-label="Abrir configurações da conta">
-                <img id="profileImage" alt="" hidden />
-                <span id="profileName">Carregando perfil...</span>
-            </a>
-        </header>
+            <!-- O JavaScript usa este ID para limpar as mensagens e voltar à tela inicial. -->
+            <button class="new-chat" id="newChat">+ Novo chat</button>
 
-        <!-- Tela exibida inicialmente e ao selecionar Novo chat. -->
-        <section class="home-screen" id="homeScreen">
-            <!-- O JavaScript personaliza a saudação com o primeiro nome da conta. -->
-            <div class="welcome">
-                <h1 id="welcomeName">Olá!</h1>
-                <p>Como posso ajudar você hoje?</p>
-            </div>
+            <!-- data-page identifica o item destacado; Conversas abre o histórico salvo. -->
+            <nav aria-label="Menu principal">
+                <a class="nav-link active" href="home.html" data-page="home"
+                    ><span>⌂</span> Início</a
+                >
+                <a class="nav-link" href="../Conversas/conversas.html" data-page="chat"
+                    ><span>▤</span> Conversas</a
+                >
+                <a class="nav-link" href="../Avisos/avisos.html"><span>♧</span> Avisos</a>
+                <a class="nav-link" href="../Serviços/servicos.html"><span>▱</span> Serviços</a>
+                <a class="nav-link" id="settingsLink" href="../Configurações Aluno/configAl.html"
+                    ><span>⚙</span> Configurações</a
+                >
+            </nav>
+        </aside>
 
-            <!-- Cartões de atendimento: data-message guarda o texto enviado ao clicar. -->
-            <div class="feature-cards">
-                <button class="feature-card" data-message="Quero solicitar documentos e declarações.">
-                    <b class="card-icon">▰</b>
-                    <span>
-                        <strong>Solicitar documentos</strong>
-                        <small>Peça documentos e declarações</small>
-                    </span>
-                </button>
+        <!-- Área principal: cabeçalho, tela inicial, conversa e barra de mensagem. -->
+        <main class="app-content">
+            <!-- Cabeçalho com a identificação do assistente e os dados do perfil. -->
+            <header class="topbar">
+                <div class="assistant-brand">
+                    <span class="assistant-avatar">🤖</span>
+                    <span>Assistente ETEC IA</span>
+                </div>
 
-                <button class="feature-card" data-message="Quero consultar o calendário acadêmico.">
-                    <b class="card-icon">▣</b>
-                    <span>
-                        <strong>Calendário acadêmico</strong>
-                        <small>Datas importantes e eventos</small>
-                    </span>
-                </button>
+                <!-- Foto e nome formam um único link, acessível também pelo teclado. -->
+                <a
+                    class="profile"
+                    id="profileLink"
+                    href="../Configurações Aluno/configAl.html"
+                    aria-label="Abrir configurações da conta">
+                    <img id="profileImage" alt="" hidden />
+                    <span id="profileName">Carregando perfil...</span>
+                </a>
+            </header>
 
-                <button class="feature-card" data-message="Preciso de informações sobre matrícula.">
-                    <b class="card-icon">▱</b>
-                    <span>
-                        <strong>Matrícula</strong>
-                        <small>Informações sobre matrícula</small>
-                    </span>
-                </button>
-            </div>
+            <!-- Tela exibida inicialmente e ao selecionar Novo chat. -->
+            <section class="home-screen" id="homeScreen">
+                <!-- O JavaScript personaliza a saudação com o primeiro nome da conta. -->
+                <div class="welcome">
+                    <h1 id="welcomeName">Olá!</h1>
+                    <p>Como posso ajudar você hoje?</p>
+                </div>
 
-            <!-- Perguntas prontas que abrem a conversa e enviam o texto selecionado. -->
-            <div class="home-suggestions">
-                <button data-message="Como faço para renovar minha matrícula?">Como faço para renovar minha matrícula?</button>
-                <button data-message="Quais documentos preciso para me matricular?">Quais documentos preciso para me matricular?</button>
-                <button data-message="Quais os horários de atendimento da secretaria?">Quais os horários de atendimento da secretaria?</button>
-            </div>
-        </section>
+                <!-- Cartões de atendimento: data-message guarda o texto enviado ao clicar. -->
+                <div class="feature-cards">
+                    <button
+                        class="feature-card"
+                        data-message="Quero solicitar documentos e declarações.">
+                        <b class="card-icon">▰</b>
+                        <span>
+                            <strong>Solicitar documentos</strong>
+                            <small>Peça documentos e declarações</small>
+                        </span>
+                    </button>
 
-        <!-- Tela da conversa, inicialmente oculta pela classe hidden.
+                    <button
+                        class="feature-card"
+                        data-message="Quero consultar o calendário acadêmico.">
+                        <b class="card-icon">▣</b>
+                        <span>
+                            <strong>Calendário acadêmico</strong>
+                            <small>Datas importantes e eventos</small>
+                        </span>
+                    </button>
+
+                    <button
+                        class="feature-card"
+                        data-message="Preciso de informações sobre matrícula.">
+                        <b class="card-icon">▱</b>
+                        <span>
+                            <strong>Matrícula</strong>
+                            <small>Informações sobre matrícula</small>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Perguntas prontas que abrem a conversa e enviam o texto selecionado. -->
+                <div class="home-suggestions">
+                    <button data-message="Como faço para renovar minha matrícula?">
+                        Como faço para renovar minha matrícula?
+                    </button>
+                    <button data-message="Quais documentos preciso para me matricular?">
+                        Quais documentos preciso para me matricular?
+                    </button>
+                    <button data-message="Quais os horários de atendimento da secretaria?">
+                        Quais os horários de atendimento da secretaria?
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tela da conversa, inicialmente oculta pela classe hidden.
              aria-live permite anunciar atualizações a leitores de tela sem interromper a leitura. -->
-        <section class="chat-screen hidden" id="chatScreen" aria-live="polite">
-            <!-- Lista preenchida pelo JavaScript com os balões do usuário e do assistente. -->
-            <div class="messages" id="messages"></div>
+            <section class="chat-screen hidden" id="chatScreen" aria-live="polite">
+                <!-- Lista preenchida pelo JavaScript com os balões do usuário e do assistente. -->
+                <div class="messages" id="messages"></div>
 
-            <!-- Atalhos de perguntas disponíveis dentro da conversa. -->
-            <div class="chat-suggestions">
-                <button data-message="Como faço a matrícula?">Como faço a matrícula?</button>
-                <button data-message="Qual é o horário de funcionamento?">Horário de funcionamento</button>
-                <button data-message="Quero falar com um atendente.">Falar com atendente</button>
-            </div>
-        </section>
+                <!-- Atalhos de perguntas disponíveis dentro da conversa. -->
+                <div class="chat-suggestions">
+                    <button data-message="Como faço a matrícula?">Como faço a matrícula?</button>
+                    <button data-message="Qual é o horário de funcionamento?">
+                        Horário de funcionamento
+                    </button>
+                    <button data-message="Quero falar com um atendente.">
+                        Falar com atendente
+                    </button>
+                </div>
+            </section>
 
-        <!-- Formulário compartilhado pelas duas telas; o JavaScript trata o envio. -->
-        <!-- Informa conexão, salvamento e falhas sem confundir uma demonstração com resposta real. -->
-        <p id="chatStatus" role="status" class="chat-status">Conectando à sua conta...</p>
-        <form class="message-form" id="messageForm">
-            <!-- Rótulo acessível a leitores de tela, oculto visualmente pelo CSS. -->
-            <label class="sr-only" for="messageInput">Sua mensagem</label>
+            <!-- Formulário compartilhado pelas duas telas; o JavaScript trata o envio. -->
+            <!-- Informa conexão, salvamento e falhas sem confundir uma demonstração com resposta real. -->
+            <p id="chatStatus" role="status" class="chat-status">Conectando à sua conta...</p>
+            <form class="message-form" id="messageForm">
+                <!-- Rótulo acessível a leitores de tela, oculto visualmente pelo CSS. -->
+                <label class="sr-only" for="messageInput">Sua mensagem</label>
 
-            <!-- Campo com limite de 700 caracteres digitados e preenchimento automático desativado. -->
-            <input id="messageInput" type="text" autocomplete="off" placeholder="Digite sua mensagem..." maxlength="700" />
+                <!-- Campo com limite de 700 caracteres digitados e preenchimento automático desativado. -->
+                <input
+                    id="messageInput"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Digite sua mensagem..."
+                    maxlength="700" />
 
-            <!-- Botão reservado para anexos; ainda não possui ação no JavaScript. -->
-            <button class="attachment" type="button" aria-label="Anexar arquivo" title="Anexar arquivo (em breve)">⌕</button>
+                <!-- Botão reservado para anexos; ainda não possui ação no JavaScript. -->
+                <button
+                    class="attachment"
+                    type="button"
+                    aria-label="Anexar arquivo"
+                    title="Anexar arquivo (em breve)">
+                    ⌕
+                </button>
 
-            <!-- Dispara o evento submit do formulário para enviar a mensagem. -->
-            <button class="send" type="submit" aria-label="Enviar mensagem">→</button>
-        </form>
-    </main>
+                <!-- Dispara o evento submit do formulário para enviar a mensagem. -->
+                <button class="send" type="submit" aria-label="Enviar mensagem">→</button>
+            </form>
+        </main>
 
-    <!-- Carrega os comportamentos depois que os elementos da página já foram criados. -->
-    <script src="home.js"></script>
-</body>
-
+        <!-- Carrega os comportamentos depois que os elementos da página já foram criados. -->
+        <script src="home.js"></script>
+    </body>
 </html>

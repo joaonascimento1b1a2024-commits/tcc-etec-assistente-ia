@@ -1,3 +1,6 @@
+/* Landing Page: base, conteúdo principal, ações, navegação e ajustes responsivos. */
+/* A ordem das regras é intencional: estilos posteriores podem substituir os anteriores. */
+
 /* Faz o dimensionamento dos elementos considerar bordas e preenchimentos. */
 * {
     box-sizing: border-box;
@@ -11,10 +14,12 @@ body {
 }
 
 /* Define o fundo da página e evita que o conteúdo fique estreito demais. */
-body{
+body {
     min-width: 320px;
     background-color: black;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('arquivos/fundo1_landingPage.png');
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('arquivos/fundo1_landingPage.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -22,7 +27,7 @@ body{
 }
 
 /* Mantém o conteúdo afastado das bordas e limita a largura de leitura. */
-#corpo{
+#corpo {
     color: #ffffff;
     width: 100%;
     max-width: 760px;
@@ -30,16 +35,16 @@ body{
 }
 
 /* Define a largura máxima do bloco do título e mantém seu alinhamento à esquerda. */
-#principal{
+#principal {
     font-weight: bold;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    /* 1. Limita a largura do espaço*/
+    /* Limita a largura do título, mantendo o alinhamento da composição. */
     max-width: 450px;
-    
+
     margin: 0;
-    
-    /* 3. Garante que palavras gigantes ou links não quebrem o layout */
+
+    /* Permite quebrar palavras longas para não ultrapassar o bloco. */
     word-wrap: break-word;
 }
 
@@ -164,41 +169,41 @@ body{
     background-color: transparent; /* Mantém o fundo escuro da página */
 }
 
-/*   1. BOTÃO "ACESSAR" (Botão Destaque)*/
+/* Botão de destaque da navegação, com estados de foco do mouse e clique. */
 
 .btn-acessar {
-    background-color: #e60000;       /* Vermelho vibrante da ETEC */
-    color: #ffffff;                  /* Texto branco */
-    padding: 10px 22px;              /* Espaçamento interno: [Cima/Baixo] [Lados] */
-    border-radius: 6px;              /* Arredondamento suave dos cantos */
-    font-size: 0.9rem;               /* Tamanho da fonte */
-    font-weight: 700;                /* Texto em negrito */
-    text-decoration: none;           /* Remove o sublinhado do link */
+    background-color: #e60000; /* Vermelho vibrante da ETEC */
+    color: #ffffff; /* Texto branco */
+    padding: 10px 22px; /* Espaçamento interno: [Cima/Baixo] [Lados] */
+    border-radius: 6px; /* Arredondamento suave dos cantos */
+    font-size: 0.9rem; /* Tamanho da fonte */
+    font-weight: 700; /* Texto em negrito */
+    text-decoration: none; /* Remove o sublinhado do link */
     display: inline-block;
-    transition: all 0.3s ease;       /* Transição suave ao passar o mouse */
+    transition: all 0.3s ease; /* Transição suave ao passar o mouse */
 }
 
 /* Efeito Hover (ao passar o mouse por cima do botão) */
 .btn-acessar:hover {
-    background-color: #ff1a1a;       /* Fica ligeiramente mais claro */
+    background-color: #ff1a1a; /* Fica ligeiramente mais claro */
     box-shadow: 0 0 15px rgba(230, 0, 0, 0.6); /* Efeito de brilho neon vermelho */
-    transform: translateY(-2px);     /* Sobe 2px para dar efeito de clique/elevação */
+    transform: translateY(-2px); /* Sobe 2px para dar efeito de clique/elevação */
 }
 
 /* Efeito ao clicar no botão */
 .btn-acessar:active {
-    transform: translateY(0);        /* Volta para a posição original */
+    transform: translateY(0); /* Volta para a posição original */
 }
 
-/*    2. LINKS DE NAVEGAÇÃO (Início, Sobre, Serviços) */
+/* Links de navegação: espaçamento, estado ativo e realce ao passar o mouse. */
 .nav-menu {
     display: flex;
-    gap: clamp(16px, 3vw, 30px);     /* Distância fluida entre os itens */
+    gap: clamp(16px, 3vw, 30px); /* Distância fluida entre os itens */
     align-items: center;
 }
 
 .nav-link {
-    color: #ffffff;                  /* Cor branca padrão */
+    color: #ffffff; /* Cor branca padrão */
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -213,10 +218,10 @@ body{
 
 /* Hover nos links */
 .nav-link:hover {
-    color: #e60000;                  /* Troca para vermelho ao passar o mouse */
+    color: #e60000; /* Troca para vermelho ao passar o mouse */
 }
 
-.logoEtec{
+.logoEtec {
     color: #ffffff;
 }
 
@@ -231,7 +236,7 @@ body{
 /* Regra que diminui e padroniza o tamanho das logos */
 .logo-group img {
     height: 60px; /* <--Valor para ajustar o tamanho*/
-    width: auto;  /* Mantém a proporção original para não esticar ou amassar */
+    width: auto; /* Mantém a proporção original para não esticar ou amassar */
     object-fit: contain; /* Garante o encaixe perfeito */
 }
 
