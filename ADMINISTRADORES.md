@@ -41,12 +41,23 @@ Edite **ativo** para **false** no documento correspondente. As regras passam a n
 
 Em **Criar avisos**, preencha título, categoria e descrição e confirme em **Publicar aviso**. Os avisos usam a coleção `avisos` e aparecem na página já existente. Isso não envia e-mails: o serviço de disparo ainda não foi implementado.
 
+## Editar e excluir avisos
+
+Abra **Gerenciar avisos** nas configurações do administrador ou acesse **Avisos** pelo menu.
+Cada aviso tem **Editar**, para alterar título, categoria e descrição, e **Excluir**, para apagar
+individualmente após conferir a confirmação. A edição mantém a data de criação e o estado de publicação.
+
+Para excluir vários, marque **Selecionar** nos avisos desejados ou **Selecionar todos** e clique em
+**Excluir selecionados**. Confira os títulos na confirmação antes de excluir. A seleção acompanha as
+atualizações da lista; avisos novos não são selecionados automaticamente. Rascunhos aparecem identificados
+apenas para administradores. Se o acesso for revogado ou a conta mudar, os controles e as seleções são removidos.
+
 ## Segurança e compatibilidade
 
 - A fonte do cargo agora é exclusivamente `administradores/{UID}.ativo`. A antiga verificação de custom claim `admin` foi substituída; se houver administradores definidos por claims, cadastre seus UIDs nesta coleção ao migrar.
 - Não coloque `admin`, `cargo` ou `role` em `users/{UID}` esperando conceder acesso. Esse perfil é editável pela própria conta e esses campos são ignorados para autorização.
 - Falha ao consultar o cargo bloqueia as configurações; não libera o painel por um valor em cache.
-- Somente um administrador ativo pode criar avisos e novas permissões. Alunos só podem consultar o próprio cargo. Administradores podem consultar um perfil por UID para a promoção, mas não listar todos os perfis nem consultar históricos alheios.
+- Somente um administrador ativo pode criar, editar e excluir avisos, além de conceder novas permissões. Alunos só podem consultar o próprio cargo. Administradores podem consultar um perfil por UID para a promoção, mas não listar todos os perfis nem consultar históricos alheios.
 
 Referência do modelo de autorização: https://firebase.google.com/docs/firestore/security/rules-conditions#access_other_documents
 
@@ -55,9 +66,13 @@ Referência do modelo de autorização: https://firebase.google.com/docs/firesto
 Com Firebase CLI, Java e Node instalados, execute na raiz do projeto:
 
 ```sh
-firebase emulators:exec --config firebase.admin.test.json --only auth,firestore --project demo-etec-rbac 'node tests/admin-rules.test.mjs'
+firebase emulators:exec --config firebase.admin.test.json --only 'auth,firestore' --project demo-etec-rbac 'node tests/admin-rules.test.mjs'
 ```
 
-Os testes usam portas locais dedicadas e um projeto `demo-`. Cobrem consulta de cargo, bloqueio de auto-promoção, publicação, promoção válida, revogação, rascunhos e isolamento das conversas.
+Os testes usam portas locais dedicadas e um projeto `demo-`. Cobrem consulta de cargo, bloqueio de auto-promoção, publicação, edição, exclusão individual/em lote, promoção válida, revogação, rascunhos e isolamento das conversas.
 
 Execute também `node tests/admin-routing.test.mjs` para testar os redirecionamentos e falhas de conexão com sessão e interface simuladas.
+
+Execute `node tests/avisos-admin.test.mjs` para conferir edição, seleção, exclusão individual/em lotes,
+falhas e encerramento da sessão com interface e banco simulados.
+Execute `node tests/avisos-access.test.mjs` para conferir a consulta de avisos por cargo e a revogação em tempo real.

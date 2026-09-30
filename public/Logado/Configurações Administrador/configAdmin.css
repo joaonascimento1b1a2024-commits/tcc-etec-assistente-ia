@@ -8,7 +8,7 @@
     gap: 12px;
     margin-top: 14px;
 }
-.admin-actions button {
+.admin-actions .action {
     color: var(--accent);
     font-size: 14px;
 }

@@ -65,6 +65,27 @@ function expect(result, status, label) {
     console.log(`OK: ${label}`);
 }
 
+function editNotice(id, data, token, times = ['atualizadoEm']) {
+    return request(':commit', token, 'POST', {
+        writes: [
+            {
+                update: { name: documentName(`avisos/${id}`), fields: fields(data) },
+                updateMask: { fieldPaths: Object.keys(data) },
+                currentDocument: { exists: true },
+                updateTransforms: times.map((fieldPath) => ({
+                    fieldPath,
+                    setToServerValue: 'REQUEST_TIME',
+                })),
+            },
+        ],
+    });
+}
+function deleteNotices(ids, token) {
+    return request(':commit', token, 'POST', {
+        writes: ids.map((id) => ({ delete: documentName(`avisos/${id}`) })),
+    });
+}
+
 const admin = await signup(`admin-${Date.now()}`);
 const aluno = await signup(`aluno-${Date.now()}`);
 const outro = await signup(`outro-${Date.now()}`);
@@ -155,6 +176,82 @@ expect(
 );
 expect(await request('/avisos/rascunho', aluno.token), 403, 'aluno não lê rascunho');
 
+const originalNotice = (await request('/avisos/publicado', admin.token)).data.fields;
+for (const token of [undefined, aluno.token]) {
+    expect(
+        await editNotice('publicado', { titulo: 'Alteração proibida' }, token),
+        403,
+        'visitante/aluno não edita avisos',
+    );
+    expect(
+        await deleteNotices(['publicado'], token),
+        403,
+        'visitante/aluno não exclui aviso individual',
+    );
+    expect(
+        await deleteNotices(['publicado', 'rascunho'], token),
+        403,
+        'visitante/aluno não exclui em lote',
+    );
+}
+expect(
+    await editNotice(
+        'publicado',
+        { titulo: 'Calendário atualizado', descricao: 'Linha 1\nLinha 2', categoria: 'evento' },
+        admin.token,
+    ),
+    200,
+    'administrador edita aviso',
+);
+const editedNotice = (await request('/avisos/publicado', aluno.token)).data.fields;
+assert.equal(editedNotice.titulo.stringValue, 'Calendário atualizado');
+assert.deepEqual(editedNotice.criadoEm, originalNotice.criadoEm, 'edição preserva data de criação');
+assert.deepEqual(editedNotice.publicado, originalNotice.publicado, 'edição preserva publicação');
+assert.ok(editedNotice.atualizadoEm.timestampValue);
+expect(
+    await editNotice('publicado', { titulo: '' }, admin.token),
+    403,
+    'não aceita título vazio na edição',
+);
+expect(
+    await editNotice('publicado', { categoria: 'invalida' }, admin.token),
+    403,
+    'não aceita categoria inválida na edição',
+);
+expect(
+    await editNotice('publicado', { titulo: 'Teste' }, admin.token, ['criadoEm']),
+    403,
+    'não permite alterar data de criação',
+);
+expect(
+    await editNotice('rascunho', { titulo: 'Rascunho editado' }, admin.token),
+    200,
+    'administrador edita rascunho',
+);
+expect(await request('/avisos/rascunho', aluno.token), 403, 'editar rascunho não o publica');
+for (const id of ['excluir-a', 'excluir-b', 'excluir-c']) {
+    expect(
+        await write(`avisos/${id}`, notice, admin.token, ['criadoEm']),
+        200,
+        'prepara aviso para exclusão',
+    );
+}
+expect(
+    await deleteNotices(['excluir-a'], admin.token),
+    200,
+    'administrador exclui individualmente',
+);
+expect(await request('/avisos/excluir-a', admin.token), 404, 'aviso individual removido');
+expect(await request('/avisos/excluir-b', admin.token), 200, 'aviso não selecionado preservado');
+expect(
+    await deleteNotices(['excluir-b', 'excluir-c'], admin.token),
+    200,
+    'administrador exclui em lote',
+);
+for (const id of ['excluir-b', 'excluir-c']) {
+    expect(await request(`/avisos/${id}`, admin.token), 404, 'aviso selecionado removido');
+}
+
 expect(
     await write(
         `administradores/${outro.uid}`,
@@ -204,6 +301,17 @@ expect(
     await write('avisos/revogado', notice, outro.token, ['criadoEm']),
     403,
     'revogação bloqueia imediatamente novas publicações',
+);
+expect(
+    await editNotice('publicado', { titulo: 'Revogado' }, outro.token),
+    403,
+    'revogado não edita aviso',
+);
+expect(await deleteNotices(['publicado'], outro.token), 403, 'revogado não exclui individualmente');
+expect(
+    await deleteNotices(['publicado', 'rascunho'], outro.token),
+    403,
+    'revogado não exclui em lote',
 );
 expect(
     await write(

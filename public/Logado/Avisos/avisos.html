@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Avisos publicados: o JavaScript preenche os cartões a partir do Firestore. -->
+<!-- Avisos do Firestore: leitura para alunos e gestão para administradores. -->
 <html lang="pt-BR">
     <head>
         <!-- Codificação, adaptação a celulares e fontes compartilhadas com a área logada. -->
@@ -32,7 +32,7 @@
                     ><span aria-hidden="true">♧</span> Avisos</a
                 >
                 <a href="../Serviços/servicos.html"><span aria-hidden="true">▱</span> Serviços</a>
-                <a href="../Configurações Aluno/configAl.html"
+                <a id="settings-link" href="../Configurações Aluno/configAl.html"
                     ><span aria-hidden="true">⚙</span> Configurações</a
                 >
             </nav>
@@ -40,10 +40,24 @@
         <main id="conteudo" class="content" tabindex="-1">
             <header>
                 <h1>Avisos</h1>
-                <p>Fique por dentro das novidades</p>
+                <p id="page-description">Fique por dentro das novidades</p>
             </header>
             <!-- O JavaScript comunica o estado da consulta sem anunciar toda a lista novamente. -->
             <div class="notice-area">
+                <div id="admin-toolbar" class="admin-toolbar" hidden>
+                    <label class="selection-label">
+                        <input id="select-all" type="checkbox" /> Selecionar todos
+                    </label>
+                    <span id="selection-count" role="status" aria-live="polite"></span>
+                    <button
+                        id="delete-selected"
+                        class="notice-button danger"
+                        type="button"
+                        disabled>
+                        Excluir selecionados
+                    </button>
+                </div>
+                <p id="action-feedback" class="feedback" role="status" hidden></p>
                 <p id="status" role="status" aria-live="polite">Carregando avisos...</p>
                 <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
                 <a id="login" class="retry" href="../../Login/login.html" hidden
@@ -65,9 +79,70 @@
                     <div class="notice-copy">
                         <h2></h2>
                         <p></p>
+                        <span class="draft-label" hidden>Rascunho</span>
+                    </div>
+                    <div class="notice-admin" hidden>
+                        <label class="selection-label">
+                            <input class="notice-select" type="checkbox" /> Selecionar
+                        </label>
+                        <div class="notice-actions">
+                            <button class="notice-button" type="button" data-action="edit">
+                                Editar
+                            </button>
+                            <button class="notice-button danger" type="button" data-action="delete">
+                                Excluir
+                            </button>
+                        </div>
                     </div>
                 </article>
             </li>
         </template>
+        <dialog id="edit-dialog" aria-labelledby="edit-title">
+            <form id="edit-form" class="notice-form">
+                <h2 id="edit-title">Editar aviso</h2>
+                <label for="edit-name">Título</label>
+                <input id="edit-name" maxlength="150" required />
+                <label for="edit-category">Categoria</label>
+                <select id="edit-category">
+                    <option value="geral">Geral</option>
+                    <option value="matricula">Matrícula</option>
+                    <option value="provas">Provas</option>
+                    <option value="feriado">Feriado</option>
+                    <option value="evento">Evento</option>
+                </select>
+                <label for="edit-description">Descrição</label>
+                <textarea id="edit-description" rows="6" maxlength="5000" required></textarea>
+                <p id="edit-feedback" class="feedback" role="status" hidden></p>
+                <div class="dialog-actions">
+                    <button class="notice-button" type="button" data-close="edit-dialog">
+                        Cancelar
+                    </button>
+                    <button class="notice-button primary" type="submit">Salvar alterações</button>
+                </div>
+            </form>
+        </dialog>
+        <dialog
+            id="delete-dialog"
+            aria-labelledby="delete-title"
+            aria-describedby="delete-description">
+            <form id="delete-form" class="notice-form">
+                <h2 id="delete-title">Excluir avisos?</h2>
+                <p id="delete-description"></p>
+                <ul id="delete-preview"></ul>
+                <p id="delete-feedback" class="feedback" role="status" hidden></p>
+                <div class="dialog-actions">
+                    <button
+                        id="cancel-delete"
+                        class="notice-button"
+                        type="button"
+                        data-close="delete-dialog">
+                        Cancelar
+                    </button>
+                    <button id="confirm-delete" class="notice-button primary" type="submit">
+                        Confirmar exclusão
+                    </button>
+                </div>
+            </form>
+        </dialog>
     </body>
 </html>

@@ -160,6 +160,7 @@ header p {
         inset 0 0 3px #ffffff12;
 }
 .notice-copy {
+    flex: 1;
     min-width: 0;
 }
 .notice-copy h2 {
@@ -234,6 +235,147 @@ header p {
 }
 .skip-link:focus {
     top: 12px;
+}
+
+/* Ações administrativas e seleção com alvos confortáveis para toque. */
+.admin-toolbar,
+.notice-admin,
+.notice-actions,
+.dialog-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.admin-toolbar {
+    padding: 16px;
+    margin-bottom: 20px;
+    background: #191919;
+    border: 1px solid #444;
+    border-radius: 8px;
+}
+#selection-count {
+    flex: 1;
+    color: #c6c6c6;
+    font-size: 13px;
+}
+.notice-card {
+    flex-wrap: wrap;
+}
+.notice-card.is-selected {
+    border-color: #ff7878;
+}
+.notice-admin {
+    flex-basis: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #444;
+    padding-top: 12px;
+}
+.selection-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-size: 13px;
+    cursor: pointer;
+}
+input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    accent-color: #be0808;
+}
+.notice-button {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #666;
+    border-radius: 6px;
+    background: #252525;
+    color: #fff;
+}
+.notice-button:hover:not(:disabled) {
+    background: #3a3a3a;
+}
+.notice-button.danger {
+    color: #ffb3b3;
+    border-color: #aa5555;
+}
+.notice-button.primary {
+    background: #be0808;
+    border-color: #be0808;
+}
+.notice-button.primary:hover:not(:disabled) {
+    background: #970606;
+}
+button:disabled,
+input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.draft-label {
+    display: inline-block;
+    margin-top: 12px;
+    color: #ffd48a;
+    font-size: 12px;
+}
+.feedback {
+    padding: 12px;
+    border: 1px solid #666;
+    border-radius: 6px;
+    background: #191919;
+    overflow-wrap: anywhere;
+}
+.feedback[data-error='true'] {
+    color: #ffb3b3;
+    border-color: #aa5555;
+}
+dialog {
+    width: min(560px, calc(100% - 32px));
+    max-height: 90dvh;
+    overflow: auto;
+    padding: 24px;
+    color: #f6f6f6;
+    background: #151515;
+    border: 1px solid #666;
+    border-radius: 12px;
+}
+dialog::backdrop {
+    background: #000b;
+}
+.notice-form {
+    display: grid;
+    gap: 12px;
+}
+.notice-form h2,
+.notice-form p {
+    margin: 0;
+}
+.notice-form h2 {
+    font-size: 22px;
+}
+.notice-form input,
+.notice-form textarea,
+.notice-form select {
+    width: 100%;
+    min-width: 0;
+    font: inherit;
+    color: inherit;
+    background: #252525;
+    border: 1px solid #777;
+    border-radius: 6px;
+    padding: 10px;
+}
+.notice-form textarea {
+    resize: vertical;
+}
+.dialog-actions {
+    justify-content: flex-end;
+}
+#delete-preview {
+    max-height: 180px;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    margin: 0;
+    padding-left: 24px;
 }
 
 /* Em tablets e celulares, o menu entra no fluxo e mantém os textos legíveis. */

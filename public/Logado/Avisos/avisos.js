@@ -8,7 +8,7 @@
 // publicado: boolean (somente true aparece para os alunos)
 // criadoEm: Timestamp do Firestore (usar serverTimestamp() ao criar)
 // atualizadoEm: Timestamp opcional
-// A criação pertence ao painel administrativo. Esta página somente lê.
+// A criação pertence ao painel administrativo. Administradores editam/excluem aqui.
 // A permissão vem de administradores/{UID}.ativo, protegido pelas regras.
 // Campos como admin/cargo em /users nunca concedem acesso administrativo.
 
@@ -30,6 +30,11 @@ const retry = document.querySelector('#retry');
 const login = document.querySelector('#login');
 let unsubscribeNotices;
 let unsubscribeAuth;
+let unsubscribeRole;
+let management;
+let sessionVersion = 0;
+let queryVersion = 0;
+let startVersion = 0;
 
 // Ícones locais: nenhum HTML recebido do banco é interpretado.
 const icons = {
@@ -55,6 +60,7 @@ function createCard(data) {
     const card = template.content.cloneNode(true);
     card.querySelector('h2').textContent = data.titulo;
     card.querySelector('.notice-copy p').textContent = data.descricao;
+    card.querySelector('.draft-label').hidden = data.publicado !== false;
     const category = Object.hasOwn(icons, data.categoria) ? data.categoria : 'geral';
     const icon = card.querySelector('.notice-icon');
     icon.classList.add(`category-${category}`);
@@ -64,102 +70,189 @@ function createCard(data) {
     path.setAttribute('d', icons[category]);
     svg.append(path);
     icon.append(svg);
+    management?.prepareCard(card, data);
     return card;
+}
+
+function clearNotices() {
+    queryVersion++;
+    unsubscribeNotices?.();
+    unsubscribeNotices = undefined;
+    management?.dispose();
+    management = undefined;
+    list.replaceChildren();
 }
 
 // Desliga escutas anteriores para evitar consultas duplicadas e dados de outra sessão.
 function stopListeners() {
-    unsubscribeNotices?.();
+    sessionVersion++;
+    clearNotices();
     unsubscribeAuth?.();
-    unsubscribeNotices = undefined;
+    unsubscribeRole?.();
     unsubscribeAuth = undefined;
+    unsubscribeRole = undefined;
 }
 
 // Carrega os módulos sob demanda para também tratar falhas no carregamento do SDK.
 async function start() {
+    const boot = ++startVersion;
     stopListeners();
-    list.replaceChildren();
     login.hidden = true;
     showStatus('Carregando avisos...', { loading: true });
 
     try {
-        const [appSDK, authSDK, dbSDK] = await Promise.all([
+        const [appSDK, authSDK, dbSDK, access, admin] = await Promise.all([
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js'),
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js'),
+            import('../acesso.js'),
+            import('./avisos-admin.js'),
         ]);
+        if (boot !== startVersion) return;
         const app = appSDK.getApps().length
             ? appSDK.getApp()
             : appSDK.initializeApp(firebaseConfig);
         const db = dbSDK.getFirestore(app);
+        const auth = authSDK.getAuth(app);
 
         // Aguarda a sessão real do Firebase; dados do localStorage não autenticam a consulta.
         unsubscribeAuth = authSDK.onAuthStateChanged(
-            authSDK.getAuth(app),
+            auth,
             (user) => {
-                unsubscribeNotices?.();
-                unsubscribeNotices = undefined;
-                list.replaceChildren();
+                if (boot !== startVersion) return;
+                const version = ++sessionVersion;
+                clearNotices();
+                unsubscribeRole?.();
+                unsubscribeRole = undefined;
+                document.querySelector('#settings-link').href = access.paginaConfiguracoes(false);
+                document.querySelector('#page-description').textContent =
+                    'Fique por dentro das novidades';
                 login.hidden = Boolean(user);
                 if (!user) {
                     showStatus('Entre na sua conta para acompanhar os avisos da escola.');
                     return;
                 }
 
-                showStatus('Carregando avisos...', { loading: true });
-                // O filtro corresponde às regras: alunos não recebem rascunhos administrativos.
-                const noticesQuery = dbSDK.query(
-                    dbSDK.collection(db, 'avisos'),
-                    dbSDK.where('publicado', '==', true),
-                );
-                unsubscribeNotices = dbSDK.onSnapshot(
-                    noticesQuery,
+                let currentRole;
+                showStatus('Verificando acesso aos avisos...', { loading: true });
+                // Somente uma resposta do servidor libera os controles administrativos.
+                unsubscribeRole = dbSDK.onSnapshot(
+                    dbSDK.doc(db, 'administradores', user.uid),
                     { includeMetadataChanges: true },
                     (snapshot) => {
-                        // Ordena no navegador para dispensar índice composto: mais recentes primeiro.
-                        const notices = snapshot.docs
-                            .map((doc) => ({ id: doc.id, ...doc.data() }))
-                            .filter(
-                                (data) =>
-                                    typeof data.titulo === 'string' &&
-                                    typeof data.descricao === 'string',
-                            )
-                            .sort(
-                                (a, b) =>
-                                    (b.criadoEm?.toMillis?.() || 0) -
-                                    (a.criadoEm?.toMillis?.() || 0),
-                            );
-                        const fragment = document.createDocumentFragment();
-                        notices.forEach((data) => fragment.append(createCard(data)));
-                        list.replaceChildren(fragment);
-
-                        // Não confunde cache vazio com confirmação de que o banco está vazio.
+                        if (version !== sessionVersion) return;
                         if (snapshot.metadata.fromCache) {
-                            showStatus(
-                                notices.length
-                                    ? 'Exibindo avisos salvos. Aguardando atualização da conexão.'
-                                    : 'Aguardando conexão para consultar os avisos.',
-                                { canRetry: true },
-                            );
-                        } else {
-                            showStatus(notices.length ? '' : 'Nenhum aviso publicado no momento.');
+                            if (currentRole === undefined)
+                                showStatus('Aguardando conexão para verificar seu acesso.', {
+                                    canRetry: true,
+                                });
+                            return;
                         }
+                        const allowed = snapshot.exists() && snapshot.data().ativo === true;
+                        if (allowed === currentRole) return;
+                        currentRole = allowed;
+                        clearNotices();
+                        document.querySelector('#settings-link').href =
+                            access.paginaConfiguracoes(allowed);
+                        document.querySelector('#page-description').textContent = allowed
+                            ? 'Edite os avisos ou selecione os que deseja excluir'
+                            : 'Fique por dentro das novidades';
+                        if (allowed)
+                            management = admin.iniciarGestaoAvisos({
+                                db,
+                                sdk: dbSDK,
+                                verificarAcesso: async () => {
+                                    const active = await access.verificarAdministrador(user, db);
+                                    return (
+                                        active &&
+                                        version === sessionVersion &&
+                                        currentRole === true &&
+                                        auth.currentUser?.uid === user.uid
+                                    );
+                                },
+                            });
+                        listenNotices(allowed);
                     },
-                    (error) => {
-                        list.replaceChildren();
-                        console.error('Falha ao consultar avisos:', error.code);
-                        showStatus(
-                            error.code === 'permission-denied'
-                                ? 'Não foi possível acessar os avisos. Entre novamente ou procure a administração.'
-                                : 'Não foi possível carregar os avisos. Verifique a conexão e tente novamente.',
-                            { canRetry: true },
-                        );
+                    () => {
+                        if (version !== sessionVersion) return;
+                        clearNotices();
+                        showStatus('Não foi possível verificar seu acesso. Tente novamente.', {
+                            canRetry: true,
+                        });
                     },
                 );
+
+                function listenNotices(allowed) {
+                    const queryId = queryVersion;
+                    showStatus('Carregando avisos...', { loading: true });
+                    const collection = dbSDK.collection(db, 'avisos');
+                    // Alunos não recebem rascunhos; administradores gerenciam todos os avisos.
+                    const noticesQuery = allowed
+                        ? collection
+                        : dbSDK.query(collection, dbSDK.where('publicado', '==', true));
+                    unsubscribeNotices = dbSDK.onSnapshot(
+                        noticesQuery,
+                        { includeMetadataChanges: true },
+                        (snapshot) => {
+                            if (version !== sessionVersion || queryId !== queryVersion) return;
+                            // Ordena no navegador para dispensar índice composto: mais recentes primeiro.
+                            const notices = snapshot.docs
+                                .map((doc) => ({ ...doc.data(), id: doc.id }))
+                                .filter(
+                                    (data) =>
+                                        typeof data.titulo === 'string' &&
+                                        typeof data.descricao === 'string',
+                                )
+                                .sort(
+                                    (a, b) =>
+                                        (b.criadoEm?.toMillis?.() || 0) -
+                                        (a.criadoEm?.toMillis?.() || 0),
+                                );
+                            const fragment = document.createDocumentFragment();
+                            notices.forEach((data) => fragment.append(createCard(data)));
+                            list.replaceChildren(fragment);
+                            management?.updateNotices(notices);
+
+                            // Não confunde cache vazio com confirmação de que o banco está vazio.
+                            if (snapshot.metadata.fromCache) {
+                                showStatus(
+                                    notices.length
+                                        ? 'Exibindo avisos salvos. Aguardando atualização da conexão.'
+                                        : 'Aguardando conexão para consultar os avisos.',
+                                    { canRetry: true },
+                                );
+                            } else {
+                                showStatus(
+                                    notices.length
+                                        ? ''
+                                        : allowed
+                                          ? 'Nenhum aviso cadastrado no momento.'
+                                          : 'Nenhum aviso publicado no momento.',
+                                );
+                            }
+                        },
+                        (error) => {
+                            if (version !== sessionVersion || queryId !== queryVersion) return;
+                            list.replaceChildren();
+                            management?.updateNotices([]);
+                            console.error('Falha ao consultar avisos:', error.code);
+                            showStatus(
+                                error.code === 'permission-denied'
+                                    ? 'Não foi possível acessar os avisos. Entre novamente ou procure a administração.'
+                                    : 'Não foi possível carregar os avisos. Verifique a conexão e tente novamente.',
+                                { canRetry: true },
+                            );
+                        },
+                    );
+                }
             },
-            () => showStatus('Não foi possível verificar sua sessão.', { canRetry: true }),
+            () => {
+                stopListeners();
+                showStatus('Não foi possível verificar sua sessão.', { canRetry: true });
+            },
         );
     } catch (error) {
+        if (boot !== startVersion) return;
         console.error('Falha ao iniciar a página de avisos:', error.code || error.message);
         showStatus('Não foi possível conectar. Verifique sua conexão e tente novamente.', {
             canRetry: true,
@@ -167,6 +260,6 @@ async function start() {
     }
 }
 
-// Reabre a conexão quando solicitado; a página não escreve nem cria avisos de exemplo.
+// Reabre a conexão e descarta seleções/confirmações pertencentes à sessão anterior.
 retry.addEventListener('click', start);
 start();
