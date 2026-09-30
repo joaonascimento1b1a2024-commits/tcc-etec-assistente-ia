@@ -38,7 +38,7 @@ export async function createConversationStore(app, uid) {
                     throw new Error('Conversa excluída. Inicie uma nova mensagem.');
                 const previous = snapshot.exists() ? snapshot.data() : null;
                 const items = previous?.mensagens || [];
-                if (items.length >= 100)
+                if (items.length >= 99)
                     throw new Error(
                         'Esta conversa atingiu 100 mensagens. Inicie uma nova conversa.',
                     );
