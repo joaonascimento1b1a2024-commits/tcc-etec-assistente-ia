@@ -58,6 +58,7 @@ body {
 /* Define a largura de leitura e o espaçamento do texto de apoio. */
 #corpo p {
     max-width: 430px;
+    font-family: Arial, sans-serif;
     font-size: clamp(1rem, 2.5vw, 1.1rem);
     line-height: 1.45;
     margin: 18px 0 0;

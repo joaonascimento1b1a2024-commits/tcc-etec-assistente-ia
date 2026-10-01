@@ -176,7 +176,11 @@ nav {
     width: 35px;
     border-radius: 50%;
     background: #050505;
-    font-size: 19px;
+}
+
+#logo{
+    width: 10px;
+    height: 10px;
 }
 
 /* Recorta a foto do perfil em círculo e define borda e fundo. */
