@@ -1,0 +1,12 @@
+{
+  "name": "sylvinho-render-poc",
+  "private": true,
+  "version": "0.0.0",
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "build": "npm --prefix ../functions run build",
+    "start": "node server.cjs",
+    "test": "node --test test/adapter.test.cjs",
+    "test:emulators": "node test/emulators.cjs"
+  }
+}

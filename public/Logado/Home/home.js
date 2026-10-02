@@ -13,6 +13,8 @@ const profileImage = document.querySelector('#profileImage');
 
 // A conversa só aceita envios após restaurar a sessão e abrir o histórico solicitado.
 let conversationStore = null;
+let authenticatedUser = null;
+let activeRequest = null;
 let conversationId = new URLSearchParams(window.location.search).get('conversa');
 let sending = false;
 let sessionVersion = 0;
@@ -81,6 +83,8 @@ async function loadAuthenticatedProfile() {
             authSDK.getAuth(app),
             async (user) => {
                 const version = ++sessionVersion;
+                activeRequest?.abort();
+                authenticatedUser = user;
                 conversationStore = null;
                 messages.replaceChildren();
                 lockComposer(true);
@@ -127,9 +131,8 @@ async function loadAuthenticatedProfile() {
                         for (const message of saved.mensagens)
                             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
                     }
-                    chatStatus.textContent =
-                        'As mensagens são salvas na sua conta. A IA ainda não está conectada.';
-                    lockComposer(false);
+                    chatStatus.textContent = 'As mensagens são salvas na sua conta.';
+                    lockComposer(sending);
                 } catch (error) {
                     if (version !== sessionVersion) return;
                     chatStatus.textContent =
@@ -146,6 +149,10 @@ async function loadAuthenticatedProfile() {
 
 // Mantém o acesso às configurações mesmo se houver falha ao consultar a sessão.
 function handleProfileError(error) {
+    sessionVersion++;
+    activeRequest?.abort();
+    authenticatedUser = null;
+    conversationStore = null;
     lockComposer(true);
     chatStatus.textContent =
         'Não foi possível conectar à conta. Recarregue a página para tentar novamente.';
@@ -205,40 +212,64 @@ function addMessage(text, sender) {
 // mantém o texto para uma nova tentativa e não fabrica respostas da IA.
 async function sendMessage(text) {
     const cleanText = text.trim();
-    if (!cleanText || sending || !conversationStore) return;
+    if (!cleanText || sending || !conversationStore || !authenticatedUser) return;
     const version = sessionVersion;
+    const store = conversationStore;
+    const user = authenticatedUser;
+    const request = new AbortController();
+    activeRequest = request;
+    let userSaved = false;
     sending = true;
     lockComposer(true);
     newChat.disabled = true;
     messageInput.value = cleanText;
     chatStatus.textContent = 'Salvando mensagem...';
     try {
-        const id = await conversationStore.append(conversationId, cleanText);
+        const id = await store.append(conversationId, cleanText);
+        userSaved = true;
         if (version !== sessionVersion) return;
         conversationId = id;
         window.history.replaceState(null, '', `?conversa=${encodeURIComponent(id)}`);
         // O banco já confirmou o envio: uma falha de releitura não deve duplicá-lo.
         messageInput.value = '';
         // Reconsulta o documento para incluir mensagens enviadas por outras abas.
-        const saved = await conversationStore.open(id);
+        const saved = await store.open(id);
         if (version !== sessionVersion) return;
         messages.replaceChildren();
         showChat();
         for (const message of saved.mensagens)
             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
-        messageInput.value = '';
-        chatStatus.textContent =
-            'Mensagem salva. A resposta e o título pela IA aguardam a integração do projeto.';
+        chatStatus.textContent = 'Mensagem salva. Aguardando resposta...';
+        const [{ perguntarAssistente }, { assistenteConfig }] = await Promise.all([
+            import('./assistente-client.js'),
+            import('./assistente-config.js'),
+        ]);
+        if (version !== sessionVersion) return;
+        await perguntarAssistente({
+            user, pergunta: cleanText, conversationId: id,
+            ...assistenteConfig, signal: request.signal,
+            sessaoAtual: () => version === sessionVersion && authenticatedUser === user,
+        });
+        if (version !== sessionVersion) return;
+        const confirmed = await store.open(id);
+        if (version !== sessionVersion) return;
+        messages.replaceChildren();
+        for (const message of confirmed.mensagens)
+            addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
+        chatStatus.textContent = 'Conversa atualizada.';
     } catch (error) {
         if (version !== sessionVersion) return;
-        chatStatus.textContent = error.code
+        chatStatus.textContent = userSaved
+            ? 'A pergunta foi salva, mas não foi possível confirmar a resposta. Confira o histórico ou recarregue antes de reenviar; se a conversa foi excluída, inicie um novo chat.'
+            : error.code
             ? 'Falha de conexão ou permissão. Confira o histórico antes de reenviar.'
             : error.message;
     } finally {
         sending = false;
+        if (activeRequest === request) activeRequest = null;
         newChat.disabled = false;
+        lockComposer(!conversationStore || !authenticatedUser);
         if (version === sessionVersion) {
-            lockComposer(false);
             messageInput.focus();
         }
     }

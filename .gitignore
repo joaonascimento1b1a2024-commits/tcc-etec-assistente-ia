@@ -137,3 +137,15 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Local credentials, temporary files and compiled Functions
+*service-account*.json
+*service_account*.json
+*firebase-adminsdk*.json
+firebase-admin.json
+application_default_credentials.json
+credentials.json
+*.pem
+*.key
+*.tmp
+/functions/lib/

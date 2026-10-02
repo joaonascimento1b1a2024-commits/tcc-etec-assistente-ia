@@ -27,8 +27,8 @@ module.exports = {
   plugins: ["@typescript-eslint", "import"],
   // Mantém as convenções já adotadas pelo backend: aspas duplas e dois espaços.
   rules: {
-    quotes: ["error", "double"],
+    "quotes": ["error", "double"],
     "import/no-unresolved": 0,
-    indent: ["error", 2],
+    "indent": ["error", 2],
   },
 };
