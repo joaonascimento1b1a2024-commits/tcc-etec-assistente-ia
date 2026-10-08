@@ -62,6 +62,7 @@ const modules = {
     },
 };
 vm.runInNewContext(source, {
+    window: { etecTheme: { useAccount() {} } },
     document: { querySelector: get, createDocumentFragment: () => ({ append() {} }) },
     console,
     mockImport: async (path) => modules[Object.keys(modules).find((name) => path.includes(name))],

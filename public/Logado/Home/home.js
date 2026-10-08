@@ -95,6 +95,7 @@ async function loadAuthenticatedProfile() {
                     window.location.replace('../../Login/login.html');
                     return;
                 }
+                window.etecTheme?.useAccount(user.uid);
                 renderProfile(user);
                 try {
                     // O destino do perfil é definido pelo cargo confirmado pelo servidor.

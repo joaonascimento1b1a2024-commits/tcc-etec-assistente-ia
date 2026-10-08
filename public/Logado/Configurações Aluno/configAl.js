@@ -73,19 +73,15 @@ function profileFor(user) {
 }
 
 // ============================================================
-// 2. Tema desta página e leitura das configurações
+// 2. Tema compartilhado e leitura das configurações
 // ============================================================
 function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    window.etecTheme.apply(theme);
 }
 
 // Cache separado por conta; indisponibilidade do armazenamento não bloqueia a página.
 function cacheTheme(uid, theme) {
-    try {
-        localStorage.setItem(`etec:theme:${uid}`, theme);
-    } catch {
-        /* O Firestore continua sendo a fonte principal. */
-    }
+    window.etecTheme.save(uid, theme);
 }
 
 function syncControls() {
@@ -333,12 +329,7 @@ async function start() {
                     : 'Você entra com o Google e não possui uma senha de acesso ao site. A senha do Google é gerenciada na sua Conta Google.';
                 ui.logout.disabled = false;
                 ui['account-settings'].hidden = false;
-                applyTheme('dark');
-                try {
-                    applyTheme(localStorage.getItem(`etec:theme:${user.uid}`));
-                } catch {
-                    /* Usa o tema padrão até consultar o banco. */
-                }
+                window.etecTheme.useAccount(user.uid);
                 loadPreferences(user, activeVersion);
             },
             () => {

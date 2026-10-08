@@ -130,6 +130,7 @@ async function start() {
                     return;
                 }
                 try {
+                    window.etecTheme?.useAccount(user.uid);
                     const nextStore = await storage.createConversationStore(app, user.uid);
                     if (version !== sessionVersion) return;
                     store = nextStore;

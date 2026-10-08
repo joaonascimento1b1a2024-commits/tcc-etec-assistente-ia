@@ -72,6 +72,7 @@ async function scenario({ role, page, user = true, error = false }) {
             documentElement: { dataset: {} },
         },
         window: {
+            etecTheme: { apply() {}, save() {}, useAccount() {} },
             location: {
                 replace(url) {
                     redirect = url;

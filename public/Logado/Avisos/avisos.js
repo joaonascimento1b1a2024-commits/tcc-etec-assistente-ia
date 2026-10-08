@@ -133,6 +133,7 @@ async function start() {
                     return;
                 }
 
+                window.etecTheme?.useAccount(user.uid);
                 let currentRole;
                 showStatus('Verificando acesso aos avisos...', { loading: true });
                 // Somente uma resposta do servidor libera os controles administrativos.

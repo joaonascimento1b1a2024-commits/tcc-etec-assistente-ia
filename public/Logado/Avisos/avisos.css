@@ -51,22 +51,12 @@ button {
     line-height: 1;
     margin-bottom: 18px;
 }
-.school-logo strong {
+.school-logo img {
     display: block;
-    color: #78858b;
-    font:
-        bold 42px Arial,
-        sans-serif;
-}
-.school-logo span {
-    display: block;
-    color: var(--red);
-    font-size: 11px;
-    font-weight: 600;
-}
-.school-logo small {
-    color: #9ca5aa;
-    font-size: 8px;
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    margin: 0 auto;
 }
 .new-chat {
     display: grid;
@@ -393,9 +383,6 @@ dialog::backdrop {
     }
     .school-logo {
         margin: 0;
-    }
-    .school-logo strong {
-        font-size: 30px;
     }
     .new-chat {
         padding: 8px 18px;
