@@ -10,11 +10,13 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 
 test('Bootstrap local exige origem exata e conecta ambos antes de autenticar/carregar Home', () => {
     const source = read('local-e2e/bootstrap.js');
-    assert.match(source, /location.origin !== 'http:\/\/127\.0\.0\.1:5000'/);
+    assert.match(source, /location.origin !== ambienteLocalAssistente.origin/);
+    assert.match(read('public/Logado/Home/assistente-config.js'), /projectId: 'demo-sylvinho-render-poc'/);
     assert.ok(source.indexOf('connectAuthEmulator(auth,') < source.indexOf('await signInAnonymously'));
     assert.ok(source.indexOf('connectFirestoreEmulator(db,') < source.indexOf('await signInAnonymously'));
     assert.ok(source.indexOf('await signInAnonymously') < source.indexOf("await import('./home.js')"));
-    assert.match(source, /inMemoryPersistence/);
+    assert.match(source, /browserSessionPersistence/);
+    assert.doesNotMatch(source, /tcc-ia-d8891/);
 });
 test('Harness fora do staging ou sem marcador encerra antes de importar SDKs', () => {
     const source = read('local-e2e/function.cjs');
@@ -36,7 +38,7 @@ test('Harness nao importa producao/Gemini; possui guardas antes de initializeApp
     assert.ok(source.indexOf('Object.values(checks)') < source.indexOf('initializeApp({'));
     assert.match(source, /FIREBASE_AUTH_EMULATOR_HOST === '127.0.0.1:9099'/);
     assert.match(source, /FIRESTORE_EMULATOR_HOST === '127.0.0.1:8080'/);
-    assert.match(source, /GCLOUD_PROJECT === 'tcc-ia-d8891'/);
+    assert.match(source, /GCLOUD_PROJECT === 'demo-sylvinho-render-poc'/);
 });
 test('Preload bloqueia Firebase/Gemini em HTTP HTTPS fetch TLS e socket antes da rede', () => {
     const code = `
@@ -58,7 +60,29 @@ test('Preload bloqueia Firebase/Gemini em HTTP HTTPS fetch TLS e socket antes da
     assert.equal(execFileSync(process.execPath, ['-e', code], { cwd: root, env, encoding: 'utf8' }).trim(), 'GUARD_OK');
 });
 test('Configuracao de producao continua sem endpoint local ou bootstrap', () => {
-    assert.doesNotMatch(read('public/Logado/Home/assistente-config.js'), /5001|127\.0\.0\.1/);
+    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: ''/);
+    assert.match(read('public/Logado/Home/assistente-config.js'), /local.projectId !== config.projectId/);
     assert.doesNotMatch(read('public/Logado/Home/home.html'), /local-bootstrap|local-e2e/);
     assert.doesNotMatch(read('functions/src/index.ts'), /local-e2e|SYLVINHO_LOCAL|mock/i);
+});
+
+
+const { resolverAssistenteConfig, ambienteLocalAssistente: demo } = await import(
+    'data:text/javascript;base64,' + Buffer.from(read('public/Logado/Home/assistente-config.js')).toString('base64'));
+test('config local exige origem projeto Auth e Firestore exatos; fora do demo continua sem endpoint', () => {
+    const config = resolverAssistenteConfig({ origin: demo.origin, local: demo });
+    assert.equal(config.endpoint, 'http://' + demo.functions + '/' + demo.projectId + '/' + demo.region + '/perguntarAssistente');
+    for (const changed of [{ projectId: 'outro-projeto' }, { auth: 'remoto:9099' }, { firestore: 'remoto:8080' }]) {
+        assert.throws(() => resolverAssistenteConfig({ origin: demo.origin, local: { ...demo, ...changed } }), { code: 'AMBIENTE_LOCAL_INVALIDO' });
+    }
+    assert.throws(() => resolverAssistenteConfig({ origin: 'https://site.example.invalid', local: demo }), { code: 'AMBIENTE_LOCAL_INVALIDO' });
+    assert.equal(resolverAssistenteConfig({ origin: demo.origin, local: null }).endpoint, '');
+    assert.equal(resolverAssistenteConfig({ origin: 'https://site.example.invalid', local: null }).endpoint, '');
+});
+
+
+test('entrada legada delega ao runner demo validado sem projeto ou credenciais próprios', () => {
+    const source = read('local-e2e/run.mjs');
+    assert.match(source, /import '.\/history-run.mjs'/);
+    assert.doesNotMatch(source, /tcc-ia-d8891|GOOGLE_APPLICATION_CREDENTIALS|spawn\(/);
 });

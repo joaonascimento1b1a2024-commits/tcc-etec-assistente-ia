@@ -13,12 +13,13 @@ const { initializeApp } = localRequire('firebase-admin/app');
 const { getAuth } = localRequire('firebase-admin/auth');
 const { getFirestore, FieldValue } = localRequire('firebase-admin/firestore');
 const { criarEndpointAssistente } = require(path.join(root, 'functions/lib/assistente/http.js'));
+const { gerarRespostaDocumental } = require(path.join(root, 'functions/lib/assistente/resposta-documental.js'));
 let app;
 function localDependencies() {
     const checks = {
         auth: process.env.FIREBASE_AUTH_EMULATOR_HOST === '127.0.0.1:9099',
         firestore: process.env.FIRESTORE_EMULATOR_HOST === '127.0.0.1:8080',
-        project: process.env.GCLOUD_PROJECT === 'tcc-ia-d8891',
+        project: process.env.GCLOUD_PROJECT === 'demo-sylvinho-render-poc',
     };
     evidence.emulatorChecks = checks;
     evidence.configured = {
@@ -32,10 +33,10 @@ function localDependencies() {
     if (!app) {
         // O SDK Firestore nao aceita credential artesanal. Emuladores usam
         // somente o projeto explicito; o runner isola HOME e bloqueia ADC/rede.
-        app = initializeApp({ projectId: 'tcc-ia-d8891' }, 'sylvinho-local-e2e');
+        app = initializeApp({ projectId: 'demo-sylvinho-render-poc' }, 'sylvinho-local-e2e');
     }
 }
-const evidence = { tokenValidado: false, geracoes: 0, ativoNoContexto: false, inativoNoContexto: false };
+const evidence = { tokenValidado: false, geracoes: 0, ativoNoContexto: false, inativoNoContexto: false, resultados: [] };
 function save() {
     fs.writeFileSync(path.join(root, '.cache/local-e2e/function-evidence.json'), JSON.stringify(evidence, null, 2));
 }
@@ -51,13 +52,17 @@ exports.perguntarAssistente = onRequest({ region: 'southamerica-east1', cors: fa
     } },
     firestore: getFirestore(app),
     serverTimestamp: () => FieldValue.serverTimestamp(),
-    gerarResposta: async (prompt) => {
+    gerarResposta: async (pergunta, chunks) => {
+        const contexto = chunks.map((chunk) => chunk.conteudo).join('\n');
         evidence.geracoes++;
-        evidence.ativoNoContexto = prompt.includes('MARCADOR_ATIVO_MATRICULA');
-        evidence.inativoNoContexto = prompt.includes('MARCADOR_INATIVO_PROIBIDO');
+        evidence.ativoNoContexto = contexto.includes('MARCADOR_ATIVO_MATRICULA');
+        evidence.inativoNoContexto = contexto.includes('MARCADOR_INATIVO_PROIBIDO');
+        if (evidence.inativoNoContexto) throw new Error('INVALID_LOCAL_CONTEXT');
+        const resultado = gerarRespostaDocumental(pergunta, chunks);
+        evidence.resultados.push({ status: resultado.status, ativoNoContexto: evidence.ativoNoContexto,
+            inativoNoContexto: evidence.inativoNoContexto });
         save();
-        if (!evidence.ativoNoContexto || evidence.inativoNoContexto) throw new Error('INVALID_LOCAL_CONTEXT');
-        return 'Resposta local de teste baseada no contexto recuperado.';
+        return resultado.resposta;
     },
     };
 }, () => 'http://127.0.0.1:5000'));
