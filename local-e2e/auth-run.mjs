@@ -250,6 +250,27 @@ try {
     if (documental) await validarRecuperacaoDocumental({ page, context, envio: primeiroEnvio, uid: uidA, states });
     if (documental) await validarConfiabilidadeNoNavegador({ page, context, uid: uidA, states });
     if (academica) await validarAusenciaAcademica(page, uidA, states);
+    // Conteúdo acadêmico: página raiz e Avisos/Serviços não oferecem atendimento real.
+    const demoTab = await context.newPage();
+    const demoRequests = [];
+    demoTab.on('request', request => demoRequests.push(request.url()));
+    await demoTab.goto(origin + '/Logado/Avisos/avisos.html');
+    await demoTab.locator('#noticeList').filter({ hasText: 'Fixture de demonstração' }).waitFor();
+    assert.equal(demoRequests.some(url => url.includes(':8080/') || url.includes('firestore.googleapis.com')), false);
+    await demoTab.goto(origin + '/Logado/Servi%C3%A7os/servicos.html');
+    assert.equal(await demoTab.locator('#whatsapp-link').getAttribute('href'), '../Home/home.html');
+    await demoTab.goto(origin + '/');
+    assert.equal(await demoTab.locator('.academic-demo-banner').isVisible(), true);
+    for (const width of [1280, 390]) {
+        await demoTab.setViewportSize({ width, height: 900 });
+        for (const path of ['/', '/Logado/Avisos/avisos.html', '/Logado/Servi%C3%A7os/servicos.html']) {
+            await demoTab.goto(origin + path);
+            assert.equal(await demoTab.locator('.academic-demo-banner').isVisible(), true);
+            assert.equal(await demoTab.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, 'Layout demo: ' + path);
+        }
+    }
+    await demoTab.close();
+    states.push('raiz identificada; Avisos fictícios sem consultas ao Firestore; Serviços aponta apenas ao chat web');
     // Navegação real pelos links, tema persistido e layout desktop/mobile.
     await page.locator('#settingsLink').click();
     await page.waitForFunction(() => { const control = document.querySelector('#theme'); return control && !control.disabled; });

@@ -98,6 +98,15 @@ async function start() {
     const boot = ++startVersion;
     stopListeners();
     login.hidden = true;
+    if (document.documentElement?.dataset?.demoAcademica === 'true') {
+        const item = document.createElement('li');
+        item.textContent = 'Fixture de demonstração: encontro imaginário no Salão Cometa. Não é um evento da escola.';
+        list.replaceChildren(item);
+        document.querySelector('#page-description').textContent = 'Somente conteúdo fictício; a coleção institucional não é consultada.';
+        showStatus('Avisos institucionais indisponíveis nesta demonstração.');
+        retry.hidden = true;
+        return;
+    }
     showStatus('Carregando avisos...', { loading: true });
 
     try {
