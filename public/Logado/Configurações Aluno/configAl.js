@@ -17,9 +17,9 @@ const firebaseConfig = {
 
 // Dados gravados em users/{uid}.preferencias:
 // tema: 'dark' ou 'light'; avisosEmail: boolean; atualizadoEm: Timestamp.
-// O futuro serviço de e-mails deve verificar avisosEmail === true antes de
-// enviar cada aviso e obter o endereço verificado pelo Firebase Authentication.
-// Esta tela salva consentimento; não dispara campanhas nem configura SMTP.
+// O serviço de e-mails verifica avisosEmail === true antes de enviar cada aviso
+// e obtém o endereço cadastrado no Firebase Authentication, para ambos os cargos.
+// Esta tela salva a preferência; as Cloud Functions fazem o envio pelo Resend.
 // Ausência de administradores/{UID}.ativo == true significa acesso de aluno.
 // A verificação vem do servidor; não se concede cargo por campos do perfil.
 

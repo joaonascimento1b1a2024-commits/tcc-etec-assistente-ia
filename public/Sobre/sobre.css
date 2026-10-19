@@ -1,0 +1,241 @@
+/* Reutiliza o cabeçalho da landing page e as preferências do tema compartilhado. */
+:root {
+    color-scheme: dark;
+    --text: #f6f6f6;
+    --muted: #c8c8ce;
+    --panel: #111114ed;
+    --border: #35353b;
+    --accent: #ff6565;
+}
+
+body {
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+}
+
+.skip-link {
+    position: fixed;
+    top: -100px;
+    left: 16px;
+    z-index: 10;
+    padding: 10px 16px;
+    border-radius: 6px;
+    color: #fff;
+    background: #b00000;
+}
+
+.skip-link:focus {
+    top: 12px;
+}
+
+.nav-link.active,
+.nav-link:hover {
+    color: var(--accent);
+}
+
+.about-content {
+    max-width: 1184px;
+    margin: 0 auto;
+    padding: clamp(36px, 6vw, 72px) 32px 24px;
+}
+
+.about-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 64px);
+}
+
+.eyebrow {
+    margin: 0 0 12px;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.25;
+}
+
+h1 {
+    max-width: 580px;
+    margin: 0;
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    letter-spacing: -0.035em;
+}
+
+h1 span {
+    color: var(--accent);
+}
+
+.intro-description {
+    max-width: 580px;
+    margin: 24px 0 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.project-purpose {
+    border-left: 3px solid var(--accent);
+    padding-left: 24px;
+}
+
+.project-purpose h2 {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+}
+
+.project-purpose p {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.project-purpose p:last-child {
+    margin-bottom: 0;
+}
+
+.team {
+    margin-top: clamp(48px, 7vw, 80px);
+}
+
+.section-heading {
+    max-width: 720px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: clamp(1.65rem, 3vw, 2rem);
+}
+
+.section-heading > p:last-child {
+    margin: 14px 0 0;
+    color: var(--muted);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+}
+
+.member-initials {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.team-card h3 {
+    margin: 20px 0 12px;
+    font-size: 1.1rem;
+}
+
+.member-email {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    max-width: 100%;
+    margin-top: auto;
+    color: var(--muted);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+    text-underline-offset: 4px;
+}
+
+.member-email:hover,
+.member-email:focus-visible {
+    color: var(--accent);
+}
+
+.about-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.about-footer p {
+    margin: 0;
+}
+
+.about-footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--text);
+    text-underline-offset: 4px;
+}
+
+@media (max-width: 1000px) {
+    .team-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .about-intro {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .about-content {
+        padding: 36px 20px 24px;
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-card {
+        padding: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-link,
+    .btn-acessar {
+        transition: none;
+    }
+
+    .btn-acessar:hover {
+        transform: none;
+    }
+}

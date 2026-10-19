@@ -26,7 +26,10 @@
 ## Servidor, segurança e testes
 
 - `firestore.rules`: autoriza as operações sobre perfis, conversas, avisos e administradores. O cargo não vem de campos editáveis em `users`.
-- `functions/src/index.ts`: entrada das Cloud Functions; atualmente define apenas o limite de instâncias, sem endpoints de IA ou envio de e-mails.
+- `functions/src/index.ts`: entrada das Cloud Functions, com o endpoint do assistente e os gatilhos de criação e envio dos e-mails de avisos.
+- `functions/src/avisos/`: fila de notificações, verificação da preferência e envio individual pelo Resend.
+- `tests/avisos-email.test.mjs`: valida destinatários, preferências, falhas e repetição de eventos com serviços simulados.
+- `AVISOS-EMAIL.md`: configuração do Resend, publicação das funções e acompanhamento das entregas.
 - `tests/admin-routing.test.mjs`: verifica os redirecionamentos com sessão e interface simuladas, sem acessar o Firebase.
 - `tests/admin-rules.test.mjs`: exercita as regras nos emuladores locais, usando um projeto `demo-`, sem dados de produção.
 - `ADMINISTRADORES.md`: instruções para publicar as regras, cadastrar o primeiro administrador e executar os testes.

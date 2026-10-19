@@ -6,7 +6,7 @@ O site usa o Firebase Authentication para identificar a pessoa e o Cloud Firesto
 
 1. Publique as regras de `firestore.rules` no **Firestore Database → Rules → Publish**, substituindo as regras anteriores deste projeto. Não use regras de teste que liberam todo o banco.
 2. Publique também os arquivos atualizados de `public` se estiver usando o site hospedado. Alterar os arquivos locais não atualiza automaticamente o Firebase.
-3. Não é necessário publicar Cloud Functions para estas funcionalidades. Não publicamos alterações nem promovemos contas automaticamente durante o desenvolvimento.
+3. A gestão de cargos e o mural funcionam sem Cloud Functions. O envio de avisos por e-mail exige as funções e a configuração descritas em [AVISOS-EMAIL.md](AVISOS-EMAIL.md). Não publicamos alterações nem promovemos contas automaticamente durante o desenvolvimento.
 
 Alternativa pelo terminal, dentro da pasta do projeto, após conferir a conta e o projeto selecionados:
 
@@ -39,7 +39,7 @@ Edite **ativo** para **false** no documento correspondente. As regras passam a n
 
 ## Publicar avisos
 
-Em **Criar avisos**, preencha título, categoria e descrição e confirme em **Publicar aviso**. Os avisos usam a coleção `avisos` e aparecem na página já existente. Isso não envia e-mails: o serviço de disparo ainda não foi implementado.
+Em **Criar avisos**, preencha título, categoria e descrição e confirme em **Publicar aviso**. Os avisos usam a coleção `avisos` e aparecem na página já existente. Com o serviço de e-mail configurado e publicado, alunos e administradores que ativaram **Notificações** também recebem o aviso no e-mail da conta. A publicação no mural não aguarda a entrega dos e-mails. Consulte [AVISOS-EMAIL.md](AVISOS-EMAIL.md) para configurar o Resend e publicar as funções.
 
 ## Editar e excluir avisos
 

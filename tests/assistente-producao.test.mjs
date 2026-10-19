@@ -173,8 +173,12 @@ function fixture({origins = "https://permitido.example", sdkError,
         return {uid: "alice"};
     }};
     const params = {
-        defineSecret(name) {assert.equal(name, "GEMINI_API_KEY"); return secret;},
+        defineSecret(name) {
+            if (name === "RESEND_API_KEY") return {value() {throw new Error("Envio inesperado");}};
+            assert.equal(name, "GEMINI_API_KEY"); return secret;
+        },
         defineString(name, options) {
+            if (name.startsWith("AVISOS_")) return {value: () => options.default};
             assert.equal(name, "ASSISTENTE_CORS_ORIGINS");
             assert.equal(options.default, "");
             return {value: () => origins};
@@ -187,6 +191,7 @@ function fixture({origins = "https://permitido.example", sdkError,
         "firebase-functions/v2/https": {onRequest(options, callback) {
             calls.options = options; return callback;
         }},
+        "firebase-functions/v2/firestore": {onDocumentCreated: (_, callback) => callback},
         "firebase-functions/params": params,
         "firebase-admin/app": {getApps: () => apps, initializeApp() {calls.init++;}},
         "firebase-admin/auth": {getAuth() {calls.authFactory++; return auth;}},
@@ -203,6 +208,8 @@ function fixture({origins = "https://permitido.example", sdkError,
                 },
             }}))},
         "./assistente/http.js": http,
+        "./avisos/email.js": require(fileURLToPath(new URL("avisos/email.js", raiz))),
+        "./avisos/notificacoes.js": require(fileURLToPath(new URL("avisos/notificacoes.js", raiz))),
     };
     const exports = {};
     vm.runInNewContext(readFileSync(new URL("index.js", raiz), "utf8"),
@@ -232,9 +239,11 @@ function fixture({origins = "https://permitido.example", sdkError,
     return {calls, saved, secret, exports, request};
 }
 
-test("entrypoint exporta somente endpoint e vincula secret/regiao/maxInstances", () => {
+test("entrypoint preserva endpoint e seus secret/regiao/maxInstances junto aos avisos", () => {
     const s = fixture();
-    assert.deepEqual(Object.keys(s.exports), ["perguntarAssistente"]);
+    assert.deepEqual(Object.keys(s.exports).sort(), [
+        "enfileirarNotificacoesAviso", "enviarNotificacaoAviso", "perguntarAssistente",
+    ]);
     assert.deepEqual(dados(s.calls.globals), {maxInstances: 10});
     assert.equal(s.calls.options.region, "southamerica-east1");
     assert.equal(s.calls.options.cors, false);

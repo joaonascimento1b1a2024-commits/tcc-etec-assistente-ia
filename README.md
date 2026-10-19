@@ -89,6 +89,9 @@ Usuários autenticados poderão consultar suas conversas anteriores com o assist
 
 Exibição de comunicados oficiais, eventos, prazos e outras informações importantes disponibilizadas pela secretaria.
 
+Novos avisos também podem ser enviados por e-mail a alunos e administradores com
+notificações ativadas. A ativação do serviço está descrita em [AVISOS-EMAIL.md](AVISOS-EMAIL.md).
+
 ### Perfil e Configurações
 
 Permite consultar e alterar informações do perfil, além de configurar preferências como tema da interface e notificações.
