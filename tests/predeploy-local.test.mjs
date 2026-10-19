@@ -82,5 +82,5 @@ test('Sem isolamento concluido, configuracao do cliente permanece fechada sem UR
     const source = read('public/Logado/Home/assistente-config.js');
     const { assistenteConfig } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
     assert.equal(assistenteConfig.endpoint, '');
-    assert.equal(assistenteConfig.timeoutMs, 30000);
+    assert.equal(assistenteConfig.timeoutMs, 120000);
 });

@@ -1,0 +1,57 @@
+{
+  "versao": "sylvinho-demo-academica-v1",
+  "aviso": "Demonstração acadêmica — dados fictícios — não é atendimento oficial da escola.",
+  "documentos": [
+    {
+      "id": "demo-academica-v1-matricula",
+      "dados": {
+        "ativo": true,
+        "fixtureDemo": true,
+        "versaoDocumento": "sylvinho-demo-academica-v1",
+        "documentoId": "fixture-inventada-matricula",
+        "titulo": "Matrícula fictícia",
+        "categoria": "matricula",
+        "tipoConteudo": "procedimento",
+        "secao": "Cenário inteiramente inventado para demonstração",
+        "termosBusca": "matricula",
+        "conteudo": "Nesta demonstração fictícia, a matrícula é solicitada no Balcão Aurora com o código inventado AZUL-42.",
+        "paginaInicial": 1,
+        "paginaFinal": 1
+      }
+    },
+    {
+      "id": "demo-academica-v1-declaracao",
+      "dados": {
+        "ativo": true,
+        "fixtureDemo": true,
+        "versaoDocumento": "sylvinho-demo-academica-v1",
+        "documentoId": "fixture-inventada-declaracao",
+        "titulo": "Declaração fictícia",
+        "categoria": "declaracao",
+        "tipoConteudo": "procedimento",
+        "secao": "Cenário inteiramente inventado para demonstração",
+        "termosBusca": "declaracao",
+        "conteudo": "Nesta demonstração fictícia, a declaração é solicitada no Portal Cometa com o código inventado LUZ-17.",
+        "paginaInicial": 1,
+        "paginaFinal": 1
+      }
+    },
+    {
+      "id": "demo-academica-v1-biblioteca",
+      "dados": {
+        "ativo": true,
+        "fixtureDemo": true,
+        "versaoDocumento": "sylvinho-demo-academica-v1",
+        "documentoId": "fixture-inventada-biblioteca",
+        "titulo": "Biblioteca fictícia",
+        "categoria": "biblioteca",
+        "tipoConteudo": "procedimento",
+        "secao": "Cenário inteiramente inventado para demonstração",
+        "termosBusca": "biblioteca",
+        "conteudo": "Nesta demonstração fictícia, a biblioteca empresta livros por sete dias imaginários mediante o cartão inventado ESTRELA-9.",
+        "paginaInicial": 1,
+        "paginaFinal": 1
+      }
+    }
+  ]
+}

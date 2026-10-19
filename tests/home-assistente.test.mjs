@@ -10,7 +10,7 @@ const clientSource = readFileSync(new URL('../public/Logado/Home/assistente-clie
 const { perguntarAssistente: clienteReal } = await import(`data:text/javascript;base64,${Buffer.from(clientSource).toString('base64')}`);
 const pendingSource = readFileSync(new URL('../public/Logado/Home/envio-pendente.js', import.meta.url), 'utf8');
 const pendingModule = await import(`data:text/javascript;base64,${Buffer.from(pendingSource).toString('base64')}`);
-function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, appendFailOnce, realClient, pendingRaw, readBlocked = false, removeBlocked = false, confirmed = true, endpoint = 'http://localhost/mock' } = {}) {
+function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, appendFailOnce, realClient, pendingRaw, readBlocked = false, removeBlocked = false, confirmed = true, timeoutMs = 30000, endpoint = 'http://localhost/mock' } = {}) {
     const elements = new Map();
     const events = new Map();
     let navigations = 0, confirmations = 0, allocations = 0;
@@ -66,7 +66,7 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
                 inspecionarEnvioPendente: (uid) => pendingModule.inspecionarEnvioPendente(uid, storage),
                 descartarEnvioPendente: (uid) => pendingModule.descartarEnvioPendente(uid, storage),
             };
-            if (path.endsWith('assistente-config.js')) return { resolverAssistenteConfig: () => ({ endpoint }) };
+            if (path.endsWith('assistente-config.js')) return { resolverAssistenteConfig: () => ({ endpoint, timeoutMs }) };
             assert.ok(path.endsWith('assistente-client.js'), `Import inesperado: ${path}`);
             return { perguntarAssistente: async (options) => {
                 requests++;
@@ -300,4 +300,19 @@ test('recuperação de conversa excluída não cria novamente nem chama backend'
     assert.equal(run.pending().messageId, original.messageId);
     assert.equal(run.allocations(), 1);
     assert.match(run.element('#chatStatus').textContent, /Conversa excluída/);
+});
+
+test('espera de 120 segundos informa retomada do servidor e mantém o envio único', async () => {
+    let finish;
+    const waiting = new Promise(resolve => { finish = resolve; });
+    const run = scenario({ timeoutMs: 120000, waiting });
+    const sent = run.send();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.match(run.element('#chatStatus').textContent, /até dois minutos para iniciar/);
+    assert.equal(run.counts().appends, 1);
+    assert.equal(run.allocations(), 1);
+    assert.equal(run.element('#messageInput').disabled, true);
+    finish();
+    await sent;
+    assert.equal(run.persisted.length, 2);
 });

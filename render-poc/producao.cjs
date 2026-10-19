@@ -9,6 +9,13 @@ const OFFICIAL_ORIGINS = Object.freeze([
     'https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com',
 ]);
 
+function lerModoDemonstracao(env) {
+    const flag = env.SYLVINHO_DEMO_ACADEMICA;
+    if (flag !== undefined && !['true', 'false'].includes(flag))
+        throw new Error('DEMO_FLAG_INVALID');
+    return flag === 'true';
+}
+
 function validarPlanoProducao(plan) {
     if (!plan || plan.projectId !== PROJECT_ID) throw new Error('PRODUCTION_PROJECT_INVALID');
     if (plan.databaseId !== DATABASE_ID) throw new Error('PRODUCTION_DATABASE_INVALID');
@@ -60,6 +67,6 @@ function lerPlanoProducao(env) {
 }
 
 module.exports = {
-    lerPlanoProducao, validarPlanoProducao, validarOrigensProducao,
+    lerPlanoProducao, validarPlanoProducao, validarOrigensProducao, lerModoDemonstracao,
     PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, SERVICE_ACCOUNT_EMAIL, OFFICIAL_ORIGINS,
 };

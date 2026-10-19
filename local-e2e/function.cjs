@@ -14,6 +14,8 @@ const { getAuth } = localRequire('firebase-admin/auth');
 const { getFirestore, FieldValue } = localRequire('firebase-admin/firestore');
 const { criarEndpointAssistente } = require(path.join(root, 'functions/lib/assistente/http.js'));
 const { gerarRespostaDocumental } = require(path.join(root, 'functions/lib/assistente/resposta-documental.js'));
+const { criarLeitorDemonstracao, lerModoDemonstracao } = require(path.join(root, 'render-poc/demonstracao.cjs'));
+const academica = lerModoDemonstracao(process.env);
 let app;
 function localDependencies() {
     const checks = {
@@ -51,12 +53,16 @@ exports.perguntarAssistente = onRequest({ region: 'southamerica-east1', cors: fa
         return decoded;
     } },
     firestore: getFirestore(app),
+    ...(academica ? { recuperarConhecimento: criarLeitorDemonstracao(getFirestore(app)) } : {}),
     serverTimestamp: () => FieldValue.serverTimestamp(),
     gerarResposta: async (pergunta, chunks) => {
         const contexto = chunks.map((chunk) => chunk.conteudo).join('\n');
         evidence.geracoes++;
-        evidence.ativoNoContexto = contexto.includes('MARCADOR_ATIVO_MATRICULA');
+        evidence.ativoNoContexto = contexto.includes(academica ? 'AZUL-42' : 'MARCADOR_ATIVO_MATRICULA');
         evidence.inativoNoContexto = contexto.includes('MARCADOR_INATIVO_PROIBIDO');
+        evidence.academica = academica;
+        evidence.idsContexto = chunks.map(chunk => chunk.id);
+        if (contexto.includes('MARCADOR_FORA_SELECAO')) throw new Error('ACADEMIC_ISOLATION_FAILED');
         if (evidence.inativoNoContexto) throw new Error('INVALID_LOCAL_CONTEXT');
         const resultado = gerarRespostaDocumental(pergunta, chunks);
         evidence.resultados.push({ status: resultado.status, ativoNoContexto: evidence.ativoNoContexto,

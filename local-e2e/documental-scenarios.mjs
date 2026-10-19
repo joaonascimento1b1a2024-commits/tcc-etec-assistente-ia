@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const { documentos: fixturesAcademicas } = createRequire(import.meta.url)('../demo-academica/fixtures.json');
 
 const project = 'demo-sylvinho-render-poc';
 export const endpointDocumental = `http://127.0.0.1:5001/${project}/southamerica-east1/perguntarAssistente`;
@@ -15,7 +17,16 @@ function encode(value) {
     if (Array.isArray(value)) return { arrayValue: { values: value.map(encode) } };
     return { mapValue: { fields: Object.fromEntries(Object.entries(value).map(([key, data]) => [key, encode(data)])) } };
 }
-export async function prepararFixturesDocumentais() {
+export async function prepararFixturesDocumentais(academica = false) {
+    if (academica) {
+        const docs = [...fixturesAcademicas, { id: "fora-selecao", dados: { ativo: true, titulo: "Transporte interplanetario",
+            conteudo: "MARCADOR_FORA_SELECAO: transporte interplanetario indisponível fora da seleção.", documentoId: "fixture-nao-autorizada" } }];
+        const response = await local(documentsDocumentais + ":commit", { method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer owner" }, body: JSON.stringify({ writes: docs.map(doc => ({ update: {
+                name: "projects/" + project + "/databases/(default)/documents/conhecimento/" + doc.id, fields: encode(doc.dados).mapValue.fields,
+            } })) }) });
+        assert.equal(response.status, 200); return;
+    }
     const fixture = ativo => ({ documentoId: 'documento-ficticio', versaoDocumento: 'teste-local', ativo,
         tipoConteudo: 'procedimento', titulo: 'Matricula local ficticia', categoria: 'matricula',
         termosBusca: ['matricula'], secao: 'Teste local', paginaInicial: 1, paginaFinal: 1,
@@ -29,7 +40,7 @@ export async function prepararFixturesDocumentais() {
         } })) }) });
     assert.equal(response.status, 200);
 }
-export async function enviarPerguntaDocumental(page, pergunta = 'Como faço minha matrícula?', insuficiente = false) {
+export async function enviarPerguntaDocumental(page, pergunta = 'Como faço minha matrícula?', insuficiente = false, academica = false) {
     await page.locator('#messageInput').fill(pergunta);
     const waiting = page.waitForResponse(r => r.url() === endpointDocumental && r.request().method() === 'POST');
     await page.locator('#messageForm button[type=submit]').click();
@@ -42,7 +53,7 @@ export async function enviarPerguntaDocumental(page, pergunta = 'Como faço minh
     const data = await response.json();
     assert.deepEqual(Object.keys(data), ['resposta']);
     if (insuficiente) assert.match(data.resposta, /Nao ha informacao suficiente/);
-    else { assert.match(data.resposta, /MARCADOR_ATIVO_MATRICULA/); assert.match(data.resposta, /documento-ficticio/); }
+    else { assert.match(data.resposta, academica ? /AZUL-42/ : /MARCADOR_ATIVO_MATRICULA/); assert.match(data.resposta, academica ? /fixture-inventada-matricula/ : /documento-ficticio/); }
     assert.doesNotMatch(data.resposta, /MARCADOR_INATIVO_PROIBIDO/);
     await page.waitForFunction(() => document.querySelector('#chatStatus')?.textContent === 'Conversa atualizada.');
     assert.equal(await page.locator('.message-row.bot').count(), 1);
@@ -99,4 +110,24 @@ export async function validarFunctionOutroUid(page, conversationId) {
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         body: JSON.stringify({ conversationId, messageId: 'message-outro-uid-000001', pergunta: 'Como faço minha matrícula?' }) });
     assert.equal(response.status, 404);
+}
+
+export async function validarAusenciaAcademica(page, uid, states) {
+    const home = 'http://127.0.0.1:5000/Logado/Home/home.html';
+    try {
+        const removed = await local(documentsDocumentais + ':commit', { method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer owner' },
+            body: JSON.stringify({ writes: fixturesAcademicas.map(doc => ({ delete: 'projects/' + project +
+                '/databases/(default)/documents/conhecimento/' + doc.id })) }) });
+        assert.equal(removed.status, 200);
+        await page.goto(home);
+        await page.waitForFunction(() => document.querySelector('#chatStatus')?.textContent === 'As mensagens são salvas na sua conta.');
+        const envio = await enviarPerguntaDocumental(page, 'Como faço minha matrícula?', true, true);
+        assert.doesNotMatch(envio.resposta, /AZUL-42|MARCADOR_FORA_SELECAO/);
+        await page.evaluate(async ({ uid, id }) => {
+            const sdk = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+            await sdk.deleteDoc(sdk.doc(sdk.getFirestore(), 'users', uid, 'conversas', id));
+        }, { uid, id: envio.body.conversationId });
+        states.push('sem fixtures autorizadas: insuficiência, sem consulta ou fallback para documento ativo fora da seleção');
+    } finally { await prepararFixturesDocumentais(true); }
 }

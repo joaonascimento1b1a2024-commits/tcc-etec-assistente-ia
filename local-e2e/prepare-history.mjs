@@ -3,8 +3,9 @@ import { resolve } from 'node:path';
 import { prepare as prepareAuth, stage as authStage, root } from './prepare-auth.mjs';
 export { root };
 export const stage = resolve(root, '.cache/local-e2e');
-export function prepare({ authMode = 'anonymous' } = {}) {
+export function prepare({ authMode = 'anonymous', academica = false } = {}) {
     if (!['anonymous', 'password'].includes(authMode)) throw new Error('LOCAL_AUTH_MODE_REQUIRED');
+    if (typeof academica !== 'boolean') throw new Error('LOCAL_ACADEMIC_MODE_INVALID');
     prepareAuth();
     mkdirSync(stage, { recursive: true });
     cpSync(resolve(authStage, 'public'), resolve(stage, 'public'), { recursive: true });
@@ -28,7 +29,8 @@ export function prepare({ authMode = 'anonymous' } = {}) {
     config.emulators.functions = { host: '127.0.0.1', port: 5001 };
     mkdirSync(resolve(stage, 'functions'), { recursive: true });
     cpSync(resolve(root, 'local-e2e/function.cjs'), resolve(stage, 'functions/index.cjs'));
-    writeFileSync(resolve(stage, 'functions/.env.local'), `SYLVINHO_LOCAL_E2E=1\nNODE_OPTIONS=--require "${resolve(root, 'local-e2e/network-guard.cjs').replaceAll('\\', '/')}"\n`);
+    const demoEnv = academica ? 'SYLVINHO_DEMO_ACADEMICA=true\n' : '';
+    writeFileSync(resolve(stage, 'functions/.env.local'), `SYLVINHO_LOCAL_E2E=1\n${demoEnv}NODE_OPTIONS=--require "${resolve(root, 'local-e2e/network-guard.cjs').replaceAll('\\', '/')}"\n`);
     if (!existsSync(resolve(stage, 'functions/node_modules')))
         symlinkSync(resolve(root, 'functions/node_modules'), resolve(stage, 'functions/node_modules'), 'junction');
     const dependencies = JSON.parse(readFileSync(resolve(root, 'functions/package.json'), 'utf8')).dependencies;

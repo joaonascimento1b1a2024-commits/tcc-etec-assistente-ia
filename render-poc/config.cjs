@@ -1,7 +1,7 @@
 'use strict';
 
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
-const { lerPlanoProducao, validarPlanoProducao, validarOrigensProducao } = require('./producao.cjs');
+const { lerPlanoProducao, validarPlanoProducao, validarOrigensProducao, lerModoDemonstracao } = require('./producao.cjs');
 const { lerConfiguracaoDocumental, validarConfiguracaoDocumental } = require('./documental.cjs');
 const DEMO_PROJECT = 'demo-sylvinho-render-poc';
 const localHost = (value) => typeof value === 'string' &&
@@ -12,6 +12,8 @@ function validarConfiguracao(config) {
     if (!config || !['health', 'emulator', 'auth-diagnostic', 'firestore-diagnostic', 'rag-diagnostic',
         'production-locked', 'documental', 'documental-emulator'].includes(config.mode))
         throw new Error('POC_MODE_INVALID');
+    if (config.demonstracao !== undefined && typeof config.demonstracao !== 'boolean') throw new Error('DEMO_FLAG_INVALID');
+    if (config.demonstracao && !['documental', 'documental-emulator'].includes(config.mode)) throw new Error('DEMO_REQUIRES_DOCUMENTAL_MODE');
     if (typeof config.origins !== 'string') throw new Error('INVALID_CORS_CONFIGURATION');
     origensPermitidas(config.origins);
     if (!Number.isInteger(config.port) || config.port < 1 || config.port > 65535) throw new Error('PORT_INVALID');
@@ -21,11 +23,14 @@ function validarConfiguracao(config) {
     if (production) validarOrigensProducao(config.origins);
     if (config.mode === 'documental') return validarConfiguracaoDocumental(config);
     return Object.freeze({ mode: config.mode, origins: config.origins, port: config.port, host,
+        ...(config.demonstracao ? { demonstracao: true } : {}),
         ...(production ? { production } : {}) });
 }
 
 function lerConfiguracao(env = process.env) {
     const mode = env.SYLVINHO_POC_MODE || 'health';
+    const demonstracao = lerModoDemonstracao(env);
+    if (demonstracao && !['documental', 'documental-emulator'].includes(mode)) throw new Error('DEMO_REQUIRES_DOCUMENTAL_MODE');
     if (!['health', 'emulator', 'auth-diagnostic', 'firestore-diagnostic', 'rag-diagnostic',
         'production-locked', 'documental', 'documental-emulator'].includes(mode))
         throw new Error('POC_MODE_INVALID');
@@ -49,7 +54,7 @@ function lerConfiguracao(env = process.env) {
         throw new Error('LOCAL_EMULATORS_REQUIRED');
     if (render && emulatorConfigured) throw new Error('EMULATORS_FORBIDDEN_ON_RENDER');
     return validarConfiguracao({
-        mode,
+        mode, ...(demonstracao ? { demonstracao: true } : {}),
         origins: env.ASSISTENTE_CORS_ORIGINS || '',
         port: env.PORT === undefined ? 10000 : Number(env.PORT),
         host: mode === 'health' ? '0.0.0.0' : '127.0.0.1',

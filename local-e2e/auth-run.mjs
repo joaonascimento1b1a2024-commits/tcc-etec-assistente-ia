@@ -9,8 +9,10 @@ import { prepare, root, stage as authStage } from './prepare-auth.mjs';
 import { prepare as prepareHistory, stage as historyStage } from './prepare-history.mjs';
 import { validarPendenciasNoNavegador, validarConfiabilidadeNoNavegador } from './pending-regressions.mjs';
 import { endpointDocumental, prepararFixturesDocumentais, enviarPerguntaDocumental,
-    validarRecuperacaoDocumental, validarFunctionOutroUid } from './documental-scenarios.mjs';
+    validarRecuperacaoDocumental, validarFunctionOutroUid, validarAusenciaAcademica } from './documental-scenarios.mjs';
 const documental = process.argv.includes('--documental');
+const academica = process.argv.includes('--academica');
+if (academica && !documental) throw new Error('ACADEMIC_REQUIRES_DOCUMENTAL');
 const stage = documental ? historyStage : authStage;
 
 
@@ -21,7 +23,7 @@ const { javaHome, cli } = localizarFerramentas();
 const runtimeModules = localizarPlaywright();
 const localRequire = createRequire(resolve(runtimeModules, 'package.json'));
 const { chromium } = localRequire('playwright');
-if (documental) prepareHistory({ authMode: 'password' });
+if (documental) prepareHistory({ authMode: 'password', academica });
 else prepare({ authMode: 'password' });
 const home = resolve(stage, `isolated-home-auth-${Date.now()}`);
 mkdirSync(home, { recursive: true });
@@ -106,7 +108,7 @@ try {
             await delay(1000);
         }
         assert.ok(logs.includes(endpointDocumental), 'Function demo deve estar pronta');
-        await prepararFixturesDocumentais();
+        await prepararFixturesDocumentais(academica);
         states.push('Function documental pronta; fixtures ativa/inativa gravadas somente no Firestore Emulator');
     }
     let primeiroEnvio;
@@ -194,7 +196,7 @@ try {
     async function sendQuestion(insuficiente = false) {
         if (documental) {
             const envio = await enviarPerguntaDocumental(page,
-                insuficiente ? 'Qual procedimento para transporte interplanetario?' : 'Como faço minha matrícula?', insuficiente);
+                insuficiente ? 'Qual procedimento para transporte interplanetario?' : 'Como faço minha matrícula?', insuficiente, academica);
             if (!primeiroEnvio) primeiroEnvio = envio;
             return envio.body.conversationId;
         }
@@ -247,6 +249,7 @@ try {
     states.push('login A: senha inválida rejeitada; UID consistente; histórico reaberto; sessão restaurada em reload, nova aba e contexto recriado com IndexedDB');
     if (documental) await validarRecuperacaoDocumental({ page, context, envio: primeiroEnvio, uid: uidA, states });
     if (documental) await validarConfiabilidadeNoNavegador({ page, context, uid: uidA, states });
+    if (academica) await validarAusenciaAcademica(page, uidA, states);
     // Navegação real pelos links, tema persistido e layout desktop/mobile.
     await page.locator('#settingsLink').click();
     await page.waitForFunction(() => { const control = document.querySelector('#theme'); return control && !control.disabled; });
@@ -270,6 +273,8 @@ try {
             else if (path.includes('home.html')) await homeReady();
             else await page.locator('.conversation-link').first().waitFor();
             assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+            assert.equal(await page.locator('.academic-demo-banner').isVisible(), true);
+            assert.match(await page.locator('.academic-demo-banner').innerText(), /não é atendimento oficial da escola/);
             const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
             assert.equal(overflow, false, 'Overflow horizontal: ' + path + ' @ ' + width);
             assert.ok(await page.locator('nav a').count() > 0);
@@ -357,7 +362,7 @@ try {
         const evidence = JSON.parse(readFileSync(resolve(stage, 'function-evidence.json'), 'utf8'));
         assert.equal(evidence.tokenValidado, true);
         assert.equal(evidence.uid, uidB);
-        assert.equal(evidence.geracoes, 4); // Inclui a resposta da regressão de limpeza local.
+        assert.equal(evidence.geracoes, academica ? 5 : 4); // Inclui a resposta da regressão de limpeza local.
         assert.equal(evidence.inativoNoContexto, false);
         assert.equal(evidence.resultados.at(-1).status, 'informacao_insuficiente');
     }
