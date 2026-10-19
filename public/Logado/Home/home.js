@@ -248,6 +248,7 @@ async function sendMessage(text) {
         if (!config.endpoint) throw Object.assign(new Error('Assistente ainda não configurado.'), { code: 'ENDPOINT_NAO_CONFIGURADO' });
         if (version !== sessionVersion) return;
         let envio = pendencias.carregarEnvioPendente(user.uid);
+        const primeiraTentativa = !envio;
         if (envio && envio.pergunta !== cleanText) {
             chatStatus.textContent = 'Existe uma pergunta pendente. Recarregue para recuperá-la antes de enviar outra.';
             return;
@@ -260,7 +261,7 @@ async function sendMessage(text) {
             pendencias.guardarEnvioPendente(user.uid, envio);
         }
         const id = await store.append(envio.conversationId, envio.pergunta, envio.messageId,
-            envio.enviadoEm, { create: envio.novaConversa });
+            envio.enviadoEm, { create: primeiraTentativa && envio.novaConversa });
         userSaved = true;
         envio.novaConversa = false;
         pendencias.guardarEnvioPendente(user.uid, envio);
@@ -290,11 +291,16 @@ async function sendMessage(text) {
         if (version !== sessionVersion) return;
         if (!confirmed.mensagens.some((message) => message.remetente === 'bot' && message.messageId === envio.messageId))
             throw new Error('Resposta ainda não confirmada no histórico.');
-        pendencias.concluirEnvioPendente(user.uid);
         messages.replaceChildren();
         for (const message of confirmed.mensagens)
             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
         chatStatus.textContent = 'Conversa atualizada.';
+        try {
+            pendencias.concluirEnvioPendente(user.uid);
+        } catch {
+            // A resposta já foi confirmada e exibida; cache não muda esse resultado.
+            chatStatus.textContent = 'Resposta confirmada e salva. Não foi possível limpar a pendência local. Recarregar reutilizará o mesmo identificador, sem duplicar a resposta.';
+        }
     } catch (error) {
         if (version !== sessionVersion) return;
         chatStatus.textContent = error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'

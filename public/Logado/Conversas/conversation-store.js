@@ -5,13 +5,18 @@ export async function createConversationStore(app, uid) {
     const sdk = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
     const db = sdk.getFirestore(app);
     const collection = sdk.collection(db, 'users', uid, 'conversas');
+    const reservas = new Set();
     const reference = (id) => {
         if (!/^[A-Za-z0-9]{20}$/.test(id)) throw new Error('Conversa inválida.');
         return sdk.doc(collection, id);
     };
 
     return {
-        reserve() { return sdk.doc(collection).id; },
+        reserve() {
+            const id = sdk.doc(collection).id;
+            reservas.add(id);
+            return id;
+        },
         // A consulta é restrita ao usuário; as regras também verificam essa propriedade.
         watch(onChange, onError) {
             return sdk.onSnapshot(
@@ -36,10 +41,16 @@ export async function createConversationStore(app, uid) {
                 !Number.isSafeInteger(enviadoEm) || enviadoEm < 0)
                 throw new Error('Identificador ou horário inválido.');
             const ref = id ? reference(id) : sdk.doc(collection);
+            // Permissão de criação só existe na primeira chamada desta reserva.
+            // Uma pendência restaurada não prova que o documento nunca existiu.
+            let podeCriar = !id || (create && reservas.delete(id));
             await sdk.runTransaction(db, async (transaction) => {
                 const snapshot = await transaction.get(ref);
-                if (id && !snapshot.exists() && !create)
+                if (!snapshot.exists() && !podeCriar)
                     throw new Error('Conversa excluída. Inicie uma nova mensagem.');
+                // Consumir também em retries do callback: uma exclusão concorrente
+                // nunca deve converter uma retomada em nova criação.
+                podeCriar = false;
                 const previous = snapshot.exists() ? snapshot.data() : null;
                 const items = previous?.mensagens || [];
                 const existing = items.filter((message) => message.messageId === messageId && message.remetente === 'user');

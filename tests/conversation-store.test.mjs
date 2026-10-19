@@ -107,3 +107,74 @@ test('exclusão limpa somente pendência da conversa removida', async () => {
     pendingId = id;
     await store.remove(id); assert.equal(cleared, 1);
 });
+
+function transactionalStore() {
+    const documents = new Map();
+    let retry, afterSet, sets = 0;
+    const sdk = {
+        getFirestore: () => 'db', collection: (_db, ...parts) => parts.join('/'),
+        doc: (collection, key = id) => ({ id: key, path: collection + '/' + key }),
+        serverTimestamp: () => 999,
+        runTransaction: async (_db, callback) => {
+            let writes = [];
+            const transaction = {
+                get: async ref => ({ exists: () => documents.has(ref.path), data: () => structuredClone(documents.get(ref.path)) }),
+                set: (ref, data) => writes.push(() => { sets++; documents.set(ref.path, structuredClone(data)); }),
+                update: (ref, data) => writes.push(() => documents.set(ref.path, { ...documents.get(ref.path), ...structuredClone(data) })),
+            };
+            await callback(transaction);
+            if (retry) { const action = retry; retry = null; action(documents); writes = []; await callback(transaction); }
+            writes.forEach(write => write());
+            if (afterSet) { const action = afterSet; afterSet = null; action(); }
+        },
+    };
+    const context = vm.createContext({ mockImport: async () => sdk });
+    vm.runInContext(source, context);
+    return { documents, create: () => context.createConversationStore('app', 'alice'),
+        retry: action => { retry = action; }, afterCommit: action => { afterSet = action; }, sets: () => sets };
+}
+
+test('reserva consumida não recria após commit com resposta perdida e exclusão em outra aba', async () => {
+    const s = transactionalStore(), store = await s.create();
+    const reserved = store.reserve(), mid = 'message-reliability-000001';
+    s.afterCommit(() => { throw new Error('ack perdido'); });
+    await assert.rejects(store.append(reserved, 'Pergunta', mid, 1, { create: true }), /ack perdido/);
+    assert.equal(s.sets(), 1);
+    s.documents.clear();
+    for (const current of [store, await s.create()]) {
+        await assert.rejects(current.append(reserved, 'Pergunta', mid, 1, { create: true }), /Conversa excluída/);
+    }
+    assert.equal(s.documents.size, 0);
+    assert.equal(s.sets(), 1);
+});
+
+test('recuperação com reserva antiga preserva resposta confirmada e deduplica pergunta', async () => {
+    const s = transactionalStore(), store = await s.create(), reserved = store.reserve();
+    const mid = 'message-reliability-000002';
+    await store.append(reserved, 'Pergunta', mid, 1, { create: true });
+    const saved = s.documents.get('users/alice/conversas/' + reserved);
+    saved.mensagens.push({ texto: 'Resposta confirmada', remetente: 'bot', messageId: mid });
+    const recovered = await s.create();
+    await recovered.append(reserved, 'Pergunta', mid, 1, { create: true });
+    assert.equal(saved.mensagens.length, 2);
+    assert.equal(s.documents.get('users/alice/conversas/' + reserved).mensagens.length, 2);
+    assert.equal(s.sets(), 1);
+});
+
+test('retry transacional não recria documento excluído após leitura existente', async () => {
+    const s = transactionalStore(), store = await s.create(), reserved = store.reserve();
+    s.documents.set('users/alice/conversas/' + reserved, { mensagens: [] });
+    s.retry(documents => documents.clear());
+    await assert.rejects(store.append(reserved, 'Pergunta', 'message-reliability-000003', 1, { create: true }), /Conversa excluída/);
+    assert.equal(s.documents.size, 0);
+    assert.equal(s.sets(), 0);
+});
+
+test('criação inicial legítima continua disponível com reserva ou ID automático', async () => {
+    const s = transactionalStore(), store = await s.create();
+    await store.append(store.reserve(), 'Pergunta', 'message-reliability-000004', 1, { create: true });
+    assert.equal(s.sets(), 1);
+    const next = transactionalStore();
+    await (await next.create()).append(null, 'Pergunta', 'message-reliability-000005', 1);
+    assert.equal(next.sets(), 1);
+});

@@ -33,11 +33,16 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
     if (pendingRaw !== undefined) values.set('sylvinho:pendente:alice', pendingRaw);
     const storage = { getItem: (key) => { if (readBlocked) throw new Error('storage blocked'); return values.get(key) || null; }, setItem: (key, value) => values.set(key, value), removeItem: (key) => { if (removeBlocked) throw new Error('storage blocked'); values.delete(key); } };
     const ids = [];
+    const criacoes = [];
+    let existe = false;
     const store = {
         reserve: () => 'abcdefghijklmnopqrst',
-        append: async (_, text, messageId) => {
+        append: async (_, text, messageId, _enviadoEm, { create = false } = {}) => {
             appends++;
+            criacoes.push(create);
             if (appendFail || (appendFailOnce && appends === 1)) throw new Error('Nao salvo');
+            if (!existe && !create) throw new Error('Conversa excluída. Inicie uma nova mensagem.');
+            existe = true;
             if (!persisted.some((m) => m.remetente === 'user' && m.messageId === messageId))
                 persisted.push({ texto: text, remetente: 'user', messageId });
             return 'abcdefghijklmnopqrst';
@@ -93,7 +98,8 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
     return {
         send: () => vm.runInContext('sendMessage("Pergunta")', context),
         switchSession: () => vm.runInContext('sessionVersion++; authenticatedUser = null; conversationStore = null; activeRequest?.abort(); lockComposer(true);', context),
-        element, rendered, persisted, ids,
+        element, rendered, persisted, ids, criacoes,
+        excluir: () => { existe = false; persisted.length = 0; },
         newChat: () => events.get('#newChat:click')(),
         navigation: () => ({ navigations, confirmations }),
         allocations: () => allocations,
@@ -210,18 +216,19 @@ test('Troca/perda de sessao descarta conclusao antiga e nao desbloqueia conta au
 });
 
 
-test('falha antes da primeira gravação preserva ID e recupera uma única pergunta', async () => {
+test('falha de resultado incerto não autoriza criação na recuperação nem troca IDs', async () => {
     const run = scenario({ appendFailOnce: true });
     await run.send();
     const pending = run.pending();
     assert.ok(pending);
     assert.equal(pending.novaConversa, true);
+    await run.send();
+    assert.deepEqual(run.criacoes, [true, false]);
     assert.equal(run.persisted.length, 0);
     assert.equal(run.counts().requests, 0);
-    await run.send();
-    assert.equal(run.ids[0], pending.messageId);
-    assert.equal(run.persisted.length, 2);
-    assert.equal(run.pending(), null);
+    assert.equal(run.pending().messageId, pending.messageId);
+    assert.equal(run.allocations(), 1);
+    assert.match(run.element('#chatStatus').textContent, /Conversa excluída/);
 });
 
 
@@ -261,3 +268,36 @@ for (const options of [{ readBlocked: true, removeBlocked: true }, { pendingRaw:
         } finally { run.cleanup(); }
     });
 }
+
+test('resposta confirmada continua visível quando limpeza local falha; replay mantém ID', async () => {
+    const run = scenario({ removeBlocked: true });
+    try {
+        await run.send();
+        const original = run.pending();
+        assert.ok(original);
+        assert.deepEqual(run.rendered(), ['Pergunta', 'Bot confirmado no banco']);
+        assert.match(run.element('#chatStatus').textContent, /Resposta confirmada e salva/);
+        assert.match(run.element('#chatStatus').textContent, /limpar a pendência local/);
+        assert.doesNotMatch(run.element('#chatStatus').textContent, /não foi possível confirmar a resposta/);
+        assert.equal(run.element('#messageInput').disabled, false);
+        await run.send();
+        assert.deepEqual(run.ids, [original.messageId, original.messageId]);
+        assert.equal(run.persisted.length, 2);
+        assert.equal(run.allocations(), 1);
+        assert.deepEqual(run.criacoes, [true, false]);
+    } finally { run.cleanup(); }
+});
+
+test('recuperação de conversa excluída não cria novamente nem chama backend', async () => {
+    const run = scenario({ failOnce: true });
+    await run.send();
+    const original = run.pending();
+    run.excluir();
+    await run.send();
+    assert.equal(run.persisted.length, 0);
+    assert.deepEqual(run.criacoes, [true, false]);
+    assert.equal(run.counts().requests, 1);
+    assert.equal(run.pending().messageId, original.messageId);
+    assert.equal(run.allocations(), 1);
+    assert.match(run.element('#chatStatus').textContent, /Conversa excluída/);
+});

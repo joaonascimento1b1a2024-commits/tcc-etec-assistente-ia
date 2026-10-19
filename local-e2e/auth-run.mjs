@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { createServer } from 'node:net';
 import { prepare, root, stage as authStage } from './prepare-auth.mjs';
 import { prepare as prepareHistory, stage as historyStage } from './prepare-history.mjs';
-import { validarPendenciasNoNavegador } from './pending-regressions.mjs';
+import { validarPendenciasNoNavegador, validarConfiabilidadeNoNavegador } from './pending-regressions.mjs';
 import { endpointDocumental, prepararFixturesDocumentais, enviarPerguntaDocumental,
     validarRecuperacaoDocumental, validarFunctionOutroUid } from './documental-scenarios.mjs';
 const documental = process.argv.includes('--documental');
@@ -246,6 +246,7 @@ try {
     await restartedContext.close();
     states.push('login A: senha inválida rejeitada; UID consistente; histórico reaberto; sessão restaurada em reload, nova aba e contexto recriado com IndexedDB');
     if (documental) await validarRecuperacaoDocumental({ page, context, envio: primeiroEnvio, uid: uidA, states });
+    if (documental) await validarConfiabilidadeNoNavegador({ page, context, uid: uidA, states });
     // Navegação real pelos links, tema persistido e layout desktop/mobile.
     await page.locator('#settingsLink').click();
     await page.waitForFunction(() => { const control = document.querySelector('#theme'); return control && !control.disabled; });
@@ -356,7 +357,7 @@ try {
         const evidence = JSON.parse(readFileSync(resolve(stage, 'function-evidence.json'), 'utf8'));
         assert.equal(evidence.tokenValidado, true);
         assert.equal(evidence.uid, uidB);
-        assert.equal(evidence.geracoes, 3);
+        assert.equal(evidence.geracoes, 4); // Inclui a resposta da regressão de limpeza local.
         assert.equal(evidence.inativoNoContexto, false);
         assert.equal(evidence.resultados.at(-1).status, 'informacao_insuficiente');
     }
