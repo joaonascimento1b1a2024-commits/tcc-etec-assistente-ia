@@ -31,6 +31,22 @@ export function criarEndpointAssistente(
   obterDependencias: () => DependenciasAssistente,
   lerOrigens: () => string,
 ): (req: Request, res: Response) => Promise<void> {
+  return criarEndpointComCors(
+    (req, res) => perguntarAssistenteHandler(req, res, obterDependencias()),
+    lerOrigens,
+  );
+}
+
+/**
+ * Compartilha CORS sem inicializar dependencias no preflight.
+ * @param {Function} handler Callback da rota.
+ * @param {Function} lerOrigens Configuracao nao secreta.
+ * @return {Function} Callback HTTP.
+ */
+export function criarEndpointComCors(
+  handler: (req: Request, res: Response) => Promise<unknown>,
+  lerOrigens: () => string,
+): (req: Request, res: Response) => Promise<void> {
   return async (req, res) => {
     res.vary("Origin");
     try {
@@ -58,7 +74,7 @@ export function criarEndpointAssistente(
         res.status(204).send();
         return;
       }
-      await perguntarAssistenteHandler(req, res, obterDependencias());
+      await handler(req, res);
     } catch {
       if (!res.headersSent) {
         res.status(500).json({

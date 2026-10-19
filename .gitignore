@@ -149,3 +149,34 @@ credentials.json
 *.key
 *.tmp
 /functions/lib/
+
+# Identidades privadas e arquivos de autenticação, em qualquer diretório
+sylvinho-firebase-admin.json
+*firebase-admin*.json
+service-account.json
+service_account.json
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_ed25519
+.credentials/
+secrets/
+
+# Cópias de segurança claramente identificadas (não são fontes do projeto)
+[Bb]ackup/
+[Bb]ackups/
+[Bb]ackup-*/
+[Bb]ackups-*/
+*.bak
+*.backup
+*.old
+*.zip
+*.7z
+*.rar
+
+# Arquivos temporários locais
+tmp/
+temp/
+*.swp
+*.swo

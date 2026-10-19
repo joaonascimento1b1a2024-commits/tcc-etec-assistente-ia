@@ -1,52 +1,12 @@
 'use strict';
 
 const http = require('node:http');
-const { createRequire } = require('node:module');
-const { resolve } = require('node:path');
-const { criarEndpointAssistente, origensPermitidas } = require('../functions/lib/assistente/http.js');
-const DEMO_PROJECT = 'demo-sylvinho-render-poc';
-const MOCK_RESPONSE = 'Resposta simulada da POC. Nenhuma IA real foi chamada.';
-const localHost = (value) => /^(127\.0\.0\.1|localhost):[1-9][0-9]{0,4}$/.test(value || '') &&
-    Number(value.split(':')[1]) <= 65535;
-
-function lerConfiguracao(env = process.env) {
-    const mode = env.SYLVINHO_POC_MODE || 'health';
-    if (!['health', 'emulator'].includes(mode)) throw new Error('POC_MODE_INVALID');
-    const origins = env.ASSISTENTE_CORS_ORIGINS || '';
-    origensPermitidas(origins);
-    const port = env.PORT === undefined ? 10000 : Number(env.PORT);
-    if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT_INVALID');
-    if (mode === 'emulator' && (
-        env.GCLOUD_PROJECT !== DEMO_PROJECT ||
-        !localHost(env.FIREBASE_AUTH_EMULATOR_HOST) ||
-        !localHost(env.FIRESTORE_EMULATOR_HOST) || env.RENDER === 'true'
-    )) throw new Error('LOCAL_EMULATORS_REQUIRED');
-    return { mode, origins, port, host: mode === 'emulator' ? '127.0.0.1' : '0.0.0.0' };
-}
-
-function criarDependencias(config) {
-    // Health-only never initializes Admin, reads credentials, or contacts Firebase.
-    if (config.mode === 'health') return {
-        auth: { async verifyIdToken() { throw new Error('AUTH_UNAVAILABLE'); } },
-        firestore: {},
-        serverTimestamp: () => { throw new Error('FIRESTORE_UNAVAILABLE'); },
-        gerarResposta: async () => MOCK_RESPONSE,
-    };
-    if (lerConfiguracao(process.env).mode !== 'emulator') throw new Error('LOCAL_EMULATORS_REQUIRED');
-    const localRequire = createRequire(resolve(__dirname, '../functions/package.json'));
-    const { initializeApp, getApps } = localRequire('firebase-admin/app');
-    const { getAuth } = localRequire('firebase-admin/auth');
-    const { getFirestore, FieldValue } = localRequire('firebase-admin/firestore');
-    const name = 'sylvinho-render-poc-emulator';
-    // Firestore Admin requires its standard credential type, even with emulators.
-    // Explicit demo project + both local hosts + isolated runner prevent production access.
-    const app = getApps().find((item) => item.name === name) || initializeApp({ projectId: DEMO_PROJECT }, name);
-    return {
-        auth: getAuth(app), firestore: getFirestore(app),
-        serverTimestamp: () => FieldValue.serverTimestamp(),
-        gerarResposta: async () => MOCK_RESPONSE,
-    };
-}
+const { criarEndpointAssistente } = require('../functions/lib/assistente/http.js');
+const { lerConfiguracao, validarConfiguracao, DEMO_PROJECT } = require('./config.cjs');
+const { criarDependencias, criarFabricaDependencias, MOCK_RESPONSE } = require('./dependencias.cjs');
+const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
+const { criarDiagnosticoConhecimento } = require('./conhecimento.cjs');
+const { criarDiagnosticoRag } = require('./rag.cjs');
 
 function respostaExpress(res) {
     const adapter = {
@@ -87,26 +47,38 @@ async function lerCorpo(req) {
 }
 
 function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
-    let deps;
-    const endpoint = criarEndpointAssistente(() => {
-        deps ||= obterDependencias ? obterDependencias() : criarDependencias(config);
-        return deps;
-    }, () => config.origins);
+    const validated = validarConfiguracao(config);
+    const factory = criarFabricaDependencias(validated, { obterDependencias });
+    const diagnostic = criarDiagnosticoAutenticado(factory, () => validated.origins);
+    const knowledgeDiagnostic = criarDiagnosticoConhecimento(factory, () => validated.origins);
+    const ragDiagnostic = criarDiagnosticoRag(factory, () => validated.origins);
+    const endpoint = criarEndpointAssistente(factory, () => validated.origins);
     const server = http.createServer(async (req, res) => {
         const output = respostaExpress(res);
         try {
+            if (validated.mode === 'health') {
+                if (req.url?.split('?')[0] === '/health' && req.method === 'GET')
+                    output.status(200).json({ status: 'ok', service: 'sylvinho-backend' });
+                else output.status(404).json({ error: 'Rota nao encontrada.' });
+                return;
+            }
             const path = new URL(req.url, 'http://localhost').pathname;
             if (path === '/health') {
                 if (req.method !== 'GET') output.set('Allow', 'GET').status(405).json({ error: 'Metodo nao permitido.' });
                 else output.status(200).json({ status: 'ok', service: 'sylvinho-backend' });
                 return;
             }
-            if (path !== '/perguntarAssistente') {
+            const diagnosticRoute = path === '/diagnostico/auth' && validated.mode === 'auth-diagnostic';
+            const knowledgeRoute = path === '/diagnostico/conhecimento' && validated.mode === 'firestore-diagnostic';
+            const ragRoute = path === '/diagnostico/rag' && validated.mode === 'rag-diagnostic';
+            const assistantRoute = path === '/perguntarAssistente' && ['emulator', 'documental', 'documental-emulator'].includes(validated.mode);
+            if (!diagnosticRoute && !knowledgeRoute && !ragRoute && !assistantRoute) {
                 output.status(404).json({ error: 'Rota nao encontrada.' });
                 return;
             }
             const body = await lerCorpo(req);
-            await endpoint({ method: req.method, body, get: (name) => req.headers[name.toLowerCase()] }, output);
+            await (ragRoute ? ragDiagnostic : knowledgeRoute ? knowledgeDiagnostic : diagnosticRoute ? diagnostic : endpoint)(
+                { method: req.method, body, get: (name) => req.headers[name.toLowerCase()] }, output);
         } catch (error) {
             const status = { INVALID_JSON: 400, PAYLOAD_TOO_LARGE: 413, UNSUPPORTED_MEDIA_TYPE: 415 }[error.message] || 500;
             if (!res.headersSent && !res.destroyed) output.status(status).json({ error: 'Requisicao nao processada.' });

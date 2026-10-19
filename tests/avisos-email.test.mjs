@@ -274,7 +274,7 @@ test('entrypoint registra apenas criação, retry e secrets no worker; declaraç
         'firebase-admin/app': { getApps: () => [{ name: '[DEFAULT]' }] },
         'firebase-admin/auth': { getAuth: proibido },
         'firebase-admin/firestore': { getFirestore: proibido },
-        './assistente/gemini.js': {}, './assistente/http.js': { criarEndpointAssistente: () => ({}) },
+        './assistente/resposta-documental.js': {}, './assistente/http.js': { criarEndpointAssistente: () => ({}) },
         './avisos/email.js': { criarEnvioResend: proibido },
         './avisos/notificacoes.js': { enfileirarEmailsAviso: proibido, enviarEmailAviso: proibido },
     };
@@ -283,6 +283,7 @@ test('entrypoint registra apenas criação, retry e secrets no worker; declaraç
     });
     assert.deepEqual(registros.map((v) => v.document), ['avisos/{avisoId}', 'avisosEmails/{entregaId}']);
     assert.ok(registros.every((v) => v.retry && v.region === 'southamerica-east1'));
+    assert.equal(secrets.has('GEMINI_API_KEY'), false);
     assert.equal(registros[0].secrets, undefined);
     assert.equal(registros[1].secrets[0], secrets.get('RESEND_API_KEY'));
     assert.equal(registros[1].maxInstances, 1);
