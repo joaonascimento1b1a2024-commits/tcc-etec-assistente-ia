@@ -1,12 +1,46 @@
 import type {Request, Response} from "express";
 import type {DocumentReference, Firestore} from "firebase-admin/firestore";
+import {ErroAutenticacao, verificarAutenticacao} from "./autenticacao.js";
 import {
-  formatarDocumentoContexto,
   recuperarConhecimentoRelevante,
 } from "../rag/recuperacao.js";
+import type {DocumentoPreparado} from "../rag/recuperacao.js";
 
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
+const requisicoesEmAndamento =
+  new WeakMap<object, Map<string, Promise<string>>>();
+
+interface MensagemIdentificada {
+  texto: string;
+  remetente: string;
+  messageId?: string;
+}
+
+/**
+ * Vincula o ID a uma unica pergunta imutavel e recupera resposta persistida.
+ * @param {unknown[]} mensagens Historico relido.
+ * @param {string} messageId ID estavel da pergunta.
+ * @param {string} pergunta Texto autenticado pelo historico.
+ * @return {string|undefined} Resposta existente.
+ */
+function respostaExistente(
+  mensagens: unknown[], messageId: string, pergunta: string,
+): string | undefined {
+  const identificadas = mensagens.filter((m): m is MensagemIdentificada =>
+    !!m && typeof m === "object" &&
+    (m as MensagemIdentificada).messageId === messageId);
+  const users = identificadas.filter((m) => m.remetente === "user");
+  const bots = identificadas.filter((m) => m.remetente === "bot");
+  if (users.length !== 1 || users[0].texto !== pergunta || bots.length > 1) {
+    throw new Error("MESSAGE_ID_CONFLICT");
+  }
+  if (bots.length &&
+    (typeof bots[0].texto !== "string" || !bots[0].texto.trim())) {
+    throw new Error("MESSAGE_ID_CONFLICT");
+  }
+  return bots[0]?.texto;
+}
 
 export interface DependenciasAssistente {
   auth: {
@@ -14,7 +48,8 @@ export interface DependenciasAssistente {
   };
   firestore: Pick<Firestore, "collection" | "runTransaction">;
   serverTimestamp: () => unknown;
-  gerarResposta: (promptSistema: string, pergunta: string) => Promise<string>;
+  gerarResposta: (pergunta: string,
+    chunks: readonly DocumentoPreparado[]) => Promise<string>;
   agora?: () => number;
 }
 
@@ -50,15 +85,19 @@ ${insuficiencia}
  * @param {DocumentReference} conversaRef Referencia autenticada.
  * @param {string} resposta Texto produzido pelo gerador injetado.
  * @param {DependenciasAssistente} deps Dependencias locais/injetadas.
- * @return {Promise<void>} Resolvida somente apos persistencia.
+ * @param {string} messageId ID da pergunta.
+ * @param {string} pergunta Texto da pergunta persistida.
+ * @return {Promise<string>} Resposta confirmada ou ja existente.
  */
 export async function adicionarRespostaBot(
   conversaRef: DocumentReference,
   resposta: string,
   deps: Pick<DependenciasAssistente,
     "firestore" | "serverTimestamp" | "agora">,
-): Promise<void> {
-  await deps.firestore.runTransaction(async (transaction) => {
+  messageId: string,
+  pergunta: string,
+): Promise<string> {
+  return deps.firestore.runTransaction(async (transaction) => {
     const snapshot = await transaction.get(conversaRef);
     if (!snapshot.exists) {
       throw new Error("CONVERSATION_NOT_FOUND");
@@ -67,6 +106,8 @@ export async function adicionarRespostaBot(
     const conversa = snapshot.data();
     const mensagens: unknown[] = Array.isArray(conversa?.mensagens) ?
       conversa.mensagens : [];
+    const existente = respostaExistente(mensagens, messageId, pergunta);
+    if (existente !== undefined) return existente;
     if (mensagens.length >= MAX_MENSAGENS) {
       throw new Error("CONVERSATION_LIMIT_REACHED");
     }
@@ -78,10 +119,12 @@ export async function adicionarRespostaBot(
           texto: resposta,
           remetente: "bot",
           enviadoEm: (deps.agora || Date.now)(),
+          messageId,
         },
       ],
       atualizadoEm: deps.serverTimestamp(),
     });
+    return resposta;
   });
 }
 
@@ -105,26 +148,14 @@ export async function perguntarAssistenteHandler(
       });
     }
 
-    const authorizationHeader = req.get("Authorization");
-    if (!authorizationHeader) {
-      return res.status(401).json({error: "Autenticação obrigatória."});
-    }
-
-    const authParts = authorizationHeader.trim().split(/\s+/);
-    const [scheme, idToken] = authParts;
-    if (authParts.length !== 2 || scheme !== "Bearer" || !idToken) {
-      return res.status(401).json({
-        error: "Formato de autenticação inválido.",
-      });
-    }
-
     let decodedToken: {uid: string};
     try {
-      decodedToken = await deps.auth.verifyIdToken(idToken);
-    } catch {
-      return res.status(401).json({
-        error: "Token de autenticação inválido.",
-      });
+      decodedToken = await verificarAutenticacao(req, deps.auth);
+    } catch (error) {
+      if (error instanceof ErroAutenticacao) {
+        return res.status(401).json({error: error.message});
+      }
+      throw error;
     }
 
     if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
@@ -132,7 +163,8 @@ export async function perguntarAssistenteHandler(
     }
 
     // usuarioId nao e lido; o caminho depende somente do token validado.
-    const {pergunta, conversationId} = req.body as Record<string, unknown>;
+    const {pergunta, conversationId, messageId} =
+      req.body as Record<string, unknown>;
     if (typeof pergunta !== "string") {
       return res.status(400).json({error: "A pergunta deve ser um texto."});
     }
@@ -156,6 +188,12 @@ export async function perguntarAssistenteHandler(
         error: "Identificador da conversa inválido.",
       });
     }
+    if (typeof messageId !== "string" ||
+      !/^[A-Za-z0-9_-]{20,80}$/.test(messageId)) {
+      return res.status(400).json({
+        error: "Identificador da mensagem inválido.",
+      });
+    }
 
     const conversaRef = deps.firestore
       .collection("users")
@@ -170,29 +208,61 @@ export async function perguntarAssistenteHandler(
     const conversa = conversaInicial.data();
     const mensagensIniciais: unknown[] = Array.isArray(conversa?.mensagens) ?
       conversa.mensagens : [];
+    const existente = respostaExistente(
+      mensagensIniciais, messageId, perguntaNormalizada,
+    );
+    if (existente !== undefined) {
+      return res.status(200).json({resposta: existente});
+    }
     if (mensagensIniciais.length >= MAX_MENSAGENS) {
       return res.status(409).json({
         error: "A conversa atingiu o limite de mensagens.",
       });
     }
 
-    const chunks = await recuperarConhecimentoRelevante(
-      deps.firestore,
-      perguntaNormalizada,
-    );
-    const contexto = chunks.map(formatarDocumentoContexto).join("\n\n");
-    const resposta = await deps.gerarResposta(
-      montarPromptSistema(contexto),
-      perguntaNormalizada,
-    );
-    if (typeof resposta !== "string" || !resposta.trim()) {
-      throw new Error("INVALID_GENERATOR_RESPONSE");
+    let emAndamento = requisicoesEmAndamento.get(deps.firestore);
+    if (!emAndamento) {
+      emAndamento = new Map();
+      requisicoesEmAndamento.set(deps.firestore, emAndamento);
     }
-
-    await adicionarRespostaBot(conversaRef, resposta, deps);
+    const chave = JSON.stringify([decodedToken.uid, conversationId, messageId]);
+    let operacao = emAndamento.get(chave);
+    if (!operacao) {
+      operacao = (async () => {
+        // Revalidar depois de um possivel commit concorrente.
+        const atual = await conversaRef.get();
+        if (!atual.exists) throw new Error("CONVERSATION_NOT_FOUND");
+        const dados = atual.data();
+        const atualizadas: unknown[] = Array.isArray(dados?.mensagens) ?
+          dados.mensagens : [];
+        const concluida = respostaExistente(
+          atualizadas, messageId, perguntaNormalizada,
+        );
+        if (concluida !== undefined) return concluida;
+        const chunks = await recuperarConhecimentoRelevante(
+          deps.firestore, perguntaNormalizada,
+        );
+        const gerada = await deps.gerarResposta(perguntaNormalizada, chunks);
+        if (typeof gerada !== "string" || !gerada.trim()) {
+          throw new Error("INVALID_GENERATOR_RESPONSE");
+        }
+        return adicionarRespostaBot(
+          conversaRef, gerada, deps, messageId, perguntaNormalizada,
+        );
+      })();
+      emAndamento.set(chave, operacao);
+      // Coalesce por instancia; a transacao protege tambem entre instancias.
+      void operacao.finally(() => emAndamento?.delete(chave)).catch(() => {});
+    }
+    const resposta = await operacao;
     return res.status(200).json({resposta});
   } catch (error) {
     const mensagem = error instanceof Error ? error.message : "";
+    if (mensagem === "MESSAGE_ID_CONFLICT") {
+      return res.status(409).json({
+        error: "Identificador não corresponde à pergunta salva.",
+      });
+    }
     if (mensagem === "CONVERSATION_NOT_FOUND") {
       return res.status(404).json({error: "Conversa não encontrada."});
     }

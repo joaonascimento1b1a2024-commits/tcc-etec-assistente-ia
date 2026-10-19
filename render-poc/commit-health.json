@@ -1,0 +1,52 @@
+{
+  "purpose": "Selecao explicita para commit futuro do backend health. Nenhum arquivo e adicionado ao Git automaticamente.",
+  "baseReference": "origin/main",
+  "commitFiles": [
+    ".gitignore",
+    "render-poc/.gitignore",
+    "render-poc/server.cjs",
+    "render-poc/config.cjs",
+    "render-poc/dependencias.cjs",
+    "render-poc/documental.cjs",
+    "render-poc/producao.cjs",
+    "render-poc/autenticacao.cjs",
+    "render-poc/conhecimento.cjs",
+    "render-poc/rag.cjs",
+    "render-poc/.env.example",
+    "render-poc/commit-health.json",
+    "render-poc/PUBLICACAO-HEALTH.md",
+    "render-poc/test/health-only.test.cjs",
+    "render-poc/test/adapter.test.cjs",
+    "render-poc/test/arquitetura.test.cjs",
+    "functions/package.json",
+    "functions/package-lock.json",
+    "functions/src/index.ts",
+    "functions/src/assistente/handler.ts",
+    "functions/src/assistente/http.ts",
+    "functions/src/assistente/autenticacao.ts",
+    "functions/src/assistente/resposta-documental.ts",
+    "functions/src/rag/recuperacao.ts",
+    "scripts/verificar-selecao-render.mjs",
+    "scripts/verificar-segredos.mjs",
+    "tests/gitignore-publicacao.test.mjs",
+    "functions/.env.example",
+    "tests/assistente-producao.test.mjs",
+    "tests/avisos-email.test.mjs",
+    ".gitattributes"
+  ],
+  "existingPrerequisites": [
+    "functions/tsconfig.json",
+    "functions/src/assistente/gemini.ts",
+    "local-e2e/network-guard.cjs",
+    "functions/src/avisos/email.ts",
+    "functions/src/avisos/notificacoes.ts"
+  ],
+  "excludeFromThisCommit": [
+    "knowledge-base/**",
+    "public/**",
+    "firestore.rules",
+    "local-e2e/** (exceto network-guard.cjs ja existente e sem alteracao)",
+    "arquivos nao listados em commitFiles",
+    "credenciais, .env reais, backups, caches, dependencias e compilados"
+  ]
+}

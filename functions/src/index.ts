@@ -7,7 +7,7 @@ import {defineSecret, defineString} from "firebase-functions/params";
 import {getApps, initializeApp} from "firebase-admin/app";
 import {getAuth} from "firebase-admin/auth";
 import {FieldValue, getFirestore} from "firebase-admin/firestore";
-import {criarGeradorGemini} from "./assistente/gemini.js";
+import {gerarRespostaDocumental} from "./assistente/resposta-documental.js";
 import {criarEndpointAssistente} from "./assistente/http.js";
 import {criarEnvioResend} from "./avisos/email.js";
 import {
@@ -19,7 +19,6 @@ import {
 // Essa configuração não cria endpoints e não se aplica às funções da API v1.
 setGlobalOptions({maxInstances: 10});
 
-const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const corsOrigins = defineString("ASSISTENTE_CORS_ORIGINS", {default: ""});
 const resendApiKey = defineSecret("RESEND_API_KEY");
 const avisosRemetente = defineString("AVISOS_EMAIL_FROM", {default: ""});
@@ -32,13 +31,13 @@ if (!getApps().some((app) => app.name === "[DEFAULT]")) {
 
 export const perguntarAssistente = onRequest({
   region: "southamerica-east1",
-  secrets: [geminiApiKey],
   cors: false, // CORS restrito e preflight tratados no adapter.
 }, criarEndpointAssistente(() => ({
   auth: getAuth(),
   firestore: getFirestore(),
   serverTimestamp: () => FieldValue.serverTimestamp(),
-  gerarResposta: criarGeradorGemini(() => geminiApiKey.value()),
+  gerarResposta: async (pergunta, chunks) =>
+    gerarRespostaDocumental(pergunta, chunks).resposta,
 }), () => corsOrigins.value()));
 
 // A criação do aviso não aguarda o provedor de e-mail.

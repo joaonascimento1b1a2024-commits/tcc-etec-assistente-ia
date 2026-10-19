@@ -3,6 +3,7 @@ export interface DocumentoPreparado {
   documentoId: string;
   titulo: string;
   categoria: string;
+  tipoConteudo?: string;
   secao: string;
   conteudo: string;
   termosBusca: string;
@@ -129,6 +130,8 @@ export function prepararDocumento(
     documentoId: textoValido(campos.documentoId),
     titulo: textoValido(campos.titulo),
     categoria: textoValido(campos.categoria),
+    ...(typeof campos.tipoConteudo === "string" ?
+      {tipoConteudo: textoValido(campos.tipoConteudo)} : {}),
     secao: textoValido(campos.secao),
     conteudo: textoValido(campos.conteudo),
     termosBusca: termosBuscaValidos(campos.termosBusca),

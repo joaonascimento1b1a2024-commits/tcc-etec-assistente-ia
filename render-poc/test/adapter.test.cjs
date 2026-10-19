@@ -2,15 +2,15 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { readFileSync } = require('node:fs');
-const { criarServidor, lerConfiguracao, DEMO_PROJECT, MOCK_RESPONSE } = require('../server.cjs');
+const { criarServidor, criarDependencias, lerConfiguracao, DEMO_PROJECT, MOCK_RESPONSE } = require('../server.cjs');
 
 const ID = 'AbCdEfGhIjKlMnOpQrSt';
 const ORIGIN = 'http://localhost:5000';
-const BODY = { pergunta: 'matricula', conversationId: ID, usuarioId: 'intruso' };
+const BODY = { pergunta: 'matricula', conversationId: ID, messageId: 'message-sylvinho-000001', usuarioId: 'intruso' };
 function fixture() {
     const state = { calls: [], generations: 0, prompt: '', conversation: {
         titulo: 'Titulo manual', tituloOrigem: 'manual', criadoEm: 1,
-        mensagens: [{ texto: 'matricula', remetente: 'user', enviadoEm: 1 }],
+        mensagens: [{ texto: 'matricula', remetente: 'user', enviadoEm: 1, messageId: BODY.messageId }],
     } };
     const ref = { get: async () => ({ exists: true, data: () => state.conversation }) };
     const deps = {
@@ -29,16 +29,23 @@ function fixture() {
                     assert.equal(sub, 'conversas'); return { doc(id) { assert.equal(id, ID); return ref; } };
                 } }; } };
             },
-            async runTransaction(cb) { await cb({ get: ref.get, update(_ref, data) { Object.assign(state.conversation, data); } }); },
+            async runTransaction(cb) { return cb({ get: ref.get, update(_ref, data) { Object.assign(state.conversation, data); } }); },
         },
         serverTimestamp: () => 'SERVER_TIMESTAMP', agora: () => 123,
-        async gerarResposta(prompt) { state.generations++; state.prompt = prompt; return MOCK_RESPONSE; },
+        async gerarResposta(pergunta, chunks) {
+            state.generations++;
+            state.prompt = chunks.map((chunk) => chunk.conteudo).join('\n');
+            assert.equal(pergunta, BODY.pergunta);
+            return MOCK_RESPONSE;
+        },
     };
     return { state, deps };
 }
 
 async function withServer(t, options = {}) {
-    const server = criarServidor({ config: lerConfiguracao({ ASSISTENTE_CORS_ORIGINS: ORIGIN }), ...options });
+    const server = criarServidor({ config: lerConfiguracao({ SYLVINHO_POC_MODE: 'emulator', GCLOUD_PROJECT: DEMO_PROJECT,
+        FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9199', FIRESTORE_EMULATOR_HOST: '127.0.0.1:8180',
+        ASSISTENTE_CORS_ORIGINS: ORIGIN }), obterDependencias: () => criarDependencias(lerConfiguracao({})), ...options });
     await new Promise((done) => server.listen(0, '127.0.0.1', done));
     t.after(() => new Promise((done) => { server.close(done); server.closeAllConnections(); }));
     return async (path = '/perguntarAssistente', options = {}) => fetch(`http://127.0.0.1:${server.address().port}${path}`, options);
@@ -48,7 +55,7 @@ const post = (body = BODY, token) => ({ method: 'POST', headers: {
 }, body: JSON.stringify(body) });
 
 test('health 200 sem inicializar dependencias e sem dados sensiveis', async (t) => {
-    const request = await withServer(t, { obterDependencias: () => { throw new Error('NAO_INICIALIZAR'); } });
+    const request = await withServer(t, { config: lerConfiguracao({}), obterDependencias: () => { throw new Error('NAO_INICIALIZAR'); } });
     const r = await request('/health');
     assert.equal(r.status, 200);
     assert.deepEqual(await r.json(), { status: 'ok', service: 'sylvinho-backend' });
@@ -57,8 +64,8 @@ test('metodo invalido no endpoint original retorna 405', async (t) => {
     const r = await (await withServer(t))(); assert.equal(r.status, 405); assert.equal(r.headers.get('allow'), 'POST');
 });
 test('health rejeita POST e rota desconhecida retorna 404', async (t) => {
-    const request = await withServer(t);
-    assert.equal((await request('/health', { method: 'POST' })).status, 405);
+    const request = await withServer(t, { config: lerConfiguracao({}) });
+    assert.equal((await request('/health', { method: 'POST' })).status, 404);
     assert.equal((await request('/outra')).status, 404);
 });
 test('token ausente retorna 401', async (t) => {
@@ -105,9 +112,9 @@ test('erro interno de dependencia retorna generico sem segredo', async (t) => {
     const r = await request('/perguntarAssistente', post()); assert.equal(r.status, 500);
     assert.doesNotMatch(await r.text(), /PRIVATE_KEY_SENTINEL|stack/);
 });
-test('health-only rejeita bearer sem ADC ou Firestore', async (t) => {
-    const r = await (await withServer(t))('/perguntarAssistente', post(BODY, 'ficticio'));
-    assert.equal(r.status, 401);
+test('health-only oculta assistente sem ADC ou Firestore', async (t) => {
+    const r = await (await withServer(t, { config: lerConfiguracao({}) }))('/perguntarAssistente', post(BODY, 'ficticio'));
+    assert.equal(r.status, 404);
 });
 test('modo emulador exige ambos hosts locais e projeto demo exato', () => {
     const env = { SYLVINHO_POC_MODE: 'emulator', GCLOUD_PROJECT: DEMO_PROJECT,
