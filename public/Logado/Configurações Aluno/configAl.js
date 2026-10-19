@@ -221,6 +221,8 @@ async function start() {
     ui.retry.hidden = true;
     message('page-status', 'Verificando sua conta...');
     try {
+        if (['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) &&
+            !globalThis.__LOCAL_E2E__) throw new Error('LOCAL_EMULATORS_REQUIRED');
         // Imports dinâmicos permitem mostrar um erro se o SDK não carregar.
         const [appSDK, authModule, dbModule] = await Promise.all([
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
@@ -230,6 +232,9 @@ async function start() {
         if (version !== sessionVersion) return;
         authSDK = authModule;
         firestoreSDK = dbModule;
+        if (globalThis.__LOCAL_E2E__ && (!appSDK.getApps().length ||
+            appSDK.getApp().options.projectId !== 'demo-sylvinho-render-poc'))
+            throw new Error('LOCAL_DEMO_REQUIRED');
         const app = appSDK.getApps().length
             ? appSDK.getApp()
             : appSDK.initializeApp(firebaseConfig);

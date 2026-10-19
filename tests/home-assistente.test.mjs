@@ -2,16 +2,23 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
+import { randomUUID } from 'node:crypto';
 
 const source = readFileSync(new URL('../public/Logado/Home/home.js', import.meta.url), 'utf8')
     .replace('loadAuthenticatedProfile();', '').replaceAll('import(', 'mockImport(');
-function scenario({ fail, failRead, waiting, appendFail } = {}) {
+const clientSource = readFileSync(new URL('../public/Logado/Home/assistente-client.js', import.meta.url), 'utf8');
+const { perguntarAssistente: clienteReal } = await import(`data:text/javascript;base64,${Buffer.from(clientSource).toString('base64')}`);
+const pendingSource = readFileSync(new URL('../public/Logado/Home/envio-pendente.js', import.meta.url), 'utf8');
+const pendingModule = await import(`data:text/javascript;base64,${Buffer.from(pendingSource).toString('base64')}`);
+function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, appendFailOnce, realClient, pendingRaw, readBlocked = false, removeBlocked = false, confirmed = true, endpoint = 'http://localhost/mock' } = {}) {
     const elements = new Map();
+    const events = new Map();
+    let navigations = 0, confirmations = 0, allocations = 0;
     function element(id) {
         if (!elements.has(id)) elements.set(id, {
             children: [], dataset: {}, value: '', textContent: '', disabled: false,
             classList: { add() {}, remove() {}, toggle() {} },
-            addEventListener() {}, setAttribute() {}, focus() {},
+            addEventListener(event, callback) { events.set(String(id) + ':' + event, callback); }, setAttribute() {}, focus() {},
             append(child) { this.children.push(child); },
             replaceChildren() { this.children = []; },
             querySelector: (selector) => element(selector),
@@ -22,11 +29,17 @@ function scenario({ fail, failRead, waiting, appendFail } = {}) {
     let reads = 0;
     let requests = 0;
     const persisted = [];
+    const values = new Map();
+    if (pendingRaw !== undefined) values.set('sylvinho:pendente:alice', pendingRaw);
+    const storage = { getItem: (key) => { if (readBlocked) throw new Error('storage blocked'); return values.get(key) || null; }, setItem: (key, value) => values.set(key, value), removeItem: (key) => { if (removeBlocked) throw new Error('storage blocked'); values.delete(key); } };
+    const ids = [];
     const store = {
-        append: async (_, text) => {
+        reserve: () => 'abcdefghijklmnopqrst',
+        append: async (_, text, messageId) => {
             appends++;
-            if (appendFail) throw new Error('Nao salvo');
-            persisted.push({ texto: text, remetente: 'user' });
+            if (appendFail || (appendFailOnce && appends === 1)) throw new Error('Nao salvo');
+            if (!persisted.some((m) => m.remetente === 'user' && m.messageId === messageId))
+                persisted.push({ texto: text, remetente: 'user', messageId });
             return 'abcdefghijklmnopqrst';
         },
         open: async () => {
@@ -37,32 +50,56 @@ function scenario({ fail, failRead, waiting, appendFail } = {}) {
     };
     const context = vm.createContext({
         document: { querySelector: element, querySelectorAll: () => [], createElement: () => element(Symbol()) },
-        window: { location: { search: '', assign() {}, replace() {} }, history: { replaceState() {} } },
-        URLSearchParams, AbortController, console,
+        window: { location: { search: '', assign() { navigations++; }, replace() {} }, history: { replaceState() {} },
+            confirm() { confirmations++; return confirmed; } },
+        URLSearchParams, AbortController, console, crypto: { randomUUID: () => { allocations++; return randomUUID(); } },
         mockImport: async (path) => {
-            if (path.endsWith('assistente-config.js')) return { assistenteConfig: { endpoint: 'http://localhost/mock' } };
+            if (path.endsWith('envio-pendente.js')) return {
+                carregarEnvioPendente: (uid) => pendingModule.carregarEnvioPendente(uid, storage),
+                guardarEnvioPendente: (uid, envio) => pendingModule.guardarEnvioPendente(uid, envio, storage),
+                concluirEnvioPendente: (uid) => pendingModule.concluirEnvioPendente(uid, storage),
+                inspecionarEnvioPendente: (uid) => pendingModule.inspecionarEnvioPendente(uid, storage),
+                descartarEnvioPendente: (uid) => pendingModule.descartarEnvioPendente(uid, storage),
+            };
+            if (path.endsWith('assistente-config.js')) return { resolverAssistenteConfig: () => ({ endpoint }) };
             assert.ok(path.endsWith('assistente-client.js'), `Import inesperado: ${path}`);
             return { perguntarAssistente: async (options) => {
                 requests++;
-                assert.equal(appends, 1);
+                ids.push(options.messageId);
+                assert.equal(persisted.filter((m) => m.remetente === 'user').length, 1);
                 assert.equal(options.pergunta, 'Pergunta');
                 assert.equal(options.conversationId, 'abcdefghijklmnopqrst');
+                if (realClient) return clienteReal({ ...options, fetchImpl: async (url, request) => {
+                    assert.equal(url, endpoint);
+                    assert.equal(request.headers.Authorization, 'Bearer simulado');
+                    assert.deepEqual(JSON.parse(request.body), { pergunta: 'Pergunta', conversationId: 'abcdefghijklmnopqrst', messageId: options.messageId });
+                    assert.equal(reads, 1, 'A conversa foi confirmada antes do HTTP');
+                    persisted.push({ texto: 'Bot confirmado no banco', remetente: 'bot', messageId: options.messageId });
+                    return { ok: true, json: async () => ({ resposta: 'Nao renderizar este texto HTTP' }) };
+                } });
                 if (waiting) await waiting;
-                if (fail) throw new Error('HTTP 500');
+                if (fail || (failOnce && requests === 1)) throw Object.assign(new Error('HTTP 500'), { code: failCode });
                 if (!options.sessaoAtual()) throw new Error('Sessao trocada');
                 // Apenas o servidor simulado grava bot; a resposta HTTP e distinta.
-                persisted.push({ texto: 'Bot confirmado no banco', remetente: 'bot' });
+                if (!persisted.some((m) => m.remetente === 'bot' && m.messageId === options.messageId))
+                    persisted.push({ texto: 'Bot confirmado no banco', remetente: 'bot', messageId: options.messageId });
                 return { resposta: 'Nao renderizar este texto HTTP' };
             } };
         },
-        store, user: { getIdToken: async () => 'simulado' },
+        store, user: { uid: 'alice', getIdToken: async () => 'simulado' },
     });
     vm.runInContext(source + '\nconversationStore = store; authenticatedUser = user;', context);
     const rendered = () => element('#messages').children.map((row) => row.children.at(-1).textContent);
     return {
         send: () => vm.runInContext('sendMessage("Pergunta")', context),
         switchSession: () => vm.runInContext('sessionVersion++; authenticatedUser = null; conversationStore = null; activeRequest?.abort(); lockComposer(true);', context),
-        element, rendered, persisted,
+        element, rendered, persisted, ids,
+        newChat: () => events.get('#newChat:click')(),
+        navigation: () => ({ navigations, confirmations }),
+        allocations: () => allocations,
+        rawPending: () => values.get('sylvinho:pendente:alice'),
+        cleanup: () => pendingModule.concluirEnvioPendente('alice', { removeItem() {} }),
+        pending: () => pendingModule.carregarEnvioPendente('alice', storage),
         counts: () => ({ appends, reads, requests }),
     };
 }
@@ -75,15 +112,56 @@ test('Home salva user uma vez e renderiza somente historico confirmado, nao corp
     assert.equal(run.element('#messageInput').disabled, false);
     assert.equal(run.element('#newChat').disabled, false);
 });
+
+test('timeout preserva pendência e recuperação usa mesmo ID sem duplicar user ou bot', async () => {
+    const run = scenario({ failOnce: true, failCode: 'TIMEOUT' });
+    await run.send();
+    const original = run.pending();
+    assert.ok(original);
+    assert.equal(run.persisted.length, 1);
+    assert.match(run.element('#chatStatus').textContent, /mesmo identificador, sem duplicar/);
+    await run.send();
+    assert.deepEqual(run.ids, [original.messageId, original.messageId]);
+    assert.equal(run.persisted.length, 2);
+    assert.equal(run.pending(), null);
+});
+
+test('Home e cliente real integram token body e sincronizacao sem duplicar bot', async () => {
+    const run = scenario({ realClient: true });
+    await run.send();
+    assert.deepEqual(run.counts(), { appends: 1, reads: 2, requests: 1 });
+    assert.deepEqual(run.rendered(), ['Pergunta', 'Bot confirmado no banco']);
+    assert.equal(run.persisted.filter((item) => item.remetente === 'bot').length, 1);
+    assert.equal(run.element('#chatStatus').textContent, 'Conversa atualizada.');
+});
 test('Falha IA conserva user, nao grava bot, nao faz retry, desbloqueia', async () => {
     const run = scenario({ fail: true });
     await run.send();
     assert.deepEqual(run.counts(), { appends: 1, reads: 1, requests: 1 });
-    assert.deepEqual(run.persisted, [{ texto: 'Pergunta', remetente: 'user' }]);
+    assert.equal(run.persisted.length, 1);
+    assert.equal(run.persisted[0].remetente, 'user');
     assert.deepEqual(run.rendered(), ['Pergunta']);
     assert.match(run.element('#chatStatus').textContent, /pergunta foi salva/);
     assert.equal(run.element('#messageInput').value, '');
     assert.equal(run.element('#messageInput').disabled, false);
+});
+
+test('endpoint ausente nao salva pergunta nem chama HTTP e preserva texto', async () => {
+    const run = scenario({ endpoint: '' });
+    await run.send();
+    assert.deepEqual(run.counts(), { appends: 0, reads: 0, requests: 0 });
+    assert.equal(run.element('#messageInput').value, 'Pergunta');
+    assert.match(run.element('#chatStatus').textContent, /Nenhuma pergunta foi salva/);
+});
+
+test('recuperacao reaproveita ID e nao duplica pergunta', async () => {
+    const run = scenario({ failOnce: true });
+    await run.send();
+    assert.ok(run.pending());
+    await run.send();
+    assert.equal(run.ids[0], run.ids[1]);
+    assert.equal(run.persisted.length, 2);
+    assert.equal(run.pending(), null);
 });
 for (const failRead of [1, 2]) {
     test(`Conversa removida na releitura ${failRead}: nao duplica append nem fabrica bot`, async () => {
@@ -130,3 +208,56 @@ test('Troca/perda de sessao descarta conclusao antiga e nao desbloqueia conta au
     assert.equal(run.counts().reads, 1);
     assert.equal(run.persisted.length, 1);
 });
+
+
+test('falha antes da primeira gravação preserva ID e recupera uma única pergunta', async () => {
+    const run = scenario({ appendFailOnce: true });
+    await run.send();
+    const pending = run.pending();
+    assert.ok(pending);
+    assert.equal(pending.novaConversa, true);
+    assert.equal(run.persisted.length, 0);
+    assert.equal(run.counts().requests, 0);
+    await run.send();
+    assert.equal(run.ids[0], pending.messageId);
+    assert.equal(run.persisted.length, 2);
+    assert.equal(run.pending(), null);
+});
+
+
+const pendingFixture = JSON.stringify({ version: 1, conversationId: 'abcdefghijklmnopqrst',
+    messageId: 'message-sylvinho-000001', pergunta: 'Pergunta', enviadoEm: 123, novaConversa: false });
+for (const pendingRaw of [pendingFixture, '{']) {
+    test('Novo chat não descarta pendência sem confirmação: ' + (pendingRaw === '{' ? 'inválida' : 'válida'), async () => {
+        const run = scenario({ pendingRaw, confirmed: false });
+        await run.newChat();
+        assert.deepEqual(run.navigation(), { navigations: 0, confirmations: 1 });
+        assert.equal(run.rawPending(), pendingRaw);
+        assert.equal(run.ids.length, 0);
+        assert.equal(run.allocations(), 0);
+    });
+    test('Novo chat descarta explicitamente sem gerar mensagem: ' + (pendingRaw === '{' ? 'inválida' : 'válida'), async () => {
+        const run = scenario({ pendingRaw });
+        await run.newChat();
+        assert.deepEqual(run.navigation(), { navigations: 1, confirmations: 1 });
+        assert.equal(run.rawPending(), undefined);
+        assert.equal(run.ids.length, 0);
+        assert.equal(run.allocations(), 0);
+        assert.equal(run.counts().appends, 0);
+    });
+}
+for (const options of [{ readBlocked: true, removeBlocked: true }, { pendingRaw: pendingFixture, removeBlocked: true }]) {
+    test('Novo chat abre na página atual quando limpeza é indisponível: ' + JSON.stringify(options), async () => {
+        const run = scenario(options);
+        try {
+            await run.newChat();
+            assert.deepEqual(run.navigation(), { navigations: 0, confirmations: 1 });
+            assert.match(run.element('#chatStatus').textContent, /descarte vale somente nesta página/);
+            assert.equal(run.ids.length, 0);
+        assert.equal(run.allocations(), 0);
+            assert.equal(run.counts().appends, 0);
+            assert.equal(run.rawPending(), options.pendingRaw);
+            assert.equal(run.pending(), null);
+        } finally { run.cleanup(); }
+    });
+}

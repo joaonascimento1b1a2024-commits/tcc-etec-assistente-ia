@@ -1,19 +1,19 @@
 // Apenas mocks locais; nao importa index.ts, SDK inicializado, secrets ou Gemini.
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
-import {createRequire} from "node:module";
 import test from "node:test";
 import {
     perguntarAssistenteHandler, montarPromptSistema,
     MAX_PERGUNTA_LENGTH, MAX_MENSAGENS,
 } from "../functions/lib/assistente/handler.js";
-import {formatarDocumentoContexto, selecionarDocumentosRelevantes}
+import {selecionarDocumentosRelevantes}
     from "../functions/lib/rag/recuperacao.js";
 
+const MID = "message-sylvinho-000001";
+const MID2 = "message-sylvinho-000002";
 const ID = "AbCdEfGhIjKlMnOpQrSt";
 const caminho = (uid = "alice", id = ID) => `users/${uid}/conversas/${id}`;
-const userMessage = (texto = "matricula", enviadoEm = 1) =>
-    ({texto, remetente: "user", enviadoEm});
+const userMessage = (texto = "matricula", enviadoEm = 1, messageId = MID) =>
+    ({texto, remetente: "user", enviadoEm, messageId});
 const conversa = (mensagens = [userMessage()]) => ({
     titulo: "Titulo manual", tituloOrigem: "manual",
     criadoEm: {seconds: 1}, atualizadoEm: {seconds: 2}, mensagens,
@@ -109,13 +109,13 @@ function setup({initial = conversa(), chunks = chunksPadrao} = {}) {
         }},
         serverTimestamp: () => ({serverTimestamp: true}),
         agora: () => 12345,
-        async gerarResposta(prompt, pergunta) {
-            calls.generator.push({prompt, pergunta});
+        async gerarResposta(pergunta, chunks) {
+            calls.generator.push({chunks, pergunta});
             return "Resposta controlada";
         },
     };
     async function run({method = "POST", authorization = "Bearer tokenA",
-        body = {pergunta: "matricula", conversationId: ID}} = {}) {
+        body = {pergunta: "matricula", conversationId: ID, messageId: MID}, dependencies = deps} = {}) {
         const res = {
             code: null, body: null, headers: {},
             set(name, value) {this.headers[name] = value; return this;},
@@ -123,11 +123,11 @@ function setup({initial = conversa(), chunks = chunksPadrao} = {}) {
             json(payload) {this.body = payload; return this;},
         };
         await perguntarAssistenteHandler({
-            method, body, get(name) {
+            method, body: body && typeof body === "object" && !Array.isArray(body) ? Object.defineProperties({messageId: MID}, Object.getOwnPropertyDescriptors(body)) : body, get(name) {
                 assert.equal(name, "Authorization");
                 return authorization;
             },
-        }, res, deps);
+        }, res, dependencies);
         return res;
     }
     return {rows, calls, state, deps, run};
@@ -141,7 +141,7 @@ function assertSemTrabalho(s, {auth = 1} = {}) {
 }
 
 test("POST valido integra RAG V1 e acrescenta exclusivamente bot", async () => {
-    const initial = conversa();
+    const initial = conversa([userMessage("MATRÍCULA")]);
     const s = setup({initial});
     const r = await s.run({body: {pergunta: "  MATRÍCULA  ", conversationId: ID}});
     assert.equal(r.code, 200);
@@ -149,13 +149,10 @@ test("POST valido integra RAG V1 e acrescenta exclusivamente bot", async () => {
     assert.deepEqual(s.calls.auth, ["tokenA"]);
     assert.deepEqual(s.calls.rag, [["conhecimento", "ativo", "==", true]]);
     assert.equal(s.calls.generator[0].pergunta, "MATRÍCULA");
-    const contexto = selecionarDocumentosRelevantes(chunksPadrao, "MATRÍCULA")
-        .map(formatarDocumentoContexto).join("\n\n");
-    assert.ok(s.calls.generator[0].prompt.includes(contexto));
-    assert.ok(!s.calls.generator[0].prompt.includes("NAO USAR"));
+    assert.deepEqual(s.calls.generator[0].chunks.map(d => d.id), ["ativo"]);
     const saved = s.rows.get(caminho());
     assert.deepEqual(saved.mensagens, [...initial.mensagens, {
-        texto: "Resposta controlada", remetente: "bot", enviadoEm: 12345,
+        texto: "Resposta controlada", remetente: "bot", enviadoEm: 12345, messageId: MID,
     }]);
     for (const key of ["titulo", "tituloOrigem", "criadoEm"]) {
         assert.deepEqual(saved[key], initial[key]);
@@ -229,7 +226,7 @@ test("limite1000 e aplicado depois de trim sem reduzir limite para700", async ()
         pergunta: "x".repeat(1001), conversationId: ID,
     }})).code, 400);
     assertSemTrabalho(s);
-    const valido = setup();
+    const valido = setup({initial: conversa([userMessage("x".repeat(1000))])});
     assert.equal((await valido.run({body: {
         pergunta: "  " + "x".repeat(1000) + "  ", conversationId: ID,
     }})).code, 200);
@@ -281,7 +278,7 @@ test("UID do token nao acessa conversa existente de outra conta", async () => {
 
 test("conversa cheia retorna409 sem gerar resposta", async () => {
     assert.equal(MAX_MENSAGENS, 100);
-    const s = setup({initial: conversa(Array.from({length: 100}, (_, i) => userMessage(String(i))))});
+    const s = setup({initial: conversa([...Array.from({length: 99}, () => ({texto: "legado", remetente: "user"})), userMessage()])});
     const before = structuredClone(s.rows.get(caminho()));
     assert.equal((await s.run()).code, 409);
     assert.deepEqual(s.rows.get(caminho()), before);
@@ -290,7 +287,7 @@ test("conversa cheia retorna409 sem gerar resposta", async () => {
 });
 
 test("99 mensagens aceita um bot e chega exatamente a100", async () => {
-    const s = setup({initial: conversa(Array.from({length: 99}, (_, i) => userMessage(String(i))))});
+    const s = setup({initial: conversa([...Array.from({length: 98}, () => ({texto: "legado", remetente: "user"})), userMessage()])});
     assert.equal((await s.run()).code, 200);
     assert.equal(s.rows.get(caminho()).mensagens.length, 100);
 });
@@ -320,7 +317,7 @@ test("conversa excluida durante geracao nao e recriada na transacao", async () =
 test("corrida para100 mensagens durante geracao retorna409 sem bot", async () => {
     const s = setup();
     s.deps.gerarResposta = async () => {
-        s.rows.get(caminho()).mensagens = Array.from({length: 100}, (_, i) => userMessage(String(i)));
+        s.rows.get(caminho()).mensagens = [userMessage(), ...Array.from({length: 99}, () => ({texto: "legado", remetente: "user"}))];
         return "resposta";
     };
     assert.equal((await s.run()).code, 409);
@@ -332,7 +329,7 @@ test("corrida para100 mensagens durante geracao retorna409 sem bot", async () =>
 test("mensagem de outra aba entre leitura e transacao nao e perdida", async () => {
     const s = setup();
     s.deps.gerarResposta = async () => {
-        s.rows.get(caminho()).mensagens.push(userMessage("outra aba", 2));
+        s.rows.get(caminho()).mensagens.push(userMessage("outra aba", 2, MID2));
         return "resposta da primeira pergunta";
     };
     assert.equal((await s.run()).code, 200);
@@ -368,27 +365,27 @@ test("falha no commit retorna500 com user preservado", async () => {
     assert.equal(s.calls.commits, 0);
 });
 
-test("duas requisicoes iguais nao sao idempotentes: dois bots, nenhum novo user", async () => {
+test("duas requisicoes iguais sao idempotentes: um bot, nenhum novo user", async () => {
     const s = setup();
     assert.equal((await s.run()).code, 200);
     assert.equal((await s.run()).code, 200);
     const msgs = s.rows.get(caminho()).mensagens;
     assert.equal(msgs.filter((m) => m.remetente === "user").length, 1);
-    assert.equal(msgs.filter((m) => m.remetente === "bot").length, 2);
-    assert.equal(s.calls.generator.length, 2);
+    assert.equal(msgs.filter((m) => m.remetente === "bot").length, 1);
+    assert.equal(s.calls.generator.length, 1);
 });
 
 test("duas abas podem concluir fora de ordem sem perder mensagens", async () => {
-    const s = setup({initial: conversa([userMessage("pergunta A"), userMessage("pergunta B", 2)])});
+    const s = setup({initial: conversa([userMessage("pergunta A"), userMessage("pergunta B", 2, MID2)])});
     const a = deferred(), b = deferred(), started = deferred();
     let count = 0;
-    s.deps.gerarResposta = async (_, pergunta) => {
+    s.deps.gerarResposta = async (pergunta) => {
         if (++count === 2) started.resolve();
         await (pergunta === "pergunta A" ? a.promise : b.promise);
         return "resposta " + pergunta;
     };
     const ra = s.run({body: {pergunta: "pergunta A", conversationId: ID}});
-    const rb = s.run({body: {pergunta: "pergunta B", conversationId: ID}});
+    const rb = s.run({body: {pergunta: "pergunta B", conversationId: ID, messageId: MID2}});
     await started.promise;
     b.resolve();
     assert.equal((await rb).code, 200);
@@ -399,7 +396,7 @@ test("duas abas podem concluir fora de ordem sem perder mensagens", async () => 
 });
 
 test("duas respostas concorrentes em99 mensagens: uma200 outra409", async () => {
-    const s = setup({initial: conversa(Array.from({length: 99}, () => userMessage()))});
+    const s = setup({initial: conversa([...Array.from({length: 97}, () => ({texto: "legado", remetente: "user"})), userMessage(), userMessage("matricula", 2, MID2)])});
     const started = deferred(), release = deferred();
     let count = 0;
     s.deps.gerarResposta = async () => {
@@ -407,7 +404,7 @@ test("duas respostas concorrentes em99 mensagens: uma200 outra409", async () => 
         await release.promise;
         return "resposta";
     };
-    const a = s.run(), b = s.run();
+    const a = s.run(), b = s.run({body: {pergunta: "matricula", conversationId: ID, messageId: MID2}});
     await started.promise;
     release.resolve();
     const results = await Promise.all([a, b]);
@@ -418,7 +415,7 @@ test("duas respostas concorrentes em99 mensagens: uma200 outra409", async () => 
 test("retry do callback transacional nao repete geracao nem perde estado novo", async () => {
     const s = setup();
     s.state.repeatTransaction = true;
-    s.state.onRetry = () => s.rows.get(caminho()).mensagens.push(userMessage("aba durante retry"));
+    s.state.onRetry = () => s.rows.get(caminho()).mensagens.push(userMessage("aba durante retry", 2, MID2));
     assert.equal((await s.run()).code, 200);
     assert.equal(s.calls.generator.length, 1);
     assert.equal(s.calls.updates.length, 2);
@@ -444,10 +441,9 @@ test("troca de sessao nao muda UID de requisicao ja autenticada", async () => {
 });
 
 test("sem score positivo contexto vazio nao inclui base inteira", async () => {
-    const s = setup();
+    const s = setup({initial: conversa([userMessage("xyzxyz")])});
     assert.equal((await s.run({body: {pergunta: "xyzxyz", conversationId: ID}})).code, 200);
-    assert.ok(s.calls.generator[0].prompt.includes("--- INÍCIO DO CONTEXTO OFICIAL ---\n\n--- FIM"));
-    assert.ok(!s.calls.generator[0].prompt.includes("Documento oficial"));
+    assert.equal(s.calls.generator[0].chunks.length, 0);
 });
 
 test("falha na leitura RAG nao gera resposta nem bot", async () => {
@@ -462,34 +458,17 @@ test("falha na leitura RAG nao gera resposta nem bot", async () => {
     assert.equal(s.calls.transactions, 0);
 });
 
-test("contrato nao garante correspondencia entre body e ultima mensagem user", async () => {
+test("contrato vincula messageId ao texto salvo", async () => {
     const s = setup();
-    assert.equal((await s.run({body: {pergunta: "outra pergunta", conversationId: ID}})).code, 200);
-    assert.equal(s.calls.generator[0].pergunta, "outra pergunta");
-    assert.equal(s.rows.get(caminho()).mensagens[0].texto, "matricula");
+    assert.equal((await s.run({body: {pergunta: "outra pergunta", conversationId: ID}})).code, 409);
+    assert.equal(s.calls.generator.length, 0);
 });
 
-test("prompt e identico ao template do JS original sem executar index.js", () => {
-    const requireFunctions = createRequire(new URL("../functions/package.json", import.meta.url));
-    const compiler = requireFunctions("typescript");
-    const codigo = readFileSync(
-        "D:/Programação/sylvinho-backend/functions/index.js", "utf8");
-    const ast = compiler.createSourceFile("index.js", codigo,
-        compiler.ScriptTarget.Latest, true, compiler.ScriptKind.JS);
-    let template;
-    function procurar(node) {
-        if (compiler.isVariableDeclaration(node) && compiler.isIdentifier(node.name) &&
-            node.name.text === "promptSistema") template = node.initializer;
-        compiler.forEachChild(node, procurar);
-    }
-    procurar(ast);
-    assert.ok(compiler.isTemplateExpression(template));
-    assert.equal(template.templateSpans.length, 1);
-    const span = template.templateSpans[0];
-    assert.equal(span.expression.getText(ast), "contextoSecretaria");
-    for (const contexto of ["", "Contexto\ncom duas linhas", "Art.83 e matrícula"]) {
-        assert.equal(montarPromptSistema(contexto),
-            template.head.text + contexto + span.literal.text);
+test("utilitario legado de prompt preserva contexto sem carregar arquivos externos", () => {
+    for (const contexto of ["", "Contexto local ficticio"]) {
+        const prompt = montarPromptSistema(contexto);
+        assert.ok(prompt.includes(contexto));
+        assert.match(prompt, /Nunca invente dados/);
     }
 });
 
@@ -506,25 +485,118 @@ test("erro ao devolver HTTP depois do commit nao desfaz bot", async () => {
         },
     };
     await perguntarAssistenteHandler({
-        method: "POST", body: {pergunta: "matricula", conversationId: ID},
+        method: "POST", body: {pergunta: "matricula", conversationId: ID, messageId: MID},
         get: () => "Bearer tokenA",
     }, res, s.deps);
     assert.equal(res.code, 500);
     assert.equal(s.calls.commits, 1);
     assert.equal(s.rows.get(caminho()).mensagens.at(-1).remetente, "bot");
     assert.equal((await s.run()).code, 200);
-    assert.equal(s.rows.get(caminho()).mensagens.filter((m) => m.remetente === "bot").length, 2);
+    assert.equal(s.rows.get(caminho()).mensagens.filter((m) => m.remetente === "bot").length, 1);
 });
 
 test("retry transacional revalida limite e descarta update da tentativa anterior", async () => {
     const s = setup();
     s.state.repeatTransaction = true;
     s.state.onRetry = () => {
-        s.rows.get(caminho()).mensagens = Array.from({length: 100}, () => userMessage());
+        s.rows.get(caminho()).mensagens = [userMessage(), ...Array.from({length: 99}, () => ({texto: "legado", remetente: "user"}))];
     };
     assert.equal((await s.run()).code, 409);
     assert.equal(s.calls.generator.length, 1);
     assert.equal(s.calls.commits, 0);
     assert.equal(s.rows.get(caminho()).mensagens.length, 100);
     assert.ok(s.rows.get(caminho()).mensagens.every((m) => m.remetente === "user"));
+});
+
+const body = (messageId = MID, pergunta = 'matricula') => ({pergunta, conversationId: ID, messageId});
+const bots = (s) => s.rows.get(caminho()).mensagens.filter((m) => m.remetente === 'bot');
+
+test('primeira resposta e replay persistem somente um bot com messageId', async () => {
+ const s=setup(); const a=await s.run(), b=await s.run();
+ assert.equal(a.code,200); assert.deepEqual(a.body,b.body);
+ assert.equal(bots(s).length,1); assert.equal(bots(s)[0].messageId,MID);
+ assert.equal(s.calls.generator.length,1); assert.equal(s.calls.commits,1);
+ assert.equal(s.rows.get(caminho()).titulo,'Titulo manual');
+});
+test('oito requisicoes simultaneas compartilham geracao e resposta', async () => {
+ const s=setup(); const results=await Promise.all(Array.from({length:8},()=>s.run()));
+ assert.ok(results.every(r=>r.code===200)); assert.equal(bots(s).length,1);
+ assert.equal(s.calls.generator.length,1);
+});
+test('instancias separadas tambem deduplicam a persistencia na transacao', async () => {
+ const s=setup(); const dependencies={...s.deps,firestore:{...s.deps.firestore}};
+ const [a,b]=await Promise.all([s.run(),s.run({dependencies})]);
+ assert.equal(a.code,200); assert.equal(b.code,200); assert.deepEqual(a.body,b.body);
+ assert.equal(bots(s).length,1);
+});
+test('mesmo texto com IDs diferentes representa duas perguntas', async () => {
+ const s=setup(); const mid2='message-sylvinho-000002';
+ s.rows.get(caminho()).mensagens.push({...userMessage(),messageId:mid2});
+ await s.run(); await s.run({body:body(mid2)}); assert.equal(bots(s).length,2);
+});
+for(const messageId of [undefined,'','x','../outro',42,'x'.repeat(81)]) {
+ test('ID invalido '+String(messageId)+' retorna400',async()=>{
+ const s=setup(); assert.equal((await s.run({body:{...body(),messageId}})).code,400);
+ assert.equal(s.calls.generator.length,0);
+ });
+}
+test('ID de outra pergunta ou texto alterado retorna409',async()=>{
+ for(const input of [body('message-sylvinho-000099'),body(MID,'outra pergunta')]) {
+ const s=setup(); assert.equal((await s.run({body:input})).code,409);
+ assert.equal(s.calls.generator.length,0);
+ }
+});
+test('UID alheio nao acessa conversa e usuarioId do corpo e ignorado',async()=>{
+ const s=setup(); assert.equal((await s.run({authorization:'Bearer tokenB'})).code,404);
+ assert.equal((await s.run({body:{...body(),usuarioId:'bob'}})).code,200);
+});
+for(const [options,code] of [[{method:'GET'},405],[{authorization:null},401],
+ [{authorization:'Bearer invalido'},401],[{body:[]},400],[{body:{}},400],
+ [{body:body(MID,' ')},400],[{body:body(MID,'x'.repeat(1001))},400],
+ [{body:{...body(),conversationId:'../outro'}},400]]) {
+ test('validacao '+JSON.stringify(options)+' -> '+code,async()=>{
+ const s=setup(); assert.equal((await s.run(options)).code,code); assert.equal(bots(s).length,0);
+ });
+}
+test('pergunta duplicada no historico nao recebe resposta ambigua',async()=>{
+ const s=setup({initial:conversa([userMessage(),userMessage()])});
+ assert.equal((await s.run()).code,409); assert.equal(bots(s).length,0);
+});
+test('falha de commit seguida de retry preserva user e um unico bot',async()=>{
+ const s=setup(); s.state.rejectCommit=true; assert.equal((await s.run()).code,500);
+ assert.equal(bots(s).length,0); s.state.rejectCommit=false;
+ assert.equal((await s.run()).code,200); assert.equal(bots(s).length,1);
+});
+test('retry transacional nao repete geracao',async()=>{
+ const s=setup(); s.state.repeatTransaction=true;
+ assert.equal((await s.run()).code,200); assert.equal(s.calls.generator.length,1); assert.equal(bots(s).length,1);
+});
+test('historico legado sem IDs permanece intacto',async()=>{
+ const legacy=[{texto:'Antiga',remetente:'user'},{texto:'Resposta antiga',remetente:'bot'}];
+ const s=setup({initial:conversa([...legacy,userMessage()])}); await s.run();
+ assert.deepEqual(s.rows.get(caminho()).mensagens.slice(0,2),legacy);
+});
+test('limite100 bloqueia nova resposta e permite replay ja persistido',async()=>{
+ const filler=Array.from({length:98},()=>({texto:'legado',remetente:'user'}));
+ const s=setup({initial:conversa([...filler,userMessage()])});
+ assert.equal((await s.run()).code,200); assert.equal((await s.run()).code,200);
+ assert.equal(s.rows.get(caminho()).mensagens.length,100);
+ const full=setup({initial:conversa([...filler,userMessage(),{texto:'ultimo',remetente:'user'}])});
+ assert.equal((await full.run()).code,409);
+});
+test('conversa excluida durante geracao nao e recriada',async()=>{
+ const s=setup(); s.deps.gerarResposta=async()=>{s.rows.delete(caminho());return 'resposta';};
+ assert.equal((await s.run()).code,404); assert.equal(s.rows.has(caminho()),false);
+});
+test('mensagem de outra aba durante geracao nao e perdida',async()=>{
+ const s=setup(); s.deps.gerarResposta=async()=>{s.rows.get(caminho()).mensagens.push({texto:'outra',remetente:'user'});return 'resposta';};
+ assert.equal((await s.run()).code,200); assert.equal(s.rows.get(caminho()).mensagens.length,3);
+});
+test('erro do gerador e resposta invalida nao gravam bot',async()=>{
+ for(const value of ['',undefined,42]) {
+ const s=setup();s.deps.gerarResposta=async()=>value;
+ assert.equal((await s.run()).code,500);assert.equal(bots(s).length,0);
+ }
+ const s=setup();s.deps.gerarResposta=async()=>{throw new Error('detalhe privado');};
+ const r=await s.run();assert.equal(r.code,500);assert.deepEqual(r.body,{error:'Erro interno no servidor do assistente.'});
 });

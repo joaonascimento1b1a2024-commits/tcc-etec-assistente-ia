@@ -63,11 +63,16 @@ function renderProfile(user) {
 
 async function loadAuthenticatedProfile() {
     try {
+        if (['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) &&
+            !globalThis.__LOCAL_E2E__) throw new Error('LOCAL_EMULATORS_REQUIRED');
         // Imports dinâmicos permitem tratar falhas de conexão sem interromper o chat.
         const [appSDK, authSDK] = await Promise.all([
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js'),
         ]);
+        if (globalThis.__LOCAL_E2E__ && (!appSDK.getApps().length ||
+            appSDK.getApp().options.projectId !== 'demo-sylvinho-render-poc'))
+            throw new Error('LOCAL_DEMO_REQUIRED');
         const app = appSDK.getApps().length
             ? appSDK.getApp()
             : appSDK.initializeApp({
@@ -134,6 +139,10 @@ async function loadAuthenticatedProfile() {
                     }
                     chatStatus.textContent = 'As mensagens são salvas na sua conta.';
                     lockComposer(sending);
+                    const { carregarEnvioPendente } = await import('./envio-pendente.js');
+                    if (version !== sessionVersion) return;
+                    const pendente = carregarEnvioPendente(user.uid);
+                    if (pendente) await sendMessage(pendente.pergunta);
                 } catch (error) {
                     if (version !== sessionVersion) return;
                     chatStatus.textContent =
@@ -214,6 +223,10 @@ function addMessage(text, sender) {
 async function sendMessage(text) {
     const cleanText = text.trim();
     if (!cleanText || sending || !conversationStore || !authenticatedUser) return;
+    if (cleanText.length > 700) {
+        chatStatus.textContent = 'Escreva entre 1 e 700 caracteres.';
+        return;
+    }
     const version = sessionVersion;
     const store = conversationStore;
     const user = authenticatedUser;
@@ -226,8 +239,31 @@ async function sendMessage(text) {
     messageInput.value = cleanText;
     chatStatus.textContent = 'Salvando mensagem...';
     try {
-        const id = await store.append(conversationId, cleanText);
+        const [{ perguntarAssistente }, { resolverAssistenteConfig }, pendencias] = await Promise.all([
+            import('./assistente-client.js'),
+            import('./assistente-config.js'),
+            import('./envio-pendente.js'),
+        ]);
+        const config = resolverAssistenteConfig();
+        if (!config.endpoint) throw Object.assign(new Error('Assistente ainda não configurado.'), { code: 'ENDPOINT_NAO_CONFIGURADO' });
+        if (version !== sessionVersion) return;
+        let envio = pendencias.carregarEnvioPendente(user.uid);
+        if (envio && envio.pergunta !== cleanText) {
+            chatStatus.textContent = 'Existe uma pergunta pendente. Recarregue para recuperá-la antes de enviar outra.';
+            return;
+        }
+        if (!envio) {
+            envio = { version: 1, conversationId: conversationId || store.reserve(),
+                messageId: crypto.randomUUID(), pergunta: cleanText, enviadoEm: Date.now(),
+                novaConversa: !conversationId };
+            // Persistir antes de qualquer escrita evita trocar o ID apos recarga.
+            pendencias.guardarEnvioPendente(user.uid, envio);
+        }
+        const id = await store.append(envio.conversationId, envio.pergunta, envio.messageId,
+            envio.enviadoEm, { create: envio.novaConversa });
         userSaved = true;
+        envio.novaConversa = false;
+        pendencias.guardarEnvioPendente(user.uid, envio);
         if (version !== sessionVersion) return;
         conversationId = id;
         window.history.replaceState(null, '', `?conversa=${encodeURIComponent(id)}`);
@@ -240,28 +276,33 @@ async function sendMessage(text) {
         showChat();
         for (const message of saved.mensagens)
             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
-        chatStatus.textContent = 'Mensagem salva. Aguardando resposta...';
-        const [{ perguntarAssistente }, { assistenteConfig }] = await Promise.all([
-            import('./assistente-client.js'),
-            import('./assistente-config.js'),
-        ]);
-        if (version !== sessionVersion) return;
+        chatStatus.textContent = config.timeoutMs > 30000
+            ? 'Mensagem salva. Aguardando resposta... O servidor pode levar até dois minutos para iniciar.'
+            : 'Mensagem salva. Aguardando resposta...';
         await perguntarAssistente({
             user, pergunta: cleanText, conversationId: id,
-            ...assistenteConfig, signal: request.signal,
+            messageId: envio.messageId,
+            ...config, signal: request.signal,
             sessaoAtual: () => version === sessionVersion && authenticatedUser === user,
         });
         if (version !== sessionVersion) return;
         const confirmed = await store.open(id);
         if (version !== sessionVersion) return;
+        if (!confirmed.mensagens.some((message) => message.remetente === 'bot' && message.messageId === envio.messageId))
+            throw new Error('Resposta ainda não confirmada no histórico.');
+        pendencias.concluirEnvioPendente(user.uid);
         messages.replaceChildren();
         for (const message of confirmed.mensagens)
             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
         chatStatus.textContent = 'Conversa atualizada.';
     } catch (error) {
         if (version !== sessionVersion) return;
-        chatStatus.textContent = userSaved
-            ? 'A pergunta foi salva, mas não foi possível confirmar a resposta. Confira o histórico ou recarregue antes de reenviar; se a conversa foi excluída, inicie um novo chat.'
+        chatStatus.textContent = error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'
+            ? 'O assistente não está configurado para este ambiente. Nenhuma pergunta foi salva.'
+            : userSaved && error.code === 'TIMEOUT'
+            ? 'O servidor demorou para responder. Sua pergunta está salva. Recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
+            : userSaved
+            ? 'A pergunta foi salva, mas não foi possível confirmar a resposta. Recarregue para recuperar o envio com o mesmo identificador; se a conversa foi excluída, cancele a pendência.'
             : error.code
             ? 'Falha de conexão ou permissão. Confira o histórico antes de reenviar.'
             : error.message;
@@ -295,7 +336,33 @@ document
     );
 
 // Abre uma conversa nova sem apagar nenhuma conversa anterior.
-newChat.addEventListener('click', () => {
+newChat.addEventListener('click', async () => {
+    const pendencias = await import('./envio-pendente.js');
+    if (authenticatedUser) {
+        const estado = pendencias.inspecionarEnvioPendente(authenticatedUser.uid);
+        if (estado.estado !== 'ausente') {
+            const aviso = estado.estado === 'valido'
+                ? 'Existe um envio pendente. Cancelar a recuperação e abrir uma nova conversa?'
+                : 'Não foi possível ler a pendência local. Descartar sua recuperação e abrir uma nova conversa? Nenhuma conversa salva será apagada.';
+            if (!window.confirm(aviso)) return;
+            const descarte = pendencias.descartarEnvioPendente(authenticatedUser.uid);
+            if (!descarte.persistente) {
+                // Sem armazenamento, manter o descarte explícito nesta página evita
+                // recarregar e recuperar novamente o envio que a pessoa cancelou.
+                conversationId = null;
+                window.history.replaceState(null, '', 'home.html');
+                messages.replaceChildren();
+                messageInput.value = '';
+                homeScreen.classList.remove('hidden');
+                chatScreen.classList.add('hidden');
+                document.querySelectorAll('.nav-link').forEach((link) =>
+                    link.classList.toggle('active', link.dataset.page === 'home'));
+                chatStatus.textContent = 'Novo chat aberto. O armazenamento local não pôde ser limpo; o descarte vale somente nesta página. Recarregar pode recuperar a pendência anterior. Nenhuma pergunta foi enviada.';
+                lockComposer(!conversationStore || !authenticatedUser);
+                return;
+            }
+        }
+    }
     // A navegação limpa apenas a seleção; o histórico já salvo não é apagado.
     window.location.assign('home.html');
 });

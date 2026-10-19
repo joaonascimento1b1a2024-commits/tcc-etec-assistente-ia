@@ -11,6 +11,7 @@ const base = {
     endpoint: 'http://127.0.0.1:5001/demo-local/southamerica-east1/perguntarAssistente',
     pergunta: 'Como funciona a matricula?',
     conversationId: 'abcdefghijklmnopqrst',
+    messageId: 'message-sylvinho-000001',
     timeoutMs: 1000,
     fetchImpl: async () => ({ ok: true, json: async () => ({ resposta: 'Resposta do servidor' }) }),
 };
@@ -26,7 +27,7 @@ test('Authorization, body exato e sucesso sem cookies, redirecionamento ou usuar
             assert.equal(options.method, 'POST');
             assert.equal(options.headers.Authorization, 'Bearer token-simulado');
             assert.equal(options.headers['Content-Type'], 'application/json');
-            assert.deepEqual(JSON.parse(options.body), { pergunta: base.pergunta, conversationId: base.conversationId });
+            assert.deepEqual(JSON.parse(options.body), { pergunta: base.pergunta, conversationId: base.conversationId, messageId: base.messageId });
             assert.equal(options.credentials, 'omit');
             assert.equal(options.redirect, 'error');
             assert.ok(options.signal instanceof AbortSignal);

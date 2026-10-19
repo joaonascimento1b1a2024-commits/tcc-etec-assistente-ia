@@ -102,11 +102,16 @@ dialog.addEventListener('cancel', (event) => {
 // Aguarda a sessão real do Firebase antes de consultar qualquer histórico particular.
 async function start() {
     try {
+        if (['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) &&
+            !globalThis.__LOCAL_E2E__) throw new Error('LOCAL_EMULATORS_REQUIRED');
         const [appSDK, authSDK, storage] = await Promise.all([
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
             import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js'),
             import('./conversation-store.js'),
         ]);
+        if (globalThis.__LOCAL_E2E__ && (!appSDK.getApps().length ||
+            appSDK.getApp().options.projectId !== 'demo-sylvinho-render-poc'))
+            throw new Error('LOCAL_DEMO_REQUIRED');
         const app = appSDK.getApps().length
             ? appSDK.getApp()
             : appSDK.initializeApp({
