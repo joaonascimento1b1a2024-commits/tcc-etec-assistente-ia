@@ -1,7 +1,7 @@
 // Login: autentica por e-mail/senha ou Google e verifica o cargo antes de abrir a Home.
 // 1. Dependências: SDK oficial do Firebase e encaminhamento compartilhado por cargo.
 
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { entrarNaAreaLogada } from '../Logado/acesso.js';
 import {
     getAuth,
@@ -24,7 +24,12 @@ const firebaseConfig = {
     appId: '1:767501525275:web:9153a051a817504f64b3be',
 };
 
-const app = initializeApp(firebaseConfig);
+// Em loopback, a inicialização pertence ao bootstrap isolado dos emuladores.
+if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) &&
+    (!globalThis.__LOCAL_E2E__ || !getApps().length)) throw new Error('LOCAL_EMULATORS_REQUIRED');
+if (globalThis.__LOCAL_E2E__ && (!getApps().length || getApp().options.projectId !== 'demo-sylvinho-render-poc'))
+    throw new Error('LOCAL_DEMO_REQUIRED');
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // 3. Elementos do formulário e mensagens acessíveis de retorno.

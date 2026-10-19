@@ -62,10 +62,34 @@ service cloud.firestore {
           && data.mensagens is list && data.mensagens.size() > 0 && data.mensagens.size() <= 100
           && data.criadoEm is timestamp && data.atualizadoEm == request.time;
       }
+      function validUserMessage(message) {
+        return message is map
+          && message.keys().hasAll(['texto', 'remetente', 'enviadoEm', 'messageId'])
+          && message.keys().hasOnly(['texto', 'remetente', 'enviadoEm', 'messageId'])
+          && message.remetente == 'user'
+          && message.texto is string && message.texto.size() > 0 && message.texto.size() <= 700
+          && message.enviadoEm is int && message.enviadoEm >= 0
+          && message.messageId is string && message.messageId.matches('^[A-Za-z0-9_-]{20,80}$');
+      }
+      function appendsUserOnly() {
+        let before = resource.data.mensagens;
+        let after = request.resource.data.mensagens;
+        return before is list && after.size() == before.size() + 1
+          && after == before.concat([after[before.size()]])
+          && validUserMessage(after[before.size()])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['mensagens', 'atualizadoEm']);
+      }
       allow read, delete: if owner();
-      allow create: if owner() && validConversation() && request.resource.data.criadoEm == request.time;
+      allow create: if owner() && validConversation() && request.resource.data.criadoEm == request.time
+        && request.resource.data.mensagens.size() == 1
+        && validUserMessage(request.resource.data.mensagens[0]);
       allow update: if owner() && validConversation()
-        && request.resource.data.criadoEm == resource.data.criadoEm;
+        && request.resource.data.criadoEm == resource.data.criadoEm
+        && (appendsUserOnly() ||
+          (request.resource.data.mensagens == resource.data.mensagens
+           && (request.resource.data.tituloOrigem == 'manual'
+             || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['atualizadoEm']))
+           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['titulo', 'tituloOrigem', 'atualizadoEm'])));
     }
 
     // Cada usuário só pode acessar o próprio perfil.

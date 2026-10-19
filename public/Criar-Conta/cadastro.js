@@ -2,7 +2,7 @@
 // Os provedores de acesso e as regras precisam estar habilitados no console Firebase.
 // 1. Dependências de autenticação, perfil e encaminhamento da área logada.
 
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { entrarNaAreaLogada } from '../Logado/acesso.js';
 import {
     getAuth,
@@ -10,6 +10,7 @@ import {
     updateProfile,
     GoogleAuthProvider,
     signInWithPopup,
+    signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import {
     getFirestore,
@@ -28,7 +29,12 @@ const firebaseConfig = {
     appId: '1:767501525275:web:9153a051a817504f64b3be',
 };
 
-const app = initializeApp(firebaseConfig);
+// Em loopback, a inicialização pertence ao bootstrap isolado dos emuladores.
+if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) &&
+    (!globalThis.__LOCAL_E2E__ || !getApps().length)) throw new Error('LOCAL_EMULATORS_REQUIRED');
+if (globalThis.__LOCAL_E2E__ && (!getApps().length || getApp().options.projectId !== 'demo-sylvinho-render-poc'))
+    throw new Error('LOCAL_DEMO_REQUIRED');
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -65,6 +71,12 @@ form.addEventListener('submit', async (event) => {
     const password = form.password.value;
     const confirmPassword = form['confirm-password'].value;
 
+    // O formulário usa novalidate: validar campos e aceite antes de criar a conta.
+    if (!name || !form.checkValidity()) {
+        showMessage('Preencha os campos obrigatórios e aceite os termos para continuar.');
+        form.reportValidity();
+        return;
+    }
     if (password !== confirmPassword) {
         showMessage('As senhas não coincidem.');
         form['confirm-password'].focus();
@@ -90,6 +102,7 @@ form.addEventListener('submit', async (event) => {
         showMessage('Conta criada com sucesso!', 'success');
         form.reset();
         // Após o cadastro por senha, encaminha para a tela de login existente.
+        await signOut(auth);
         window.location.href = '../Login/login.html';
     } catch (error) {
         console.error(error);

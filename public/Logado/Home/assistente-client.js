@@ -17,10 +17,11 @@ function validarEndpoint(endpoint) {
 
 // Nao conhece Firestore e nao persiste mensagens. Todo erro encerra sem retry.
 export async function perguntarAssistente({
-    user, pergunta, conversationId, endpoint, timeoutMs = 30000,
+    user, pergunta, conversationId, messageId, endpoint, timeoutMs = 30000,
     signal, sessaoAtual = () => true, fetchImpl = globalThis.fetch,
 }) {
     if (!user || typeof user.getIdToken !== 'function') throw falha('SESSAO_INVALIDA');
+    if (typeof messageId !== 'string' || !/^[A-Za-z0-9_-]{20,80}$/.test(messageId)) throw falha('MENSAGEM_INVALIDA');
     const url = validarEndpoint(endpoint);
     if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw falha('TIMEOUT_INVALIDO');
     const controller = new AbortController();
@@ -48,7 +49,7 @@ export async function perguntarAssistente({
             const response = await fetchImpl(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pergunta, conversationId }),
+                body: JSON.stringify({ pergunta, conversationId, messageId }),
                 signal: controller.signal,
                 credentials: 'omit',
                 redirect: 'error',

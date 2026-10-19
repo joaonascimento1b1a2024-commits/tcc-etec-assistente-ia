@@ -9,6 +9,8 @@ const source = readFileSync(
 
 async function scenario({ role, page, user = true, error = false }) {
     const elements = new Map();
+    const events = new Map();
+    let signouts = 0;
     const get = (id) => {
         if (!elements.has(id))
             elements.set(id, {
@@ -17,7 +19,7 @@ async function scenario({ role, page, user = true, error = false }) {
                 dataset: {},
                 textContent: '',
                 value: '',
-                addEventListener() {},
+                addEventListener(event, callback) { events.set(id + ':' + event, callback); },
             });
         return elements.get(id);
     };
@@ -41,6 +43,7 @@ async function scenario({ role, page, user = true, error = false }) {
         'firebase-app': { getApps: () => [], initializeApp: () => ({}) },
         'firebase-auth': {
             getAuth: () => ({}),
+            signOut: async () => { signouts++; await authCallback(null); },
             onAuthStateChanged: (_, callback) => {
                 authCallback = callback;
                 return () => {};
@@ -100,6 +103,8 @@ async function scenario({ role, page, user = true, error = false }) {
     return {
         get,
         initialized,
+        logout: () => events.get('logout:click')(),
+        get signouts() { return signouts; },
         get redirect() {
             return redirect;
         },
@@ -138,3 +143,11 @@ assert.equal(aluno.redirect, 'ADMIN');
 console.log(
     'OK: aluno, administrador, URLs trocadas, visitante, falha de conexão, promoção e revogação em tempo real.',
 );
+
+// Logout usa Firebase Authentication e a mesma limpeza de sessão da restauração.
+const logoutScenario = await scenario({ role: false, page: 'aluno' });
+await logoutScenario.logout();
+assert.equal(logoutScenario.signouts, 1);
+assert.equal(logoutScenario.redirect, '../../Login/login.html');
+assert.equal(logoutScenario.get('account-settings').hidden, true);
+assert.equal(logoutScenario.get('profile-email').textContent, '');
