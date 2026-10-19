@@ -164,3 +164,23 @@
 :root[data-theme='light'] img[src*='etec_ra_central_matao_sylvio_de_mattos_carvalho_'] {
     content: url('etec_ra_central_matao_sylvio_de_mattos_carvalho_pb.png');
 }
+
+
+/* Identificação acadêmica visível, sem cobrir controles ou alterar a navegação. */
+.academic-demo-banner {
+    display: block;
+    grid-column: 1 / -1;
+    flex-shrink: 0;
+    max-width: 100%;
+    padding: 0.75rem 1rem;
+    margin: 0 0 1rem;
+    border: 1px solid var(--border, #777);
+    border-inline-start: 0.3rem solid var(--accent, #e53935);
+    border-radius: 0.5rem;
+    background: var(--panel, #242428);
+    color: var(--text, #fff);
+    font: inherit;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}

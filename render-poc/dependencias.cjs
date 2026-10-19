@@ -25,7 +25,9 @@ function criarDependencias(config, { lerAmbiente = () => process.env, carregar =
         gerarResposta: async () => MOCK_RESPONSE,
     };
     // Recheck the actual runtime before loading any SDK, not just the supplied config.
-    if (lerConfiguracao(lerAmbiente()).mode !== validated.mode) throw new Error('LOCAL_EMULATORS_REQUIRED');
+    const current = lerConfiguracao(lerAmbiente());
+    if (current.mode !== validated.mode || current.demonstracao !== validated.demonstracao)
+        throw new Error('LOCAL_EMULATORS_REQUIRED');
     const { initializeApp, getApps } = carregar('firebase-admin/app');
     const { getAuth } = carregar('firebase-admin/auth');
     const name = 'sylvinho-render-poc-emulator';
@@ -53,8 +55,10 @@ function criarDependencias(config, { lerAmbiente = () => process.env, carregar =
         };
     }
     const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
+    const firestore = getFirestore(app);
     return {
-        auth: getAuth(app), firestore: getFirestore(app),
+        auth: getAuth(app), firestore,
+        ...(validated.demonstracao ? { recuperarConhecimento: require("./demonstracao.cjs").criarLeitorDemonstracao(firestore) } : {}),
         serverTimestamp: () => FieldValue.serverTimestamp(),
         gerarResposta: validated.mode === 'documental-emulator' ?
             async (pergunta, chunks) => gerarRespostaDocumental(pergunta, chunks).resposta : async () => MOCK_RESPONSE,

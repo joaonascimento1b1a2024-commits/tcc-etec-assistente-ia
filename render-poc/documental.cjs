@@ -3,9 +3,10 @@
 const { readFileSync } = require('node:fs');
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
 const { gerarRespostaDocumental } = require('../functions/lib/assistente/resposta-documental.js');
-const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS } = require('./producao.cjs');
+const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
 
 function validarConfiguracaoDocumental(config) {
+    if (config.demonstracao !== undefined && typeof config.demonstracao !== 'boolean') throw new Error('DEMO_FLAG_INVALID');
     if (config.projectId !== PROJECT_ID || config.databaseId !== DATABASE_ID) throw new Error('DOCUMENTAL_PROJECT_INVALID');
     if (config.enabled !== true) throw new Error('DOCUMENTAL_EXPLICIT_ENABLE_REQUIRED');
     if (config.credentialPath !== CREDENTIAL_PATH || typeof config.serviceAccountEmail !== 'string' ||
@@ -32,7 +33,7 @@ function lerConfiguracaoDocumental(env) {
         env.NODE_TLS_REJECT_UNAUTHORIZED !== undefined && env.NODE_TLS_REJECT_UNAUTHORIZED !== '1')
         throw new Error('DOCUMENTAL_UNSAFE_ENVIRONMENT');
     return validarConfiguracaoDocumental({
-        mode: 'documental', host: '0.0.0.0', port: env.PORT === undefined ? 10000 : Number(env.PORT),
+        mode: 'documental', ...(lerModoDemonstracao(env) ? { demonstracao: true } : {}), host: '0.0.0.0', port: env.PORT === undefined ? 10000 : Number(env.PORT),
         origins: env.ASSISTENTE_CORS_ORIGINS || '', projectId: env.GCLOUD_PROJECT,
         databaseId: env.FIRESTORE_DATABASE_ID, enabled: env.SYLVINHO_DOCUMENTAL_ENABLED === 'true',
         credentialPath: env.GOOGLE_APPLICATION_CREDENTIALS, serviceAccountEmail: env.SYLVINHO_SERVICE_ACCOUNT_EMAIL,
@@ -42,7 +43,7 @@ function lerConfiguracaoDocumental(env) {
 function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileSync, lerAmbiente = () => process.env } = {}) {
     const current = lerConfiguracaoDocumental(lerAmbiente());
     const expected = validarConfiguracaoDocumental(config);
-    for (const key of ['projectId', 'databaseId', 'credentialPath', 'serviceAccountEmail', 'origins', 'port'])
+    for (const key of ['projectId', 'databaseId', 'credentialPath', 'serviceAccountEmail', 'origins', 'port', 'demonstracao'])
         if (current[key] !== expected[key]) throw new Error('DOCUMENTAL_RUNTIME_CHANGED');
     let credential;
     try { credential = JSON.parse(lerArquivo(current.credentialPath, 'utf8')); }
@@ -63,7 +64,9 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const app = initializeApp({ projectId: PROJECT_ID, credential: cert(credential) }, name);
         const { getAuth } = carregar('firebase-admin/auth');
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
-        return { auth: getAuth(app), firestore: getFirestore(app, DATABASE_ID),
+        const firestore = getFirestore(app, DATABASE_ID);
+        return { auth: getAuth(app), firestore,
+            ...(current.demonstracao ? { recuperarConhecimento: require("./demonstracao.cjs").criarLeitorDemonstracao(firestore) } : {}),
             serverTimestamp: () => FieldValue.serverTimestamp(),
             gerarResposta: async (pergunta, chunks) => gerarRespostaDocumental(pergunta, chunks).resposta };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }

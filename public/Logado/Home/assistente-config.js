@@ -2,7 +2,7 @@
 // Vazio impede chamadas HTTP; nao existe fallback para producao.
 export const assistenteConfig = Object.freeze({
     endpoint: '',
-    timeoutMs: 30000,
+    timeoutMs: 120000,
 });
 
 // Configuração explícita do demo: nenhuma URL publicada é inferida.
@@ -26,5 +26,19 @@ export function resolverAssistenteConfig({
         });
     }
     const loopback = origin && ['localhost', '127.0.0.1', '[::1]'].includes(new URL(origin).hostname);
-    return loopback ? Object.freeze({ endpoint: '', timeoutMs: 30000 }) : assistenteConfig;
+    if (loopback) return Object.freeze({ endpoint: '', timeoutMs: 30000 });
+    if (assistenteConfig.endpoint) validarEndpointPublicado(assistenteConfig.endpoint);
+    return assistenteConfig;
+}
+
+
+// Só configurar após confirmar a URL real do serviço. Vazio mantém o acesso online desligado.
+export function validarEndpointPublicado(endpoint) {
+    let url;
+    try { url = new URL(endpoint); } catch { throw new Error('ENDPOINT_PUBLICADO_INVALIDO'); }
+    if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash ||
+        url.pathname !== '/perguntarAssistente' || url.hostname.includes('*') ||
+        ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname))
+        throw new Error('ENDPOINT_PUBLICADO_INVALIDO');
+    return url.href;
 }

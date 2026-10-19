@@ -50,6 +50,7 @@ export interface DependenciasAssistente {
   serverTimestamp: () => unknown;
   gerarResposta: (pergunta: string,
     chunks: readonly DocumentoPreparado[]) => Promise<string>;
+  recuperarConhecimento?: (pergunta: string) => Promise<DocumentoPreparado[]>;
   agora?: () => number;
 }
 
@@ -239,9 +240,11 @@ export async function perguntarAssistenteHandler(
           atualizadas, messageId, perguntaNormalizada,
         );
         if (concluida !== undefined) return concluida;
-        const chunks = await recuperarConhecimentoRelevante(
-          deps.firestore, perguntaNormalizada,
-        );
+        const chunks = deps.recuperarConhecimento ?
+          await deps.recuperarConhecimento(perguntaNormalizada) :
+          await recuperarConhecimentoRelevante(
+            deps.firestore, perguntaNormalizada,
+          );
         const gerada = await deps.gerarResposta(perguntaNormalizada, chunks);
         if (typeof gerada !== "string" || !gerada.trim()) {
           throw new Error("INVALID_GENERATOR_RESPONSE");
