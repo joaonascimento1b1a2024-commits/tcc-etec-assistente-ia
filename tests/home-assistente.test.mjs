@@ -316,3 +316,21 @@ test('espera de 120 segundos informa retomada do servidor e mantém o envio úni
     await sent;
     assert.equal(run.persisted.length, 2);
 });
+
+for (const [code, expected] of [
+    ['HTTP_401', /sessão expirou/], ['SESSAO_INVALIDA', /sessão expirou/],
+    ['TOKEN_INVALIDO', /sessão expirou/], ['HTTP_502', /temporariamente indisponível/],
+    ['HTTP_503', /temporariamente indisponível/], ['HTTP_504', /temporariamente indisponível/],
+    ['REDE_OU_TOKEN', /conexão e o login/], ['TIMEOUT', /demorou para responder/],
+]) {
+    test('Erro ' + code + ' preserva pendencia sem retry ou bot local', async () => {
+        const run = scenario({fail: true, failCode: code});
+        await run.send();
+        assert.deepEqual(run.counts(), {appends: 1, reads: 1, requests: 1});
+        assert.match(run.element('#chatStatus').textContent, expected);
+        assert.match(run.element('#chatStatus').textContent, /mesmo identificador/);
+        assert.ok(run.pending());
+        assert.equal(run.persisted.length, 1);
+        assert.equal(run.persisted[0].remetente, 'user');
+    });
+}

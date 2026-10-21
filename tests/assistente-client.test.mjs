@@ -63,7 +63,17 @@ for (const user of [null, {}, { getIdToken: async () => '' }, { getIdToken: asyn
     });
 }
 test('Falha ao obter token', () => rejects({ user: { getIdToken: async () => { throw new Error('expirado'); } } }, 'REDE_OU_TOKEN'));
-test('Configuracao padrao nao chama producao nem rede', () => rejects({ ...assistenteConfig, fetchImpl: () => assert.fail('Endpoint vazio') }, 'ENDPOINT_INVALIDO'));
+test('Endpoint vazio continua impedindo rede', () => rejects({ ...assistenteConfig, endpoint: '', fetchImpl: () => assert.fail('Endpoint vazio') }, 'ENDPOINT_INVALIDO'));
+test('Configuracao publicada envia somente ao Render com fetch simulado', async () => {
+    let calls = 0;
+    await perguntarAssistente({ ...base, ...assistenteConfig, fetchImpl: async (url, options) => {
+        calls++;
+        assert.equal(url, 'https://sylvinho-backend-poc.onrender.com/perguntarAssistente');
+        assert.equal(options.headers.Authorization, 'Bearer token-simulado');
+        return {ok: true, json: async () => ({resposta: 'Resposta simulada de teste'})};
+    }});
+    assert.equal(calls, 1);
+});
 for (const endpoint of ['http://example.invalid/function', 'https://user:pass@example.invalid/f', 'https://example.invalid/f?key=x', 'https://example.invalid/f#fragment']) {
     test(`Endpoint rejeitado ${endpoint}`, () => rejects({ endpoint, fetchImpl: () => assert.fail('URL invalida') }, 'ENDPOINT_INVALIDO'));
 }

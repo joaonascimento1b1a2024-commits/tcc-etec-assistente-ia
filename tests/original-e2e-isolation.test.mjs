@@ -47,7 +47,7 @@ test('staging original identifica documentos reais sem alterar HTML de publicaca
     assert.match(source, /documentos de referência/);
     assert.match(read('public/Logado/Home/home.html'), /Protótipo de TCC/);
     assert.doesNotMatch(read('public/Logado/Home/home.html'), /dados fictícios/);
-    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: ''/);
+    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: endpointRenderPreparado/);
 });
 
 test('modo original nao importa documentos e evidencia apenas fontes autorizadas', () => {

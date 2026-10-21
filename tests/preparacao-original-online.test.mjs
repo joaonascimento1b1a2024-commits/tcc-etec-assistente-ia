@@ -4,13 +4,15 @@ import test from 'node:test';
 import vm from 'node:vm';
 const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 
-test('frontend prepara URL confirmada mas nao ativa envio online', async () => {
+test('frontend ativa somente a URL confirmada na origem autorizada', async () => {
     const source = read('public/Logado/Home/assistente-config.js');
     const config = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
     assert.equal(config.endpointRenderPreparado, 'https://sylvinho-backend-poc.onrender.com/perguntarAssistente');
     assert.equal(config.validarEndpointPublicado(config.endpointRenderPreparado), config.endpointRenderPreparado);
-    assert.equal(config.resolverAssistenteConfig({origin: 'https://tcc-ia-d8891.web.app', local: undefined}).endpoint, '');
+    assert.equal(config.resolverAssistenteConfig({origin: 'https://tcc-ia-d8891.web.app', local: undefined}).endpoint, config.endpointRenderPreparado);
     assert.equal(config.assistenteConfig.timeoutMs, 120000);
+    for (const origin of ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://[::1]:5000', 'https://site.example.invalid'])
+        assert.equal(config.resolverAssistenteConfig({origin, local: undefined}).endpoint, '');
 });
 
 test('avisos do prototipo nao mostram fixture nem consultam dados institucionais', async () => {

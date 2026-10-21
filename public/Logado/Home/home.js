@@ -305,6 +305,12 @@ async function sendMessage(text) {
         if (version !== sessionVersion) return;
         chatStatus.textContent = error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'
             ? 'O assistente não está configurado para este ambiente. Nenhuma pergunta foi salva.'
+            : userSaved && ['HTTP_401', 'SESSAO_INVALIDA', 'TOKEN_INVALIDO'].includes(error.code)
+            ? 'Sua sessão expirou ou não pôde ser validada. A pergunta foi salva. Entre novamente e recarregue para recuperar o envio com o mesmo identificador.'
+            : userSaved && ['HTTP_502', 'HTTP_503', 'HTTP_504'].includes(error.code)
+            ? 'O assistente está temporariamente indisponível. A pergunta foi salva. Aguarde e recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
+            : userSaved && error.code === 'REDE_OU_TOKEN'
+            ? 'Não foi possível conectar ao assistente ou obter a sessão. A pergunta foi salva. Confira a conexão e o login e recarregue para recuperar o envio com o mesmo identificador.'
             : userSaved && error.code === 'TIMEOUT'
             ? 'O servidor demorou para responder. Sua pergunta está salva. Recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
             : userSaved

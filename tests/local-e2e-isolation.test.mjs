@@ -60,7 +60,7 @@ test('Preload bloqueia Firebase/Gemini em HTTP HTTPS fetch TLS e socket antes da
     assert.equal(execFileSync(process.execPath, ['-e', code], { cwd: root, env, encoding: 'utf8' }).trim(), 'GUARD_OK');
 });
 test('Configuracao de producao continua sem endpoint local ou bootstrap', () => {
-    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: ''/);
+    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: endpointRenderPreparado/);
     assert.match(read('public/Logado/Home/assistente-config.js'), /local.projectId !== config.projectId/);
     assert.doesNotMatch(read('public/Logado/Home/home.html'), /local-bootstrap|local-e2e/);
     assert.doesNotMatch(read('functions/src/index.ts'), /local-e2e|SYLVINHO_LOCAL|mock/i);
@@ -69,7 +69,7 @@ test('Configuracao de producao continua sem endpoint local ou bootstrap', () => 
 
 const { resolverAssistenteConfig, ambienteLocalAssistente: demo } = await import(
     'data:text/javascript;base64,' + Buffer.from(read('public/Logado/Home/assistente-config.js')).toString('base64'));
-test('config local exige origem projeto Auth e Firestore exatos; fora do demo continua sem endpoint', () => {
+test('config local exige origem projeto Auth e Firestore exatos; origens nao autorizadas continuam sem endpoint', () => {
     const config = resolverAssistenteConfig({ origin: demo.origin, local: demo });
     assert.equal(config.endpoint, 'http://' + demo.functions + '/' + demo.projectId + '/' + demo.region + '/perguntarAssistente');
     for (const changed of [{ projectId: 'outro-projeto' }, { auth: 'remoto:9099' }, { firestore: 'remoto:8080' }]) {

@@ -1,10 +1,10 @@
 // Configure somente com a URL verificada do Emulator ou da Function publicada.
-// Vazio impede chamadas HTTP; nao existe fallback para producao.
-// URL informada pelo responsavel; ativar somente apos validar o backend autenticado.
+// Endpoint explicito; ambientes locais continuam isolados.
+// Backend documental autenticado validado; publicacao depende de revisao separada.
 export const endpointRenderPreparado =
     'https://sylvinho-backend-poc.onrender.com/perguntarAssistente';
 export const assistenteConfig = Object.freeze({
-    endpoint: '',
+    endpoint: endpointRenderPreparado,
     timeoutMs: 120000,
 });
 
@@ -30,6 +30,8 @@ export function resolverAssistenteConfig({
     }
     const loopback = origin && ['localhost', '127.0.0.1', '[::1]'].includes(new URL(origin).hostname);
     if (loopback) return Object.freeze({ endpoint: '', timeoutMs: 30000 });
+    if (origin !== 'https://tcc-ia-d8891.web.app')
+        return Object.freeze({ endpoint: '', timeoutMs: 120000 });
     if (assistenteConfig.endpoint) validarEndpointPublicado(assistenteConfig.endpoint);
     return assistenteConfig;
 }
