@@ -206,7 +206,9 @@ function addMessage(text, sender) {
     // textContent exibe a mensagem como texto, sem interpretar HTML.
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    bubble.textContent = text;
+    if (sender === 'bot' && globalThis.apresentacaoDocumental)
+        globalThis.apresentacaoDocumental.renderizar(bubble, text);
+    else bubble.textContent = text;
     row.append(bubble);
     messages.append(row);
 

@@ -533,3 +533,64 @@ nav {
         display: none;
     }
 }
+
+/* Leitura documental: largura flexível, sem alterar envio ou histórico. */
+.message-row { min-width: 0; }
+.bubble {
+    min-width: 0;
+    min-height: 0;
+    max-width: 82%;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+.message-row.bot .bubble { flex: 1 1 0; max-width: calc(100% - 51px); }
+.bubble.documental { white-space: normal; }
+.documental-introducao {
+    margin: 0 0 0.8rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+.documental-citacao { margin: 0 0 0.85rem; min-width: 0; }
+.documental-natureza { margin: 0 0 0.5rem; font-size: 0.8125rem; font-weight: 600; }
+.documental-citacao blockquote {
+    margin: 0;
+    padding: 0.1rem 0 0.1rem 0.85rem;
+    border-left: 3px solid currentColor;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.documental-fonte { margin: 0.7rem 0 0; font-size: 0.8125rem; line-height: 1.5; }
+.documental-detalhes { margin-top: 0.8rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+.documental-detalhes summary {
+    display: list-item;
+    list-style-position: inside;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    min-height: 44px;
+    cursor: pointer;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+.documental-detalhes summary:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; border-radius: 3px; }
+.documental-detalhes[open] > summary { margin-bottom: 0.8rem; }
+.documental-texto-original { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8125rem; }
+@media (max-width: 720px) {
+    .message-row { gap: 6px; }
+    .bot-avatar { flex-basis: 28px; height: 28px; font-size: 18px; }
+    .message-row.bot .bubble { max-width: calc(100% - 34px); }
+    .bubble { padding: 12px 10px; max-width: 92%; }
+    .documental-citacao blockquote { padding-left: 0.625rem; }
+}
