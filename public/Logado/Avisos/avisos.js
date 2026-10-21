@@ -98,6 +98,15 @@ async function start() {
     const boot = ++startVersion;
     stopListeners();
     login.hidden = true;
+    if (document.documentElement?.dataset?.demoAcademica === 'prototipo') {
+        const item = document.createElement('li');
+        item.textContent = 'Avisos institucionais não estão disponíveis neste protótipo. Consulte os canais da escola.';
+        list.replaceChildren(item);
+        document.querySelector('#page-description').textContent = 'O protótipo não consulta a coleção institucional de avisos.';
+        showStatus('Avisos institucionais indisponíveis neste protótipo.');
+        retry.hidden = true;
+        return;
+    }
     if (document.documentElement?.dataset?.demoAcademica === 'true') {
         const item = document.createElement('li');
         item.textContent = 'Fixture de demonstração: encontro imaginário no Salão Cometa. Não é um evento da escola.';

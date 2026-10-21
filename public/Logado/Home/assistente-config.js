@@ -1,5 +1,8 @@
 // Configure somente com a URL verificada do Emulator ou da Function publicada.
 // Vazio impede chamadas HTTP; nao existe fallback para producao.
+// URL informada pelo responsavel; ativar somente apos validar o backend autenticado.
+export const endpointRenderPreparado =
+    'https://sylvinho-backend-poc.onrender.com/perguntarAssistente';
 export const assistenteConfig = Object.freeze({
     endpoint: '',
     timeoutMs: 120000,

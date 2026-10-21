@@ -3,8 +3,9 @@ import { resolve } from 'node:path';
 import { prepare as prepareAuth, stage as authStage, root } from './prepare-auth.mjs';
 export { root };
 export const stage = resolve(root, '.cache/local-e2e');
-export function prepare({ authMode = 'anonymous', academica = false } = {}) {
+export function prepare({ authMode = 'anonymous', academica = false, original = false } = {}) {
     if (!['anonymous', 'password'].includes(authMode)) throw new Error('LOCAL_AUTH_MODE_REQUIRED');
+    if (typeof original !== 'boolean' || original && academica) throw new Error('LOCAL_ORIGINAL_MODE_INVALID');
     if (typeof academica !== 'boolean') throw new Error('LOCAL_ACADEMIC_MODE_INVALID');
     prepareAuth();
     mkdirSync(stage, { recursive: true });
@@ -22,6 +23,19 @@ export function prepare({ authMode = 'anonymous', academica = false } = {}) {
         }
     }
     protect(resolve(stage, 'public'));
+    if (original) {
+        function identificar(directory) {
+            for (const item of readdirSync(directory, {withFileTypes: true})) {
+                const target = resolve(directory, item.name);
+                if (item.isDirectory()) identificar(target);
+                else if (item.name.endsWith('.html')) writeFileSync(target, readFileSync(target, 'utf8')
+                    .replaceAll('Demonstração acadêmica — dados fictícios — não é atendimento oficial da escola.',
+                        'Demonstração acadêmica — documentos de referência — não é atendimento oficial da escola.')
+                    .replaceAll('somente com documentos fictícios de demonstração', 'com trechos dos documentos de referência'));
+            }
+        }
+        identificar(resolve(stage, 'public'));
+    }
     config.hosting.headers[0].headers[0].value = config.hosting.headers[0].headers[0].value
         .replace('connect-src http://127.0.0.1:9099 http://127.0.0.1:8080;',
             'connect-src http://127.0.0.1:9099 http://127.0.0.1:8080 http://127.0.0.1:5001;');
@@ -29,7 +43,7 @@ export function prepare({ authMode = 'anonymous', academica = false } = {}) {
     config.emulators.functions = { host: '127.0.0.1', port: 5001 };
     mkdirSync(resolve(stage, 'functions'), { recursive: true });
     cpSync(resolve(root, 'local-e2e/function.cjs'), resolve(stage, 'functions/index.cjs'));
-    const demoEnv = academica ? 'SYLVINHO_DEMO_ACADEMICA=true\n' : '';
+    const demoEnv = original ? 'SYLVINHO_RAG_ORIGINAL_LOCAL=1\n' : academica ? 'SYLVINHO_DEMO_ACADEMICA=true\n' : '';
     writeFileSync(resolve(stage, 'functions/.env.local'), `SYLVINHO_LOCAL_E2E=1\n${demoEnv}NODE_OPTIONS=--require "${resolve(root, 'local-e2e/network-guard.cjs').replaceAll('\\', '/')}"\n`);
     if (!existsSync(resolve(stage, 'functions/node_modules')))
         symlinkSync(resolve(root, 'functions/node_modules'), resolve(stage, 'functions/node_modules'), 'junction');

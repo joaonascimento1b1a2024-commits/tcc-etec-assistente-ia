@@ -128,9 +128,8 @@ test("origens sao exatas, sem wildcard caminhos ou HTTP externo", () => {
 
 function fixture({origins = "https://permitido.example", apps = [],
     ragError, commitError,
-    chunks = [{id: "c", ativo: true, titulo: "Matricula - fixture",
-        documentoId: "doc-oficial", secao: "Procedimento", paginaInicial: 2,
-        paginaFinal: 3, conteudo: "A matricula deve ser solicitada na secretaria da escola."}]} = {}) {
+    chunks = [JSON.parse(readFileSync(new URL("./dados/rag-original.json", import.meta.url))).documentos
+        .find(d => d.titulo === "Sistema Etec - B1 - Inicial na Etec" && /Material Necessário/.test(d.secao))]} = {}) {
     const calls = {init: 0, authFactory: 0, dbFactory: 0, auth: [],
         reads: [], rag: [], updates: [], sdk: [], secret: 0, options: null, globals: null, triggers: {}};
     const secret = {value() {calls.secret++; return randomUUID();}};
@@ -268,7 +267,7 @@ test("endpoint documental responde sem chave ou secret", async () => {
     s.secret.value = () => "";
     const r = await s.request();
     assert.equal(r.code, 200);
-    assert.match(r.body.resposta, /A matricula deve ser solicitada/);
+    assert.match(r.body.resposta, /documentos de matrícula/);
     assert.equal(s.calls.sdk.length, 0);
     assert.equal(s.calls.updates.length, 1);
     assert.equal(s.calls.secret, 0);
@@ -279,10 +278,10 @@ test("POST atraves dos adapters reais mockados preserva contrato e somente bot",
     const r = await s.request();
     assert.equal(r.code, 200);
     assert.deepEqual(Object.keys(r.body), ["resposta"]);
-    assert.match(r.body.resposta, /A matricula deve ser solicitada na secretaria da escola\./);
-    assert.match(r.body.resposta, /Matricula - fixture/);
-    assert.match(r.body.resposta, /doc-oficial/);
-    assert.match(r.body.resposta, /paginas 2-3/);
+    assert.match(r.body.resposta, /documentos de matrícula/);
+    assert.match(r.body.resposta, /Sistema Etec - B1/);
+    assert.match(r.body.resposta, /doc-10d342eed4d6a46a5c6638a29179d80b/);
+    assert.match(r.body.resposta, /pagina 25/);
     assert.equal(r.headers["Access-Control-Allow-Origin"], "https://permitido.example");
     assert.equal(r.headers.Vary, "Origin");
     assert.equal(r.headers["Access-Control-Allow-Credentials"], undefined);
@@ -390,13 +389,14 @@ test("tipoConteudo do Firestore preserva modelo como nao normativo", async () =>
     const r = await s.request();
     assert.equal(r.code, 200);
     assert.match(r.body.resposta, /Nao ha informacao suficiente/);
-    assert.match(r.body.resposta, /Modelo\/exemplo, nao normativo/);
+    assert.doesNotMatch(r.body.resposta, /A matricula deve/);
     assert.equal(s.saved.mensagens[1].texto, r.body.resposta);
 });
 
 test("contradicoes documentais geram recusa persistida", async () => {
     const s = fixture({chunks: [5, 10].map((dias) => ({id: String(dias),
-        ativo: true, titulo: "Matricula", conteudo: `A matricula deve ser solicitada em ${dias} dias.`}))});
+        ativo: true, documentoId: "doc-10d342eed4d6a46a5c6638a29179d80b",
+        titulo: "Matricula inicial", conteudo: `A matricula deve ser solicitada em ${dias} dias.`}))});
     const r = await s.request();
     assert.equal(r.code, 200);
     assert.match(r.body.resposta, /informacoes divergentes/);

@@ -73,7 +73,7 @@ test('endpoint publicado permanece vazio; HTTPS e rota são exigidos; timeout pu
         'https://localhost/perguntarAssistente']) assert.throws(() => front.validarEndpointPublicado(value), /ENDPOINT_PUBLICADO_INVALIDO/);
 });
 test('aviso acadêmico é estático e acessível nas páginas principais', () => {
-    const aviso = 'Demonstração acadêmica — dados fictícios — não é atendimento oficial da escola.';
+    const aviso = 'Protótipo de TCC — documentos de referência — não é atendimento oficial da escola.';
     for (const p of ['Login/login.html', 'Criar-Conta/cadastro.html', 'Logado/Home/home.html', 'Logado/Conversas/conversas.html',
         'Logado/Configurações Aluno/configAl.html']) {
         const html = readFileSync(new URL('../public/' + p, import.meta.url), 'utf8');
@@ -122,10 +122,10 @@ test('mudança da flag no runtime é rejeitada antes de ler credencial documenta
         FIRESTORE_DATABASE_ID: '(default)', SYLVINHO_DOCUMENTAL_ENABLED: 'true',
         SYLVINHO_SERVICE_ACCOUNT_EMAIL: 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com',
         GOOGLE_APPLICATION_CREDENTIALS: '/etc/secrets/sylvinho-firebase-admin.json',
-        ASSISTENTE_CORS_ORIGINS: 'https://tcc-ia-d8891.web.app', SYLVINHO_DEMO_ACADEMICA: 'true' };
+        ASSISTENTE_CORS_ORIGINS: 'https://tcc-ia-d8891.web.app', SYLVINHO_DEMO_ACADEMICA: 'false' };
     const config = lerConfiguracaoDocumental(online);
-    assert.throws(() => criarDependenciasDocumentais(config, { lerAmbiente: () => ({ ...online, SYLVINHO_DEMO_ACADEMICA: 'false' }),
-        lerArquivo: () => assert.fail('Nenhuma credencial pode ser lida neste teste') }), /DOCUMENTAL_RUNTIME_CHANGED/);
+    assert.throws(() => criarDependenciasDocumentais(config, { lerAmbiente: () => ({ ...online, SYLVINHO_DEMO_ACADEMICA: 'true' }),
+        lerArquivo: () => assert.fail('Nenhuma credencial pode ser lida neste teste') }), /DOCUMENTAL_ORIGINAL_SOURCES_REQUIRED/);
 });
 
 test('health não depende do módulo acadêmico nem carrega fixtures', () => {

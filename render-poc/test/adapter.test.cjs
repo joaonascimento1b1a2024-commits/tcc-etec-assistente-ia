@@ -4,6 +4,8 @@ const test = require('node:test');
 const { readFileSync } = require('node:fs');
 const { criarServidor, criarDependencias, lerConfiguracao, DEMO_PROJECT, MOCK_RESPONSE } = require('../server.cjs');
 
+const trechoOriginal = JSON.parse(readFileSync(require.resolve('../../tests/dados/rag-original.json'), 'utf8')).documentos
+    .find(d => d.titulo === 'Sistema Etec - B1 - Inicial na Etec');
 const ID = 'AbCdEfGhIjKlMnOpQrSt';
 const ORIGIN = 'http://localhost:5000';
 const BODY = { pergunta: 'matricula', conversationId: ID, messageId: 'message-sylvinho-000001', usuarioId: 'intruso' };
@@ -20,7 +22,7 @@ function fixture() {
                 if (name === 'conhecimento') return { where(...args) {
                     assert.deepEqual(args, ['ativo', '==', true]);
                     return { get: async () => ({ forEach(cb) {
-                        cb({ id: 'ativo', data: () => ({ ativo: true, titulo: 'Matricula', conteudo: 'MARCADOR_ATIVO', paginaInicial: 1 }) });
+                        cb({ id: trechoOriginal.id, data: () => trechoOriginal });
                         cb({ id: 'inativo', data: () => ({ ativo: false, titulo: 'Matricula', conteudo: 'MARCADOR_INATIVO' }) });
                     } }) };
                 } };
@@ -98,7 +100,7 @@ test('handler original -> UID do token -> RAG V1 -> mock -> somente bot', async 
     const r = await request('/perguntarAssistente', post(BODY, 'ficticio'));
     assert.equal(r.status, 200); assert.deepEqual(await r.json(), { resposta: MOCK_RESPONSE });
     assert.deepEqual(state.calls, ['aluno']); assert.equal(state.generations, 1);
-    assert.match(state.prompt, /MARCADOR_ATIVO/); assert.doesNotMatch(state.prompt, /MARCADOR_INATIVO/);
+    assert.ok(state.prompt.includes(trechoOriginal.conteudo)); assert.doesNotMatch(state.prompt, /MARCADOR_INATIVO/);
     assert.deepEqual(state.conversation.mensagens.map((m) => m.remetente), ['user', 'bot']);
     assert.equal(state.conversation.tituloOrigem, 'manual'); assert.equal(state.conversation.criadoEm, 1);
 });

@@ -282,8 +282,165 @@ export function selecionarDocumentosRelevantes(
   return selecionados;
 }
 
+/** Fontes originais autorizadas; nunca recebidas do cliente. */
+export const FONTES_ORIGINAIS = Object.freeze([
+  "doc-10d342eed4d6a46a5c6638a29179d80b",
+  "doc-3319912252fbc4089c42a062f73d1b58",
+  "doc-e7dd9dc45e79430bc34af10b786f6b1d",
+]);
+
+// Verbos de pedido e qualificadores nao identificam o assunto documental.
+const TERMOS_PEDIDO = new Set([
+  "faco", "fazer", "funciona", "funcionam", "posso", "pode", "podem",
+  "pedir", "solicitar", "solicito", "conseguir", "consigo", "obter",
+  "ser", "sao", "sera", "existe", "existem", "onde", "quando", "quanto",
+  "quantos", "quantas", "procedimento", "procedimentos", "informacao",
+  "informacoes", "saber", "gostaria", "favor",
+]);
+const FLEXOES: Record<string, string> = {
+  matriculas: "matricula", rematriculas: "rematricula",
+  declaracoes: "declaracao", frequencias: "frequencia",
+  minimos: "minima", minimo: "minima", minimas: "minima",
+  aprovar: "aprovacao", aprovado: "aprovacao", aprovados: "aprovacao",
+  documentos: "documento", telefones: "telefone",
+  modelos: "modelo", exemplos: "exemplo",
+};
+
 /**
- * Consulta somente conhecimento ativo e aplica selecao V1.
+ * Equivalencias morfologicas pequenas, explicitas e testaveis.
+ * @param {unknown} texto Campo ou pergunta.
+ * @return {string[]} Termos canonicos.
+ */
+export function extrairTermosOriginais(texto: unknown): string[] {
+  const termos = extrairTermosUteis(texto)
+    .map((termo) => FLEXOES[termo] || termo);
+  if (/\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
+    .test(normalizarTexto(texto))) termos.push("rematricula");
+  return [...new Set(termos)];
+}
+
+/**
+ * Mesmo contrato lexical para recuperacao e citacao de fontes originais.
+ * Remove intencao de pedido, mantendo o assunto verificavel no documento.
+ * @param {unknown} pergunta Pergunta do usuario.
+ * @return {string[]} Termos de evidencia canonicos.
+ */
+export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
+  const termos = extrairTermosOriginais(pergunta)
+    .filter((termo) => !TERMOS_PEDIDO.has(termo));
+  const renovacao =
+    /\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
+      .test(normalizarTexto(pergunta));
+  return termos.filter((termo) =>
+    !(termos.includes("frequencia") && termo === "aprovacao") &&
+    !(termos.includes("declaracao") && termo === "escolar") &&
+    !["modelo", "exemplo"].includes(termo) &&
+    !(renovacao && ["renovacao", "renovar", "matricula"].includes(termo)));
+}
+
+/**
+ * Modelos sao evidencias de formulario, nao de obrigacoes institucionais.
+ * @param {DocumentoPreparado} documento Chunk preparado.
+ * @return {boolean} Documento identificado como modelo ou exemplo.
+ */
+function eModelo(documento: DocumentoPreparado): boolean {
+  return /\b(modelo|exemplo)\b/u.test(normalizarTexto(
+    documento.tipoConteudo)) ||
+    /\bdoc \d/u.test(normalizarTexto(documento.titulo));
+}
+
+/**
+ * Selecao original: procedencia e cobertura do assunto antes do score V1.
+ * Nao altera o seletor lexical legado usado pelos testes isolados de demo.
+ * @param {unknown} documentos Chunks reais ou snapshots somente-leitura.
+ * @param {unknown} pergunta Pergunta do usuario.
+ * @param {OpcoesSelecao} opcoes Limites opcionais, limitados ao teto do V1.
+ * @return {DocumentoPreparado[]} Evidencias ou lista vazia por insuficiencia.
+ */
+export function selecionarDocumentosOriginais(
+  documentos: unknown,
+  pergunta: unknown,
+  opcoes: OpcoesSelecao = {},
+): DocumentoPreparado[] {
+  if (!Array.isArray(documentos)) return [];
+  const termos = extrairTermosOriginais(pergunta)
+    .filter((t) => !TERMOS_PEDIDO.has(t));
+  const frequencia = termos.includes("frequencia");
+  const regraFrequencia = frequencia &&
+    (termos.includes("minima") || termos.includes("aprovacao"));
+  const modeloPedido = termos.includes("modelo") || termos.includes("exemplo");
+  // Aprovacao e o objetivo da consulta de frequencia, nao um sinonimo textual
+  // obrigatorio: o artigo que define a frequencia nao usa essa palavra.
+  const exigidos = extrairTermosConsultaOriginal(pergunta);
+  if (!exigidos.length) return [];
+  const candidatas = documentos
+    .map((doc, indice) => prepararDocumento(doc, indice))
+    .filter((doc): doc is DocumentoPreparado => Boolean(doc))
+    .filter((doc) => FONTES_ORIGINAIS.includes(doc.documentoId) &&
+      Boolean(doc.id && doc.conteudo))
+    .filter((doc) => {
+      const corpo = new Set(extrairTermosOriginais(doc.conteudo));
+      // Titulos, palavras-chave e categorias ajudam o ranking, mas nunca
+      // substituem a evidencia do assunto no corpo do chunk.
+      if (!exigidos.every((termo) => corpo.has(termo))) return false;
+      if (regraFrequencia &&
+          normalizarTexto(doc.tipoConteudo) !== "normativo") {
+        return false;
+      }
+      if (modeloPedido && !eModelo(doc)) return false;
+      if (eModelo(doc) && !modeloPedido) return false;
+      // O assunto principal evita usar mencoes incidentais: por exemplo,
+      // trancamento ou intercambio nao explicam a matricula inicial.
+      const cabecalho = normalizarTexto(doc.titulo + " " + doc.secao);
+      const linhas = doc.conteudo.split(/\r?\n/u)
+        .map(normalizarTexto).filter(Boolean);
+      if (exigidos.includes("rematricula") &&
+          !/renovacao|rematricula/u.test(cabecalho)) return false;
+      if (exigidos.length === 1 && exigidos[0] === "matricula" &&
+          !/b1 inicial|matricula inicial|das matriculas/u.test(cabecalho)) {
+        return false;
+      }
+      if (exigidos.includes("declaracao") &&
+          !(/declarac/u.test(cabecalho) ||
+          (eModelo(doc) &&
+          linhas.some((linha) => /^declaracao\b/u.test(linha))) ||
+          normalizarTexto(doc.tipoConteudo) === "normativo")) return false;
+      // Remove apenas cabecalhos identificaveis, sem tamanho minimo magico.
+      if (exigidos.includes("declaracao") &&
+          /\b(como|solicitar|pedir|faco)\b/u.test(normalizarTexto(pergunta)) &&
+          !modeloPedido &&
+          normalizarTexto(doc.tipoConteudo) !== "procedimento") return false;
+      const titulo = normalizarTexto(doc.titulo);
+      if (!linhas.some((linha) => linha !== "atividades" &&
+          !titulo.endsWith(linha))) return false;
+      if (exigidos.includes("telefone")) {
+        // Um telefone de exemplo ou de outra unidade nao prova o contato local.
+        if (!/sylvio de mattos carvalho/u.test(normalizarTexto(doc.conteudo)) ||
+          !/(?:\(?\d{2}\)?[ .-]*)?\d{4,5}[ .-]?\d{4}/u.test(doc.conteudo)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  // Ranking original entre candidatos que ja passaram pelos invariantes.
+  // Canonicaliza so a pergunta de ranking; preserva conteudo e metadados.
+  const comPercentual = frequencia && exigidos.includes("minima") ?
+    candidatas.filter((doc) => /\d+\s*%/u.test(doc.conteudo)) : [];
+  const iniciais = exigidos.length === 1 && exigidos[0] === "matricula" ?
+    candidatas.filter((doc) => /b1 inicial/u.test(
+      normalizarTexto(doc.titulo))) : [];
+  const evidencias = comPercentual.length ? comPercentual :
+    iniciais.length ? iniciais : candidatas;
+  return selecionarDocumentosRelevantes(evidencias, exigidos.join(" "), {
+    maxDocumentos: Math.min(opcoes.maxDocumentos ?? MAX_DOCUMENTOS_CONTEXTO,
+      MAX_DOCUMENTOS_CONTEXTO),
+    maxCaracteres: Math.min(opcoes.maxCaracteres ?? MAX_CARACTERES_CONTEXTO,
+      MAX_CARACTERES_CONTEXTO),
+  });
+}
+
+/**
+ * Consulta somente conhecimento ativo e aplica selecao original restrita.
  * @param {FonteConhecimento} firestore Fonte somente-leitura.
  * @param {unknown} pergunta Pergunta de entrada.
  * @return {Promise<DocumentoPreparado[]>} Chunks selecionados.
@@ -299,5 +456,5 @@ export async function recuperarConhecimentoRelevante(
   const chunks: unknown[] = [];
   snapshot.forEach((chunk) => chunks.push(chunk));
 
-  return selecionarDocumentosRelevantes(chunks, pergunta);
+  return selecionarDocumentosOriginais(chunks, pergunta);
 }
