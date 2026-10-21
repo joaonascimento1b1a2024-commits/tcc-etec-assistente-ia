@@ -180,3 +180,6 @@ tmp/
 temp/
 *.swp
 *.swo
+
+# Snapshot documental de regressao: somente local, nao publicar no repositorio.
+/tests/dados/rag-original.json

@@ -16,6 +16,10 @@ const { criarEndpointAssistente } = require(path.join(root, 'functions/lib/assis
 const { gerarRespostaDocumental } = require(path.join(root, 'functions/lib/assistente/resposta-documental.js'));
 const { criarLeitorDemonstracao, lerModoDemonstracao } = require(path.join(root, 'render-poc/demonstracao.cjs'));
 const academica = lerModoDemonstracao(process.env);
+const original = process.env.SYLVINHO_RAG_ORIGINAL_LOCAL === '1';
+if (original && academica) throw new Error('LOCAL_ORIGINAL_MODE_CONFLICT');
+const leitorOriginal = original ? require(path.join(root, 'local-e2e/original-corpus.cjs'))
+    .criarLeitorOriginalLocal() : null;
 let app;
 function localDependencies() {
     const checks = {
@@ -53,19 +57,23 @@ exports.perguntarAssistente = onRequest({ region: 'southamerica-east1', cors: fa
         return decoded;
     } },
     firestore: getFirestore(app),
-    ...(academica ? { recuperarConhecimento: criarLeitorDemonstracao(getFirestore(app)) } : {}),
+    ...(original ? {recuperarConhecimento: leitorOriginal} : academica ? { recuperarConhecimento: criarLeitorDemonstracao(getFirestore(app)) } : {}),
     serverTimestamp: () => FieldValue.serverTimestamp(),
     gerarResposta: async (pergunta, chunks) => {
         const contexto = chunks.map((chunk) => chunk.conteudo).join('\n');
         evidence.geracoes++;
-        evidence.ativoNoContexto = contexto.includes(academica ? 'AZUL-42' : 'MARCADOR_ATIVO_MATRICULA');
+        evidence.original = original;
+        evidence.ativoNoContexto = original ? chunks.length > 0 : contexto.includes(academica ? 'AZUL-42' : 'MARCADOR_ATIVO_MATRICULA');
         evidence.inativoNoContexto = contexto.includes('MARCADOR_INATIVO_PROIBIDO');
         evidence.academica = academica;
         evidence.idsContexto = chunks.map(chunk => chunk.id);
+        evidence.fontes = chunks.map(chunk => chunk.documentoId);
+        if (original && evidence.fontes.some(id => !require(path.join(root,
+            'functions/lib/rag/recuperacao.js')).FONTES_ORIGINAIS.includes(id))) throw new Error('ORIGINAL_SOURCE_INVALID');
         if (contexto.includes('MARCADOR_FORA_SELECAO')) throw new Error('ACADEMIC_ISOLATION_FAILED');
         if (evidence.inativoNoContexto) throw new Error('INVALID_LOCAL_CONTEXT');
         const resultado = gerarRespostaDocumental(pergunta, chunks);
-        evidence.resultados.push({ status: resultado.status, ativoNoContexto: evidence.ativoNoContexto,
+        evidence.resultados.push({ pergunta, fontes: evidence.fontes, original, status: resultado.status, ativoNoContexto: evidence.ativoNoContexto,
             inativoNoContexto: evidence.inativoNoContexto });
         save();
         return resultado.resposta;

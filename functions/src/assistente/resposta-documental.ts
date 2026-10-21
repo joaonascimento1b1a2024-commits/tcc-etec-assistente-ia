@@ -1,6 +1,7 @@
 import type {DocumentoPreparado} from "../rag/recuperacao";
 import {
-  extrairTermosUteis, normalizarTexto,
+  extrairTermosUteis, normalizarTexto, FONTES_ORIGINAIS,
+  extrairTermosOriginais, extrairTermosConsultaOriginal,
   MAX_CARACTERES_CONTEXTO, MAX_DOCUMENTOS_CONTEXTO,
 } from "../rag/recuperacao";
 
@@ -48,7 +49,7 @@ const TERMOS_PERGUNTA = new Set([
 // Node 24 oferece Segmenter; descrevemos a API sem mudar o tsconfig ES2017.
 const intl = Intl as unknown as {
   Segmenter: new (locale: string, opcoes: {granularity: "sentence"}) => {
-    segment(texto: string): Iterable<{segment: string}>;
+    segment(texto: string): Iterable<{segment: string; index: number}>;
   };
 };
 const segmentador = new intl.Segmenter("pt-BR", {granularity: "sentence"});
@@ -124,7 +125,8 @@ function fonteDoTrecho(
     ["id", "chunkId"], ["documentoId", "documentoId"],
     ["titulo", "titulo"], ["secao", "secao"],
   ] as const) {
-    const valor = textoSeguro(trecho[entrada], 180);
+    const limite = entrada === "secao" ? 1200 : 180;
+    const valor = textoSeguro(trecho[entrada], limite);
     if (/[\r\n]/u.test(valor)) continue;
     if (valor && !instrucaoSuspeita(valor)) fonte[saida] = valor;
   }
@@ -217,7 +219,68 @@ function rotuloFonte(fonte: FonteDocumental): string {
 }
 
 /**
- * Gerador puro: cita frases na ordem recebida, sem ranking, SDKs ou I/O.
+ * Segmenta sem tratar a quebra visual de linha do PDF como fim da frase.
+ * Os indices sao preservados: cada citacao e uma substring literal do chunk.
+ * Sentencas longas podem ser separadas apenas em limites estruturais de lista.
+ * @param {string} conteudo Texto original.
+ * @param {TrechoDocumental} trecho Metadados do chunk.
+ * @return {Array} Unidades literais com prioridade de passo numerado.
+ */
+function unidadesOriginais(
+  conteudo: string, trecho: TrechoDocumental,
+): {texto: string; passo: boolean}[] {
+  const saida: {texto: string; passo: boolean}[] = [];
+  // Em formularios, o titulo literal pode comprovar a existencia do modelo,
+  // sem apresentar seus campos preenchiveis como uma norma institucional.
+  if (natureza(trecho, "") !== "documental") {
+    for (const linha of conteudo.split(/\r?\n/u)) {
+      const texto = linha.trim();
+      if (texto === texto.toUpperCase() && texto !== texto.toLowerCase()) {
+        saida.push({texto, passo: false});
+      }
+    }
+  }
+  const continuo = conteudo.replace(/[\r\n]/gu, " ");
+  for (const {segment, index} of segmentador.segment(continuo)) {
+    const original = conteudo.slice(index, index + segment.length);
+    const limites = [0];
+    if (original.length > MAX_CARACTERES_CITACAO) {
+      const marcadores = /\n[ \t]*(?=[•✓]|\d+[.)]\s|[a-z]\)\s)/gu;
+      for (const marcador of original.matchAll(marcadores)) {
+        limites.push((marcador.index ?? 0) + 1);
+      }
+    }
+    limites.push(original.length);
+    for (let i = 0; i < limites.length - 1; i++) {
+      const inicio = limites[i];
+      let fim = limites[i + 1];
+      // Preserva a introducao e o primeiro item quando a lista cabe no teto.
+      if (original.slice(limites[i], fim).trim().endsWith(":") &&
+          i + 2 < limites.length &&
+          limites[i + 2] - limites[i] <= MAX_CARACTERES_CITACAO) {
+        fim = limites[++i + 1];
+      }
+      let texto = original.slice(inicio, fim).trim();
+      while (texto) {
+        const primeira = /^([^\r\n]*)(?:\r?\n|$)/u.exec(texto);
+        if (!primeira || !(normalizarTexto(trecho.titulo)
+          .endsWith(normalizarTexto(primeira[1])) ||
+          /^(atividades|material necessario)$/u
+            .test(normalizarTexto(primeira[1])))) break;
+        texto = texto.slice(primeira[0].length);
+      }
+      texto = texto.trim();
+      const anterior = conteudo.slice(0, index + inicio);
+      const passo = /^\d+[.)]\s/u.test(texto) ||
+        /(?:^|\n)\s*\d+\.\s*$/u.test(anterior);
+      if (texto) saida.push({texto, passo});
+    }
+  }
+  return saida;
+}
+
+/**
+ * Gerador puro: cita evidencias literais, sem SDKs ou I/O.
  * Correspondencia literal e uma barreira conservadora, nao prova semantica.
  * @param {string} pergunta Pergunta do usuario.
  * @param {TrechoDocumental[]} selecionados Resultado ja selecionado pelo V1.
@@ -238,16 +301,27 @@ export function gerarRespostaDocumental(
     selecionados.length > MAX_DOCUMENTOS_CONTEXTO) {
     return recusar("entrada_invalida");
   }
-  const termos = extrairTermosUteis(textoPergunta)
-    .filter((t) => !TERMOS_PERGUNTA.has(t));
+  // Chunks originais compartilham exatamente os termos e a procedencia do RAG.
+  // O caminho legado continua isolado para nao mudar os contratos dos runners.
+  const originais = selecionados.some((trecho) => trecho &&
+    FONTES_ORIGINAIS.includes(trecho.documentoId || ""));
+  const chunks = originais ?
+    selecionados.filter((trecho) => trecho &&
+      FONTES_ORIGINAIS.includes(trecho.documentoId || "")) : selecionados;
+  const termos = originais ? extrairTermosConsultaOriginal(textoPergunta) :
+    extrairTermosUteis(textoPergunta)
+      .filter((t) => !TERMOS_PERGUNTA.has(t));
+  const modeloSolicitado = originais && extrairTermosOriginais(textoPergunta)
+    .some((termo) => ["modelo", "exemplo"].includes(termo));
   if (!termos.length) return recusar("sem_evidencia");
   const perguntaNormalizada = normalizarTexto(textoPergunta);
   // O contrato V1 nao comprova atualidade; nao consultar relogio ou inferi-la.
   if (/\b(atual|atuais|hoje|amanha|proximo|proxima)\b/u
     .test(perguntaNormalizada)) return recusar("sem_evidencia");
   const candidatos: CitacaoDocumental[] = [];
+  const passos = new Set<CitacaoDocumental>();
   let caracteres = 0;
-  for (const trecho of selecionados) {
+  for (const trecho of chunks) {
     if (!trecho || typeof trecho !== "object" ||
       Array.isArray(trecho) ||
       (trecho.ativo !== undefined && trecho.ativo !== true)) continue;
@@ -257,13 +331,20 @@ export function gerarRespostaDocumental(
       return recusar("entrada_invalida");
     }
     if (!conteudo || instrucaoSuspeita(conteudo)) continue;
-    for (const {segment} of segmentador.segment(conteudo)) {
-      const frase = segment.trim();
-      const palavras = new Set(normalizarTexto(frase).split(" "));
+    const unidades = originais ? unidadesOriginais(conteudo, trecho) :
+      [...segmentador.segment(conteudo)]
+        .map(({segment}) => ({texto: segment.trim(), passo: false}));
+    for (const {texto: frase, passo} of unidades) {
+      const palavras = new Set(originais ? extrairTermosOriginais(frase) :
+        normalizarTexto(frase).split(" "));
       if (frase.length < 25 || frase.length > MAX_CARACTERES_CITACAO ||
         !termos.every((t) => palavras.has(t)) ||
         !evidenciaEspecifica(perguntaNormalizada, frase)) continue;
-      candidatos.push({texto: frase, fonte: fonteDoTrecho(trecho, frase)});
+      const citacao = {texto: frase, fonte: fonteDoTrecho(trecho, frase)};
+      candidatos.push(citacao);
+      if (passo && normalizarTexto(trecho.tipoConteudo) === "procedimento") {
+        passos.add(citacao);
+      }
     }
   }
   const documentais = candidatos.filter((c) =>
@@ -274,10 +355,16 @@ export function gerarRespostaDocumental(
   }
   const apenasModelos = !documentais.length && candidatos.length > 0;
   const elegiveis = apenasModelos ? candidatos : documentais;
-  let resposta = apenasModelos ?
-    `${SEM_INFORMACAO}\nModelos/exemplos relacionados nao comprovam ` +
+  if (originais && /\b(como|faco|fazer|solicitar|renovar|procedimentos?)\b/u
+    .test(perguntaNormalizada)) {
+    elegiveis.sort((a, b) => Number(passos.has(b)) - Number(passos.has(a)));
+  }
+  let resposta = apenasModelos && modeloSolicitado ?
+    "Modelos/exemplos documentais encontrados (nao comprovam regras, " +
+      "prazos ou procedimentos):" : apenasModelos ?
+      `${SEM_INFORMACAO}\nModelos/exemplos relacionados nao comprovam ` +
       "uma regra ou procedimento:" :
-    "Trechos documentais relacionados a pergunta (citacoes, " +
+      "Trechos documentais relacionados a pergunta (citacoes, " +
       "nao uma interpretacao ou garantia de regra vigente):";
   const citacoes: CitacaoDocumental[] = [];
   const vistos = new Set<string>();
@@ -296,6 +383,8 @@ export function gerarRespostaDocumental(
   }
   if (!citacoes.length) return recusar("sem_evidencia");
   return {resposta, citacoes,
-    status: apenasModelos ? "informacao_insuficiente" : "trechos_encontrados",
-    motivo: apenasModelos ? "apenas_modelos" : "evidencia_textual"};
+    status: apenasModelos && !modeloSolicitado ?
+      "informacao_insuficiente" : "trechos_encontrados",
+    motivo: apenasModelos && !modeloSolicitado ?
+      "apenas_modelos" : "evidencia_textual"};
 }

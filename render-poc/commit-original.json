@@ -1,0 +1,230 @@
+{
+  "purpose": "Selecao explicita dos Lotes 1-4 para revisao e commit futuro. Nao executa operacoes Git.",
+  "localHead": "8b98bb96ac2c8003ac29226ccc434947e3fbdeee",
+  "branch": "codex/preparacao-publicacao-demo",
+  "commitFiles": [
+    ".gitignore",
+    "functions/src/assistente/resposta-documental.ts",
+    "functions/src/rag/recuperacao.ts",
+    "local-e2e/ORIGINAL.md",
+    "local-e2e/auth-run.mjs",
+    "local-e2e/function.cjs",
+    "local-e2e/original-corpus.cjs",
+    "local-e2e/original-scenarios.mjs",
+    "local-e2e/prepare-history.mjs",
+    "public/Criar-Conta/cadastro.html",
+    "public/Logado/Avisos/avisos.html",
+    "public/Logado/Avisos/avisos.js",
+    "public/Logado/Configurações Administrador/configAdmin.html",
+    "public/Logado/Configurações Aluno/configAl.html",
+    "public/Logado/Conversas/conversas.html",
+    "public/Logado/Home/assistente-config.js",
+    "public/Logado/Home/home.html",
+    "public/Logado/Serviços/servicos.html",
+    "public/Login/login.html",
+    "public/Pagina-Inicial/pagina-in.html",
+    "public/Sobre/sobre.html",
+    "public/index.html",
+    "render-poc/.env.example",
+    "render-poc/PUBLICACAO-ORIGINAL.md",
+    "render-poc/commit-original.json",
+    "render-poc/documental.cjs",
+    "render-poc/test/adapter.test.cjs",
+    "tests/assistente-handler.test.mjs",
+    "tests/assistente-producao.test.mjs",
+    "tests/conteudo-demo-publicacao.test.mjs",
+    "tests/dados/README.md",
+    "tests/demo-academica.test.mjs",
+    "tests/original-e2e-isolation.test.mjs",
+    "tests/preparacao-original-online.test.mjs",
+    "tests/rag-gerador-original.test.mjs",
+    "tests/rag-original.test.mjs",
+    "tests/render-original-publicacao.test.mjs"
+  ],
+  "classificacao": [
+    {
+      "path": ".gitignore",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "functions/src/assistente/resposta-documental.ts",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "functions/src/rag/recuperacao.ts",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "local-e2e/ORIGINAL.md",
+      "categoria": "documentacao"
+    },
+    {
+      "path": "local-e2e/auth-run.mjs",
+      "categoria": "runner_exclusivamente_local_versionavel"
+    },
+    {
+      "path": "local-e2e/function.cjs",
+      "categoria": "runner_exclusivamente_local_versionavel"
+    },
+    {
+      "path": "local-e2e/original-corpus.cjs",
+      "categoria": "runner_exclusivamente_local_versionavel"
+    },
+    {
+      "path": "local-e2e/original-scenarios.mjs",
+      "categoria": "runner_exclusivamente_local_versionavel"
+    },
+    {
+      "path": "local-e2e/prepare-history.mjs",
+      "categoria": "runner_exclusivamente_local_versionavel"
+    },
+    {
+      "path": "public/Criar-Conta/cadastro.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Avisos/avisos.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Avisos/avisos.js",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Configurações Administrador/configAdmin.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Configurações Aluno/configAl.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Conversas/conversas.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Home/assistente-config.js",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Home/home.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Logado/Serviços/servicos.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Login/login.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Pagina-Inicial/pagina-in.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/Sobre/sobre.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "public/index.html",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "render-poc/.env.example",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "render-poc/PUBLICACAO-ORIGINAL.md",
+      "categoria": "documentacao"
+    },
+    {
+      "path": "render-poc/commit-original.json",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "render-poc/documental.cjs",
+      "categoria": "producao_ou_preparacao"
+    },
+    {
+      "path": "render-poc/test/adapter.test.cjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/assistente-handler.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/assistente-producao.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/conteudo-demo-publicacao.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/dados/README.md",
+      "categoria": "documentacao"
+    },
+    {
+      "path": "tests/demo-academica.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/original-e2e-isolation.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/preparacao-original-online.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/rag-gerador-original.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/rag-original.test.mjs",
+      "categoria": "teste_automatizado"
+    },
+    {
+      "path": "tests/render-original-publicacao.test.mjs",
+      "categoria": "teste_automatizado"
+    }
+  ],
+  "excludeFromCommit": [
+    "tests/dados/rag-original.json",
+    ".cache/**",
+    "functions/lib/**",
+    "**/node_modules/**",
+    ".env reais, credenciais, chaves, tokens, logs, screenshots e backups"
+  ],
+  "isolatedExisting": [
+    "demo-academica/**",
+    "render-poc/demonstracao.cjs (somente caminho emulado explicito)",
+    "local-e2e/documental-scenarios.mjs (cenarios ficticios legados, nao usar --original)",
+    "public/Sobre/sobre.html: equipe de exemplo em template nao exibido"
+  ],
+  "prerequisitesAlreadyTracked": [
+    "functions/package.json",
+    "functions/package-lock.json",
+    "functions/tsconfig.json",
+    "functions/src/assistente/handler.ts",
+    "functions/src/assistente/http.ts",
+    "functions/src/assistente/autenticacao.ts",
+    "functions/src/avisos/**",
+    "render-poc/server.cjs",
+    "render-poc/config.cjs",
+    "render-poc/dependencias.cjs",
+    "render-poc/producao.cjs",
+    "scripts/verificar-segredos.mjs",
+    "firestore.rules",
+    "public/Logado/Home/assistente-client.js",
+    "public/Logado/Conversas/conversation-store.js"
+  ],
+  "notes": [
+    "Revalidar a main remota antes de versionar; nao foi consultada neste lote.",
+    "Snapshots necessarios aos testes documentais sao locais e nao acompanharao o Git; ausencia nao equivale a teste aprovado.",
+    "Build/Start de producao nao dependem de snapshots, runners ou fixtures.",
+    "Endpoint publicado permanece vazio. Nenhuma publicacao autorizada neste lote."
+  ]
+}

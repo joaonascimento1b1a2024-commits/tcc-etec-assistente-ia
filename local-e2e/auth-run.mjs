@@ -10,7 +10,10 @@ import { prepare as prepareHistory, stage as historyStage } from './prepare-hist
 import { validarPendenciasNoNavegador, validarConfiabilidadeNoNavegador } from './pending-regressions.mjs';
 import { endpointDocumental, prepararFixturesDocumentais, enviarPerguntaDocumental,
     validarRecuperacaoDocumental, validarFunctionOutroUid, validarAusenciaAcademica } from './documental-scenarios.mjs';
+import { enviarPerguntaOriginal, validarMatrizOriginal, validarBackendIndisponivel } from './original-scenarios.mjs';
+const original = process.argv.includes('--original');
 const documental = process.argv.includes('--documental');
+if (original && (!documental || process.argv.includes('--academica'))) throw new Error('ORIGINAL_REQUIRES_DOCUMENTAL_ONLY');
 const academica = process.argv.includes('--academica');
 if (academica && !documental) throw new Error('ACADEMIC_REQUIRES_DOCUMENTAL');
 const stage = documental ? historyStage : authStage;
@@ -23,7 +26,7 @@ const { javaHome, cli } = localizarFerramentas();
 const runtimeModules = localizarPlaywright();
 const localRequire = createRequire(resolve(runtimeModules, 'package.json'));
 const { chromium } = localRequire('playwright');
-if (documental) prepareHistory({ authMode: 'password', academica });
+if (documental) prepareHistory({ authMode: 'password', academica, original });
 else prepare({ authMode: 'password' });
 const home = resolve(stage, `isolated-home-auth-${Date.now()}`);
 mkdirSync(home, { recursive: true });
@@ -108,8 +111,8 @@ try {
             await delay(1000);
         }
         assert.ok(logs.includes(endpointDocumental), 'Function demo deve estar pronta');
-        await prepararFixturesDocumentais(academica);
-        states.push('Function documental pronta; fixtures ativa/inativa gravadas somente no Firestore Emulator');
+        if (!original) await prepararFixturesDocumentais(academica);
+        states.push(original ? 'Function original pronta; snapshot local de 514 chunks; nenhuma importacao documental' : 'Function documental pronta; fixtures ativa/inativa gravadas somente no Firestore Emulator');
     }
     let primeiroEnvio;
     browser = await chromium.launch({ channel: 'msedge', headless: true, args: ['--disable-background-networking', '--disable-component-update', '--disable-sync'] });
@@ -195,7 +198,7 @@ try {
     // Cria somente pergunta própria pelo store real, sem Function, bot ou conteúdo institucional.
     async function sendQuestion(insuficiente = false) {
         if (documental) {
-            const envio = await enviarPerguntaDocumental(page,
+            const envio = await (original ? enviarPerguntaOriginal : enviarPerguntaDocumental)(page,
                 insuficiente ? 'Qual procedimento para transporte interplanetario?' : 'Como faço minha matrícula?', insuficiente, academica);
             if (!primeiroEnvio) primeiroEnvio = envio;
             return envio.body.conversationId;
@@ -250,12 +253,17 @@ try {
     if (documental) await validarRecuperacaoDocumental({ page, context, envio: primeiroEnvio, uid: uidA, states });
     if (documental) await validarConfiabilidadeNoNavegador({ page, context, uid: uidA, states });
     if (academica) await validarAusenciaAcademica(page, uidA, states);
+    if (original) {
+        await validarMatrizOriginal(page, states);
+        await validarBackendIndisponivel(page, context, uidA, states);
+    }
+    if (!original) {
     // Conteúdo acadêmico: página raiz e Avisos/Serviços não oferecem atendimento real.
     const demoTab = await context.newPage();
     const demoRequests = [];
     demoTab.on('request', request => demoRequests.push(request.url()));
     await demoTab.goto(origin + '/Logado/Avisos/avisos.html');
-    await demoTab.locator('#noticeList').filter({ hasText: 'Fixture de demonstração' }).waitFor();
+    await demoTab.locator('#noticeList').filter({ hasText: 'não estão disponíveis neste protótipo' }).waitFor();
     assert.equal(demoRequests.some(url => url.includes(':8080/') || url.includes('firestore.googleapis.com')), false);
     await demoTab.goto(origin + '/Logado/Servi%C3%A7os/servicos.html');
     assert.equal(await demoTab.locator('#whatsapp-link').getAttribute('href'), '../Home/home.html');
@@ -271,6 +279,7 @@ try {
     }
     await demoTab.close();
     states.push('raiz identificada; Avisos fictícios sem consultas ao Firestore; Serviços aponta apenas ao chat web');
+    }
     // Navegação real pelos links, tema persistido e layout desktop/mobile.
     await page.locator('#settingsLink').click();
     await page.waitForFunction(() => { const control = document.querySelector('#theme'); return control && !control.disabled; });
@@ -383,14 +392,15 @@ try {
         const evidence = JSON.parse(readFileSync(resolve(stage, 'function-evidence.json'), 'utf8'));
         assert.equal(evidence.tokenValidado, true);
         assert.equal(evidence.uid, uidB);
-        assert.equal(evidence.geracoes, academica ? 5 : 4); // Inclui a resposta da regressão de limpeza local.
+        if (!original) assert.equal(evidence.geracoes, academica ? 5 : 4);
+        else { assert.equal(evidence.original, true); assert.ok(evidence.geracoes >= 11); } // Inclui a resposta da regressão de limpeza local.
         assert.equal(evidence.inativoNoContexto, false);
         assert.equal(evidence.resultados.at(-1).status, 'informacao_insuficiente');
     }
     assert.ok(blocked.every(url => url === 'https://fonts.googleapis.com/css2'));
     assert.equal(pageErrors.length, 0, 'sem erros JavaScript nas telas');
     await page.screenshot({ path: resolve(stage, 'auth-e2e.png'), fullPage: true });
-    const result = { success: true, documental, layouts, project, browser: 'Microsoft Edge', uidA, uidB, conversationA, conversationB,
+    const result = { success: true, documental, original, layouts, project, browser: 'Microsoft Edge', uidA, uidB, conversationA, conversationB,
         states, isolation, reverseIsolation, pageErrors, requests, blocked, productionAccess: false, geminiCalls: 0,
         google: 'Código existente; OAuth real não validado. Não foi utilizado popup Google.' };
     writeFileSync(resolve(stage, 'auth-result.json'), JSON.stringify(result, null, 2));

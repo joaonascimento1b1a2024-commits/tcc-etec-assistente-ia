@@ -2,15 +2,18 @@
 
 const { readFileSync } = require('node:fs');
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
+const { recuperarConhecimentoRelevante } = require('../functions/lib/rag/recuperacao.js');
+const DOCUMENTAL_SERVICE_ACCOUNT_EMAIL = 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com';
 const { gerarRespostaDocumental } = require('../functions/lib/assistente/resposta-documental.js');
 const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
 
 function validarConfiguracaoDocumental(config) {
     if (config.demonstracao !== undefined && typeof config.demonstracao !== 'boolean') throw new Error('DEMO_FLAG_INVALID');
+    if (config.demonstracao === true) throw new Error('DOCUMENTAL_ORIGINAL_SOURCES_REQUIRED');
     if (config.projectId !== PROJECT_ID || config.databaseId !== DATABASE_ID) throw new Error('DOCUMENTAL_PROJECT_INVALID');
     if (config.enabled !== true) throw new Error('DOCUMENTAL_EXPLICIT_ENABLE_REQUIRED');
     if (config.credentialPath !== CREDENTIAL_PATH || typeof config.serviceAccountEmail !== 'string' ||
-        !/^[a-z][a-z0-9-]{4,28}[a-z0-9]@tcc-ia-d8891\.iam\.gserviceaccount\.com$/.test(config.serviceAccountEmail))
+        config.serviceAccountEmail !== DOCUMENTAL_SERVICE_ACCOUNT_EMAIL)
         throw new Error('DOCUMENTAL_CREDENTIAL_CONFIGURATION_INVALID');
     if (typeof config.origins !== 'string' || config.origins.split(',').some(item => !item.trim()))
         throw new Error('DOCUMENTAL_CORS_INVALID');
@@ -66,7 +69,7 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
         return { auth: getAuth(app), firestore,
-            ...(current.demonstracao ? { recuperarConhecimento: require("./demonstracao.cjs").criarLeitorDemonstracao(firestore) } : {}),
+            recuperarConhecimento: pergunta => recuperarConhecimentoRelevante(firestore, pergunta),
             serverTimestamp: () => FieldValue.serverTimestamp(),
             gerarResposta: async (pergunta, chunks) => gerarRespostaDocumental(pergunta, chunks).resposta };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }

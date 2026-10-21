@@ -1,6 +1,7 @@
 // Apenas mocks locais; nao importa index.ts, SDK inicializado, secrets ou Gemini.
 import assert from "node:assert/strict";
 import test from "node:test";
+import {readFileSync} from "node:fs";
 import {
     perguntarAssistenteHandler, montarPromptSistema,
     MAX_PERGUNTA_LENGTH, MAX_MENSAGENS,
@@ -18,12 +19,9 @@ const conversa = (mensagens = [userMessage()]) => ({
     titulo: "Titulo manual", tituloOrigem: "manual",
     criadoEm: {seconds: 1}, atualizadoEm: {seconds: 2}, mensagens,
 });
-const chunksPadrao = [
-    {id: "ativo", titulo: "Matrícula", categoria: "procedimento",
-        secao: "B1", documentoId: "doc", conteudo: "Documento oficial",
-        paginaInicial: 2, paginaFinal: 3, ativo: true},
-    {id: "inativo", titulo: "Matrícula", conteudo: "NAO USAR", ativo: false},
-];
+const origemReal = JSON.parse(readFileSync(new URL("./dados/rag-original.json", import.meta.url))).documentos
+    .find(d => d.titulo === "Sistema Etec - B1 - Inicial na Etec" && /Material Necessário/.test(d.secao));
+const chunksPadrao = [{...origemReal, id: "ativo"}, {...origemReal, id: "inativo", ativo: false}];
 
 function deferred() {
     let resolve;
