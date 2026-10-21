@@ -63,8 +63,8 @@ test('flag opt-in é estrita e health continua padrão', () => {
     assert.throws(() => lerConfiguracao({ SYLVINHO_DEMO_ACADEMICA: 'true' }), /DEMO_REQUIRES/);
     for (const value of ['1', '', 'TRUE', '*']) assert.throws(() => lerModoDemonstracao({ SYLVINHO_DEMO_ACADEMICA: value }), /DEMO_FLAG_INVALID/);
 });
-test('endpoint publicado permanece vazio; HTTPS e rota são exigidos; timeout publicado 120s', () => {
-    assert.equal(front.assistenteConfig.endpoint, '');
+test('endpoint publicado usa Render validado; HTTPS e rota são exigidos; timeout publicado 120s', () => {
+    assert.equal(front.assistenteConfig.endpoint, front.endpointRenderPreparado);
     assert.equal(front.assistenteConfig.timeoutMs, 120000);
     assert.equal(front.resolverAssistenteConfig({ origin: 'http://127.0.0.1:5000', local: null }).endpoint, '');
     assert.equal(front.validarEndpointPublicado('https://fixture.example.invalid/perguntarAssistente'), 'https://fixture.example.invalid/perguntarAssistente');

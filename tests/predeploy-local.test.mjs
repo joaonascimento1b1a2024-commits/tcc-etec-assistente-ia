@@ -78,9 +78,9 @@ test('store usa caminho por UID, servidor e transação sem criar bot pelo clien
     assert.doesNotMatch(store, /remetente:\s*['"]bot['"]/);
 });
 
-test('Sem isolamento concluido, configuracao do cliente permanece fechada sem URL', async () => {
+test('Configuracao publicada usa endpoint Render explicito apos validacao', async () => {
     const source = read('public/Logado/Home/assistente-config.js');
     const { assistenteConfig } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-    assert.equal(assistenteConfig.endpoint, '');
+    assert.equal(assistenteConfig.endpoint, 'https://sylvinho-backend-poc.onrender.com/perguntarAssistente');
     assert.equal(assistenteConfig.timeoutMs, 120000);
 });
