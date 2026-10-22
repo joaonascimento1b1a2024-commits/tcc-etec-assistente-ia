@@ -49,7 +49,8 @@ export interface DependenciasAssistente {
   firestore: Pick<Firestore, "collection" | "runTransaction">;
   serverTimestamp: () => unknown;
   gerarResposta: (pergunta: string,
-    chunks: readonly DocumentoPreparado[]) => Promise<string>;
+    chunks: readonly DocumentoPreparado[],
+    contexto?: {readonly uid: string}) => Promise<string>;
   recuperarConhecimento?: (pergunta: string) => Promise<DocumentoPreparado[]>;
   agora?: () => number;
 }
@@ -245,7 +246,10 @@ export async function perguntarAssistenteHandler(
           await recuperarConhecimentoRelevante(
             deps.firestore, perguntaNormalizada,
           );
-        const gerada = await deps.gerarResposta(perguntaNormalizada, chunks);
+        // Contexto exclusivamente do token verificado, nunca do corpo HTTP.
+        const gerada = await deps.gerarResposta(
+          perguntaNormalizada, chunks, Object.freeze({uid: decodedToken.uid}),
+        );
         if (typeof gerada !== "string" || !gerada.trim()) {
           throw new Error("INVALID_GENERATOR_RESPONSE");
         }
