@@ -4,11 +4,10 @@ import type {
   DocumentData, Firestore, QueryDocumentSnapshot,
 } from "firebase-admin/firestore";
 import {montarEmailAviso} from "./email.js";
-import type {ConteudoAviso, MensagemEmail} from "./email.js";
+import type {ConteudoAviso} from "./email.js";
 
 export const COLECAO_EMAILS = "avisosEmails";
-// Resend preserva a idempotência por 24h. Para antes, com margem de segurança.
-export const JANELA_ENVIO_MS = 23 * 60 * 60 * 1000;
+export const COLECAO_MAIL = "mail";
 
 interface DependenciasFila {
   firestore: Pick<Firestore, "collection" | "runTransaction">;
@@ -17,10 +16,7 @@ interface DependenciasFila {
 
 interface DependenciasEnvio extends DependenciasFila {
   auth: Pick<Auth, "getUser">;
-  remetente: string;
   siteUrl: string;
-  enviar: (mensagem: MensagemEmail, id: string) => Promise<string>;
-  agora?: () => number;
 }
 
 interface TrabalhoEmail {
@@ -28,9 +24,7 @@ interface TrabalhoEmail {
   uid: string;
   conteudo: ConteudoAviso;
   avisoCriadoEm: string;
-  estado: "pendente" | "enviado" | "ignorado" | "falha";
-  mensagem?: MensagemEmail;
-  primeiraTentativaEm?: number;
+  estado: "pendente" | "enfileirado" | "ignorado";
 }
 
 const codigo = (erro: unknown): unknown =>
@@ -53,8 +47,7 @@ export async function enfileirarEmailsAviso(
       !aviso.descricao.trim()) return;
 
   const consulta = deps.firestore.collection("users")
-    .where("preferencias.avisosEmail", "==", true).orderBy("__name__")
-    .limit(100);
+    .orderBy("__name__").limit(100);
   let ultimo: QueryDocumentSnapshot | undefined;
   let continuar = true;
   while (continuar) {
@@ -93,9 +86,9 @@ export async function enfileirarEmailsAviso(
 }
 
 /**
- * Revalida a adesão e usa um payload persistido em todas as tentativas.
+ * Revalida a conta e grava uma mensagem para a extensão Trigger Email.
  * @param {string} id Identificador determinístico da entrega.
- * @param {DependenciasEnvio} deps Banco, Auth, provedor e configuração.
+ * @param {DependenciasEnvio} deps Banco, Auth e configuração.
  * @return {Promise<void>} Resultado persistido ou falha para retry do trigger.
  */
 export async function enviarEmailAviso(
@@ -105,12 +98,12 @@ export async function enviarEmailAviso(
   const inicial = (await referencia.get()).data() as TrabalhoEmail | undefined;
   if (!inicial || inicial.estado !== "pendente") return;
 
-  const encerrar = async (estado: "ignorado" | "falha", motivo: string) => {
+  const encerrar = async (motivo: string) => {
     await deps.firestore.runTransaction(async (transaction) => {
       const atual = await transaction.get(referencia);
       if (atual.data()?.estado === "pendente") {
         transaction.update(referencia, {
-          estado, motivo, atualizadoEm: deps.serverTimestamp(),
+          estado: "ignorado", motivo, atualizadoEm: deps.serverTimestamp(),
         });
       }
     });
@@ -119,13 +112,13 @@ export async function enviarEmailAviso(
     deps.firestore.collection("users").doc(inicial.uid).get(),
     deps.firestore.collection("avisos").doc(inicial.avisoId).get(),
   ]);
-  if (perfil.data()?.preferencias?.avisosEmail !== true) {
-    await encerrar("ignorado", "notificacoes_desativadas");
+  if (!perfil.exists) {
+    await encerrar("perfil_removido");
     return;
   }
   if (aviso.data()?.publicado !== true ||
       aviso.createTime?.toDate().toISOString() !== inicial.avisoCriadoEm) {
-    await encerrar("ignorado", "aviso_indisponivel");
+    await encerrar("aviso_indisponivel");
     return;
   }
   let conta;
@@ -133,47 +126,34 @@ export async function enviarEmailAviso(
     conta = await deps.auth.getUser(inicial.uid);
   } catch (erro) {
     if (codigo(erro) !== "auth/user-not-found") throw erro;
-    await encerrar("ignorado", "conta_removida");
+    await encerrar("conta_removida");
     return;
   }
   if (conta.disabled || !conta.email) {
-    await encerrar("ignorado", "conta_indisponivel");
+    await encerrar("conta_indisponivel");
     return;
   }
 
-  const agora = deps.agora || Date.now;
-  const trabalho = await deps.firestore.runTransaction(async (transaction) => {
+  const mail = deps.firestore.collection(COLECAO_MAIL).doc(id);
+  await deps.firestore.runTransaction(async (transaction) => {
     const atual = (await transaction.get(referencia)).data() as
       TrabalhoEmail | undefined;
-    if (!atual || atual.estado !== "pendente") return undefined;
-    if (atual.mensagem) return atual;
-    const preparado = {
-      ...atual,
-      mensagem: montarEmailAviso(
-        atual.conteudo, conta.email as string, deps.remetente, deps.siteUrl,
-      ),
-      primeiraTentativaEm: agora(),
-    };
+    if (!atual || atual.estado !== "pendente") return;
+    // Mensagem e confirmação atômicas; repetições não alteram delivery.
+    const existente = await transaction.get(mail);
+    if (!existente.exists) {
+      transaction.create(mail, {
+        ...montarEmailAviso(
+          atual.conteudo, conta.email as string, deps.siteUrl,
+        ),
+        avisoId: atual.avisoId,
+        uid: atual.uid,
+        criadoEm: deps.serverTimestamp(),
+      });
+    }
     transaction.update(referencia, {
-      mensagem: preparado.mensagem,
-      primeiraTentativaEm: preparado.primeiraTentativaEm,
+      estado: "enfileirado", mailId: id,
+      atualizadoEm: deps.serverTimestamp(),
     });
-    return preparado;
-  });
-  if (!trabalho?.mensagem) return;
-  // Não envia para o endereço antigo após uma troca de e-mail no Auth.
-  if (trabalho.mensagem.to[0] !== conta.email) {
-    await encerrar("ignorado", "email_alterado");
-    return;
-  }
-  if (typeof trabalho.primeiraTentativaEm !== "number" ||
-      agora() - trabalho.primeiraTentativaEm >= JANELA_ENVIO_MS) {
-    await encerrar("falha", "janela_de_retentativas_expirada");
-    return;
-  }
-
-  const resendId = await deps.enviar(trabalho.mensagem, id);
-  await referencia.update({
-    estado: "enviado", resendId, enviadoEm: deps.serverTimestamp(),
   });
 }

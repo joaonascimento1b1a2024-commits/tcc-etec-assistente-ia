@@ -464,47 +464,8 @@ nav {
     border: 0;
 }
 
-/* Regras para telas de até 720px: menu compacto, cartões empilhados e conversa adaptada. */
+/* Regras para telas de até 720px: cartões empilhados e conversa adaptada. */
 @media (max-width: 720px) {
-    /* Reduz a largura e o preenchimento do menu lateral. */
-    .sidebar {
-        width: 64px;
-        padding: 12px 7px;
-    }
-
-    /* Oculta o texto do botão para exibir apenas o símbolo de adição. */
-    .new-chat {
-        font-size: 0;
-    }
-
-    /* Exibe o símbolo + no botão de nova conversa. */
-    .new-chat::after {
-        content: '+';
-        font-size: 20px;
-    }
-
-    /* Centraliza os ícones e oculta visualmente o texto dos links. */
-    .nav-link {
-        font-size: 0;
-        justify-content: center;
-    }
-
-    /* Mantém os ícones do menu visíveis. */
-    .nav-link span {
-        font-size: 18px;
-    }
-
-    /* Ajusta o recuo e as margens para a largura menor do menu. */
-    .app-content {
-        margin-left: 64px;
-        padding: 0 16px 12px;
-    }
-
-    /* Compensa as margens laterais da área principal. */
-    .topbar {
-        margin: 0 -16px;
-    }
-
     /* Empilha os cartões em uma única coluna. */
     .feature-cards {
         grid-template-columns: 1fr;

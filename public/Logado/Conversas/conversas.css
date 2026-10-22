@@ -154,12 +154,4 @@ dialog input {
     .conversation-actions button {
         flex: 1;
     }
-    .sidebar .new-chat {
-        font-size: 0;
-        padding: 12px 0;
-    }
-    .sidebar .new-chat::before {
-        content: '+';
-        font-size: 20px;
-    }
 }

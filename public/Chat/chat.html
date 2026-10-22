@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Converse com o Sylvinho | Assistente ETEC IA</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="../Logado/Home/home.css" />
+        <link rel="stylesheet" href="../Arquivos-Universais/theme.css" />
+        <link rel="stylesheet" href="chat.css" />
+        <script src="../Arquivos-Universais/theme.js"></script>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    </head>
+    <body>
+        <header class="guest-header">
+            <a class="guest-brand" href="../index.html" aria-label="Voltar à página inicial">
+                <img src="../Logado/Home/Logo s_fundo.png" alt="" />
+                <span>Sylvinho<small>Assistente ETEC IA</small></span>
+            </a>
+            <a class="guest-login" href="../Login/login.html">Entrar</a>
+        </header>
+        <main class="guest-main">
+            <div class="guest-toolbar">
+                <span class="guest-badge">Chat sem login</span>
+                <button id="newChat" class="guest-reset" type="button">+ Novo chat</button>
+            </div>
+            <section id="welcome" class="guest-welcome" aria-labelledby="welcomeTitle">
+                <img src="../Logado/Home/Logo s_fundo.png" alt="" class="welcome-avatar" />
+                <p class="guest-eyebrow">CONHEÇA O SYLVINHO</p>
+                <h1 id="welcomeTitle">Olá! Como posso ajudar?</h1>
+                <p>Tire suas dúvidas sobre a ETEC.<br />Experimente o assistente sem precisar de uma conta.</p>
+                <div class="guest-suggestions" aria-label="Sugestões de perguntas">
+                    <button type="button" data-message="Quais documentos preciso para me matricular?" disabled><span aria-hidden="true">▱</span> Documentos para matrícula <span aria-hidden="true">↗</span></button>
+                    <button type="button" data-message="Como faço para renovar minha matrícula?" disabled><span aria-hidden="true">↻</span> Renovação de matrícula <span aria-hidden="true">↗</span></button>
+                    <button type="button" data-message="Qual é a frequência mínima exigida?" disabled><span aria-hidden="true">▣</span> Frequência nas aulas <span aria-hidden="true">↗</span></button>
+                </div>
+            </section>
+            <section id="messages" class="messages guest-messages" role="log" aria-live="polite" aria-label="Conversa com o Sylvinho" hidden></section>
+            <div class="guest-composer">
+                <p id="chatStatus" class="chat-status" role="status">Verificando sua sessão...</p>
+                <button id="retrySession" class="guest-reset" type="button" hidden>Tentar verificar novamente</button>
+                <form id="messageForm" class="message-form" autocomplete="off">
+                    <label class="sr-only" for="messageInput">Sua mensagem</label>
+                    <input id="messageInput" type="text" placeholder="Pergunte ao Sylvinho..." maxlength="700" autocomplete="off" aria-describedby="privacyNote chatStatus" required disabled />
+                    <button class="send" type="submit" aria-label="Enviar mensagem" disabled>→</button>
+                </form>
+                <p id="privacyNote" class="guest-note">Conversa temporária: as mensagens não são salvas e desaparecem ao sair ou recarregar.</p>
+                <p class="guest-disclaimer">Protótipo de TCC — documentos de referência — não é atendimento oficial da escola.</p>
+            </div>
+            <noscript>Ative o JavaScript para conversar com o Sylvinho.</noscript>
+        </main>
+        <script src="../Logado/Home/resposta-documental-view.js"></script>
+        <script type="module" src="chat.js"></script>
+    </body>
+</html>

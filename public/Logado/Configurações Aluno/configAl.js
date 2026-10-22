@@ -16,10 +16,9 @@ const firebaseConfig = {
 };
 
 // Dados gravados em users/{uid}.preferencias:
-// tema: 'dark' ou 'light'; avisosEmail: boolean; atualizadoEm: Timestamp.
-// O serviço de e-mails verifica avisosEmail === true antes de enviar cada aviso
-// e obtém o endereço cadastrado no Firebase Authentication, para ambos os cargos.
-// Esta tela salva a preferência; as Cloud Functions fazem o envio pelo Resend.
+// tema: 'dark' ou 'light'; atualizadoEm: Timestamp.
+// Novos avisos são enviados a todas as contas pelas Cloud Functions e Trigger Email.
+// O endereço vem do Firebase Authentication, para ambos os cargos.
 // Ausência de administradores/{UID}.ativo == true significa acesso de aluno.
 // A verificação vem do servidor; não se concede cargo por campos do perfil.
 
@@ -34,7 +33,6 @@ const ui = Object.fromEntries(
         'password-help',
         'password-status',
         'theme',
-        'email-notifications',
         'preference-status',
         'logout',
     ].map((id) => [id, document.getElementById(id)]),
@@ -44,7 +42,7 @@ let stopAuth;
 let stopRole;
 let adminController;
 let sessionVersion = 0;
-let savedPreferences = { tema: 'dark', avisosEmail: false };
+let savedPreferences = { tema: 'dark' };
 let resetCooldown;
 
 // Exibe feedback sem interpretar conteúdo como HTML.
@@ -54,11 +52,10 @@ function message(id, text, error = false) {
     ui[id].dataset.error = String(error);
 }
 
-// Preferências ausentes não significam consentimento para e-mails.
+// Contas sem preferência de tema usam o padrão escuro.
 function normalizePreferences(data = {}) {
     return {
         tema: data?.tema === 'light' ? 'light' : 'dark',
-        avisosEmail: data?.avisosEmail === true,
     };
 }
 
@@ -86,13 +83,11 @@ function cacheTheme(uid, theme) {
 
 function syncControls() {
     ui.theme.value = savedPreferences.tema;
-    ui['email-notifications'].value = String(savedPreferences.avisosEmail);
     applyTheme(savedPreferences.tema);
 }
 
 function lockPreferences(locked) {
     ui.theme.disabled = locked;
-    ui['email-notifications'].disabled = locked;
 }
 
 async function loadPreferences(user, version) {
@@ -142,7 +137,7 @@ async function savePreference(key, value) {
         cacheTheme(user.uid, savedPreferences.tema);
         message(
             'preference-status',
-            key === 'tema' ? 'Tema salvo.' : 'Preferência de avisos por e-mail salva.',
+            'Tema salvo.',
         );
     } catch (error) {
         if (version !== sessionVersion) return;
@@ -360,9 +355,6 @@ async function start() {
 
 // Eventos registrados uma única vez; alterações nas preferências são salvas automaticamente.
 ui.theme.addEventListener('change', () => savePreference('tema', ui.theme.value));
-ui['email-notifications'].addEventListener('change', () =>
-    savePreference('avisosEmail', ui['email-notifications'].value === 'true'),
-);
 ui['reset-password'].addEventListener('click', resetPassword);
 ui.logout.addEventListener('click', logout);
 ui.retry.addEventListener('click', start);

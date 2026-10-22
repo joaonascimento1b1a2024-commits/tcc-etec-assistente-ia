@@ -2,6 +2,8 @@
 
 const http = require('node:http');
 const { criarEndpointAssistente } = require('../functions/lib/assistente/http.js');
+const { criarEndpointVisitante } = require('../functions/lib/assistente/visitante.js');
+const { recuperarConhecimentoRelevante } = require('../functions/lib/rag/recuperacao.js');
 const { lerConfiguracao, validarConfiguracao, DEMO_PROJECT } = require('./config.cjs');
 const { criarDependencias, criarFabricaDependencias, MOCK_RESPONSE } = require('./dependencias.cjs');
 const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
@@ -53,6 +55,15 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
     const knowledgeDiagnostic = criarDiagnosticoConhecimento(factory, () => validated.origins);
     const ragDiagnostic = criarDiagnosticoRag(factory, () => validated.origins);
     const endpoint = criarEndpointAssistente(factory, () => validated.origins);
+    const visitante = criarEndpointVisitante(() => {
+        const deps = factory();
+        return {
+            recuperarConhecimento: deps.recuperarConhecimento ||
+                (pergunta => recuperarConhecimentoRelevante(deps.firestore, pergunta)),
+            // Sem UID: preserva as restrições do gerador e a resposta documental.
+            gerarResposta: (pergunta, chunks) => deps.gerarResposta(pergunta, chunks),
+        };
+    }, () => validated.origins);
     const server = http.createServer(async (req, res) => {
         const output = respostaExpress(res);
         try {
@@ -72,12 +83,13 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
             const knowledgeRoute = path === '/diagnostico/conhecimento' && validated.mode === 'firestore-diagnostic';
             const ragRoute = path === '/diagnostico/rag' && validated.mode === 'rag-diagnostic';
             const assistantRoute = path === '/perguntarAssistente' && ['emulator', 'documental', 'documental-emulator'].includes(validated.mode);
-            if (!diagnosticRoute && !knowledgeRoute && !ragRoute && !assistantRoute) {
+            const visitorRoute = path === '/perguntarVisitante' && ['emulator', 'documental', 'documental-emulator'].includes(validated.mode);
+            if (!diagnosticRoute && !knowledgeRoute && !ragRoute && !assistantRoute && !visitorRoute) {
                 output.status(404).json({ error: 'Rota nao encontrada.' });
                 return;
             }
             const body = await lerCorpo(req);
-            await (ragRoute ? ragDiagnostic : knowledgeRoute ? knowledgeDiagnostic : diagnosticRoute ? diagnostic : endpoint)(
+            await (visitorRoute ? visitante : ragRoute ? ragDiagnostic : knowledgeRoute ? knowledgeDiagnostic : diagnosticRoute ? diagnostic : endpoint)(
                 { method: req.method, body, get: (name) => req.headers[name.toLowerCase()] }, output);
         } catch (error) {
             const status = { INVALID_JSON: 400, PAYLOAD_TOO_LARGE: 413, UNSUPPORTED_MEDIA_TYPE: 415 }[error.message] || 500;

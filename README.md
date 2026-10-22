@@ -89,12 +89,13 @@ Usuários autenticados poderão consultar suas conversas anteriores com o assist
 
 Exibição de comunicados oficiais, eventos, prazos e outras informações importantes disponibilizadas pela secretaria.
 
-Novos avisos também podem ser enviados por e-mail a alunos e administradores com
-notificações ativadas. A ativação do serviço está descrita em [AVISOS-EMAIL.md](AVISOS-EMAIL.md).
+Novos avisos publicados geram e-mails individuais para todas as contas de alunos e
+administradores em `users`, usando Cloud Functions e a extensão Trigger Email do
+Firebase. A ativação com Gmail está descrita em [docs/avisos-email.md](docs/avisos-email.md).
 
 ### Perfil e Configurações
 
-Permite consultar e alterar informações do perfil, além de configurar preferências como tema da interface e notificações.
+Permite consultar e alterar informações do perfil e configurar o tema da interface.
 
 ### Área Administrativa
 

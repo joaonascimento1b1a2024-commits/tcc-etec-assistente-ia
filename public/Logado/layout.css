@@ -1,0 +1,210 @@
+/* Responsividade compartilhada da área logada, carregada após os estilos de tema. */
+:is(.app-content, .content, .services-content) {
+    min-width: 0;
+}
+
+.sidebar {
+    overflow-y: auto;
+}
+
+.feature-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.feature-card,
+.feature-card span {
+    min-width: 0;
+}
+
+.feature-card strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.home-suggestions button,
+.chat-suggestions button {
+    height: auto;
+    min-height: 44px;
+    padding: 8px 10px;
+    overflow-wrap: anywhere;
+}
+
+dialog {
+    max-height: 90dvh;
+    overflow: auto;
+    overflow-wrap: anywhere;
+}
+
+/* O mesmo cabeçalho das configurações: logo e novo chat, seguidos do menu. */
+@media (max-width: 720px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        padding: 18px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border, #292929);
+    }
+
+    .sidebar .school-logo {
+        display: block;
+        width: 130px;
+        max-width: 45%;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .sidebar .school-logo img {
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar .new-chat {
+        display: grid;
+        place-items: center;
+        width: auto;
+        height: auto;
+        min-height: 36px;
+        margin: 0;
+        padding: 8px 18px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--accent, var(--red, #ff0909));
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .sidebar nav {
+        display: grid;
+        width: 100%;
+        margin: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+    }
+
+    .sidebar nav :is(a, button) {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px;
+        min-width: 0;
+        width: 100%;
+        min-height: 44px;
+        padding: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    .sidebar nav span {
+        flex: 0 0 16px;
+        width: 16px;
+        font-size: 21px;
+        text-align: center;
+    }
+
+    :is(.app-content, .content, .services-content) {
+        margin-left: 0;
+        padding: 24px 16px 40px;
+        background-attachment: scroll;
+    }
+
+    /* A especificidade também cobre o fundo definido pelo tema claro. */
+    :root[data-theme] :is(.app-content, .content, .services-content) {
+        background-attachment: scroll;
+    }
+
+    .topbar {
+        margin: 0;
+        height: auto;
+        min-height: 44px;
+        padding: 4px 8px;
+        gap: 8px;
+        border-radius: 8px;
+    }
+
+    .assistant-brand {
+        min-width: 0;
+    }
+
+    .assistant-avatar {
+        flex-shrink: 0;
+    }
+
+    .feature-cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin: 26px 0;
+    }
+
+    .feature-card {
+        min-height: 88px;
+    }
+
+    .feature-card strong,
+    .home-suggestions button,
+    .chat-suggestions button {
+        font-size: 14px;
+    }
+
+    .feature-card small {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .message-form {
+        flex-shrink: 0;
+        min-height: 48px;
+    }
+
+    .message-form input {
+        font-size: 16px;
+    }
+
+    .message-form button {
+        flex: 0 0 44px;
+    }
+
+    .demonstracao-panel {
+        margin-inline: 0;
+    }
+
+    .history-heading h1 {
+        font-size: 26px;
+    }
+
+    .notice-area {
+        margin-top: 28px;
+    }
+
+    .notice-actions {
+        flex: 1 1 100%;
+    }
+
+    .notice-actions button,
+    .dialog-actions button {
+        flex: 1;
+    }
+
+    dialog {
+        padding: 18px;
+    }
+
+    dialog :is(input, textarea, select) {
+        font-size: 16px;
+    }
+}
+
+/* Duas colunas preservam os rótulos mesmo em celulares de 320px. */
+@media (max-width: 380px) {
+    .sidebar nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

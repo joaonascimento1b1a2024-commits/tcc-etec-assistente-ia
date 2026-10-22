@@ -179,10 +179,10 @@ function fixture({origins = "https://permitido.example", apps = [],
         return {uid: "alice"};
     }};
     const params = {
-        defineSecret(name) {assert.equal(name, "RESEND_API_KEY"); return secret;},
+        defineSecret() {throw new Error("SMTP deve ser configurado apenas na extensão");},
         defineString(name, options) {
             if (name === "ASSISTENTE_CORS_ORIGINS") return {value: () => origins};
-            assert.ok(["AVISOS_EMAIL_FROM", "AVISOS_SITE_URL"].includes(name));
+            assert.equal(name, "AVISOS_SITE_URL");
             return {value: () => options.default};
         },
     };
@@ -204,6 +204,8 @@ function fixture({origins = "https://permitido.example", apps = [],
         },
         "./assistente/resposta-documental.js": documental,
         "./assistente/http.js": http,
+        "./assistente/visitante.js": require(fileURLToPath(new URL("assistente/visitante.js", raiz))),
+        "./assistente/pergunta-livre/busca.js": require(fileURLToPath(new URL("assistente/pergunta-livre/busca.js", raiz))),
         "./avisos/email.js": require(fileURLToPath(new URL("avisos/email.js", raiz))),
         "./avisos/notificacoes.js": require(fileURLToPath(new URL("avisos/notificacoes.js", raiz))),
     };
@@ -235,15 +237,15 @@ function fixture({origins = "https://permitido.example", apps = [],
     return {calls, saved, secret, exports, request};
 }
 
-test("entrypoint documental sem Gemini preserva exports e secret exclusivo dos avisos", () => {
-    const s = fixture();
+test("entrypoint documental preserva exports sem credenciais SMTP na aplicação", () => {
+    const s = fixture({chunks: []});
     assert.deepEqual(Object.keys(s.exports).sort(), [
         "enfileirarNotificacoesAviso", "enviarNotificacaoAviso", "perguntarAssistente",
+        "perguntarVisitante",
     ]);
     assert.equal(s.calls.triggers["avisos/{avisoId}"].callback, s.exports.enfileirarNotificacoesAviso);
     assert.equal(s.calls.triggers["avisosEmails/{entregaId}"].callback, s.exports.enviarNotificacaoAviso);
-    assert.equal(s.calls.triggers["avisosEmails/{entregaId}"].options.secrets[0], s.secret);
-    assert.equal(s.calls.triggers["avisosEmails/{entregaId}"].options.concurrency, 1);
+    assert.equal(s.calls.triggers["avisosEmails/{entregaId}"].options.secrets, undefined);
     assert.deepEqual(dados(s.calls.globals), {maxInstances: 10});
     assert.equal(s.calls.options.region, "southamerica-east1");
     assert.equal(s.calls.options.cors, false);
@@ -252,6 +254,24 @@ test("entrypoint documental sem Gemini preserva exports e secret exclusivo dos a
     assert.equal(s.calls.secret, 0);
     assert.equal(s.calls.dbFactory, 0);
     assert.equal(s.calls.sdk.length, 0);
+});
+
+test("entrypoint visitante responde sem autenticação ou gravação", async () => {
+    const s = fixture({chunks: []});
+    const res = {headers: {}, code: null, body: null, headersSent: false,
+        vary() {}, set(key, value) {this.headers[key] = value; return this;},
+        status(code) {this.code = code; return this;},
+        json(body) {this.body = body;},
+    };
+    await s.exports.perguntarVisitante({method: "POST", body: {pergunta: "matrícula"},
+        get: name => name === "Origin" ? "https://permitido.example" : undefined}, res);
+    assert.equal(res.code, 200);
+    assert.equal(typeof res.body.resposta, "string");
+    assert.equal(res.headers["Cache-Control"], "no-store");
+    assert.equal(s.calls.authFactory, 0);
+    assert.equal(s.calls.dbFactory, 1);
+    assert.deepEqual(s.calls.reads, []);
+    assert.deepEqual(s.calls.updates, []);
 });
 
 test("Admin inicializacao nao e repetida quando app ja existe", () => {

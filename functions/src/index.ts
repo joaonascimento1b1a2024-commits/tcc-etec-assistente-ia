@@ -3,13 +3,14 @@
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/v2/https";
 import {onDocumentCreated} from "firebase-functions/v2/firestore";
-import {defineSecret, defineString} from "firebase-functions/params";
+import {defineString} from "firebase-functions/params";
 import {getApps, initializeApp} from "firebase-admin/app";
 import {getAuth} from "firebase-admin/auth";
 import {FieldValue, getFirestore} from "firebase-admin/firestore";
 import {gerarRespostaDocumental} from "./assistente/resposta-documental.js";
 import {criarEndpointAssistente} from "./assistente/http.js";
-import {criarEnvioResend} from "./avisos/email.js";
+import {criarEndpointVisitante} from "./assistente/visitante.js";
+import {criarBuscaDocumental} from "./assistente/pergunta-livre/busca.js";
 import {
   enfileirarEmailsAviso, enviarEmailAviso,
 } from "./avisos/notificacoes.js";
@@ -20,8 +21,6 @@ import {
 setGlobalOptions({maxInstances: 10});
 
 const corsOrigins = defineString("ASSISTENTE_CORS_ORIGINS", {default: ""});
-const resendApiKey = defineSecret("RESEND_API_KEY");
-const avisosRemetente = defineString("AVISOS_EMAIL_FROM", {default: ""});
 const avisosSiteUrl = defineString("AVISOS_SITE_URL", {
   default: "https://tcc-ia-d8891.web.app",
 });
@@ -36,6 +35,16 @@ export const perguntarAssistente = onRequest({
   auth: getAuth(),
   firestore: getFirestore(),
   serverTimestamp: () => FieldValue.serverTimestamp(),
+  gerarResposta: async (pergunta, chunks) =>
+    gerarRespostaDocumental(pergunta, chunks).resposta,
+}), () => corsOrigins.value()));
+
+export const perguntarVisitante = onRequest({
+  region: "southamerica-east1",
+  cors: false,
+  maxInstances: 2,
+}, criarEndpointVisitante(() => ({
+  recuperarConhecimento: criarBuscaDocumental(getFirestore()),
   gerarResposta: async (pergunta, chunks) =>
     gerarRespostaDocumental(pergunta, chunks).resposta,
 }), () => corsOrigins.value()));
@@ -60,20 +69,14 @@ export const enfileirarNotificacoesAviso = onDocumentCreated({
 export const enviarNotificacaoAviso = onDocumentCreated({
   document: "avisosEmails/{entregaId}",
   region: "southamerica-east1",
-  secrets: [resendApiKey],
   retry: true,
   timeoutSeconds: 60,
-  // Serializa as chamadas; o cliente também espaça os pedidos ao Resend.
-  maxInstances: 1,
-  concurrency: 1,
 }, async (event) => {
   if (!event.data) return;
   await enviarEmailAviso(event.params.entregaId, {
     firestore: getFirestore(),
     auth: getAuth(),
     serverTimestamp: () => FieldValue.serverTimestamp(),
-    remetente: avisosRemetente.value(),
     siteUrl: avisosSiteUrl.value(),
-    enviar: criarEnvioResend(() => resendApiKey.value()),
   });
 });
