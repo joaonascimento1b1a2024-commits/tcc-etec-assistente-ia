@@ -2,9 +2,8 @@
 
 const { readFileSync } = require('node:fs');
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
-const { recuperarConhecimentoRelevante } = require('../functions/lib/rag/recuperacao.js');
 const DOCUMENTAL_SERVICE_ACCOUNT_EMAIL = 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com';
-const { criarGeradorConfiguravel } = require('../functions/lib/assistente/geracao/gateway.js');
+const { criarFluxoPerguntaLivre } = require('../functions/lib/assistente/pergunta-livre/fluxo.js');
 const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
 
 function validarConfiguracaoDocumental(config) {
@@ -69,13 +68,14 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const { getAuth } = carregar('firebase-admin/auth');
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
+        const fluxo = criarFluxoPerguntaLivre({ fonte: firestore, geracao: { lerAmbiente,
+            registrarEvento: codigo => console.info('SYLVINHO_IA', codigo) } });
         return { auth: getAuth(app), firestore,
             demonstracao: criarDemonstracaoGemini({ lerAmbiente,
                 registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),
-            recuperarConhecimento: pergunta => recuperarConhecimentoRelevante(firestore, pergunta),
+            recuperarConhecimento: fluxo.recuperarConhecimento,
             serverTimestamp: () => FieldValue.serverTimestamp(),
-            gerarResposta: criarGeradorConfiguravel({ lerAmbiente,
-                registrarEvento: codigo => console.info('SYLVINHO_IA', codigo) }) };
+            gerarResposta: fluxo.gerarResposta };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }
 }
 
