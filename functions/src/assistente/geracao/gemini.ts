@@ -84,9 +84,23 @@ export function criarClienteGemini(
       }
       const textos: string[] = [];
       for (const p of c.content.parts) {
-        if (!p || typeof p.text !== "string" ||
-          Object.keys(p).some((k) => k !== "text")) throw Error("FORMATO");
-        textos.push(p.text);
+        if (!p || typeof p !== "object" || Array.isArray(p) ||
+          Object.keys(p).some((k) =>
+            !["text", "thought", "thoughtSignature"].includes(k)) ||
+          ("text" in p && typeof p.text !== "string") ||
+          ("thought" in p && typeof p.thought !== "boolean") ||
+          ("thoughtSignature" in p &&
+            (typeof p.thoughtSignature !== "string" ||
+              !p.thoughtSignature.trim() ||
+              p.thoughtSignature.length > 65536)) ||
+          (!("text" in p) && !("thoughtSignature" in p))) {
+          throw Error("FORMATO");
+        }
+        // Metadados opacos e pensamentos nunca integram o JSON da resposta.
+        // Cada chamada e single-turn: nao reenvia assinatura nem historico.
+        if (p.thought !== true && typeof p.text === "string") {
+          textos.push(p.text);
+        }
       }
       const texto = textos.join("");
       if (texto.length > 6000) throw Error("TAMANHO");
