@@ -1,7 +1,7 @@
 import type {DocumentoPreparado} from "../rag/recuperacao";
 import {
   extrairTermosUteis, normalizarTexto, FONTES_ORIGINAIS,
-  extrairTermosOriginais, extrairTermosConsultaOriginal,
+  extrairTermosOriginais, extrairTermosConsultaOriginal, solicitaDeclaracao,
   MAX_CARACTERES_CONTEXTO, MAX_DOCUMENTOS_CONTEXTO,
 } from "../rag/recuperacao";
 
@@ -356,7 +356,8 @@ export function gerarRespostaDocumental(
   const apenasModelos = !documentais.length && candidatos.length > 0;
   const elegiveis = apenasModelos ? candidatos : documentais;
   if (originais && /\b(como|faco|fazer|solicitar|renovar|procedimentos?)\b/u
-    .test(perguntaNormalizada)) {
+    .test(perguntaNormalizada) || originais &&
+    solicitaDeclaracao(textoPergunta)) {
     elegiveis.sort((a, b) => Number(passos.has(b)) - Number(passos.has(a)));
   }
   let resposta = apenasModelos && modeloSolicitado ?
@@ -366,6 +367,13 @@ export function gerarRespostaDocumental(
       "uma regra ou procedimento:" :
       "Trechos documentais relacionados a pergunta (citacoes, " +
       "nao uma interpretacao ou garantia de regra vigente):";
+  if (originais && !apenasModelos && !modeloSolicitado &&
+    solicitaDeclaracao(textoPergunta) &&
+    /\bdeclarac(?:ao|oes) de matricula\b/u.test(perguntaNormalizada)) {
+    resposta += "\nA base consultada oferece orientacao geral para solicitar " +
+      "declaracoes; nao confirma o procedimento especifico de declaracao " +
+      "de matricula para essa finalidade.";
+  }
   const citacoes: CitacaoDocumental[] = [];
   const vistos = new Set<string>();
   for (const citacao of elegiveis) {

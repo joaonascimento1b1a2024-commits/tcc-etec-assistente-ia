@@ -151,7 +151,8 @@ test('chave ausente, modelo com path e cancelamento nao chamam transporte', asyn
   assert.equal(n,0);
 });
 test('Render carrega gateway configuravel compilado e build inclui adaptador', () => {
-  assert.match(readFileSync(new URL('../render-poc/documental.cjs',import.meta.url),'utf8'), /geracao\/gateway/);
+  assert.match(readFileSync(new URL('../render-poc/documental.cjs',import.meta.url),'utf8'), /pergunta-livre\/fluxo\.js/);
+  assert.match(readFileSync(new URL('../functions/lib/assistente/pergunta-livre/fluxo.js',import.meta.url),'utf8'), /require\("\.\.\/geracao\/gateway"\)/);
   assert.match(readFileSync(new URL('../functions/lib/assistente/geracao/gateway.js',import.meta.url),'utf8'), /require\("\.\/gemini"\)/);
 });
 test('HTTP, historico e replay Gemini simulados preservam duas mensagens', async () => {
