@@ -320,13 +320,37 @@ export function extrairTermosOriginais(texto: unknown): string[] {
 }
 
 /**
+ * Pedido de orientacao, distinto de uma pergunta apenas informativa.
+ * @param {unknown} pergunta Texto original, sem reescrita por modelo.
+ * @return {boolean} Intencao lexical de solicitar uma declaracao.
+ */
+export function solicitaDeclaracao(pergunta: unknown): boolean {
+  const n = normalizarTexto(pergunta);
+  const pedido = new RegExp(
+    "\\b(como|faco|fazer|solicitar|solicito|pedir|conseguir|obter|" +
+      "preciso|quero|gostaria)\\b", "u");
+  return /\bdeclarac(?:ao|oes)\b/u.test(n) && pedido.test(n);
+}
+
+/**
  * Mesmo contrato lexical para recuperacao e citacao de fontes originais.
  * Remove intencao de pedido, mantendo o assunto verificavel no documento.
  * @param {unknown} pergunta Pergunta do usuario.
  * @return {string[]} Termos de evidencia canonicos.
  */
 export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
-  const termos = extrairTermosOriginais(pergunta)
+  let consulta = normalizarTexto(pergunta);
+  if (solicitaDeclaracao(pergunta) &&
+      !/\b(modelos?|exemplos?)\b/u.test(consulta)) {
+    // Apenas consulta de orientacao GERAL. Nao comprova emissao de um subtipo.
+    // Finalidades reconhecidas nao viram requisitos de procedimento escolar.
+    // Outros qualificadores (prazo, internet, assinatura etc.) permanecem.
+    consulta = consulta
+      .replace(/\bdeclarac(?:ao|oes) de matricula\b/gu, "declaracao")
+      .replace(/\bpara (?:entregar|apresentar) (?:no trabalho|na empresa)\b/gu,
+        " ");
+  }
+  const termos = extrairTermosOriginais(consulta)
     .filter((termo) => !TERMOS_PEDIDO.has(termo));
   const renovacao =
     /\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
@@ -414,7 +438,7 @@ export function selecionarDocumentosOriginais(
           normalizarTexto(doc.tipoConteudo) === "normativo")) return false;
       // Remove apenas cabecalhos identificaveis, sem tamanho minimo magico.
       if (exigidos.includes("declaracao") &&
-          /\b(como|solicitar|pedir|faco)\b/u.test(normalizarTexto(pergunta)) &&
+          solicitaDeclaracao(pergunta) &&
           !modeloPedido &&
           normalizarTexto(doc.tipoConteudo) !== "procedimento") return false;
       const titulo = normalizarTexto(doc.titulo);

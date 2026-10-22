@@ -158,7 +158,10 @@ test('build e cadeia Render apontam para os modulos locais compilados', async ()
   assert.ok(tsconfig.include.includes('src'));
   assert.match(ler('render-poc/server.cjs'), /criarFabricaDependencias/);
   assert.match(ler('render-poc/dependencias.cjs'), /require\('\.\/documental\.cjs'\)/);
-  assert.match(ler('render-poc/documental.cjs'), /functions\/lib\/assistente\/geracao\/gateway\.js/);
+  assert.match(ler('render-poc/documental.cjs'), /functions\/lib\/assistente\/pergunta-livre\/fluxo\.js/);
+  const fluxo = await import('../functions/lib/assistente/pergunta-livre/fluxo.js');
+  assert.equal(typeof fluxo.criarFluxoPerguntaLivre, 'function');
+  assert.match(ler('functions/lib/assistente/pergunta-livre/fluxo.js'), /require\("\.\.\/geracao\/gateway"\)/);
   const compilado = await import('../functions/lib/assistente/geracao/gateway.js');
   assert.equal(typeof compilado.usuarioIAAutorizado, 'function');
   assert.match(ler('functions/lib/assistente/handler.js'), /Object\.freeze\(\{ uid: decodedToken\.uid \}\)/);
