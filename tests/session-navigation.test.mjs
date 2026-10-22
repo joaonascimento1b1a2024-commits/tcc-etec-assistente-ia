@@ -25,6 +25,8 @@ async function page(kind, { local = true, demo = true, appPresent = true } = {})
         'firebase-firestore': { getFirestore: () => ({}), doc: (_, ...path) => path.join('/'),
             setDoc: async path => calls.push(['profile', path]) },
         'envio-pendente.js': { carregarEnvioPendente: () => null },
+        'assistente-config.js': { resolverAssistenteConfig: () => ({endpoint:''}) },
+        'assistente-client.js': { consultarDemonstracao: async () => {throw Error('DESATIVADA');} },
         'acesso.js': { verificarAdministrador: async () => false, paginaConfiguracoes: () => 'settings' },
         'conversation-store.js': { createConversationStore: async (_, uid) => {
             calls.push(['store', uid]);
@@ -38,7 +40,7 @@ async function page(kind, { local = true, demo = true, appPresent = true } = {})
         document: { querySelector: node, querySelectorAll: () => [], createElement: () => node(Symbol()) },
         window: { location: { hostname: '127.0.0.1', search: '?conversa=abcdefghijklmnopqrst',
             replace: path => calls.push(['redirect', path]) }, etecTheme: { useAccount: uid => calls.push(['theme', uid]) } },
-        URLSearchParams, console: { error() {} },
+        URLSearchParams, AbortController, console: { error() {} },
         mockImport: async path => {
             const name = Object.keys(modules).find(key => path.includes(key));
             assert.ok(name, 'Import inesperado: ' + path); return modules[name];

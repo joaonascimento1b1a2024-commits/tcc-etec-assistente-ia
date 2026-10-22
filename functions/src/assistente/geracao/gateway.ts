@@ -38,6 +38,30 @@ export function usuarioIAAutorizado(env: AmbienteIA, uid: unknown): boolean {
 }
 
 /**
+ * Politica de retencao nao comprova elegibilidade nem ausencia de dados
+ * pessoais.
+ * @param {AmbienteIA} env Configuracao do servidor; nunca do corpo HTTP.
+ * @return {string} Modalidade reconhecida ou bloqueio fail-closed.
+ */
+export function politicaRetencaoIA(env: AmbienteIA):
+  "zdr" | "demonstracao_bloqueada_dados" | "bloqueada" {
+  const provedor = env.SYLVINHO_IA_PROVIDER;
+  if (provedor === "openai") {
+    return env.SYLVINHO_IA_ZDR_APROVADO === "true" ? "zdr" : "bloqueada";
+  }
+  if (provedor !== "gemini") return "bloqueada";
+  const modo = env.SYLVINHO_IA_GEMINI_MODALIDADE ?? "zdr";
+  if (modo === "zdr") {
+    return env.SYLVINHO_IA_ZDR_APROVADO === "true" ? "zdr" : "bloqueada";
+  }
+  if (modo === "demonstracao_publica" &&
+    env.SYLVINHO_IA_GEMINI_RETENCAO_RECONHECIDA === "true") {
+    return "demonstracao_bloqueada_dados";
+  }
+  return "bloqueada";
+}
+
+/**
  * Escolha opt-in; preserva verificacao Auth, RAG, persistencia e HTTP.
  * Flags do operador NAO configuram ZDR ou aprovacao institucional.
  * @param {OpcoesGerador} opcoes Fabricas substituiveis nos testes.
@@ -77,8 +101,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       const env = lerAmbiente();
       if (!usuarioIAAutorizado(env, contexto?.uid)) return baseline.resposta;
       const aprovacoes = ["SYLVINHO_IA_INSTITUCIONAL_APROVADA",
-        "SYLVINHO_IA_PRIVACIDADE_APROVADA", "SYLVINHO_IA_MENORES_APROVADA",
-        "SYLVINHO_IA_ZDR_APROVADO"];
+        "SYLVINHO_IA_PRIVACIDADE_APROVADA", "SYLVINHO_IA_MENORES_APROVADA"];
       const provedor = env.SYLVINHO_IA_PROVIDER;
       if (env.SYLVINHO_IA_ENABLED !== "true" ||
         (provedor !== "openai" && provedor !== "gemini") ||
@@ -86,6 +109,15 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           env.SYLVINHO_IA_GEMINI_MODALIDADE_APROVADA !== "true") ||
         aprovacoes.some((nome) => env[nome] !== "true")) {
         return baseline.resposta;
+      }
+      const retencao = politicaRetencaoIA(env);
+      if (retencao === "bloqueada") return baseline.resposta;
+      if (retencao === "demonstracao_bloqueada_dados") {
+        // Texto livre e geracao podem conter dados pessoais nao detectados.
+        // Nao ha mecanismo comprovado de revisao de TODOS os envios externos.
+        // Flag de retencao, allowlist e regex NAO autorizam essa transmissao.
+        evento("SEGURANCA");
+        return fallback();
       }
       if (baseline.status !== "trechos_encontrados" ||
         !baseline.citacoes.length || baseline.citacoes.some((c) =>

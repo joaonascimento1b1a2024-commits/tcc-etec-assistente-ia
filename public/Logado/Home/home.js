@@ -19,10 +19,76 @@ let conversationId = new URLSearchParams(window.location.search).get('conversa')
 let sending = false;
 let sessionVersion = 0;
 const chatStatus = document.querySelector('#chatStatus');
+const demonstracaoPanel = document.querySelector('#demonstracaoPanel');
+const demonstracaoSelect = document.querySelector('#demonstracaoSelect');
+const demonstracaoPergunta = document.querySelector('#demonstracaoPergunta');
+const demonstracaoEnviar = document.querySelector('#demonstracaoEnviar');
+const demonstracaoRecuperar = document.querySelector('#demonstracaoRecuperar');
+let demonstracaoCatalogo = [];
+let demonstracaoRequest = null;
+let demonstracaoPendente = null;
+function reiniciarDemonstracao() {
+    demonstracaoRequest?.abort();
+    demonstracaoRequest = null;
+    demonstracaoCatalogo = [];
+    demonstracaoPendente = null;
+    demonstracaoPanel.hidden = true;
+    demonstracaoSelect.replaceChildren();
+    demonstracaoPergunta.textContent = '';
+    demonstracaoEnviar.disabled = true;
+    demonstracaoRecuperar.hidden = true;
+}
+function selecionarDemonstracao() {
+    const item = demonstracaoCatalogo.find(p => p.perguntaId === demonstracaoSelect.value);
+    demonstracaoPergunta.textContent = item?.pergunta || '';
+    demonstracaoEnviar.disabled = sending || !item;
+}
+async function carregarDemonstracao(user, version) {
+    const controller = new AbortController();
+    demonstracaoRequest = controller;
+    try {
+        const [{ consultarDemonstracao }, { resolverAssistenteConfig }] = await Promise.all([
+            import('./assistente-client.js'), import('./assistente-config.js'),
+        ]);
+        const config = resolverAssistenteConfig();
+        if (!config.endpoint || version !== sessionVersion) return;
+        const { perguntas } = await consultarDemonstracao({ user, ...config,
+            signal: controller.signal,
+            sessaoAtual: () => version === sessionVersion && authenticatedUser === user });
+        if (version !== sessionVersion || authenticatedUser !== user) return;
+        demonstracaoCatalogo = perguntas;
+        demonstracaoSelect.replaceChildren();
+        for (const item of perguntas) {
+            const option = document.createElement('option');
+            option.value = item.perguntaId;
+            option.textContent = item.pergunta.split('\n').at(-1);
+            demonstracaoSelect.append(option);
+        }
+        demonstracaoSelect.value = demonstracaoPendente?.perguntaId || perguntas[0].perguntaId;
+        demonstracaoPanel.hidden = false;
+        demonstracaoRecuperar.hidden = !perguntas.some(p => p.perguntaId === demonstracaoPendente?.perguntaId &&
+            p.pergunta === demonstracaoPendente.pergunta);
+        demonstracaoSelect.disabled = sending;
+        demonstracaoRecuperar.disabled = sending;
+        selecionarDemonstracao();
+    } catch {
+        if (version !== sessionVersion || authenticatedUser !== user) return;
+        demonstracaoCatalogo = [];
+        demonstracaoPanel.hidden = true;
+        if (demonstracaoPendente) chatStatus.textContent =
+            'Demonstração pendente preservada. A autorização não está disponível; nenhuma pergunta foi reenviada.';
+    } finally {
+        if (demonstracaoRequest === controller) demonstracaoRequest = null;
+    }
+}
 function lockComposer(locked) {
     messageInput.disabled = locked;
     messageForm.querySelector('[type="submit"]').disabled = locked;
     document.querySelectorAll('[data-message]').forEach((button) => (button.disabled = locked));
+    demonstracaoSelect.disabled = locked || !demonstracaoCatalogo.length;
+    demonstracaoEnviar.disabled = locked || !demonstracaoCatalogo.some(p => p.perguntaId === demonstracaoSelect.value);
+    demonstracaoRecuperar.disabled = locked || !demonstracaoCatalogo.some(p =>
+        p.perguntaId === demonstracaoPendente?.perguntaId && p.pergunta === demonstracaoPendente.pergunta);
 }
 lockComposer(true);
 
@@ -89,6 +155,7 @@ async function loadAuthenticatedProfile() {
             async (user) => {
                 const version = ++sessionVersion;
                 activeRequest?.abort();
+                reiniciarDemonstracao();
                 authenticatedUser = user;
                 conversationStore = null;
                 messages.replaceChildren();
@@ -142,7 +209,11 @@ async function loadAuthenticatedProfile() {
                     const { carregarEnvioPendente } = await import('./envio-pendente.js');
                     if (version !== sessionVersion) return;
                     const pendente = carregarEnvioPendente(user.uid);
-                    if (pendente) await sendMessage(pendente.pergunta);
+                    demonstracaoPendente = pendente?.perguntaId ? pendente : null;
+                    void carregarDemonstracao(user, version);
+                    if (demonstracaoPendente) chatStatus.textContent =
+                        "Demonstração pendente preservada. Use Retomar demonstração pendente para reenviar com o mesmo identificador.";
+                    else if (pendente) await sendMessage(pendente.pergunta);
                 } catch (error) {
                     if (version !== sessionVersion) return;
                     chatStatus.textContent =
@@ -163,6 +234,7 @@ function handleProfileError(error) {
     activeRequest?.abort();
     authenticatedUser = null;
     conversationStore = null;
+    reiniciarDemonstracao();
     lockComposer(true);
     chatStatus.textContent =
         'Não foi possível conectar à conta. Recarregue a página para tentar novamente.';
@@ -222,7 +294,13 @@ function addMessage(text, sender) {
 
 // Só apresenta o envio como salvo após a confirmação do banco. Em caso de erro,
 // mantém o texto para uma nova tentativa e não fabrica respostas da IA.
-async function sendMessage(text) {
+async function sendMessage(text, perguntaId) {
+    const demo = perguntaId !== undefined;
+    const autorizada = demonstracaoCatalogo.find(p => p.perguntaId === perguntaId);
+    if (demo && (!autorizada || autorizada.pergunta !== text)) {
+        chatStatus.textContent = "Demonstração indisponível para esta pergunta ou sessão.";
+        return;
+    }
     const cleanText = text.trim();
     if (!cleanText || sending || !conversationStore || !authenticatedUser) return;
     if (cleanText.length > 700) {
@@ -238,10 +316,10 @@ async function sendMessage(text) {
     sending = true;
     lockComposer(true);
     newChat.disabled = true;
-    messageInput.value = cleanText;
+    if (!demo) messageInput.value = cleanText;
     chatStatus.textContent = 'Salvando mensagem...';
     try {
-        const [{ perguntarAssistente }, { resolverAssistenteConfig }, pendencias] = await Promise.all([
+        const [{ perguntarAssistente, consultarDemonstracao }, { resolverAssistenteConfig }, pendencias] = await Promise.all([
             import('./assistente-client.js'),
             import('./assistente-config.js'),
             import('./envio-pendente.js'),
@@ -249,18 +327,30 @@ async function sendMessage(text) {
         const config = resolverAssistenteConfig();
         if (!config.endpoint) throw Object.assign(new Error('Assistente ainda não configurado.'), { code: 'ENDPOINT_NAO_CONFIGURADO' });
         if (version !== sessionVersion) return;
+        if (demo) {
+            // Revalidar no servidor antes de salvar user; UI nao concede acesso.
+            const { perguntas } = await consultarDemonstracao({ user, ...config, signal: request.signal,
+                sessaoAtual: () => version === sessionVersion && authenticatedUser === user });
+            if (version !== sessionVersion) return;
+            if (!perguntas.some(p => p.perguntaId === perguntaId && p.pergunta === cleanText))
+                throw Object.assign(new Error('Demonstração não autorizada.'), { code: 'DEMONSTRACAO_INVALIDA' });
+        }
         let envio = pendencias.carregarEnvioPendente(user.uid);
         const primeiraTentativa = !envio;
-        if (envio && envio.pergunta !== cleanText) {
+        if (envio && (envio.pergunta !== cleanText || envio.perguntaId !== perguntaId)) {
             chatStatus.textContent = 'Existe uma pergunta pendente. Recarregue para recuperá-la antes de enviar outra.';
             return;
         }
         if (!envio) {
             envio = { version: 1, conversationId: conversationId || store.reserve(),
                 messageId: crypto.randomUUID(), pergunta: cleanText, enviadoEm: Date.now(),
-                novaConversa: !conversationId };
+                novaConversa: !conversationId, ...(demo ? { perguntaId } : {}) };
             // Persistir antes de qualquer escrita evita trocar o ID apos recarga.
             pendencias.guardarEnvioPendente(user.uid, envio);
+        }
+        if (demo) {
+            demonstracaoPendente = envio;
+            demonstracaoRecuperar.hidden = false;
         }
         const id = await store.append(envio.conversationId, envio.pergunta, envio.messageId,
             envio.enviadoEm, { create: primeiraTentativa && envio.novaConversa });
@@ -271,7 +361,7 @@ async function sendMessage(text) {
         conversationId = id;
         window.history.replaceState(null, '', `?conversa=${encodeURIComponent(id)}`);
         // O banco já confirmou o envio: uma falha de releitura não deve duplicá-lo.
-        messageInput.value = '';
+        if (!demo) messageInput.value = '';
         // Reconsulta o documento para incluir mensagens enviadas por outras abas.
         const saved = await store.open(id);
         if (version !== sessionVersion) return;
@@ -283,7 +373,7 @@ async function sendMessage(text) {
             ? 'Mensagem salva. Aguardando resposta... O servidor pode levar até dois minutos para iniciar.'
             : 'Mensagem salva. Aguardando resposta...';
         await perguntarAssistente({
-            user, pergunta: cleanText, conversationId: id,
+            user, ...(envio.perguntaId ? { perguntaId: envio.perguntaId } : { pergunta: cleanText }), conversationId: id,
             messageId: envio.messageId,
             ...config, signal: request.signal,
             sessaoAtual: () => version === sessionVersion && authenticatedUser === user,
@@ -299,16 +389,24 @@ async function sendMessage(text) {
         chatStatus.textContent = 'Conversa atualizada.';
         try {
             pendencias.concluirEnvioPendente(user.uid);
+            if (demo) { demonstracaoPendente = null; demonstracaoRecuperar.hidden = true; }
         } catch {
             // A resposta já foi confirmada e exibida; cache não muda esse resultado.
             chatStatus.textContent = 'Resposta confirmada e salva. Não foi possível limpar a pendência local. Recarregar reutilizará o mesmo identificador, sem duplicar a resposta.';
         }
     } catch (error) {
         if (version !== sessionVersion) return;
-        chatStatus.textContent = error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'
+        if (demo && ['HTTP_403', 'HTTP_401', 'SESSAO_INVALIDA', 'DEMONSTRACAO_INVALIDA'].includes(error.code)) {
+            demonstracaoCatalogo = []; demonstracaoPanel.hidden = true;
+        }
+        chatStatus.textContent = demo && ['HTTP_403', 'DEMONSTRACAO_INVALIDA'].includes(error.code)
+            ? 'Demonstração não autorizada ou expirada. O modo documental permanece disponível; nenhuma geração foi repetida.'
+            : error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'
             ? 'O assistente não está configurado para este ambiente. Nenhuma pergunta foi salva.'
             : userSaved && ['HTTP_401', 'SESSAO_INVALIDA', 'TOKEN_INVALIDO'].includes(error.code)
             ? 'Sua sessão expirou ou não pôde ser validada. A pergunta foi salva. Entre novamente e recarregue para recuperar o envio com o mesmo identificador.'
+            : demo && userSaved
+            ? 'Pergunta demonstrativa salva; resposta não confirmada. Use Retomar demonstração pendente para tentar com o mesmo identificador. Não há repetição automática.'
             : userSaved && ['HTTP_502', 'HTTP_503', 'HTTP_504'].includes(error.code)
             ? 'O assistente está temporariamente indisponível. A pergunta foi salva. Aguarde e recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
             : userSaved && error.code === 'REDE_OU_TOKEN'
@@ -326,7 +424,8 @@ async function sendMessage(text) {
         newChat.disabled = false;
         lockComposer(!conversationStore || !authenticatedUser);
         if (version === sessionVersion) {
-            messageInput.focus();
+            if (demo && !demonstracaoPanel.hidden) demonstracaoSelect.focus();
+            else messageInput.focus();
         }
     }
 }
@@ -379,4 +478,16 @@ newChat.addEventListener('click', async () => {
     }
     // A navegação limpa apenas a seleção; o histórico já salvo não é apagado.
     window.location.assign('home.html');
+});
+
+// Selecao fechada; nao usa messageInput nem data-message no caminho demo.
+demonstracaoSelect.addEventListener('change', selecionarDemonstracao);
+demonstracaoEnviar.addEventListener('click', () => {
+    const item = demonstracaoCatalogo.find(p => p.perguntaId === demonstracaoSelect.value);
+    if (item) return sendMessage(item.pergunta, item.perguntaId);
+});
+demonstracaoRecuperar.addEventListener('click', () => {
+    const item = demonstracaoCatalogo.find(p => p.perguntaId === demonstracaoPendente?.perguntaId &&
+        p.pergunta === demonstracaoPendente.pergunta);
+    if (item) return sendMessage(item.pergunta, item.perguntaId);
 });

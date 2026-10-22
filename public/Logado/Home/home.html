@@ -144,6 +144,14 @@
             <!-- Formulário compartilhado pelas duas telas; o JavaScript trata o envio. -->
             <!-- Informa conexão, salvamento e falhas sem confundir uma demonstração com resposta real. -->
             <p id="chatStatus" role="status" class="chat-status">Conectando à sua conta...</p>
+            <section id="demonstracaoPanel" class="demonstracao-panel" hidden aria-label="Demonstração restrita de IA">
+                <p>Demonstração sintética — não é informação escolar oficial.</p>
+                <label for="demonstracaoSelect">Selecione uma pergunta autorizada</label>
+                <select id="demonstracaoSelect" disabled></select>
+                <p id="demonstracaoPergunta"></p>
+                <button id="demonstracaoEnviar" type="button" disabled>Enviar pergunta de demonstração</button>
+                <button id="demonstracaoRecuperar" type="button" hidden disabled>Retomar demonstração pendente</button>
+            </section>
             <form class="message-form" id="messageForm">
                 <!-- Rótulo acessível a leitores de tela, oculto visualmente pelo CSS. -->
                 <label class="sr-only" for="messageInput">Sua mensagem</label>
