@@ -74,9 +74,11 @@ pergunta ou logs de identidade. Nao ha retries automaticos.
 
 Uma geracao bem-sucedida usa quatro chamadas Gemini, inclusive classificacoes e
 revisao; todas podem ter custo. Nao houve chamadas reais, verificacao de modelo,
-cota, disponibilidade da conta ou estimativa monetaria confirmada. Modelos que
-emitam partes de pensamento/assinaturas adicionais sao conservadoramente
-recusados pelo parser atual; compatibilidade real deve ser validada antes de uso.
+cota, disponibilidade da conta ou estimativa monetaria confirmada. O parser aceita somente text, thought booleano e thoughtSignature textual
+nao vazia nas partes. Assinaturas sao opacas e descartadas; partes thought=true
+nao integram o JSON final. Campos desconhecidos, tools e ausencia de JSON final
+continuam recusados. As chamadas sao independentes, sem reenvio de assinaturas
+ou historico. Compatibilidade real do modelo ainda exige validacao autorizada.
 
 ## Roteiro Render: publicar inicialmente com IA desligada
 

@@ -170,3 +170,66 @@ test('HTTP, historico e replay Gemini simulados preservam duas mensagens', async
   assert.deepEqual(await enviar(),a);assert.equal(f.chamadas.length,4);
   assert.equal(conversa.mensagens.length,2);assert.equal(conversa.mensagens[1].messageId,messageId);
 });
+
+// Compatibilidade Part: assinatura e pensamento nunca sao conteudo de resposta.
+for (const [nome, parts] of [
+  ['sem metadados', [{text:'{"segura":true}'}]],
+  ['assinatura junto ao texto', [{text:'{"segura":true}',thoughtSignature:'assinatura-simulada'}]],
+  ['assinatura separada', [{thoughtSignature:'assinatura-simulada'},{text:'{"segura":true}'}]],
+  ['thought false', [{text:'{"segura":true}',thought:false,thoughtSignature:'assinatura-simulada'}]],
+  ['pensamento nao e concatenado', [{text:'nao e JSON nem resposta',thought:true,thoughtSignature:'assinatura-simulada'},{text:'{"segura":true}'}]],
+  ['assinatura com texto enganoso ignorada', [{text:'{"segura":false}',thoughtSignature:'{"segura":true}'}]],
+]) test('parser Gemini aceita metadados: '+nome, async () => {
+  const c=criarClienteGemini('modelo-simulado',()=> 'credencial-ficticia',async()=>json({candidates:[{finishReason:'STOP',content:{role:'model',parts}}]}));
+  assert.equal(await c.moderar('texto sintetico',new AbortController().signal),nome!=='assinatura com texto enganoso ignorada');
+});
+for(const [nome,parts] of [
+  ['assinatura numerica',[{text:'{"segura":true}',thoughtSignature:42}]],
+  ['assinatura objeto',[{text:'{"segura":true}',thoughtSignature:{segura:true}}]],
+  ['assinatura nula',[{text:'{"segura":true}',thoughtSignature:null}]],
+  ['assinatura vazia',[{text:'{"segura":true}',thoughtSignature:''}]],
+  ['thought nao booleano',[{text:'{"segura":true}',thought:'false'}]],
+  ['texto nao string',[{text:42,thoughtSignature:'assinatura-simulada'}]],
+  ['campo desconhecido',[{text:'{"segura":true}',thoughtSignature:'assinatura-simulada',ignorarSeguranca:true}]],
+  ['tool junto de assinatura',[{text:'{"segura":true}',thoughtSignature:'assinatura-simulada',functionCall:{name:'x'}}]],
+  ['campo desconhecido em pensamento',[{text:'pensamento',thought:true,tool:{name:'x'}},{text:'{"segura":true}'}]],
+  ['somente pensamento',[{text:'{"segura":true}',thought:true}]],
+  ['somente assinatura',[{thoughtSignature:'{"segura":true}'}]],
+  ['JSON invalido assinado',[{text:'invalido',thoughtSignature:'assinatura-simulada'}]],
+]) test('parser Gemini rejeita metadados/conteudo invalidos: '+nome,async()=>{
+  const c=criarClienteGemini('modelo-simulado',()=> 'credencial-ficticia',async()=>json({candidates:[{finishReason:'STOP',content:{role:'model',parts}}]}));
+  await assert.rejects(c.moderar('texto sintetico',new AbortController().signal),/^Error: GEMINI_INDISPONIVEL$/);
+});
+test('pipeline com assinaturas preserva referencias e nao vaza metadados',async()=>{
+  const f=fixture(envTeste(),{responder:({valor})=>{
+    const b=resposta(valor);
+    b.candidates[0].content.parts.unshift({thought:true,text:'PENSAMENTO_NAO_EXIBIR',thoughtSignature:'ASSINATURA_NAO_EXIBIR'});
+    b.candidates[0].content.parts.at(-1).thoughtSignature='ASSINATURA_NAO_EXIBIR';
+    return json(b);
+  }});
+  const r=await f.gerar(pergunta,chunks,{uid});
+  assert.match(r,/^Resposta gerada por IA/);assert.ok(r.endsWith(baseline));
+  assert.equal(f.chamadas.length,4);
+  assert.equal(r.includes('NAO_EXIBIR'),false);
+  assert.equal(JSON.stringify(f.chamadas).includes('NAO_EXIBIR'),false);
+  assert.deepEqual(f.eventos,['GERADA']);
+});
+for(const [nome,mudar] of [
+  ['referencia falsa',v=>v.afirmacoes[0].referencias[0].id='E99'],
+  ['citacao falsa',v=>v.afirmacoes[0].referencias[0].citacao+=' falsa'],
+  ['JSON estruturado com campo extra',v=>v.extra=true],
+]) test('assinatura nao dispensa validacao de fundamentacao: '+nome,async()=>{
+  const f=fixture(envTeste(),{responder:({body,valor})=>{
+    if(body.generationConfig.responseJsonSchema.properties.afirmacoes)mudar(valor);
+    const b=resposta(valor);b.candidates[0].content.parts[0].thoughtSignature='assinatura-simulada';return json(b);
+  }});
+  assert.equal(await f.gerar(pergunta,chunks,{uid}),baseline);
+  assert.equal(f.eventos.includes('GERADA'),false);
+});
+test('metadado desconhecido assinado aciona fallback documental',async()=>{
+  const f=fixture(envTeste(),{responder:({valor})=>{
+    const b=resposta(valor);Object.assign(b.candidates[0].content.parts[0],{thoughtSignature:'assinatura-simulada',unknown:true});return json(b);
+  }});
+  assert.equal(await f.gerar(pergunta,chunks,{uid}),baseline);
+  assert.equal(f.chamadas.length,1);
+});
