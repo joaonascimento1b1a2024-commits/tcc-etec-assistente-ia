@@ -7,12 +7,15 @@ import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
 import {validarGeracao} from "./contrato";
 import type {PedidoGeracao, ProvedorGeracao} from "./contrato";
 import {criarClienteOpenAI} from "./openai";
+import {criarClienteGemini} from "./gemini";
 
 export type AmbienteIA = Readonly<Record<string, string | undefined>>;
 export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
 export interface OpcoesGerador {
   lerAmbiente?: () => AmbienteIA;
   criarCliente?: (modelo: string, lerChave: () => string) => ProvedorGeracao;
+  criarClienteGemini?:
+    (modelo: string, lerChave: () => string) => ProvedorGeracao;
   registrarEvento?: (codigo: EventoIA) => void;
   agora?: () => number;
 }
@@ -76,8 +79,11 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       const aprovacoes = ["SYLVINHO_IA_INSTITUCIONAL_APROVADA",
         "SYLVINHO_IA_PRIVACIDADE_APROVADA", "SYLVINHO_IA_MENORES_APROVADA",
         "SYLVINHO_IA_ZDR_APROVADO"];
+      const provedor = env.SYLVINHO_IA_PROVIDER;
       if (env.SYLVINHO_IA_ENABLED !== "true" ||
-        env.SYLVINHO_IA_PROVIDER !== "openai" ||
+        (provedor !== "openai" && provedor !== "gemini") ||
+        (provedor === "gemini" &&
+          env.SYLVINHO_IA_GEMINI_MODALIDADE_APROVADA !== "true") ||
         aprovacoes.some((nome) => env[nome] !== "true")) {
         return baseline.resposta;
       }
@@ -87,7 +93,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         preparada.motivoContexto === "minimizacao_bloqueada") {
         return fallback();
       }
-      const modelo = env.OPENAI_MODEL || "";
+      const modelo = (provedor === "gemini" ?
+        env.GEMINI_MODEL : env.OPENAI_MODEL) || "";
       const timeout = Number(env.SYLVINHO_IA_TIMEOUT_MS ?? 20000);
       const limite = Number(env.SYLVINHO_IA_MAX_POR_MINUTO ?? 5);
       if (!/^[a-zA-Z0-9._:-]{1,100}$/u.test(modelo) ||
@@ -117,7 +124,10 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       }
       if (ocupado || chamadasNaJanela >= limite) return fallback();
       ocupado = true; adquiriu = true; chamadasNaJanela++;
-      const cliente = criarCliente(modelo, () => env.OPENAI_API_KEY || "");
+      const cliente = provedor === "gemini" ?
+        (opcoes.criarClienteGemini ?? criarClienteGemini)(
+          modelo, () => env.GEMINI_API_KEY || "") :
+        criarCliente(modelo, () => env.OPENAI_API_KEY || "");
       const operacao = async (): Promise<string> => {
         const entrada = [pedido.pergunta, ...pedido.contextos].join("\n\n");
         const entradaSegura = await cliente.moderar(
