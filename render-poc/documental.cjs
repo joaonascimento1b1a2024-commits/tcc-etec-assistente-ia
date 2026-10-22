@@ -4,7 +4,7 @@ const { readFileSync } = require('node:fs');
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
 const { recuperarConhecimentoRelevante } = require('../functions/lib/rag/recuperacao.js');
 const DOCUMENTAL_SERVICE_ACCOUNT_EMAIL = 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com';
-const { gerarRespostaDocumental } = require('../functions/lib/assistente/resposta-documental.js');
+const { criarGeradorConfiguravel } = require('../functions/lib/assistente/geracao/gateway.js');
 const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
 
 function validarConfiguracaoDocumental(config) {
@@ -71,7 +71,8 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         return { auth: getAuth(app), firestore,
             recuperarConhecimento: pergunta => recuperarConhecimentoRelevante(firestore, pergunta),
             serverTimestamp: () => FieldValue.serverTimestamp(),
-            gerarResposta: async (pergunta, chunks) => gerarRespostaDocumental(pergunta, chunks).resposta };
+            gerarResposta: criarGeradorConfiguravel({ lerAmbiente,
+                registrarEvento: codigo => console.info('SYLVINHO_IA', codigo) }) };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }
 }
 
