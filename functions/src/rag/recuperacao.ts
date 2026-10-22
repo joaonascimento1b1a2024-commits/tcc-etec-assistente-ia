@@ -331,7 +331,14 @@ export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
   const renovacao =
     /\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
       .test(normalizarTexto(pergunta));
+  // "Na ETEC" situa uma norma da rede, mas nao e palavra obrigatoria
+  // no corpo de cada artigo. Nao remove nomes de unidades ou condicoes.
+  const normaFrequencia = termos.includes("frequencia") &&
+    (termos.includes("minima") || termos.includes("aprovacao"));
+  const etecGenerica = normaFrequencia &&
+    /\bna etec$/u.test(normalizarTexto(pergunta));
   return termos.filter((termo) =>
+    !(etecGenerica && termo === "etec") &&
     !(termos.includes("frequencia") && termo === "aprovacao") &&
     !(termos.includes("declaracao") && termo === "escolar") &&
     !["modelo", "exemplo"].includes(termo) &&
