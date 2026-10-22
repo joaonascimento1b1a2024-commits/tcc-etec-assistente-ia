@@ -64,11 +64,14 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
     const existing = getApps().find(app => app.name === name);
     if (existing) throw new Error('DOCUMENTAL_APP_ALREADY_INITIALIZED');
     try {
+        const { criarDemonstracaoGemini } = require('../functions/lib/assistente/geracao/demonstracao.js');
         const app = initializeApp({ projectId: PROJECT_ID, credential: cert(credential) }, name);
         const { getAuth } = carregar('firebase-admin/auth');
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
         return { auth: getAuth(app), firestore,
+            demonstracao: criarDemonstracaoGemini({ lerAmbiente,
+                registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),
             recuperarConhecimento: pergunta => recuperarConhecimentoRelevante(firestore, pergunta),
             serverTimestamp: () => FieldValue.serverTimestamp(),
             gerarResposta: criarGeradorConfiguravel({ lerAmbiente,

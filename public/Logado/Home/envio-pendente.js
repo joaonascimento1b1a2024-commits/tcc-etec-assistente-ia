@@ -15,7 +15,10 @@ export function carregarEnvioPendente(uid, storage) {
         !idValido(envio.messageId) || typeof envio.pergunta !== 'string' ||
         !envio.pergunta.trim() || envio.pergunta.length > 700 ||
         !Number.isSafeInteger(envio.enviadoEm) || envio.enviadoEm < 0 ||
-        typeof envio.novaConversa !== 'boolean') throw invalida();
+        typeof envio.novaConversa !== 'boolean' ||
+        (envio.perguntaId !== undefined && (typeof envio.perguntaId !== 'string' ||
+          !/^[a-z0-9-]{1,80}$/.test(envio.perguntaId) ||
+          !envio.pergunta.startsWith('Demonstração sintética; não é informação escolar oficial.\n')))) throw invalida();
     return envio;
 }
 

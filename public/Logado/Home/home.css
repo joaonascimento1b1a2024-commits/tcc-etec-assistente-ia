@@ -594,3 +594,12 @@ nav {
     .bubble { padding: 12px 10px; max-width: 92%; }
     .documental-citacao blockquote { padding-left: 0.625rem; }
 }
+
+.demonstracao-panel[hidden] { display: none; }
+.demonstracao-panel { margin: 0.5rem 1rem; padding: 0.8rem; border: 1px solid var(--line); border-radius: 12px; min-width: 0; }
+.demonstracao-panel p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0.4rem 0; }
+.demonstracao-panel select, .demonstracao-panel button { max-width: 100%; min-height: 44px; margin: 0.3rem 0; font: inherit; color: inherit; background: var(--panel, #252525); border: 1px solid var(--line); border-radius: 6px; padding: 0.5rem; }
+.demonstracao-panel button { white-space: normal; overflow-wrap: anywhere; cursor: pointer; }
+.demonstracao-panel select { display: block; width: 100%; }
+.demonstracao-panel :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.demonstracao-panel button:disabled { opacity: 0.6; cursor: default; }

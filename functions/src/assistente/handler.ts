@@ -43,6 +43,13 @@ function respostaExistente(
 }
 
 export interface DependenciasAssistente {
+  demonstracao?: {
+    listarPerguntas(uid: string): readonly {
+      perguntaId: string; pergunta: string;
+    }[];
+    resolverPergunta(id: unknown, uid: string): string | undefined;
+    gerarResposta(id: string, uid: string): Promise<string>;
+  };
   auth: {
     verifyIdToken(token: string): Promise<{uid: string}>;
   };
@@ -165,8 +172,34 @@ export async function perguntarAssistenteHandler(
     }
 
     // usuarioId nao e lido; o caminho depende somente do token validado.
-    const {pergunta, conversationId, messageId} =
-      req.body as Record<string, unknown>;
+    const corpo = req.body as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(corpo, "acao")) {
+      if (Object.keys(corpo).length !== 1 ||
+        corpo.acao !== "catalogo_demonstracao") {
+        return res.status(400).json({error: "Consulta inválida."});
+      }
+      const perguntas = deps.demonstracao?.listarPerguntas(decodedToken.uid);
+      if (!perguntas?.length) {
+        return res.status(403).json({error: "Demonstração não autorizada."});
+      }
+      return res.status(200).json({perguntas});
+    }
+    const {conversationId, messageId} = corpo;
+    const demo = Object.prototype.hasOwnProperty.call(corpo, "perguntaId");
+    let pergunta = corpo.pergunta;
+    if (demo) {
+      if (Object.keys(corpo).length !== 3 ||
+        !["perguntaId", "conversationId", "messageId"].every((k) =>
+          Object.prototype.hasOwnProperty.call(corpo, k))) {
+        return res.status(400).json({error: "Corpo demonstrativo inválido."});
+      }
+      pergunta = deps.demonstracao?.resolverPergunta(
+        corpo.perguntaId, decodedToken.uid,
+      );
+      if (!pergunta) {
+        return res.status(403).json({error: "Demonstração não autorizada."});
+      }
+    }
     if (typeof pergunta !== "string") {
       return res.status(400).json({error: "A pergunta deve ser um texto."});
     }
@@ -241,6 +274,17 @@ export async function perguntarAssistenteHandler(
           atualizadas, messageId, perguntaNormalizada,
         );
         if (concluida !== undefined) return concluida;
+        if (demo && deps.demonstracao) {
+          const gerada = await deps.demonstracao.gerarResposta(
+            corpo.perguntaId as string, decodedToken.uid,
+          );
+          if (typeof gerada !== "string" || !gerada.trim()) {
+            throw new Error("INVALID_GENERATOR_RESPONSE");
+          }
+          return adicionarRespostaBot(
+            conversaRef, gerada, deps, messageId, perguntaNormalizada,
+          );
+        }
         const chunks = deps.recuperarConhecimento ?
           await deps.recuperarConhecimento(perguntaNormalizada) :
           await recuperarConhecimentoRelevante(
@@ -265,6 +309,9 @@ export async function perguntarAssistenteHandler(
     return res.status(200).json({resposta});
   } catch (error) {
     const mensagem = error instanceof Error ? error.message : "";
+    if (mensagem === "DEMO_NAO_AUTORIZADA") {
+      return res.status(403).json({error: "Demonstração não autorizada."});
+    }
     if (mensagem === "MESSAGE_ID_CONFLICT") {
       return res.status(409).json({
         error: "Identificador não corresponde à pergunta salva.",
