@@ -5,6 +5,7 @@ const { origensPermitidas } = require('../functions/lib/assistente/http.js');
 const DOCUMENTAL_SERVICE_ACCOUNT_EMAIL = 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com';
 const { criarFluxoPerguntaLivre } = require('../functions/lib/assistente/pergunta-livre/fluxo.js');
 const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
+const DOCUMENTAL_ORIGINS = Object.freeze([...OFFICIAL_ORIGINS, 'https://sylvinho.web.app']);
 
 function validarConfiguracaoDocumental(config) {
     if (config.demonstracao !== undefined && typeof config.demonstracao !== 'boolean') throw new Error('DEMO_FLAG_INVALID');
@@ -17,7 +18,7 @@ function validarConfiguracaoDocumental(config) {
     if (typeof config.origins !== 'string' || config.origins.split(',').some(item => !item.trim()))
         throw new Error('DOCUMENTAL_CORS_INVALID');
     const origins = origensPermitidas(config.origins);
-    if (!origins.length || new Set(origins).size !== origins.length || origins.some(origin => !OFFICIAL_ORIGINS.includes(origin)))
+    if (!origins.length || new Set(origins).size !== origins.length || origins.some(origin => !DOCUMENTAL_ORIGINS.includes(origin)))
         throw new Error('DOCUMENTAL_CORS_INVALID');
     return Object.freeze({ ...config, projectId: PROJECT_ID, databaseId: DATABASE_ID, credentialPath: CREDENTIAL_PATH });
 }
