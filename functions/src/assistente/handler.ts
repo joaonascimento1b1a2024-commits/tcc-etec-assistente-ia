@@ -43,6 +43,8 @@ function respostaExistente(
 }
 
 export interface DependenciasAssistente {
+  gerarRespostaGeral?: (pergunta: string, contexto: {readonly uid: string}) =>
+    Promise<string | null>;
   demonstracao?: {
     listarPerguntas(uid: string): readonly {
       perguntaId: string; pergunta: string;
@@ -284,6 +286,17 @@ export async function perguntarAssistenteHandler(
           return adicionarRespostaBot(
             conversaRef, gerada, deps, messageId, perguntaNormalizada,
           );
+        }
+        if (deps.gerarRespostaGeral) {
+          const geral = await deps.gerarRespostaGeral(perguntaNormalizada,
+            Object.freeze({uid: decodedToken.uid}));
+          if (geral !== null) {
+            if (typeof geral !== "string" || !geral.trim()) {
+              throw new Error("INVALID_GENERATOR_RESPONSE");
+            }
+            return adicionarRespostaBot(conversaRef, geral, deps,
+              messageId, perguntaNormalizada);
+          }
         }
         const chunks = deps.recuperarConhecimento ?
           await deps.recuperarConhecimento(perguntaNormalizada) :
