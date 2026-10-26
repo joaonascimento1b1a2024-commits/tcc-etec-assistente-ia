@@ -68,9 +68,14 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const { getAuth } = carregar('firebase-admin/auth');
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
+        const diagnosticar = evento => console.info('SYLVINHO_DIAGNOSTICO', JSON.stringify(evento));
         const fluxo = criarFluxoPerguntaLivre({ fonte: firestore, geracao: { lerAmbiente,
             registrarEvento: codigo => console.info('SYLVINHO_IA', codigo) } });
-        return { auth: getAuth(app), firestore,
+        const { criarGeradorGeral } = require('../functions/lib/assistente/geracao/geral.js');
+        const gerarRespostaGeral = criarGeradorGeral({ lerAmbiente, diagnosticar,
+            lerPoliticaAutomatica: () => lerArquivo('/etc/secrets/sylvinho-gemini-geral-automatico.json', 'utf8'),
+            registrarEvento: codigo => console.info('SYLVINHO_IA_GERAL', codigo) });
+        return { auth: getAuth(app), firestore, gerarRespostaGeral, registrarDiagnostico: diagnosticar,
             demonstracao: criarDemonstracaoGemini({ lerAmbiente,
                 registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),
             recuperarConhecimento: fluxo.recuperarConhecimento,

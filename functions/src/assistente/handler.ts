@@ -5,6 +5,7 @@ import {
   recuperarConhecimentoRelevante,
 } from "../rag/recuperacao.js";
 import type {DocumentoPreparado} from "../rag/recuperacao.js";
+import {randomUUID} from "node:crypto";
 
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
@@ -43,6 +44,12 @@ function respostaExistente(
 }
 
 export interface DependenciasAssistente {
+  registrarDiagnostico?: (evento: {
+    requestId: string; etapa: "HTTP"; codigo: string;
+  }) => void;
+  gerarRespostaGeral?: (pergunta: string,
+    contexto: {readonly uid: string; readonly requestId?: string}) =>
+    Promise<string | null>;
   demonstracao?: {
     listarPerguntas(uid: string): readonly {
       perguntaId: string; pergunta: string;
@@ -96,6 +103,7 @@ ${insuficiencia}
  * @param {DependenciasAssistente} deps Dependencias locais/injetadas.
  * @param {string} messageId ID da pergunta.
  * @param {string} pergunta Texto da pergunta persistida.
+ * @param {Function} aoReplay Notifica replay confirmado pela transacao.
  * @return {Promise<string>} Resposta confirmada ou ja existente.
  */
 export async function adicionarRespostaBot(
@@ -105,8 +113,9 @@ export async function adicionarRespostaBot(
     "firestore" | "serverTimestamp" | "agora">,
   messageId: string,
   pergunta: string,
+  aoReplay?: () => void,
 ): Promise<string> {
-  return deps.firestore.runTransaction(async (transaction) => {
+  const resultado = await deps.firestore.runTransaction(async (transaction) => {
     const snapshot = await transaction.get(conversaRef);
     if (!snapshot.exists) {
       throw new Error("CONVERSATION_NOT_FOUND");
@@ -116,7 +125,7 @@ export async function adicionarRespostaBot(
     const mensagens: unknown[] = Array.isArray(conversa?.mensagens) ?
       conversa.mensagens : [];
     const existente = respostaExistente(mensagens, messageId, pergunta);
-    if (existente !== undefined) return existente;
+    if (existente !== undefined) return {resposta: existente, replay: true};
     if (mensagens.length >= MAX_MENSAGENS) {
       throw new Error("CONVERSATION_LIMIT_REACHED");
     }
@@ -133,8 +142,14 @@ export async function adicionarRespostaBot(
       ],
       atualizadoEm: deps.serverTimestamp(),
     });
-    return resposta;
+    return {resposta, replay: false};
   });
+  if (resultado.replay) {
+    try {
+      aoReplay?.();
+    } catch {/* Telemetria nao interfere no resultado confirmado. */}
+  }
+  return resultado.resposta;
 }
 
 /**
@@ -149,7 +164,16 @@ export async function perguntarAssistenteHandler(
   res: RespostaAssistente,
   deps: DependenciasAssistente,
 ): Promise<unknown> {
+  const requestId = randomUUID();
+  const diagnostico = (codigo: string) => {
+    try {
+      deps.registrarDiagnostico?.({requestId, etapa: "HTTP", codigo});
+    } catch {/* Logs nao interferem na persistencia. */}
+  };
+  res.set("X-Sylvinho-Request-Id", requestId);
+  res.set("Cache-Control", "no-store");
   try {
+    diagnostico("RECEBIDA");
     if (req.method !== "POST") {
       res.set("Allow", "POST");
       return res.status(405).json({
@@ -162,6 +186,7 @@ export async function perguntarAssistenteHandler(
       decodedToken = await verificarAutenticacao(req, deps.auth);
     } catch (error) {
       if (error instanceof ErroAutenticacao) {
+        diagnostico("AUTENTICACAO_RECUSADA");
         return res.status(401).json({error: error.message});
       }
       throw error;
@@ -247,6 +272,7 @@ export async function perguntarAssistenteHandler(
       mensagensIniciais, messageId, perguntaNormalizada,
     );
     if (existente !== undefined) {
+      diagnostico("REPLAY");
       return res.status(200).json({resposta: existente});
     }
     if (mensagensIniciais.length >= MAX_MENSAGENS) {
@@ -273,7 +299,9 @@ export async function perguntarAssistenteHandler(
         const concluida = respostaExistente(
           atualizadas, messageId, perguntaNormalizada,
         );
-        if (concluida !== undefined) return concluida;
+        if (concluida !== undefined) {
+          diagnostico("REPLAY_REVALIDACAO"); return concluida;
+        }
         if (demo && deps.demonstracao) {
           const gerada = await deps.demonstracao.gerarResposta(
             corpo.perguntaId as string, decodedToken.uid,
@@ -284,6 +312,18 @@ export async function perguntarAssistenteHandler(
           return adicionarRespostaBot(
             conversaRef, gerada, deps, messageId, perguntaNormalizada,
           );
+        }
+        if (deps.gerarRespostaGeral) {
+          const geral = await deps.gerarRespostaGeral(perguntaNormalizada,
+            Object.freeze({uid: decodedToken.uid, requestId}));
+          if (geral !== null) {
+            if (typeof geral !== "string" || !geral.trim()) {
+              throw new Error("INVALID_GENERATOR_RESPONSE");
+            }
+            return adicionarRespostaBot(conversaRef, geral, deps,
+              messageId, perguntaNormalizada,
+              () => diagnostico("REPLAY_TRANSACAO"));
+          }
         }
         const chunks = deps.recuperarConhecimento ?
           await deps.recuperarConhecimento(perguntaNormalizada) :
@@ -304,10 +344,12 @@ export async function perguntarAssistenteHandler(
       emAndamento.set(chave, operacao);
       // Coalesce por instancia; a transacao protege tambem entre instancias.
       void operacao.finally(() => emAndamento?.delete(chave)).catch(() => {});
-    }
+    } else diagnostico("COALESCIDA");
     const resposta = await operacao;
+    diagnostico("RESPOSTA_CONFIRMADA");
     return res.status(200).json({resposta});
   } catch (error) {
+    diagnostico("FALHA");
     const mensagem = error instanceof Error ? error.message : "";
     if (mensagem === "DEMO_NAO_AUTORIZADA") {
       return res.status(403).json({error: "Demonstração não autorizada."});

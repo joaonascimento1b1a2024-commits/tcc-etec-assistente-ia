@@ -314,3 +314,11 @@ for autorizada. Selecionar ID, enviar uma vez, conferir aviso gerativo, fonte E1
 log SYLVINHO_IA_DEMO GERADA e consumo no provedor. HTTP 200 pode ser fallback.
 Sem registros/aprovacoes comprovados, site continua documental e painel oculto.
 Nao cadastrar segredo nem criar dossie ficticio para superar esse bloqueio.
+
+
+## Perguntas gerais automaticas (desativadas por padrao)
+
+O caminho geral separado, sem documentos ou aprovacao individual, esta descrito
+em [GEMINI-GERAL-AUTOMATICO.md](GEMINI-GERAL-AUTOMATICO.md). Nao altera o gateway
+RAG acima nem herda a aprovacao do catalogo. Publicar inicialmente com
+SYLVINHO_IA_GEMINI_GERAL_ENABLED=false. Nenhuma configuracao online foi alterada.

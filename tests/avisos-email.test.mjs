@@ -254,6 +254,8 @@ test('entrypoint registra apenas criação com retry; SMTP fica exclusivamente n
         'firebase-admin/auth': { getAuth: proibido },
         'firebase-admin/firestore': { getFirestore: proibido },
         './assistente/resposta-documental.js': {}, './assistente/http.js': { criarEndpointAssistente: () => ({}) },
+        './assistente/visitante.js': { criarEndpointVisitante: () => ({}) },
+        './assistente/pergunta-livre/busca.js': { criarBuscaDocumental: proibido },
         './avisos/notificacoes.js': { enfileirarEmailsAviso: proibido, enviarEmailAviso: proibido },
     };
     vm.runInNewContext(readFileSync(new URL('../functions/lib/index.js', import.meta.url), 'utf8'), {
