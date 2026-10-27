@@ -18,6 +18,7 @@ export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
 export type MotivoFallback = CodigoOpenRouter | "UID_NAO_AUTORIZADO" |
   "IA_DESATIVADA" | "PROVEDOR_INVALIDO" | "APROVACAO_PENDENTE" |
   "MODALIDADE_PENDENTE" | "RETENCAO_BLOQUEADA" | "DADOS_BLOQUEADOS" |
+  "DADOS_BLOQUEADOS_PERGUNTA" | "DADOS_BLOQUEADOS_CONTEXTO" |
   "EVIDENCIAS_INSUFICIENTES" | "CONFIGURACAO_INVALIDA" |
   "FONTES_INVALIDAS" | "OCUPADO" | "LIMITE_LOCAL" | "ENTRADA_INSEGURA" |
   "PROPOSTA_INVALIDA" | "REVISAO_REPROVADA" | "SAIDA_INSEGURA" |
@@ -145,7 +146,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         return fallback("DADOS_BLOQUEADOS");
       }
       if (preparada.motivoContexto === "minimizacao_bloqueada") {
-        return fallback("DADOS_BLOQUEADOS");
+        return fallback(preparada.origemBloqueio === "pergunta" ?
+          "DADOS_BLOQUEADOS_PERGUNTA" : "DADOS_BLOQUEADOS_CONTEXTO");
       }
       if (baseline.status !== "trechos_encontrados" ||
         !baseline.citacoes.length || baseline.citacoes.some((c) =>

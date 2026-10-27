@@ -200,3 +200,17 @@ severidade alta ([GHSA-27r3-jxmh-p828](https://github.com/advisories/GHSA-27r3-j
 Nenhuma dependencia foi adicionada ou atualizada nesta integracao. O servidor
 Render usa Node HTTP e leitor de corpo proprio, mas o risco da dependencia em
 outros caminhos deve ser revisado em manutencao especifica antes da publicacao.
+
+## Diagnostico de privacidade atualizado
+
+Perguntas gerais como “Como faço para renovar minha matrícula?” nao sao
+bloqueadas apenas pelo possessivo. Identificadores preenchidos, declaracoes
+pessoais e os demais filtros continuam sendo verificados. Esta heuristica
+nao comprova ausencia de dados pessoais nem dispensa as aprovacoes.
+
+`DADOS_BLOQUEADOS_PERGUNTA` indica bloqueio no texto enviado pelo usuario;
+`DADOS_BLOQUEADOS_CONTEXTO` indica bloqueio em algum trecho recuperado. Se ambos
+forem bloqueados, o codigo da pergunta tem prioridade. Nenhum conteudo e incluido
+no log. `DADOS_BLOQUEADOS` permanece para a politica demonstrativa legada.
+A mudanca nao libera automaticamente documentos que acionem outros padroes,
+como CPF, nomes completos ou identificadores; esses casos requerem diagnostico.

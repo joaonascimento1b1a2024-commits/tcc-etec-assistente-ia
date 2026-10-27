@@ -41,6 +41,7 @@ type Preparacao = {ok: false; motivo: string} | {
   evidencias: readonly Evidencia[];
   seguro: boolean;
   motivoContexto: string;
+  origemBloqueio?: "pergunta" | "contexto";
 };
 
 /**
@@ -145,9 +146,13 @@ export function prepararEvidencias(
       })),
     );
     const integral = contextoLocalIntegral(dados, evidencias);
-    const privado = textoSuspeito(pergunta) || dados.some((c) =>
+    const perguntaBloqueada = textoSuspeito(pergunta);
+    const contextoBloqueado = dados.some((c) =>
       textoSuspeito(c.conteudo || ""));
+    const privado = perguntaBloqueada || contextoBloqueado;
     return {ok: true, baseline, evidencias, seguro: integral && !privado,
+      ...(privado ? {origemBloqueio: perguntaBloqueada ?
+        "pergunta" as const : "contexto" as const} : {}),
       motivoContexto: privado ? "minimizacao_bloqueada" :
         integral ? "unidade_integral_local" : "contexto_nao_comprovado"};
   } catch {

@@ -106,12 +106,13 @@ export function textoSuspeito(texto: string): boolean {
     "<\\/?(?:system|instruction)|\\[inst\\]", "iu");
   const pessoais = new RegExp(
     "\\b(?:meu nome|my name|nome completo|full name|meu endereco|" +
-    "my address|minha matricula|numero da matricula|cpf|" +
+    "my address|numero da matricula|cpf|" +
     "social security|passport)\\b", "u");
   // Matricula e tambem um assunto escolar; bloquear identificacao, nao tema.
   const matriculaPessoal = new RegExp(
     "\\bmatricula\\s*(?:(?:numero|n[º°o.]|e)\\s*)?[:#=-]?\\s*" +
-    "[a-z]{0,8}\\d[\\w/-]*\\b|\\bmatricula\\s*[:#=]\\s*\\w+", "u");
+    "[a-z]{0,8}\\d[\\w/-]*\\b|\\bmatricula\\s*[:#=]\\s*\\w+|" +
+    "\\bminha matricula\\s+(?:e|eh)\\b", "u");
   const identificadores = new RegExp(
     "\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b|" +
     "\\b\\d{2}\\s?\\d{4,5}[- ]?\\d{4}\\b", "u");

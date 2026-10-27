@@ -243,5 +243,45 @@ test('contexto com identificador continua bloqueado e motivo e explicito', async
   const f = fixture();
   await f.gerar(pergunta, [criarChunk(texto + ' Matrícula: ABC123.')], {uid});
   assert.equal(f.chamadas.length, 0);
-  assert.equal(f.eventos.at(-1).motivo, 'DADOS_BLOQUEADOS');
+  assert.equal(f.eventos.at(-1).motivo, 'DADOS_BLOQUEADOS_CONTEXTO');
 });
+
+for (const q of ['Como faço para renovar minha matrícula?',
+  'Como renovar minha matrícula?', 'Quero renovar minha matrícula.',
+  'Quais documentos preciso para renovar minha matrícula?']) {
+  test('procedimento sem identificador nao e dado pessoal: ' + q, async () => {
+    const {textoSuspeito} = await import('../functions/lib/assistente/fundamentacao/contrato.js');
+    assert.equal(textoSuspeito(q), false);
+  });
+}
+test('renovar minha matricula atravessa busca e quatro chamadas simuladas', async () => {
+  const {criarFluxoPerguntaLivre} = await import('../functions/lib/assistente/pergunta-livre/fluxo.js');
+  const q = 'Como faço para renovar minha matrícula?';
+  const chunk = criarChunk('A renovação da matrícula (rematrícula) experimental utiliza papel violeta de laboratório.',
+    {titulo: 'Renovação de matrícula - UNIDADE SINTÉTICA'});
+  let chamadas = 0;
+  const fluxo = criarFluxoPerguntaLivre({fonte: {collection() {return {where() {
+    return {async get() {return {forEach(cb) {cb({id: chunk.id, data: () => chunk});}};}};
+  }};}}, geracao: {lerAmbiente: () => ambiente,
+    criarCliente() {assert.fail('nao chamar OpenAI');},
+    criarClienteGemini() {assert.fail('nao chamar Gemini direto');},
+    criarClienteOpenRouter(id, chave) {return criarClienteOpenRouter(id, chave, async (url, init) => {
+      assert.equal(url, 'https://openrouter.ai/api/v1/chat/completions'); chamadas++;
+      const b = JSON.parse(init.body), p = JSON.parse(b.messages[1].content);
+      const schema = b.response_format.json_schema.schema.properties;
+      return resposta(schema.segura ? {segura: true} : schema.sustentada ? {sustentada: true} :
+        {afirmacoes: [{texto: p.evidencias[0].texto,
+          referencias: [{id: p.evidencias[0].id, citacao: p.evidencias[0].texto}]}]});
+    });},
+  }});
+  assert.match(await fluxo.responder(q, {uid}), /^Resposta gerada por IA/);
+  assert.equal(chamadas, 4);
+});
+for (const pessoal of ['Minha matrícula é ABC123', 'Minha matrícula é IDENTIFICADOR',
+  'Como renovar minha matrícula AB123456?', 'Como renovar minha matrícula: ABC123?']) {
+  test('identificador ou declaracao pessoal nao chega ao provedor: ' + pessoal, async () => {
+    const f = fixture(); await f.gerar(pessoal, chunks, {uid});
+    assert.equal(f.chamadas.length, 0);
+    assert.equal(f.eventos.at(-1).motivo, 'DADOS_BLOQUEADOS_PERGUNTA');
+  });
+}
