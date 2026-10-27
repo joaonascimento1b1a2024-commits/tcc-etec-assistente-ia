@@ -69,7 +69,7 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
         const fluxo = criarFluxoPerguntaLivre({ fonte: firestore, geracao: { lerAmbiente,
-            registrarEvento: codigo => console.info('SYLVINHO_IA', codigo) } });
+            registrarEvento: (codigo, motivo) => console.info('SYLVINHO_IA', codigo, ...(motivo ? [motivo] : [])) } });
         return { auth: getAuth(app), firestore,
             demonstracao: criarDemonstracaoGemini({ lerAmbiente,
                 registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),

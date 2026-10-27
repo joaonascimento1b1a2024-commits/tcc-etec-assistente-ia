@@ -1,136 +1,98 @@
-# Render POC: mock only
+# Backend Sylvinho no Render
 
-This folder is an isolated experiment, not a production migration. It imports
-the compiled original HTTP adapter, handler and RAG V1 without copying or changing
-their logic. No Gemini gateway, Function entrypoint or real AI SDK is imported.
-There are no new dependencies: Node HTTP and the existing functions dependencies
-are sufficient. The build compiles functions; it does not deploy anything.
+O estado atual do codigo ja inclui Firebase Admin, busca documental, historico
+transacional e geracao opcional. Este README substitui a descricao antiga de
+POC exclusivamente mockada; nao afirma que houve deploy ou validacao online.
 
-## Modes and local checks
+## Arquitetura atual
 
-- `SYLVINHO_POC_MODE=health` (default): `/health` is available, CORS and protected
-  endpoint errors work, but all bearer tokens are rejected. No Firebase SDK is
-  initialized and no credentials are read. A 200 health response only proves HTTP
-  process readiness, not Firebase connectivity. This is the initial online mode.
-- `SYLVINHO_POC_MODE=emulator`: requires `GCLOUD_PROJECT=demo-sylvinho-render-poc`
-  and both emulator hosts on loopback. Not permitted with `RENDER=true`.
-  Real Admin token verification and Firestore operations run only on emulators,
-  with a fixed mock response. No production mode or ADC fallback is implemented.
+- Firebase Hosting serve `public/`; Firebase Authentication fornece o ID token.
+- O navegador chama `/perguntarAssistente` no Node HTTP do Render com Bearer.
+- Firebase Admin valida o token e usa Cloud Firestore: `conhecimento` para busca
+  e `users/{uid}/conversas/{conversationId}` para historico.
+- `documental.cjs` compoe `pergunta-livre/fluxo` e `geracao/gateway` compilados
+  de `functions/`. Nao importa `functions/lib/index.js`.
+- O gateway pode selecionar OpenRouter, Gemini direto ou OpenAI. Ao selecionar
+  `openrouter`, moderacao, proposta, verificacao e moderacao final usam somente
+  Gemini via OpenRouter; falhas voltam ao documental, sem outro provedor.
+- `/perguntarVisitante` nao recebe contexto UID e permanece documental.
+- A demonstracao sintetica de `geracao/demonstracao.ts` usa Gemini direto,
+  exige suas proprias aprovacoes e `provider=gemini`. Nao esta migrada e fica
+  indisponivel com `provider=openrouter`. `SYLVINHO_DEMO_ACADEMICA` e outro
+  mecanismo de fixtures, rejeitado no modo documental real.
 
-From the repository root:
+O frontend ja aponta para
+`https://sylvinho-backend-poc.onrender.com/perguntarAssistente` e usa 120 segundos
+no ambiente publicado. URL configurada nao comprova disponibilidade remota.
+Nenhum segredo ou configuracao de provedor deve ir para `public/`.
 
-```powershell
-npm --prefix functions run build
-node --test render-poc/test/adapter.test.cjs tests/rag-v1-paridade.test.mjs
+## Modos
+
+| Modo | Comportamento |
+| --- | --- |
+| `health` (padrao) | Apenas `/health`; demais rotas 404; sem Admin, Firestore ou IA. |
+| `documental` | Auth/Firestore reais quando configurados; geracao opt-in conforme gates. |
+| `production-locked` | Plano antigo de identidade de leitura, acesso sempre bloqueado. Nao usar para ativar IA. |
+| `emulator`, `documental-emulator` | Projeto `demo-sylvinho-render-poc`, loopback; proibidos no Render. |
+| `auth-diagnostic`, `firestore-diagnostic`, `rag-diagnostic` | Diagnosticos locais com emuladores; nao sao endpoints de readiness online. |
+
+`GET /health` retorna `{status: "ok", service: "sylvinho-backend"}` sem criar
+Admin, ler credenciais ou chamar IA. Um 200 comprova somente o processo HTTP.
+Firestore/Auth devem ser verificados pela requisicao autenticada e persistencia;
+a IA exige resposta gerada e evento `SYLVINHO_IA GERADA`.
+
+## Build, testes e inicializacao
+
+Usar Node 24, a partir da raiz do repositorio:
+
+```sh
+npm --prefix functions ci --include=dev
+npm --prefix render-poc run build
+npm --prefix functions run lint
+node --test tests/openrouter-*.test.mjs tests/assistente-handler.test.mjs tests/openai-allowlist.test.mjs tests/gemini-geracao.test.mjs tests/pergunta-livre-fluxo.test.mjs tests/chat-visitante.test.mjs render-poc/test/*.test.cjs
+node render-poc/server.cjs
 ```
 
-To start the health-only server, set nonsecret environment variables in the current
-terminal, then run `node render-poc/server.cjs`. `PORT` defaults to 10000. Choose an
-unused local port if needed. `GET /health` returns only status and service name.
-The server binds to `0.0.0.0` for Render; emulator mode binds to loopback.
+Sem variaveis, o servidor inicia em `health`. Nenhum destes comandos publica.
+O script `test` da raiz ainda e um placeholder; usar os comandos acima.
+`npm --prefix render-poc test` executa todos os testes locais da pasta.
+Testes com emuladores precisam ser executados separadamente, com projeto demo
+e bloqueio de rede externa; nao fazem parte da validacao simulada OpenRouter.
 
-For the emulator integration, set `SYLVINHO_POC_MODE=emulator`, the demo project,
-and `ASSISTENTE_CORS_ORIGINS=http://localhost:5000,http://127.0.0.1:5000`. Run:
+No Render, manter Root Directory vazia (raiz do repositorio), pois `render-poc/`
+depende da pasta irma `functions/`. Configuracao:
 
-```text
-firebase emulators:exec --only auth,firestore --project demo-sylvinho-render-poc --config render-poc/firebase.emulators.json "node render-poc/test/emulators.cjs"
-```
+- Build: `npm --prefix functions ci --include=dev && npm --prefix render-poc run build`.
+- Start: `node render-poc/server.cjs`.
+- Runtime: Node 24 (`NODE_VERSION=24`). Health Check Path: `/health`.
+- Preservar `PORT` fornecida pelo Render, com bind `0.0.0.0`.
+- Sem variaveis de emulador, ADC pessoal ou credencial Firebase inline.
 
-Auth uses 9199 and Firestore 8180. The CLI supplies both emulator host variables
-to the test. The integration creates an anonymous fake user, a fake conversation
-and two fake chunks (active/inactive), verifies a real emulator token, sends HTTP,
-checks V1 context and the single bot append, and closes the server.
-Use the existing `local-e2e/network-guard.cjs` preload and an isolated CLI home
-to block non-loopback access and production ADC during this test.
-The POC emulator rules deny all client access; Admin fixture operations bypass
-Rules locally. This test does not validate the deployed Firestore Rules.
+Ver [OPENROUTER-ATIVACAO.md](OPENROUTER-ATIVACAO.md) para a lista completa de
+variaveis, aprovacoes, cadastro de Secret File, verificacao e rollback.
+Os guias OpenAI/Gemini existentes descrevem provedores diretos legados.
 
-## Render configuration (not executed)
+## Garantias e limites
 
-Source must first be made available in a separately authorized Git publication
-or an independently approved deployment artifact. Render cannot deploy uncommitted
-local files. Nothing was committed, pushed, or uploaded by this POC.
+CORS usa origens exatas HTTPS; token Firebase e propriedade da conversa sao
+validados no backend. `messageId` vincula pergunta salva e resposta. Repeticoes
+na mesma instancia compartilham a geracao; a transacao evita bot duplicado
+entre instancias, mas duas instancias ainda podem gerar/cobrar antes do commit.
 
-In the Render dashboard: New -> Web Service -> select the authorized repository
-containing both `render-poc/` and the validated `functions/` modules. For the current
-repository this is `joaonascimento1b1a2024-commits/tcc-etec-assistente-ia`, but do not
-deploy its current remote main as though it already contained these local files.
-Prefer a separately authorized POC branch/source; do not change the group's main.
+O limite de corpo e 16 KiB. `requestTimeout=30000` limita o recebimento da
+requisicao HTTP, e nao todo o processamento. `headersTimeout=10000` limita
+cabecalhos. Geracao tem deadline proprio total de ate 30 segundos. Busca e
+transacoes Firestore nao tem deadline global adicional neste adaptador.
+O frontend publicado aguarda 120 segundos, incluindo rede e inicializacao.
+Nao ha garantia de conclusao nesse prazo durante cold start ou falha Firestore.
 
-- Name: `sylvinho-render-poc` (or an available unique name).
-- Language: Node. Instance type: Free. Auto-deploy: Off.
-- Root Directory: leave empty (repository root). Render excludes sibling files
-  outside a configured root, so setting `render-poc` would hide `functions/`.
-- Build Command: `npm --prefix functions ci --include=dev && npm --prefix functions run build`.
-- Start Command: `node render-poc/server.cjs`.
-- Health Check Path: `/health`.
-- Environment: `NODE_VERSION=24.16.0`, `NODE_ENV=production`,
-  `SYLVINHO_POC_MODE=health`.
-- `ASSISTENTE_CORS_ORIGINS=https://tcc-ia-d8891.web.app,https://tcc-ia-d8891.firebaseapp.com`.
-- Use Render's supplied `PORT`; do not hardcode a different port.
-- No Firebase credential or AI key is needed for this online health-only mode.
-- Never set emulator variables on Render. Do not add a payment method. Stop if
-  the account/service flow requires a card, upgrade, or paid plan.
+Limites de IA sao por processo (uma geracao concorrente, ate cinco por minuto
+por padrao). Nao substituem quota global, controle de gastos ou revisao de
+privacidade. Classificacao por modelo e verificacoes locais nao garantem
+seguranca semantica. Nenhuma aprovacao foi concedida por esta implementacao.
 
-Local development origins are `http://localhost:5000` and `http://127.0.0.1:5000`.
-Use only the two HTTPS Firebase origins in a future public configuration. No `*`.
-The original adapter enforces exact Origin and Bearer validation. CORS is not
-authentication: clients outside a browser still require a valid verified token.
-
-## Future Firebase Admin outside Google (not enabled)
-
-Admin can run outside Google. Prefer workload identity federation if the host
-provides a trustworthy runtime identity. This requires an actual issuer/token
-integration; no Render runtime OIDC integration was confirmed here. Do not assume
-`applicationDefault()` on Render inherits the local developer ADC.
-
-A documented fallback is a dedicated, minimally privileged service account,
-provided manually as a Render Secret File (not a repository file). A future
-adapter could use ADC via `GOOGLE_APPLICATION_CREDENTIALS=/etc/secrets/firebase-admin.json`.
-The operator would insert the existing authorized credential only in Render's
-Environment -> Secret Files UI, never in chat, command arguments or source.
-No key was created, opened, copied or configured in this phase.
-Project ID is an identifier, not a secret; private key and credential JSON are
-secret, and service account email should not be exposed by health responses.
-
-Firestore access needs appropriate IAM (typically `roles/datastore.user` for
-reads and conversation writes). Admin bypasses Firestore Rules; this role does
-not enforce per-collection access. Do not grant Owner/Editor, Firebase Auth Admin
-or arbitrary project-wide privileges by trial and error. Verify token validation
-and Firestore permissions separately before enabling any production data access.
-Online Auth -> Firestore -> mock writes require separate explicit authorization.
-
-No real AI credential is used here. Any later gateway must read a secret only
-at runtime, redact errors, and resolve provider eligibility/privacy first.
-Moving Gemini to Render does NOT remove its audience restrictions or free-tier
-data handling requirements. The school-audience issue remains unresolved.
-
-## Limits and risks
-
-Render Free sleeps after 15 idle minutes and startup can take about a minute;
-the frontend's current 30-second timeout is not a reliable cold-start budget.
-Do not automatically resend: the unchanged handler is not request-idempotent,
-so a retry after a committed response could append a second bot.
-Free has 750 shared instance hours/month, ephemeral filesystem, no persistent
-disk and limited bandwidth/build minutes. Excessive outbound database/API traffic
-can suspend the service. Do not add keepalive workarounds, paid storage or upgrades.
-Without payment method, excess usage can suspend services/builds rather than bill.
-Actual account eligibility and any anti-abuse card prompt are not verified.
-
-This POC has a 16 KiB JSON body limit, HTTP timeouts, generic errors and no token,
-prompt or credential logging. It is not hardened public production: distributed
-rate limiting, abuse controls, credential IAM and deployment behavior remain
-future work. The 514 real chunks, production conversations, frontend and Rules
-were not accessed or changed. Future frontend work would change only the verified
-endpoint first, then test cold starts and error behavior with explicit approval.
-
-## Official references
-
-- https://render.com/docs/free
-- https://render.com/docs/web-services
-- https://render.com/docs/monorepo-support
-- https://render.com/docs/node-version
-- https://render.com/docs/configure-environment-variables
-- https://firebase.google.com/docs/admin/setup
-- https://docs.cloud.google.com/iam/docs/workload-identity-federation-with-other-providers
-- https://ai.google.dev/gemini-api/terms
+Referencias oficiais consultadas em 2026-10-26:
+[Render monorepos](https://render.com/docs/monorepo-support),
+[Environment e Secret Files](https://render.com/docs/configure-environment-variables),
+[OpenRouter JSON Schema](https://openrouter.ai/docs/guides/features/structured-outputs),
+[OpenRouter ZDR](https://openrouter.ai/docs/guides/features/zdr).

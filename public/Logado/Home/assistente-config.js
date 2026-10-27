@@ -1,4 +1,4 @@
-// Configure somente com a URL verificada do Emulator ou da Function publicada.
+// Somente endpoint HTTP do backend Render; modelo e chaves ficam no servidor.
 // Endpoint explicito; ambientes locais continuam isolados.
 // Backend documental autenticado validado; publicacao depende de revisao separada.
 export const endpointRenderPreparado =

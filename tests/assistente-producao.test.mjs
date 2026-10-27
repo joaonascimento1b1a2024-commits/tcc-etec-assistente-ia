@@ -1,3 +1,4 @@
+import matriculaSintetica from "./fixtures/matricula-sintetica.cjs";
 import assert from "node:assert/strict";
 import {randomUUID} from "node:crypto";
 import {readFileSync} from "node:fs";
@@ -128,8 +129,7 @@ test("origens sao exatas, sem wildcard caminhos ou HTTP externo", () => {
 
 function fixture({origins = "https://permitido.example", apps = [],
     ragError, commitError,
-    chunks = [JSON.parse(readFileSync(new URL("./dados/rag-original.json", import.meta.url))).documentos
-        .find(d => d.titulo === "Sistema Etec - B1 - Inicial na Etec" && /Material Necessário/.test(d.secao))]} = {}) {
+    chunks = [matriculaSintetica]} = {}) {
     const calls = {init: 0, authFactory: 0, dbFactory: 0, auth: [],
         reads: [], rag: [], updates: [], sdk: [], secret: 0, options: null, globals: null, triggers: {}};
     const secret = {value() {calls.secret++; return randomUUID();}};
@@ -299,7 +299,7 @@ test("POST atraves dos adapters reais mockados preserva contrato e somente bot",
     assert.equal(r.code, 200);
     assert.deepEqual(Object.keys(r.body), ["resposta"]);
     assert.match(r.body.resposta, /documentos de matrícula/);
-    assert.match(r.body.resposta, /Sistema Etec - B1/);
+    assert.ok(r.body.resposta.includes(matriculaSintetica.titulo));
     assert.match(r.body.resposta, /doc-10d342eed4d6a46a5c6638a29179d80b/);
     assert.match(r.body.resposta, /pagina 25/);
     assert.equal(r.headers["Access-Control-Allow-Origin"], "https://permitido.example");

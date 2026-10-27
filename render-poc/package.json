@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm --prefix ../functions run build",
     "start": "node server.cjs",
-    "test": "node --test test/adapter.test.cjs",
+    "test": "node --test test/*.test.cjs",
     "test:emulators": "node test/emulators.cjs"
   }
 }

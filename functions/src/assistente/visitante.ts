@@ -33,7 +33,9 @@ export function criarEndpointVisitante(
     if (!body || typeof body !== "object" || Array.isArray(body) ||
         Object.keys(body).length !== 1 || typeof body.pergunta !== "string" ||
         !body.pergunta.trim() || body.pergunta.length > 700) {
-      res.status(400).json({error: "Envie uma pergunta de até 700 caracteres."});
+      res.status(400).json({
+        error: "Envie uma pergunta de até 700 caracteres.",
+      });
       return;
     }
     const instante = agora();
