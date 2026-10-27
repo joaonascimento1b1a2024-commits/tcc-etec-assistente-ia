@@ -137,7 +137,7 @@ test('schema de proposta e citacao continuam validados localmente', async () => 
   const f = fixture({}, ({valor, indice}) => resposta(indice === 2 ?
     {afirmacoes: [{texto, referencias: [{id: 'E99', citacao: texto}]}]} : valor));
   assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
-  assert.equal(f.chamadas.length, 2); assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_INVALIDA');
+  assert.equal(f.chamadas.length, 2); assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_REFERENCIA_INVALIDA');
 });
 for (const etapa of [1, 3, 4]) test('seguranca/revisao falha fechada na etapa ' + etapa, async () => {
   const f = fixture({}, ({valor, indice}) => resposta(indice === etapa ? {...valor, inesperado: true} : valor));

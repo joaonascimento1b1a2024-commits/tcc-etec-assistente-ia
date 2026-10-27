@@ -158,7 +158,15 @@ configuracao, chave ou allowlist. O motivo fica apenas no log operacional.
 | `OPENROUTER_HTTP`, `OPENROUTER_INDISPONIVEL`, `GERACAO_INDISPONIVEL` | Demais erros HTTP, rede ou erro interno sanitizado. |
 | `EVIDENCIAS_INSUFICIENTES`, `FONTES_INVALIDAS` | Contexto documental nao elegivel. |
 | `OCUPADO`, `LIMITE_LOCAL` | Uma geracao por vez ou limite por minuto atingido. |
-| `ENTRADA_INSEGURA`, `PROPOSTA_INVALIDA`, `REVISAO_REPROVADA`, `SAIDA_INSEGURA`, `SAIDA_EXCESSIVA` | Validacao de conteudo/contrato ou tamanho final. |
+| `ENTRADA_INSEGURA`, `REVISAO_REPROVADA`, `SAIDA_INSEGURA`, `SAIDA_EXCESSIVA` | Validacao de conteudo ou tamanho final. |
+| `PROPOSTA_SCHEMA_INVALIDO`, `PROPOSTA_TEXTO_INVALIDO`, `PROPOSTA_REFERENCIA_INVALIDA` | Estrutura, afirmacao ou referencia rejeitada pela validacao local. |
+| `PROPOSTA_VAZIA` | O modelo retornou afirmacoes vazias; conserva a resposta documental. |
+| `PROPOSTA_CITACAO_DIVERGENTE` | A citacao retornada nao coincide exatamente com a evidencia enviada. |
+| `PROPOSTA_NUMEROS_DIVERGENTES`, `PROPOSTA_CONDICOES_DIVERGENTES` | Numeros ou marcadores de condicao/negacao divergem da fonte. |
+
+Versoes anteriores registravam apenas `PROPOSTA_INVALIDA` para esses casos.
+Esse codigo antigo nao permite determinar retroativamente a causa exata e
+nao indica, por si so, um problema na configuracao da conta OpenRouter.
 
 ## Tempo, custos e validacao
 
@@ -214,3 +222,26 @@ forem bloqueados, o codigo da pergunta tem prioridade. Nenhum conteudo e incluid
 no log. `DADOS_BLOQUEADOS` permanece para a politica demonstrativa legada.
 A mudanca nao libera automaticamente documentos que acionem outros padroes,
 como CPF, nomes completos ou identificadores; esses casos requerem diagnostico.
+
+
+## Perguntas curtas e qualidade das evidencias
+
+A busca original preserva siglas de duas letras, como RG, RA e RM, tanto na
+selecao dos chunks como na selecao das citacoes. Verbos de pedido como levar,
+trazer, apresentar e entregar nao substituem o assunto da pergunta. Assim,
+“Preciso levar RG?” nao deve selecionar um trecho so porque ele contem
+“levar em consideracao”. A pontuacao utiliza a mesma canonicalizacao de termos
+aceita pelo filtro documental; a busca legada V1 mantem sua tokenizacao.
+
+Se nao existir evidencia pertinente no corpus, o fluxo informa insuficiencia
+sem chamar a IA. Se houver evidencia, a proposta continua sujeita a validacao
+local e revisao. Nenhuma configuracao deve forcar resposta sobre uma regra
+escolar que nao esteja sustentada pelos documentos. Perguntas curtas tambem
+podem omitir o procedimento; esta correcao nao acrescenta memoria conversacional
+nem resolve toda ambiguidade ou variacao de linguagem.
+
+Validacao local: testes sinteticos incluem perguntas com siglas, distratores,
+termos canonicos e quatro chamadas OpenRouter simuladas, sem chamar Gemini
+ou OpenAI diretamente. Isso nao equivale a validar respostas reais do modelo
+ou a cobertura do corpus publicado. A regressao V1 depende do arquivo externo
+original e a amostra documental depende do snapshot local descrito acima.

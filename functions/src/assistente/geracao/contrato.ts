@@ -45,6 +45,14 @@ export const SCHEMA_REVISAO = {
   properties: {sustentada: {type: "boolean"}},
 };
 
+export type MotivoProposta = "PROPOSTA_SCHEMA_INVALIDO" | "PROPOSTA_VAZIA" |
+  "PROPOSTA_TEXTO_INVALIDO" | "PROPOSTA_REFERENCIA_INVALIDA" |
+  "PROPOSTA_CITACAO_DIVERGENTE" | "PROPOSTA_NUMEROS_DIVERGENTES" |
+  "PROPOSTA_CONDICOES_DIVERGENTES";
+export type AvaliacaoGeracao = {
+  proposta: PropostaGerada; motivo?: never;
+} | {proposta: null; motivo: MotivoProposta};
+
 /**
  * Campos exatos de uma copia sem acessores/prototipos arbitrarios.
  * @param {unknown} valor Copia estrita.
@@ -62,15 +70,18 @@ function campos(valor: unknown, nomes: string[]):
  * Rejeita alteracoes objetivas. Nao prova implicacao semantica de parafrases.
  * @param {unknown} entrada Proposta do provedor.
  * @param {EvidenciaGeracao[]} evidencias IDs/citacoes internos.
- * @return {PropostaGerada|null} Copia valida ou recusa.
+ * @return {AvaliacaoGeracao} Copia valida ou codigo seguro de recusa.
  */
-export function validarGeracao(
+export function avaliarGeracao(
   entrada: unknown, evidencias: readonly EvidenciaGeracao[],
-): PropostaGerada | null {
+): AvaliacaoGeracao {
+  const falhar = (motivo: MotivoProposta): AvaliacaoGeracao =>
+    ({proposta: null, motivo});
   try {
     const p = copiarDadosEstritos(entrada);
     if (!campos(p, ["afirmacoes"]) || !Array.isArray(p.afirmacoes) ||
-      !p.afirmacoes.length || p.afirmacoes.length > 3) return null;
+      p.afirmacoes.length > 3) return falhar("PROPOSTA_SCHEMA_INVALIDO");
+    if (!p.afirmacoes.length) return falhar("PROPOSTA_VAZIA");
     const numeros = (s: string): string => [...new Set(
       s.match(/\d+(?:[.,:/-]\d+)*(?:\s*%)?/gu) || [],
     )].sort().join("|");
@@ -83,27 +94,46 @@ export function validarGeracao(
         typeof a.texto !== "string" || !a.texto.trim() ||
         a.texto.length > 420 || /[<>]/u.test(a.texto) ||
         textoSuspeito(a.texto) || !Array.isArray(a.referencias) ||
-        !a.referencias.length || a.referencias.length > 3) return null;
+        !a.referencias.length || a.referencias.length > 3) {
+        return falhar("PROPOSTA_TEXTO_INVALIDO");
+      }
       const ids = new Set<string>();
       const citacoes: string[] = [];
       for (const r of a.referencias) {
         if (!campos(r, ["id", "citacao"]) ||
           typeof r.id !== "string" || typeof r.citacao !== "string" ||
-          ids.has(r.id)) return null;
+          ids.has(r.id)) return falhar("PROPOSTA_REFERENCIA_INVALIDA");
         const e = evidencias.find((item) => item.id === r.id);
-        if (!e || r.citacao !== e.texto) return null;
+        if (!e) return falhar("PROPOSTA_REFERENCIA_INVALIDA");
+        if (r.citacao !== e.texto) return falhar("PROPOSTA_CITACAO_DIVERGENTE");
         ids.add(r.id);
         citacoes.push(e.texto);
       }
       const fonte = citacoes.join(" ");
-      if (numeros(a.texto) !== numeros(fonte)) return null;
+      if (numeros(a.texto) !== numeros(fonte)) {
+        return falhar("PROPOSTA_NUMEROS_DIVERGENTES");
+      }
       const sinais = (s: string): string => [...new Set(
         normalizarTexto(s).match(marcadores) || [],
       )].sort().join("|");
-      if (sinais(a.texto) !== sinais(fonte)) return null;
+      if (sinais(a.texto) !== sinais(fonte)) {
+        return falhar("PROPOSTA_CONDICOES_DIVERGENTES");
+      }
     }
-    return p as unknown as PropostaGerada;
+    return {proposta: p as unknown as PropostaGerada};
   } catch {
-    return null;
+    return falhar("PROPOSTA_SCHEMA_INVALIDO");
   }
+}
+
+/**
+ * Mantem o contrato de validacao utilizado pelos fluxos existentes.
+ * @param {unknown} entrada JSON gerado.
+ * @param {EvidenciaGeracao[]} evidencias Evidencias previamente selecionadas.
+ * @return {PropostaGerada|null} Proposta validada ou recusa.
+ */
+export function validarGeracao(
+  entrada: unknown, evidencias: readonly EvidenciaGeracao[],
+): PropostaGerada | null {
+  return avaliarGeracao(entrada, evidencias).proposta;
 }

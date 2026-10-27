@@ -4,8 +4,10 @@ import type {
   RespostaDocumental, TrechoDocumental,
 } from "../resposta-documental";
 import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
-import {validarGeracao} from "./contrato";
-import type {PedidoGeracao, ProvedorGeracao} from "./contrato";
+import {avaliarGeracao} from "./contrato";
+import type {
+  PedidoGeracao, ProvedorGeracao, MotivoProposta,
+} from "./contrato";
 import {criarClienteOpenAI} from "./openai";
 import {criarClienteGemini} from "./gemini";
 import {
@@ -15,7 +17,8 @@ import type {CodigoOpenRouter} from "./openrouter";
 
 export type AmbienteIA = Readonly<Record<string, string | undefined>>;
 export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
-export type MotivoFallback = CodigoOpenRouter | "UID_NAO_AUTORIZADO" |
+export type MotivoFallback = CodigoOpenRouter | MotivoProposta |
+  "UID_NAO_AUTORIZADO" |
   "IA_DESATIVADA" | "PROVEDOR_INVALIDO" | "APROVACAO_PENDENTE" |
   "MODALIDADE_PENDENTE" | "RETENCAO_BLOQUEADA" | "DADOS_BLOQUEADOS" |
   "DADOS_BLOQUEADOS_PERGUNTA" | "DADOS_BLOQUEADOS_CONTEXTO" |
@@ -208,11 +211,12 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         if (!entradaSegura) {
           evento("SEGURANCA"); return fallback("ENTRADA_INSEGURA");
         }
-        const proposta = validarGeracao(
+        const avaliacao = avaliarGeracao(
           await cliente.propor(pedido, controller.signal), evidencias,
         );
         controller.signal.throwIfAborted();
-        if (!proposta) return fallback("PROPOSTA_INVALIDA");
+        if (!avaliacao.proposta) return fallback(avaliacao.motivo);
+        const proposta = avaliacao.proposta;
         if (!await cliente.verificar(pedido, proposta, controller.signal)) {
           return fallback("REVISAO_REPROVADA");
         }

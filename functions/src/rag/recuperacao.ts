@@ -231,14 +231,26 @@ Conteúdo: ${documento.conteudo || "Não informado"}
  * @return {DocumentoPreparado[]} Selecao ordenada.
  */
 export function selecionarDocumentosRelevantes(
-  documentos: unknown,
-  pergunta: unknown,
+  documentos: unknown, pergunta: unknown, opcoes: OpcoesSelecao = {},
+): DocumentoPreparado[] {
+  return selecionarPorTermos(documentos, extrairTermosUteis(pergunta), opcoes);
+}
+
+/**
+ * Compartilha ranking/orcamento; preserva a tokenizacao legada do V1.
+ * @param {unknown} documentos Corpus fornecido pelo servidor.
+ * @param {string[]} termos Assuntos ja extraidos, inclusive siglas curtas.
+ * @param {OpcoesSelecao} opcoes Limites de contexto.
+ * @param {boolean} canonico Canonicalizar tambem campos do ranking original.
+ * @return {DocumentoPreparado[]} Selecao sem truncar chunks.
+ */
+function selecionarPorTermos(
+  documentos: unknown, termos: string[],
   {
     maxDocumentos = MAX_DOCUMENTOS_CONTEXTO,
     maxCaracteres = MAX_CARACTERES_CONTEXTO,
-  }: OpcoesSelecao = {},
+  }: OpcoesSelecao = {}, canonico = false,
 ): DocumentoPreparado[] {
-  const termos = extrairTermosUteis(pergunta);
   if (!termos.length || !Array.isArray(documentos)) {
     return [];
   }
@@ -248,7 +260,12 @@ export function selecionarDocumentosRelevantes(
     .filter((doc): doc is DocumentoPreparado => Boolean(doc))
     .map((documento) => ({
       documento,
-      pontuacao: pontuarDocumento(documento, termos),
+      pontuacao: pontuarDocumento(canonico ? {
+        titulo: extrairTermosOriginais(documento.titulo).join(" "),
+        categoria: extrairTermosOriginais(documento.categoria).join(" "),
+        termosBusca: extrairTermosOriginais(documento.termosBusca).join(" "),
+        conteudo: extrairTermosOriginais(documento.conteudo).join(" "),
+      } : documento, termos),
     }))
     .filter(({pontuacao}) => pontuacao > 0)
     .sort((a, b) => {
@@ -295,7 +312,8 @@ const TERMOS_PEDIDO = new Set([
   "pedir", "solicitar", "solicito", "conseguir", "consigo", "obter",
   "ser", "sao", "sera", "existe", "existem", "onde", "quando", "quanto",
   "quantos", "quantas", "procedimento", "procedimentos", "informacao",
-  "informacoes", "saber", "gostaria", "favor",
+  "informacoes", "saber", "gostaria", "favor", "levar", "levo", "trazer",
+  "trago", "apresentar", "apresento", "entregar", "entrego",
 ]);
 const FLEXOES: Record<string, string> = {
   matriculas: "matricula", rematriculas: "rematricula",
@@ -312,7 +330,10 @@ const FLEXOES: Record<string, string> = {
  * @return {string[]} Termos canonicos.
  */
 export function extrairTermosOriginais(texto: unknown): string[] {
-  const termos = extrairTermosUteis(texto)
+  // Siglas de duas letras (RG, RA, RM etc.) sao assuntos, nao ruido.
+  // Esta regra e compartilhada pela busca e pelas citacoes documentais.
+  const termos = normalizarTexto(texto).split(" ")
+    .filter((termo) => termo.length >= 2 && !PALAVRAS_COMUNS.has(termo))
     .map((termo) => FLEXOES[termo] || termo);
   if (/\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
     .test(normalizarTexto(texto))) termos.push("rematricula");
@@ -454,7 +475,7 @@ export function selecionarDocumentosOriginais(
       return true;
     });
   // Ranking original entre candidatos que ja passaram pelos invariantes.
-  // Canonicaliza so a pergunta de ranking; preserva conteudo e metadados.
+  // Pontua termos canonicos sem modificar o conteudo/metadados retornados.
   const comPercentual = frequencia && exigidos.includes("minima") ?
     candidatas.filter((doc) => /\d+\s*%/u.test(doc.conteudo)) : [];
   const iniciais = exigidos.length === 1 && exigidos[0] === "matricula" ?
@@ -462,12 +483,12 @@ export function selecionarDocumentosOriginais(
       normalizarTexto(doc.titulo))) : [];
   const evidencias = comPercentual.length ? comPercentual :
     iniciais.length ? iniciais : candidatas;
-  return selecionarDocumentosRelevantes(evidencias, exigidos.join(" "), {
+  return selecionarPorTermos(evidencias, exigidos, {
     maxDocumentos: Math.min(opcoes.maxDocumentos ?? MAX_DOCUMENTOS_CONTEXTO,
       MAX_DOCUMENTOS_CONTEXTO),
     maxCaracteres: Math.min(opcoes.maxCaracteres ?? MAX_CARACTERES_CONTEXTO,
       MAX_CARACTERES_CONTEXTO),
-  });
+  }, true);
 }
 
 /**
