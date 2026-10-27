@@ -144,10 +144,12 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         evento("SEGURANCA");
         return fallback("DADOS_BLOQUEADOS");
       }
+      if (preparada.motivoContexto === "minimizacao_bloqueada") {
+        return fallback("DADOS_BLOQUEADOS");
+      }
       if (baseline.status !== "trechos_encontrados" ||
         !baseline.citacoes.length || baseline.citacoes.some((c) =>
-        c.fonte.natureza !== "documental") ||
-        preparada.motivoContexto === "minimizacao_bloqueada") {
+        c.fonte.natureza !== "documental")) {
         return fallback("EVIDENCIAS_INSUFICIENTES");
       }
       const modelo = (provedor === "openrouter" ? env.OPENROUTER_MODEL :
