@@ -106,18 +106,23 @@ export function textoSuspeito(texto: string): boolean {
     "<\\/?(?:system|instruction)|\\[inst\\]", "iu");
   const pessoais = new RegExp(
     "\\b(?:meu nome|my name|nome completo|full name|meu endereco|" +
-    "my address|numero da matricula|cpf|" +
+    "my address|numero da matricula|" +
     "social security|passport)\\b", "u");
   // Matricula e tambem um assunto escolar; bloquear identificacao, nao tema.
   const matriculaPessoal = new RegExp(
     "\\bmatricula\\s*(?:(?:numero|n[º°o.]|e)\\s*)?[:#=-]?\\s*" +
     "[a-z]{0,8}\\d[\\w/-]*\\b|\\bmatricula\\s*[:#=]\\s*\\w+|" +
     "\\bminha matricula\\s+(?:e|eh)\\b", "u");
+  const documentoPessoal = new RegExp(
+    "\\b(?:cpf|rg|ra|rm)\\s*(?:(?:numero|n[º°o.]|e|eh)\\s*)?" +
+    "[:#=-]?\\s*[a-z]{0,8}\\d[\\w./-]*\\b|" +
+    "\\b(?:cpf|rg|ra|rm)\\s*[:#=]\\s*\\w+", "u");
   const identificadores = new RegExp(
     "\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b|" +
     "\\b\\d{2}\\s?\\d{4,5}[- ]?\\d{4}\\b", "u");
   return instrucao.test(n) || exfiltracao.test(n) || papeis.test(n) ||
     pessoais.test(n) || matriculaPessoal.test(n) ||
+    documentoPessoal.test(n) ||
     identificadores.test(n) ||
     /[\w.+-]+@[\w.-]+\.[a-z]{2,}|\bBearer\s+\S+|PRIVATE KEY/iu.test(texto);
 }

@@ -1,4 +1,5 @@
 import {copiarDadosEstritos, textoSuspeito} from "../fundamentacao/contrato";
+import type {RespostaConversa} from "./conversa";
 import {normalizarTexto} from "../../rag/recuperacao";
 
 export interface EvidenciaGeracao {
@@ -10,6 +11,7 @@ export interface PedidoGeracao {
   readonly pergunta: string;
   readonly contextos: readonly string[];
   readonly evidencias: readonly EvidenciaGeracao[];
+  readonly situacao?: "sem_evidencias" | "contexto_indisponivel";
 }
 export interface AfirmacaoGerada {
   texto: string;
@@ -18,6 +20,9 @@ export interface AfirmacaoGerada {
 export interface PropostaGerada {afirmacoes: AfirmacaoGerada[]}
 /** Contrato independente do transporte/provedor, sempre injetavel em testes. */
 export interface ProvedorGeracao {
+  conversar?(pedido: PedidoGeracao, signal: AbortSignal): Promise<unknown>;
+  verificarConversa?(pedido: PedidoGeracao, resposta: RespostaConversa,
+    signal: AbortSignal): Promise<boolean>;
   moderar(texto: string, signal: AbortSignal): Promise<boolean>;
   propor(pedido: PedidoGeracao, signal: AbortSignal): Promise<unknown>;
   verificar(pedido: PedidoGeracao, proposta: PropostaGerada,

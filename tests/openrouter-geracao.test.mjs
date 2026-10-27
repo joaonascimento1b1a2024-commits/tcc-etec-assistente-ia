@@ -22,7 +22,7 @@ const signal = () => new AbortController().signal;
 const json = valor => new Response(JSON.stringify(valor));
 const envelope = content => ({choices: [{finish_reason: 'stop', message: {role: 'assistant', content}}]});
 const resposta = valor => json(envelope(JSON.stringify(valor)));
-const proposta = p => ({afirmacoes: [{texto,
+const proposta = p => ({tipo: "documental", mensagem: "", afirmacoes: [{texto,
   referencias: [{id: p.evidencias[0].id, citacao: p.evidencias[0].texto}]}]});
 function fixture(extra = {}, responder) {
   const env = {...ambiente, ...extra}, chamadas = [], eventos = [];
@@ -45,7 +45,8 @@ function fixture(extra = {}, responder) {
         const schema = body.response_format.json_schema.schema;
         const dados = JSON.parse(body.messages[1].content);
         const valor = schema.properties.segura ? {segura: true} :
-          schema.properties.sustentada ? {sustentada: true} : proposta(dados);
+          schema.properties.sustentada ? {sustentada: true} : dados.evidencias.length ? proposta(dados) :
+            {tipo: 'sem_base', mensagem: 'Não encontrei informação suficiente para confirmar. Consulte a secretaria acadêmica.', afirmacoes: []};
         return responder ? responder({body, dados, valor, init, indice: chamadas.length}) : resposta(valor);
       });
     }, registrarEvento: (codigo, motivo) => eventos.push({codigo, motivo}),
@@ -135,7 +136,7 @@ test('erro de rede descarta mensagem e credenciais', async () => {
 });
 test('schema de proposta e citacao continuam validados localmente', async () => {
   const f = fixture({}, ({valor, indice}) => resposta(indice === 2 ?
-    {afirmacoes: [{texto, referencias: [{id: 'E99', citacao: texto}]}]} : valor));
+    {tipo: "documental", mensagem: "", afirmacoes: [{texto, referencias: [{id: 'E99', citacao: texto}]}]} : valor));
   assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
   assert.equal(f.chamadas.length, 2); assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_REFERENCIA_INVALIDA');
 });
@@ -220,7 +221,7 @@ test('metadados vazios de ferramentas nao sao chamadas de ferramenta', async () 
 test('pergunta geral sobre matricula chega as quatro etapas OpenRouter', async () => {
   const {default: chunk} = await import('./fixtures/matricula-sintetica.cjs');
   const f = fixture({}, ({dados, valor, indice}) => resposta(indice === 2 ?
-    {afirmacoes: [{texto: dados.evidencias[0].texto,
+    {tipo: "documental", mensagem: "", afirmacoes: [{texto: dados.evidencias[0].texto,
       referencias: [{id: 'E1', citacao: dados.evidencias[0].texto}]}]} : valor));
   const result = await f.gerar('Como faço a matrícula?', [chunk], {uid});
   assert.match(result, /^Resposta gerada por IA/);
@@ -242,8 +243,13 @@ test('filtro diferencia tema matricula de identificadores pessoais', async () =>
 test('contexto com identificador continua bloqueado e motivo e explicito', async () => {
   const f = fixture();
   await f.gerar(pergunta, [criarChunk(texto + ' Matrícula: ABC123.')], {uid});
-  assert.equal(f.chamadas.length, 0);
-  assert.equal(f.eventos.at(-1).motivo, 'DADOS_BLOQUEADOS_CONTEXTO');
+  assert.equal(f.chamadas.length, 4);
+  assert.equal(f.eventos[0].motivo, 'DADOS_BLOQUEADOS_CONTEXTO');
+  assert.equal(f.eventos.at(-1).codigo, 'GERADA');
+  assert.equal(JSON.stringify(f.chamadas).includes('ABC123'), false);
+  const dados = JSON.parse(f.chamadas[1].body.messages[1].content);
+  assert.deepEqual(dados.contextos, []);
+  assert.deepEqual(dados.evidencias, []);
 });
 
 for (const q of ['Como faço para renovar minha matrícula?',
@@ -270,7 +276,7 @@ test('renovar minha matricula atravessa busca e quatro chamadas simuladas', asyn
       const b = JSON.parse(init.body), p = JSON.parse(b.messages[1].content);
       const schema = b.response_format.json_schema.schema.properties;
       return resposta(schema.segura ? {segura: true} : schema.sustentada ? {sustentada: true} :
-        {afirmacoes: [{texto: p.evidencias[0].texto,
+        {tipo: "documental", mensagem: "", afirmacoes: [{texto: p.evidencias[0].texto,
           referencias: [{id: p.evidencias[0].id, citacao: p.evidencias[0].texto}]}]});
     });},
   }});

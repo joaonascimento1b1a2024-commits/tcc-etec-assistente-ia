@@ -80,7 +80,9 @@ function fluxoSimulado(docs, respostaProposta) {
       chamadas.push(dados);
       const schema = b.response_format.json_schema.schema.properties;
       const valor = schema.segura ? {segura: true} : schema.sustentada ? {sustentada: true} :
-        respostaProposta ? respostaProposta(dados) : {afirmacoes: [{texto: dados.evidencias[0].texto,
+        respostaProposta ? respostaProposta(dados) : !dados.evidencias.length ?
+          {tipo: 'sem_base', mensagem: 'Não encontrei informação para confirmar essa exigência. Consulte a secretaria acadêmica.', afirmacoes: []} :
+          {tipo: 'documental', mensagem: '', afirmacoes: [{texto: dados.evidencias[0].texto,
           referencias: [{id: dados.evidencias[0].id, citacao: dados.evidencias[0].texto}]}]};
       return new Response(JSON.stringify({choices: [{finish_reason: 'stop',
         message: {role: 'assistant', content: JSON.stringify(valor)}}]}));
@@ -94,14 +96,16 @@ test('pergunta RG chega a quatro chamadas OpenRouter sem enviar trecho irrelevan
   assert.equal(f.chamadas.length, 4);
   assert.equal(JSON.stringify(f.chamadas).includes(distrator.conteudo), false);
 });
-test('sem assunto no corpus, nao chama IA nem publica citacao desconexa', async () => {
+test('sem assunto no corpus, IA explica a limitacao sem citacao desconexa', async () => {
   const f = fluxoSimulado([distrator]);
   const r = await f.responder();
   assert.doesNotMatch(r, /organização curricular/);
-  assert.equal(f.chamadas.length, 0);
+  assert.equal(f.chamadas.length, 4);
+  assert.match(r, /Não encontrei informação/);
+  assert.deepEqual(f.chamadas[1].evidencias, []);
 });
 test('recusa estruturada do modelo tem diagnostico especifico sem inventar resposta', async () => {
-  const f = fluxoSimulado(corpus, () => ({afirmacoes: []}));
+  const f = fluxoSimulado(corpus, () => ({tipo: 'documental', mensagem: '', afirmacoes: []}));
   const r = await f.responder();
   assert.equal(f.chamadas.length, 2);
   assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_VAZIA');

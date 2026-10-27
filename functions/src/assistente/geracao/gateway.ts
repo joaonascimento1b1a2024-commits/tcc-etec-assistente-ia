@@ -4,6 +4,7 @@ import type {
   RespostaDocumental, TrechoDocumental,
 } from "../resposta-documental";
 import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
+import {validarConversa} from "./conversa";
 import {avaliarGeracao} from "./contrato";
 import type {
   PedidoGeracao, ProvedorGeracao, MotivoProposta,
@@ -106,12 +107,13 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const controller = new AbortController();
     let adquiriu = false;
+    let alternativa: string | undefined;
     const fallback = (
       motivo: MotivoFallback = "GERACAO_INDISPONIVEL",
     ): string => {
       evento("FALLBACK", motivo);
       if (!baseline) throw new Error("GERACAO_ENTRADA_INVALIDA");
-      return baseline.resposta;
+      return alternativa ?? baseline.resposta;
     };
     try {
       const preparada = prepararEvidencias(pergunta, chunks);
@@ -148,13 +150,29 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         evento("SEGURANCA");
         return fallback("DADOS_BLOQUEADOS");
       }
-      if (preparada.motivoContexto === "minimizacao_bloqueada") {
-        return fallback(preparada.origemBloqueio === "pergunta" ?
-          "DADOS_BLOQUEADOS_PERGUNTA" : "DADOS_BLOQUEADOS_CONTEXTO");
+      const conversacional = provedor === "openrouter";
+      const contextoBloqueado = preparada.origemBloqueio === "contexto";
+      if (preparada.origemBloqueio === "pergunta") {
+        if (conversacional) {
+          alternativa = "Para ajudar, reformule sua pergunta sobre o " +
+            "procedimento, sem nomes, numeros de documentos ou outros " +
+            "dados pessoais.";
+        }
+        return fallback("DADOS_BLOQUEADOS_PERGUNTA");
       }
-      if (baseline.status !== "trechos_encontrados" ||
-        !baseline.citacoes.length || baseline.citacoes.some((c) =>
-        c.fonte.natureza !== "documental")) {
+      if (contextoBloqueado) {
+        if (!conversacional) return fallback("DADOS_BLOQUEADOS_CONTEXTO");
+        // Nao recorta trechos privados nem omite condicoes seletivamente.
+        // Todo o contexto fica local; a IA recebe apenas a pergunta segura.
+        alternativa = "Nao consegui confirmar essa informacao nos documentos " +
+          "disponiveis. Informe o procedimento sobre o qual voce precisa " +
+          "de ajuda, sem dados pessoais, ou consulte a secretaria academica.";
+        evento("SEGURANCA", "DADOS_BLOQUEADOS_CONTEXTO");
+      }
+      const temEvidencias = baseline.status === "trechos_encontrados" &&
+        baseline.citacoes.length > 0 && baseline.citacoes.every((c) =>
+        c.fonte.natureza === "documental");
+      if (!temEvidencias && !conversacional) {
         return fallback("EVIDENCIAS_INSUFICIENTES");
       }
       const modelo = (provedor === "openrouter" ? env.OPENROUTER_MODEL :
@@ -176,7 +194,17 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         new Set(cs.map((c) => c.id)).size !== cs.length) {
         return fallback("FONTES_INVALIDAS");
       }
-      const evidencias = baseline.citacoes.map((c, i) => {
+      const bloquearContexto = contextoBloqueado ||
+        (conversacional && cs.some((c) =>
+          textoSuspeito([c.titulo, c.secao].join("\n"))));
+      if (bloquearContexto && !contextoBloqueado) {
+        alternativa = "Nao consegui confirmar essa informacao nos documentos " +
+          "disponiveis. Consulte a secretaria academica para confirmar.";
+        evento("SEGURANCA", "DADOS_BLOQUEADOS_CONTEXTO");
+      }
+      const usarEvidencias = temEvidencias && !bloquearContexto;
+      const citacoes = usarEvidencias ? baseline.citacoes : [];
+      const evidencias = citacoes.map((c, i) => {
         const contexto = cs.findIndex((d) => d.id === c.fonte.chunkId &&
           d.documentoId === c.fonte.documentoId);
         if (contexto < 0 || !cs[contexto].conteudo?.includes(c.texto)) {
@@ -187,7 +215,11 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       const pedido: PedidoGeracao = Object.freeze({
         pergunta: pergunta as string,
         evidencias: Object.freeze(evidencias),
-        contextos: Object.freeze(cs.map((c) => c.conteudo || "")),
+        contextos: Object.freeze(usarEvidencias ? cs.map((c) =>
+          conversacional ? [c.titulo, c.secao, c.conteudo].filter(Boolean)
+            .join("\n") : c.conteudo || "") : []),
+        ...(!usarEvidencias ? {situacao: bloquearContexto ?
+          "contexto_indisponivel" as const : "sem_evidencias" as const} : {}),
       });
       if (agora() - inicioJanela >= 60000) {
         inicioJanela = agora(); chamadasNaJanela = 0;
@@ -211,6 +243,33 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         if (!entradaSegura) {
           evento("SEGURANCA"); return fallback("ENTRADA_INSEGURA");
         }
+        if (conversacional && cliente.conversar && cliente.verificarConversa) {
+          const validacao = validarConversa(
+            await cliente.conversar(pedido, controller.signal), evidencias,
+          );
+          controller.signal.throwIfAborted();
+          if (!validacao.resposta) return fallback(validacao.motivo);
+          const resposta = validacao.resposta;
+          if (!await cliente.verificarConversa(
+            pedido, resposta, controller.signal,
+          )) return fallback("REVISAO_REPROVADA");
+          controller.signal.throwIfAborted();
+          const corpo = resposta.tipo === "documental" ?
+            resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
+              "\n\n" + baseline!.resposta : resposta.mensagem;
+          const aviso = resposta.tipo === "documental" ?
+            "Resposta gerada por IA; confira as fontes oficiais." :
+            "Resposta gerada por IA.";
+          const final = aviso + "\n\n" + corpo;
+          if (final.length > 2400) return fallback("SAIDA_EXCESSIVA");
+          if (!await cliente.moderar(final, controller.signal)) {
+            evento("SEGURANCA"); return fallback("SAIDA_INSEGURA");
+          }
+          controller.signal.throwIfAborted();
+          evento("GERADA");
+          return final;
+        }
+        if (!usarEvidencias) return fallback("EVIDENCIAS_INSUFICIENTES");
         const avaliacao = avaliarGeracao(
           await cliente.propor(pedido, controller.signal), evidencias,
         );

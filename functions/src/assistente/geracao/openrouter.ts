@@ -1,3 +1,6 @@
+import {
+  SCHEMA_CONVERSA, INSTRUCAO_CONVERSA, INSTRUCAO_REVISAO_CONVERSA,
+} from "./conversa";
 import {SCHEMA_PROPOSTA, SCHEMA_REVISAO} from "./contrato";
 import type {ProvedorGeracao} from "./contrato";
 import {
@@ -179,6 +182,12 @@ export function criarClienteOpenRouter(
     Object.keys(r).length === 1 &&
     (r as Record<string, unknown>)[campo] === true;
   return {
+    conversar: (pedido, signal) => resposta(INSTRUCAO_CONVERSA,
+      pedido, SCHEMA_CONVERSA, signal),
+    async verificarConversa(pedido, proposta, signal) {
+      return afirmativo(await resposta(INSTRUCAO_REVISAO_CONVERSA,
+        {pedido, proposta}, SCHEMA_REVISAO, signal), "sustentada");
+    },
     async moderar(texto, signal) {
       return afirmativo(await resposta(INSTRUCAO_SEGURANCA,
         {texto}, SCHEMA_SEGURANCA, signal), "segura");
