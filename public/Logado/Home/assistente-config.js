@@ -3,6 +3,12 @@
 // Backend documental autenticado validado; publicacao depende de revisao separada.
 export const endpointRenderPreparado =
     'https://sylvinho-backend-poc.onrender.com/perguntarAssistente';
+// Os dois dominios publicados pertencem ao mesmo projeto Firebase.
+// Manter alinhado com OFFICIAL_ORIGINS do backend e com seu CORS.
+export const origensPublicadasAssistente = Object.freeze([
+    'https://tcc-ia-d8891.web.app',
+    'https://tcc-ia-d8891.firebaseapp.com',
+]);
 export const assistenteConfig = Object.freeze({
     endpoint: endpointRenderPreparado,
     timeoutMs: 120000,
@@ -30,7 +36,7 @@ export function resolverAssistenteConfig({
     }
     const loopback = origin && ['localhost', '127.0.0.1', '[::1]'].includes(new URL(origin).hostname);
     if (loopback) return Object.freeze({ endpoint: '', timeoutMs: 30000 });
-    if (origin !== 'https://tcc-ia-d8891.web.app')
+    if (!origensPublicadasAssistente.includes(origin))
         return Object.freeze({ endpoint: '', timeoutMs: 120000 });
     if (assistenteConfig.endpoint) validarEndpointPublicado(assistenteConfig.endpoint);
     return assistenteConfig;

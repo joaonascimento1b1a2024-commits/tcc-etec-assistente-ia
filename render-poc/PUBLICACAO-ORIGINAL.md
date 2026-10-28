@@ -36,7 +36,7 @@ GCLOUD_PROJECT=tcc-ia-d8891
 FIRESTORE_DATABASE_ID=(default)
 SYLVINHO_SERVICE_ACCOUNT_EMAIL=sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com
 GOOGLE_APPLICATION_CREDENTIALS=/etc/secrets/sylvinho-firebase-admin.json
-ASSISTENTE_CORS_ORIGINS=https://tcc-ia-d8891.web.app
+ASSISTENTE_CORS_ORIGINS=https://tcc-ia-d8891.web.app,https://tcc-ia-d8891.firebaseapp.com
 ```
 
 RENDER=true e PORT sao fornecidos pela plataforma. Sem variaveis de emulador,
@@ -46,7 +46,8 @@ aprovado do Render. Nao gerar/copiar chaves nesta etapa e nunca coloca-las no ch
 Git, frontend, logs ou exemplos. Confirmar existencia/validade desse Secret File
 manualmente; nao foi possivel verifica-lo neste lote. Sem ele, manter health.
 O codigo exige a conta dedicada exata e rejeita a flag academica ficticia.
-Somente adicionar o alias firebaseapp.com ao CORS se seu uso for autorizado.
+O frontend aceita os dois dominios oficiais; manter ambos no CORS quando
+forem usados para acessar o assistente. Nao usar wildcard.
 
 ## IAM — confirmar atribuicao existente, nao ampliar automaticamente
 

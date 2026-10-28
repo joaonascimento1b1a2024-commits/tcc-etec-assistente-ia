@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
+import {createRequire} from 'node:module';
 
 const source = readFileSync(new URL('../public/Logado/Home/assistente-client.js', import.meta.url), 'utf8');
 const { perguntarAssistente } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const configSource = readFileSync(new URL('../public/Logado/Home/assistente-config.js', import.meta.url), 'utf8');
-const { assistenteConfig } = await import(`data:text/javascript;base64,${Buffer.from(configSource).toString('base64')}`);
+const { assistenteConfig, resolverAssistenteConfig, origensPublicadasAssistente } = await import(`data:text/javascript;base64,${Buffer.from(configSource).toString('base64')}`);
 const base = {
     user: { getIdToken: async () => 'token-simulado' },
     endpoint: 'http://127.0.0.1:5001/demo-local/southamerica-east1/perguntarAssistente',
@@ -115,3 +116,35 @@ test('Timeout ao obter token impede HTTP tardio', async () => {
 test('Cliente nao possui acesso a SDK Firestore nem persistencia bot', () => {
     assert.doesNotMatch(source, /firebase|setDoc|updateDoc|append\(|runTransaction|GEMINI_API_KEY/i);
 });
+
+
+const require = createRequire(import.meta.url);
+const {OFFICIAL_ORIGINS} = require('../render-poc/producao.cjs');
+test('frontend e backend reconhecem os mesmos dois dominios oficiais', () => {
+    assert.deepEqual(origensPublicadasAssistente, OFFICIAL_ORIGINS);
+    assert.ok(Object.isFrozen(origensPublicadasAssistente));
+});
+for (const origin of ['https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com']) {
+    test('origem publicada resolve endpoint e envia token uma vez: '+origin, async () => {
+        let chamadas = 0;
+        const config = resolverAssistenteConfig({origin, local: null});
+        const result = await perguntarAssistente({...base, ...config, fetchImpl: async (url, init) => {
+            chamadas++;
+            assert.equal(url, assistenteConfig.endpoint);
+            assert.equal(init.headers.Authorization, 'Bearer token-simulado');
+            assert.deepEqual(JSON.parse(init.body), {pergunta: base.pergunta,
+                conversationId: base.conversationId, messageId: base.messageId});
+            return {ok: true, json: async () => ({resposta: 'Resposta simulada'})};
+        }});
+        assert.equal(chamadas, 1);
+        assert.equal(result.resposta, 'Resposta simulada');
+    });
+
+}
+for (const origin of ['https://tcc-ia-d8891.firebaseapp.com.intruso.invalid',
+    'https://outro-projeto.firebaseapp.com', 'http://tcc-ia-d8891.firebaseapp.com',
+    'https://tcc-ia-d8891.firebaseapp.com:444', 'http://localhost:5500']) {
+    test('alias nao libera origens externas ou locais: '+origin, () => {
+        assert.equal(resolverAssistenteConfig({origin, local: null}).endpoint, '');
+    });
+}

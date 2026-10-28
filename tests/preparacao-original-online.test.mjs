@@ -9,7 +9,8 @@ test('frontend ativa somente a URL confirmada na origem autorizada', async () =>
     const config = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
     assert.equal(config.endpointRenderPreparado, 'https://sylvinho-backend-poc.onrender.com/perguntarAssistente');
     assert.equal(config.validarEndpointPublicado(config.endpointRenderPreparado), config.endpointRenderPreparado);
-    assert.equal(config.resolverAssistenteConfig({origin: 'https://tcc-ia-d8891.web.app', local: undefined}).endpoint, config.endpointRenderPreparado);
+    for (const origin of ['https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com'])
+        assert.equal(config.resolverAssistenteConfig({origin, local: undefined}).endpoint, config.endpointRenderPreparado);
     assert.equal(config.assistenteConfig.timeoutMs, 120000);
     for (const origin of ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://[::1]:5000', 'https://site.example.invalid'])
         assert.equal(config.resolverAssistenteConfig({origin, local: undefined}).endpoint, '');

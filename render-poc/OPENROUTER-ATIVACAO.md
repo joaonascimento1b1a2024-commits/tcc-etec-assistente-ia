@@ -61,7 +61,7 @@ segredos e allowlist vazios e aprovacoes falsas.
 | `FIRESTORE_DATABASE_ID` | `(default)`. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | `/etc/secrets/sylvinho-firebase-admin.json`. |
 | `SYLVINHO_SERVICE_ACCOUNT_EMAIL` | `sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com`. |
-| `ASSISTENTE_CORS_ORIGINS` | `https://tcc-ia-d8891.web.app`; se necessario, adicionar `https://tcc-ia-d8891.firebaseapp.com` separado por virgula. Sem wildcard, barra final ou origem externa. |
+| `ASSISTENTE_CORS_ORIGINS` | `https://tcc-ia-d8891.web.app,https://tcc-ia-d8891.firebaseapp.com` para os dois dominios oficiais. Sem wildcard, barra final ou origem externa. |
 | `SYLVINHO_DEMO_ACADEMICA` | `false` (ou ausente). O valor true e rejeitado neste modo. |
 | `SYLVINHO_IA_PROVIDER` | `openrouter`. |
 | `OPENROUTER_MODEL` | `google/gemini-3.5-flash-lite` como exemplo confirmado no catalogo; reavaliar termos/custo/disponibilidade. |
@@ -305,3 +305,40 @@ HTTP local, autenticacao, historico e idempotencia usam simulacoes. Dois testes
 preexistentes de interface ainda esperam o link “Ver como funciona” e o aviso
 academico removidos anteriormente; a interface nao foi alterada para reintroduzir
 esses textos. O teste do corpus oficial continua ignorado quando falta a amostra.
+
+
+## Erro de ambiente no frontend (dominio firebaseapp.com)
+
+A mensagem “O assistente não está configurado para este ambiente. Nenhuma
+pergunta foi salva.” ocorre antes de persistir a pergunta ou chamar o Render.
+Nao e resultado de moderacao, privacidade ou geracao da IA. A configuracao do
+frontend agora aceita exatamente os dois dominios oficiais do projeto, web.app
+e firebaseapp.com, mantendo ambientes locais isolados.
+
+Para aplicar esta correcao, publicar a versao atualizada do Firebase Hosting
+pelo processo do operador. Um deploy apenas no Render nao atualiza o frontend.
+Depois, recarregar a pagina para obter os arquivos atuais. No Render, configurar
+Environment > ASSISTENTE_CORS_ORIGINS com o valor:
+
+```text
+https://tcc-ia-d8891.web.app,https://tcc-ia-d8891.firebaseapp.com
+```
+
+Aplicar a alteracao do ambiente no servico caso o alias ainda nao conste.
+Isso habilita somente os dois dominios ja aceitos pelo validador do backend;
+nao altera login, allowlist de usuarios, politicas de dados ou visitante.
+Acessar a versao existente em https://tcc-ia-d8891.web.app pode contornar o
+bloqueio do alias enquanto o Hosting nao recebe a correcao.
+
+O log “Detected service running on port 10000” informa que o Render detectou
+o servidor HTTP; sozinho nao comprova a chegada de uma pergunta ou chamada
+OpenRouter. A pergunta bloqueada nessa etapa nao foi salva e pode ser enviada
+apos corrigir o ambiente. Nao mudar IDs de perguntas que ja estejam pendentes.
+
+
+Verificacao publica somente-leitura em 28/10/2026: o arquivo de configuracao
+servido pelo Hosting ja continha a lista dos dois dominios; o preflight OPTIONS
+do Render respondeu 204 para web.app e 403 para firebaseapp.com. Isso confirma
+um bloqueio de CORS para o alias naquele momento. Nenhum token, pergunta,
+credencial ou chamada de geracao foi enviado. O estado pode mudar depois que o
+operador atualizar o ambiente; conferir novamente apos aplicar a configuracao.

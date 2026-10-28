@@ -441,3 +441,21 @@ test("erro da fabrica de dependencias e sanitizado pelo adapter", async () => {
     assert.equal(res.code, 500);
     assert.deepEqual(res.body, {error: "Erro interno no servidor do assistente."});
 });
+
+
+const origensPublicadasAssistente = require('../render-poc/producao.cjs').OFFICIAL_ORIGINS;
+for (const origin of origensPublicadasAssistente) {
+    test('CORS com lista oficial permite preflight sem carregar Firebase: '+origin, async () => {
+        const handler = criarEndpointAssistente(() => assert.fail('sem Firebase no preflight'),
+            () => origensPublicadasAssistente.join(','));
+        let status;
+        const headers = {};
+        const res = {vary() {}, set(k,v) {headers[k] = v;return this;},
+            status(value) {status = value;return this;}, send() {}, json() {assert.fail('preflight rejeitado');}};
+        await handler({method: 'OPTIONS', get: key => ({Origin: origin,
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'authorization,content-type'})[key]}, res);
+        assert.equal(status, 204);
+        assert.equal(headers['Access-Control-Allow-Origin'], origin);
+    });
+}
