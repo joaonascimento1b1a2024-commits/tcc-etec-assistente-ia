@@ -99,10 +99,18 @@ proveniente de token Firebase verificado, modelo/chave validos e limites validos
 Visitante sem UID nunca chega ao provedor. O corpo HTTP nao pode liberar UID,
 flag, modelo, chave ou URL, mesmo que contenha campos com esses nomes.
 
-Mesmo habilitado, o fluxo so gera quando ha evidencias documentais suficientes,
-fontes originais ativas, ausencia de bloqueio de minimizacao e capacidade local.
-Qualquer falha de geracao preserva o fallback documental. ZDR indisponivel nao
-autoriza enviar a outro endpoint sem essa garantia.
+No fluxo OpenRouter autorizado, perguntas seguras podem chegar a IA mesmo sem
+evidencias. Fatos e regras escolares exigem fontes; explicacoes gerais,
+saudacoes e perguntas de esclarecimento nao exigem citacoes. Contextos privados
+sao descartados integralmente; apenas a pergunta segura e enviada nesse caso.
+Se a pergunta contiver identificadores detectados, o fluxo pede reformulacao
+localmente, sem envio. ZDR indisponivel nao autoriza outro roteamento.
+
+Falhas do provedor, rejeicao de resposta e limites, apos os gates, retornam
+uma mensagem local de continuidade em vez de despejar trechos como se fossem
+uma resposta. A mensagem local nao e identificada como gerada por IA. O modo
+documental continua disponivel para visitantes, IA desativada e acessos sem
+allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
 
 ## Passo a passo do operador (nao executado nesta tarefa)
 
@@ -126,8 +134,13 @@ autoriza enviar a outro endpoint sem essa garantia.
    e aplicar a configuracao pelo processo de deploy do operador. Fazer uma
    pergunta de teste com evidencia valida e sem dados pessoais. Usar novo
    `messageId`; repetir um ID ja respondido devolve historico sem nova IA.
-6. Confirmar o aviso `Resposta gerada por IA`, fontes documentais preservadas,
-   evento `SYLVINHO_IA GERADA` e uso do modelo no painel OpenRouter. HTTP 200
+6. Confirmar `SYLVINHO_IA_FLUXO conversa-v2` no log ao inicializar as
+   dependencias documentais (primeira requisicao que as utiliza). Esse marcador
+   identifica esta revisao do fluxo; nao comprova configuracao, saldo ou IA.
+   Conferir tambem o commit do deploy. Usar nova mensagem, pois historico salvo
+   nao e reprocessado. Confirmar aviso de IA ou orientacao geral, fontes apenas
+   nas respostas documentais, evento `SYLVINHO_IA GERADA` e uso do modelo no
+   painel OpenRouter. HTTP 200
    tambem pode ser fallback. Confirmar consumo/latencia sem exportar perguntas
    ou documentos para logs. Um sucesso simulado nao valida credito, IAM ou rede.
 7. Conferir visitante documental, UID externo documental, token invalido 401,
@@ -220,8 +233,11 @@ nao comprova ausencia de dados pessoais nem dispensa as aprovacoes.
 `DADOS_BLOQUEADOS_CONTEXTO` indica bloqueio em algum trecho recuperado. Se ambos
 forem bloqueados, o codigo da pergunta tem prioridade. Nenhum conteudo e incluido
 no log. `DADOS_BLOQUEADOS` permanece para a politica demonstrativa legada.
-A mudanca nao libera automaticamente documentos que acionem outros padroes,
-como CPF, nomes completos ou identificadores; esses casos requerem diagnostico.
+Mencoes genericas a RG, CPF e ao campo nome completo nao sao identificadores
+preenchidos. Numeros de documentos, nomes rotulados e os demais padroes de
+seguranca continuam bloqueados. Isso reduz falsos positivos, mas nao garante
+que toda informacao pessoal sera reconhecida. Nao usar a heuristica como
+substituto das aprovacoes ou da revisao dos dados.
 
 
 ## Perguntas curtas e qualidade das evidencias
@@ -233,15 +249,59 @@ trazer, apresentar e entregar nao substituem o assunto da pergunta. Assim,
 “levar em consideracao”. A pontuacao utiliza a mesma canonicalizacao de termos
 aceita pelo filtro documental; a busca legada V1 mantem sua tokenizacao.
 
-Se nao existir evidencia pertinente no corpus, o fluxo informa insuficiencia
-sem chamar a IA. Se houver evidencia, a proposta continua sujeita a validacao
-local e revisao. Nenhuma configuracao deve forcar resposta sobre uma regra
-escolar que nao esteja sustentada pelos documentos. Perguntas curtas tambem
-podem omitir o procedimento; esta correcao nao acrescenta memoria conversacional
-nem resolve toda ambiguidade ou variacao de linguagem.
+Se nao existir evidencia pertinente, o fluxo OpenRouter pode gerar uma
+explicacao geral, indicar a limitacao ou pedir esclarecimento. Se houver
+evidencia, ainda deve verificar a pertinencia ao procedimento: uma regra de
+transferencia nao comprova regra de rematricula. Perguntas curtas podem omitir
+esse procedimento. O fluxo nao envia historico; a IA deve pedir o contexto
+faltante, sem supor continuidade. Nenhuma configuracao autoriza inventar uma
+regra escolar sem fonte.
 
 Validacao local: testes sinteticos incluem perguntas com siglas, distratores,
 termos canonicos e quatro chamadas OpenRouter simuladas, sem chamar Gemini
 ou OpenAI diretamente. Isso nao equivale a validar respostas reais do modelo
 ou a cobertura do corpus publicado. A regressao V1 depende do arquivo externo
 original e a amostra documental depende do snapshot local descrito acima.
+
+
+## Conversa e orientacao geral (conversa-v2)
+
+O contrato estruturado possui os tipos documental, esclarecimento, sem_base,
+geral, conversa e fora_escopo. O modelo analisa a pergunta, redige a resposta e
+passa pela revisao independente e moderacao final. O tipo geral permite
+explicacoes e calculos, com aviso visivel de que nao sao regras da escola.
+Nao permite disfarcar exigencias institucionais sem fonte como dicas gerais.
+A revisao semantica e feita por modelo; os testes simulados validam os controles
+e contratos, nao garantem acerto de toda resposta real.
+
+Nao ha flag nova nem necessidade de criar um .env no Render. Permanecem as
+variaveis e aprovacoes da tabela anterior, cadastradas diretamente no painel,
+sem compartilhar a chave no chat. Sem alteracoes na interface, no banco ou nos
+emails. A geracao continua exclusiva pelo OpenRouter para usuarios autorizados.
+
+A sequencia continua limitada a quatro chamadas: moderacao da entrada,
+resposta, revisao e moderacao da saida. Sem retries ou chamadas extras para
+reescrita. O prazo total, limite por minuto, tamanho final e roteamento ZDR
+continuam iguais. O limite da mensagem conversacional passa a mil caracteres.
+
+Verificacao apos publicar a versao aprovada, com conta autorizada e novos IDs:
+
+- “Preciso levar RG?”: deve pedir o procedimento, sem apresentar exigencia de
+  transferencia como regra geral. A formulacao depende da resposta do modelo.
+- Pergunta completa sobre um procedimento presente nos documentos: resposta
+  direta e referencias verificadas.
+- “O que significa RG?” ou “Como organizar meus estudos?”: orientacao geral.
+- Pergunta escolar cuja resposta nao existe na base: indicar a limitacao e
+  oferecer um proximo passo, sem inventar prazo ou contato.
+- Visitante permanece documental. Replay conserva a resposta original.
+
+Testes locais usam somente corpus sintetico e transporte simulado. Nao houve
+chamada paga nem verificacao do modelo real. O snapshot documental e o arquivo
+externo V1 ausentes continuam limitando a regressao do corpus original.
+
+Verificacao desta revisao: build e lint executados com Node 22.23.1 local;
+o ambiente Render continua configurado para Node 24. Os testes da IA,
+HTTP local, autenticacao, historico e idempotencia usam simulacoes. Dois testes
+preexistentes de interface ainda esperam o link “Ver como funciona” e o aviso
+academico removidos anteriormente; a interface nao foi alterada para reintroduzir
+esses textos. O teste do corpus oficial continua ignorado quando falta a amostra.

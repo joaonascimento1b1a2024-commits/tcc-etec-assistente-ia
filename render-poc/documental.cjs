@@ -70,6 +70,10 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const firestore = getFirestore(app, DATABASE_ID);
         const fluxo = criarFluxoPerguntaLivre({ fonte: firestore, geracao: { lerAmbiente,
             registrarEvento: (codigo, motivo) => console.info('SYLVINHO_IA', codigo, ...(motivo ? [motivo] : [])) } });
+        if (lerAmbiente().SYLVINHO_IA_PROVIDER === 'openrouter') {
+            const { VERSAO_FLUXO_CONVERSA } = require('../functions/lib/assistente/geracao/conversa.js');
+            console.info('SYLVINHO_IA_FLUXO', VERSAO_FLUXO_CONVERSA);
+        }
         return { auth: getAuth(app), firestore,
             demonstracao: criarDemonstracaoGemini({ lerAmbiente,
                 registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),

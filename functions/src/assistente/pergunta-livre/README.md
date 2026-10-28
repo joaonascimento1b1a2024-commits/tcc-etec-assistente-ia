@@ -10,8 +10,12 @@ completo. Fonte, modelo e respostas dos testes sao sinteticos, em memoria.
 A interface independente de provedor e ProvedorGeracao, em geracao/contrato.ts:
 moderar, propor e verificar. Nao foi criada outra interface concorrente. O gateway
 existente preserva contratos, citacoes literais, revisao, limites, timeout e
-fallback documental integral. Essas verificacoes nao provam implicacao semantica;
-o modelo simulado nao demonstra qualidade de um modelo real.
+fallback documental nos provedores legados. No OpenRouter, o contrato tambem
+oferece conversar/verificarConversa: admite resposta com fonte, esclarecimento,
+orientacao geral, saudacao ou explicacao da falta de base. Falhas apos os gates
+retornam uma mensagem local, sem listar trechos possivelmente desconexos.
+Visitantes e IA desativada continuam documentais. Essas verificacoes nao provam
+implicacao semantica; simulacoes nao demonstram qualidade de um modelo real.
 
 Por padrao esta composicao usa ambiente vazio, mesmo com flags no processo.
 Sem configuracao explicita nenhum cliente externo e criado. Os testes injetam
@@ -62,3 +66,9 @@ Apos comprovacao e autorizacao especifica, validar modelo/schema/cota, usar cont
 adulta autorizada e novos IDs, enviar uma vez e conferir evento GERADA e consumo
 Gemini correspondente. FALLBACK, HTTP 200 e replay nao provam geracao nova.
 Nenhuma chamada real, mudanca de flags ou publicacao foi executada.
+
+
+A referencia operacional do fluxo OpenRouter e o guia de ativacao do Render.
+As pendencias Gemini descritas acima pertencem ao caminho legado separado;
+nao substituem as condicoes OpenRouter. A revisao conversa-v2 nao precisa de
+nova variavel de ambiente, nao envia historico e nao libera IA para visitantes.

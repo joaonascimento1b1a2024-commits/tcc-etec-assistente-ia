@@ -7,6 +7,7 @@ import {
 import {gerarRespostaDocumental} from '../functions/lib/assistente/resposta-documental.js';
 import {criarFluxoPerguntaLivre} from '../functions/lib/assistente/pergunta-livre/fluxo.js';
 import {criarClienteOpenRouter} from '../functions/lib/assistente/geracao/openrouter.js';
+import {RESPOSTA_INDISPONIVEL} from '../functions/lib/assistente/geracao/conversa.js';
 import {avaliarGeracao, validarGeracao} from '../functions/lib/assistente/geracao/contrato.js';
 import {criarChunk} from './fixtures/fundamentacao-sintetica.mjs';
 
@@ -110,7 +111,7 @@ test('recusa estruturada do modelo tem diagnostico especifico sem inventar respo
   assert.equal(f.chamadas.length, 2);
   assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_VAZIA');
   assert.doesNotMatch(r, /organização curricular/);
-  assert.equal(r, gerarRespostaDocumental('Preciso levar RG?', [pertinente]).resposta);
+  assert.equal(r, RESPOSTA_INDISPONIVEL);
 });
 
 const evidencia = {id: 'E1', texto: 'O ensaio utiliza 42 folhas somente quando autorizado.', contexto: 0};

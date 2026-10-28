@@ -4,7 +4,7 @@ import type {
   RespostaDocumental, TrechoDocumental,
 } from "../resposta-documental";
 import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
-import {validarConversa} from "./conversa";
+import {validarConversa, RESPOSTA_INDISPONIVEL} from "./conversa";
 import {avaliarGeracao} from "./contrato";
 import type {
   PedidoGeracao, ProvedorGeracao, MotivoProposta,
@@ -221,6 +221,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         ...(!usarEvidencias ? {situacao: bloquearContexto ?
           "contexto_indisponivel" as const : "sem_evidencias" as const} : {}),
       });
+      if (conversacional) alternativa ??= RESPOSTA_INDISPONIVEL;
       if (agora() - inicioJanela >= 60000) {
         inicioJanela = agora(); chamadasNaJanela = 0;
       }
@@ -259,7 +260,9 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
               "\n\n" + baseline!.resposta : resposta.mensagem;
           const aviso = resposta.tipo === "documental" ?
             "Resposta gerada por IA; confira as fontes oficiais." :
-            "Resposta gerada por IA.";
+            resposta.tipo === "geral" ?
+              "Orientação geral gerada por IA; não é uma regra da escola." :
+              "Resposta gerada por IA.";
           const final = aviso + "\n\n" + corpo;
           if (final.length > 2400) return fallback("SAIDA_EXCESSIVA");
           if (!await cliente.moderar(final, controller.signal)) {

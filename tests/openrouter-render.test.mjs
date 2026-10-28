@@ -111,6 +111,7 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   for (const segredo of [uid, pergunta, texto, env.OPENROUTER_API_KEY, mid, cid]) {
     assert.equal(JSON.stringify(logs).includes(segredo), false);
   }
+  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v2').length, 1);
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA GERADA'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA FALLBACK UID_NAO_AUTORIZADO'));
 });

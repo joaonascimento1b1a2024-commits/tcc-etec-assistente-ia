@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {setTimeout as delay} from 'node:timers/promises';
 import {criarClienteOpenRouter, modeloOpenRouterValido} from '../functions/lib/assistente/geracao/openrouter.js';
 import {criarGeradorConfiguravel, politicaRetencaoIA} from '../functions/lib/assistente/geracao/gateway.js';
+import {RESPOSTA_INDISPONIVEL} from '../functions/lib/assistente/geracao/conversa.js';
 import {criarDemonstracaoGemini} from '../functions/lib/assistente/geracao/demonstracao.js';
 import {gerarRespostaDocumental} from '../functions/lib/assistente/resposta-documental.js';
 import {pergunta, criarChunk, texto} from './fixtures/fundamentacao-sintetica.mjs';
@@ -92,16 +93,16 @@ test('ZDR obrigatorio nao herda modalidade demonstrativa do Gemini', () => {
 for (const chave of [undefined, '', 'com espaco']) {
   test('chave ausente/invalida: fallback sem transporte', async () => {
     const f = fixture({OPENROUTER_API_KEY: chave});
-    assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+    assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
     assert.equal(f.chamadas.length, 0); assert.equal(f.eventos.at(-1).motivo, 'OPENROUTER_CHAVE_AUSENTE');
   });
 }
 for (const [status, motivo] of [[400, 'HTTP'], [401, 'AUTENTICACAO'], [402, 'SEM_CREDITOS'],
   [403, 'RECUSA'], [404, 'SEM_ENDPOINT_COMPATIVEL'], [408, 'TIMEOUT'], [504, 'TIMEOUT'], [429, 'LIMITE'],
   [500, 'HTTP'], [502, 'HTTP'], [503, 'SEM_ENDPOINT_COMPATIVEL']]) {
-  test('HTTP ' + status + ' volta ao documental sem retry ou vazamento', async () => {
+  test('HTTP ' + status + ' retorna mensagem local sem retry ou vazamento', async () => {
     const f = fixture({}, () => new Response('detalhe remoto privado', {status}));
-    assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline); assert.equal(f.chamadas.length, 1);
+    assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL); assert.equal(f.chamadas.length, 1);
     assert.equal(f.eventos.at(-1).motivo, 'OPENROUTER_'+motivo);
     assert.equal(JSON.stringify(f.eventos).includes('privado'), false);
   });
@@ -118,31 +119,31 @@ for (const [nome, payload, motivo] of [
 ]) {
   test(nome + ': rejeicao local do envelope', async () => {
     const f = fixture({}, () => json(payload));
-    assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+    assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
     assert.equal(f.eventos.at(-1).motivo, 'OPENROUTER_'+motivo); assert.equal(f.chamadas.length, 1);
   });
 }
 test('JSON HTTP invalido e resposta acima de 64KiB', async () => {
   for (const [body, motivo] of [['{', 'JSON_INVALIDO'], ['x'.repeat(65537), 'SAIDA_EXCESSIVA']]) {
     const f = fixture({}, () => new Response(body));
-    assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+    assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
     assert.equal(f.eventos.at(-1).motivo, 'OPENROUTER_'+motivo);
   }
 });
 test('erro de rede descarta mensagem e credenciais', async () => {
   const f = fixture({}, () => {throw new Error('privado '+ambiente.OPENROUTER_API_KEY);});
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
   assert.deepEqual(f.eventos, [{codigo: 'FALLBACK', motivo: 'OPENROUTER_INDISPONIVEL'}]);
 });
 test('schema de proposta e citacao continuam validados localmente', async () => {
   const f = fixture({}, ({valor, indice}) => resposta(indice === 2 ?
     {tipo: "documental", mensagem: "", afirmacoes: [{texto, referencias: [{id: 'E99', citacao: texto}]}]} : valor));
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
   assert.equal(f.chamadas.length, 2); assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_REFERENCIA_INVALIDA');
 });
 for (const etapa of [1, 3, 4]) test('seguranca/revisao falha fechada na etapa ' + etapa, async () => {
   const f = fixture({}, ({valor, indice}) => resposta(indice === etapa ? {...valor, inesperado: true} : valor));
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline); assert.equal(f.chamadas.length, etapa);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL); assert.equal(f.chamadas.length, etapa);
 });
 test('cancelamento antes da chamada nao consulta chave', async () => {
   const c = criarClienteOpenRouter(modelo, () => assert.fail('nao ler chave'), () => assert.fail('nao enviar'));
@@ -178,7 +179,7 @@ test('prazo do gateway e TOTAL, cancela segunda etapa sem iniciar terceira', asy
     if (indice === 1) {await delay(5); return resposta(valor);}
     return new Promise(() => {});
   });
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
   assert.equal(f.chamadas.length, 2); assert.ok(f.chamadas.every(c => c.signal.aborted));
   assert.equal(f.eventos.at(-1).motivo, 'GERACAO_TIMEOUT');
 });
@@ -192,9 +193,9 @@ test('concorrencia e limite por instancia sao diagnosticaveis', async () => {
     if (indice === 1) await espera; return resposta(valor);
   });
   const primeira = f.gerar(pergunta, chunks, {uid});
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
   assert.equal(f.eventos.at(-1).motivo, 'OCUPADO'); release(); await primeira;
-  assert.equal(await f.gerar(pergunta, chunks, {uid}), baseline);
+  assert.equal(await f.gerar(pergunta, chunks, {uid}), RESPOSTA_INDISPONIVEL);
   assert.equal(f.eventos.at(-1).motivo, 'LIMITE_LOCAL');
 });
 test('demonstracao Gemini separada permanece bloqueada quando provider=openrouter', async () => {
