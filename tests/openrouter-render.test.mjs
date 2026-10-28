@@ -111,7 +111,16 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   for (const segredo of [uid, pergunta, texto, env.OPENROUTER_API_KEY, mid, cid]) {
     assert.equal(JSON.stringify(logs).includes(segredo), false);
   }
-  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v2').length, 1);
+  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v3').length, 1);
+  const diagnosticos = logs.filter(l => l[0] === 'SYLVINHO_DIAGNOSTICO').map(l => JSON.parse(l[1]));
+  assert.deepEqual(diagnosticos.filter(d => d.etapa === 'BUSCA_CONCLUIDA'), [
+    {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1},
+    {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1}, // visitante, sem nova geracao
+  ]);
+  assert.deepEqual(diagnosticos.filter(d => d.etapa === 'PROPOSTA_RECEBIDA'), [
+    {etapa: 'PROPOSTA_RECEBIDA', contextos: 1, evidencias: 1, uso: 'DOCUMENTAL'},
+  ]);
+  assert.ok(diagnosticos.some(d => d.etapa === 'REVISAO_APROVADA' && d.tipo === 'documental'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA GERADA'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA FALLBACK UID_NAO_AUTORIZADO'));
 });

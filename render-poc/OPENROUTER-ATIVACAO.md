@@ -134,7 +134,7 @@ allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
    e aplicar a configuracao pelo processo de deploy do operador. Fazer uma
    pergunta de teste com evidencia valida e sem dados pessoais. Usar novo
    `messageId`; repetir um ID ja respondido devolve historico sem nova IA.
-6. Confirmar `SYLVINHO_IA_FLUXO conversa-v2` no log ao inicializar as
+6. Confirmar `SYLVINHO_IA_FLUXO conversa-v3` no log ao inicializar as
    dependencias documentais (primeira requisicao que as utiliza). Esse marcador
    identifica esta revisao do fluxo; nao comprova configuracao, saldo ou IA.
    Conferir tambem o commit do deploy. Usar nova mensagem, pois historico salvo
@@ -342,3 +342,63 @@ do Render respondeu 204 para web.app e 403 para firebaseapp.com. Isso confirma
 um bloqueio de CORS para o alias naquele momento. Nenhum token, pergunta,
 credencial ou chamada de geracao foi enviado. O estado pode mudar depois que o
 operador atualizar o ambiente; conferir novamente apos aplicar a configuracao.
+
+
+## Comprovar leitura e envio dos documentos (conversa-v3)
+
+O fluxo autenticado consulta `conhecimento` com `ativo == true` antes de gerar.
+Essa leitura retorna chunks de texto, nao PDFs inteiros ou qualquer colecao do
+banco. A selecao usa somente os tres `documentoId` de `FONTES_ORIGINAIS`, exige
+pertinencia no corpo do texto e respeita o limite de cinco chunks/oito mil
+caracteres. Arquivos somente no Storage ou registros inativos nao participam.
+As citacoes elegiveis sao preparadas antes do pedido ao provedor.
+
+O log `SYLVINHO_IA FALLBACK REVISAO_REPROVADA` sozinho nao comprova uso de fontes:
+no modo conversacional, a IA pode responder tambem sem evidencia. Ele indica
+que a proposta nao recebeu aprovacao na etapa revisora; tambem pode indicar
+um contrato de revisao nao reconhecido. O texto de indisponibilidade e local,
+nao e a resposta gerada pelo modelo. Nao e possivel recuperar a causa semantica
+exata dos logs antigos, pois nao armazenamos perguntas, propostas ou contextos.
+
+Esta revisao acrescenta `SYLVINHO_DIAGNOSTICO` com apenas codigos e contagens:
+
+| Etapa/campo | Significado |
+| --- | --- |
+| `BUSCA_CONCLUIDA`, `lidos`, `selecionados` | Quantos chunks a consulta retornou e quantos passaram na selecao. Nao e o total de documentos do banco. |
+| `BUSCA_FALHOU` | A consulta ou preparacao falhou; nao apresentar como base vazia. |
+| `CONTEXTO_PREPARADO`, `contextos`, `evidencias` | Quantidades no pedido preparado, antes das chamadas. Nao prova envio bem-sucedido. |
+| `PROPOSTA_RECEBIDA` | A etapa de proposta retornou; as contagens correspondem ao pedido enviado ao provedor. Nao comprova a correção ou compreensao semantica pelo modelo. |
+| `REVISAO_APROVADA` ou `REVISAO_REPROVADA`, `tipo` | Resultado da revisao e categoria validada da proposta. A mesma linha informa as quantidades e o uso de documentos. |
+| `uso=DOCUMENTAL` | O pedido contem evidencias documentais. |
+| `uso=SEM_EVIDENCIAS` | Nao ha citacoes elegiveis; a IA recebeu somente a pergunta para orientar ou esclarecer. |
+| `uso=CONTEXTO_BLOQUEADO` | Trechos foram excluidos do envio pelo filtro de dados; a pergunta segura pode seguir. |
+
+Exemplo ilustrativo de uma resposta rejeitada apesar de ter recebido documentos:
+
+```text
+SYLVINHO_DIAGNOSTICO {"etapa":"BUSCA_CONCLUIDA","lidos":40,"selecionados":2}
+SYLVINHO_DIAGNOSTICO {"etapa":"PROPOSTA_RECEBIDA","contextos":2,"evidencias":1,"uso":"DOCUMENTAL"}
+SYLVINHO_DIAGNOSTICO {"etapa":"REVISAO_REPROVADA","contextos":2,"evidencias":1,"uso":"DOCUMENTAL","tipo":"documental"}
+SYLVINHO_IA FALLBACK REVISAO_REPROVADA
+```
+
+Se lidos for positivo e selecionados zero, conferir o formato dos chunks,
+`documentoId` permitido, titulo/secao e pertinencia a pergunta. A existencia do
+registro no Firestore nao garante que ele passe nessa selecao. Se selecionados
+for positivo e contextos zero, verificar uso: bloqueio de dados ou ausencia de
+citacoes elegiveis. Se a proposta tiver contextos/evidencias positivos e a
+revisao rejeitar, o problema esta depois da recuperacao; isso nao autoriza
+concluir que falta conexao com o banco nem que a resposta deve ser liberada.
+
+Aplicar pelo processo de publicacao do backend; nao ha nova variavel, endpoint,
+consulta ao banco ou chamada paga adicional. Conferir `conversa-v3` e enviar uma
+nova mensagem com conta autorizada, pois replay devolve a resposta ja salva sem
+refazer busca/IA. Em requisicoes simultaneas, nao associar linhas apenas pela
+proximidade: cada linha de revisao traz suas proprias contagens. Logs nao incluem
+UID, IDs de conversa/documento, texto, chave, token ou erros brutos. Falhas do
+logger nao alteram a busca ou a geracao.
+
+Validado localmente com Firebase e transporte OpenRouter simulados, incluindo
+revisao reprovada com documentos, base vazia, fonte nao admitida, privacidade,
+erro de leitura, erro do provedor e replay. Nao foi inspecionado o conteudo do
+Firestore real nem feita chamada de IA real nesta verificacao.

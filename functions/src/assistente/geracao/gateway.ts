@@ -1,3 +1,5 @@
+import {emitirDiagnostico} from "../diagnostico";
+import type {RegistrarDiagnostico} from "../diagnostico";
 import {prepararEvidencias} from "../fundamentacao/gateway";
 import {copiarDadosEstritos, textoSuspeito} from "../fundamentacao/contrato";
 import type {
@@ -34,6 +36,7 @@ export interface OpcoesGerador {
     (modelo: string, lerChave: () => string) => ProvedorGeracao;
   criarClienteOpenRouter?:
     (modelo: string, lerChave: () => string) => ProvedorGeracao;
+  registrarDiagnostico?: RegistrarDiagnostico;
   registrarEvento?: (codigo: EventoIA, motivo?: MotivoFallback) => void;
   agora?: () => number;
 }
@@ -235,6 +238,14 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           (opcoes.criarClienteGemini ?? criarClienteGemini)(
             modelo, () => env.GEMINI_API_KEY || "") :
           criarCliente(modelo, () => env.OPENAI_API_KEY || "");
+      const resumo = {
+        contextos: pedido.contextos.length,
+        evidencias: pedido.evidencias.length,
+        uso: usarEvidencias ? "DOCUMENTAL" as const : bloquearContexto ?
+          "CONTEXTO_BLOQUEADO" as const : "SEM_EVIDENCIAS" as const,
+      };
+      const registrar = opcoes.registrarDiagnostico;
+      emitirDiagnostico(registrar, {etapa: "CONTEXTO_PREPARADO", ...resumo});
       const operacao = async (): Promise<string> => {
         const entrada = [pedido.pergunta, ...pedido.contextos].join("\n\n");
         const entradaSegura = await cliente.moderar(
@@ -245,16 +256,20 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           evento("SEGURANCA"); return fallback("ENTRADA_INSEGURA");
         }
         if (conversacional && cliente.conversar && cliente.verificarConversa) {
-          const validacao = validarConversa(
-            await cliente.conversar(pedido, controller.signal), evidencias,
-          );
+          const recebida = await cliente.conversar(pedido, controller.signal);
           controller.signal.throwIfAborted();
+          emitirDiagnostico(registrar, {etapa: "PROPOSTA_RECEBIDA", ...resumo});
+          const validacao = validarConversa(recebida, evidencias);
           if (!validacao.resposta) return fallback(validacao.motivo);
           const resposta = validacao.resposta;
-          if (!await cliente.verificarConversa(
+          const aprovada = await cliente.verificarConversa(
             pedido, resposta, controller.signal,
-          )) return fallback("REVISAO_REPROVADA");
+          );
           controller.signal.throwIfAborted();
+          emitirDiagnostico(registrar, {etapa: aprovada ?
+            "REVISAO_APROVADA" : "REVISAO_REPROVADA",
+          ...resumo, tipo: resposta.tipo});
+          if (!aprovada) return fallback("REVISAO_REPROVADA");
           const corpo = resposta.tipo === "documental" ?
             resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
               "\n\n" + baseline!.resposta : resposta.mensagem;
@@ -273,16 +288,20 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           return final;
         }
         if (!usarEvidencias) return fallback("EVIDENCIAS_INSUFICIENTES");
-        const avaliacao = avaliarGeracao(
-          await cliente.propor(pedido, controller.signal), evidencias,
-        );
+        const recebida = await cliente.propor(pedido, controller.signal);
         controller.signal.throwIfAborted();
+        emitirDiagnostico(registrar, {etapa: "PROPOSTA_RECEBIDA", ...resumo});
+        const avaliacao = avaliarGeracao(recebida, evidencias);
         if (!avaliacao.proposta) return fallback(avaliacao.motivo);
         const proposta = avaliacao.proposta;
-        if (!await cliente.verificar(pedido, proposta, controller.signal)) {
-          return fallback("REVISAO_REPROVADA");
-        }
+        const aprovada = await cliente.verificar(
+          pedido, proposta, controller.signal,
+        );
         controller.signal.throwIfAborted();
+        emitirDiagnostico(registrar, {etapa: aprovada ?
+          "REVISAO_APROVADA" : "REVISAO_REPROVADA",
+        ...resumo, tipo: "documental"});
+        if (!aprovada) return fallback("REVISAO_REPROVADA");
         const texto = proposta.afirmacoes.map((a) => a.texto).join("\n\n");
         if (textoSuspeito(texto)) return fallback("SAIDA_INSEGURA");
         // Baseline integral preservado, incluindo condicoes e fontes.

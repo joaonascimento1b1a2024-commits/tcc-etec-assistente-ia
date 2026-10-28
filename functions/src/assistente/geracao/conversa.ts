@@ -11,7 +11,7 @@ export interface RespostaConversa extends PropostaGerada {
 }
 const TIPOS = ["documental", "esclarecimento", "sem_base", "fora_escopo",
   "conversa", "geral"];
-export const VERSAO_FLUXO_CONVERSA = "conversa-v2";
+export const VERSAO_FLUXO_CONVERSA = "conversa-v3";
 export const RESPOSTA_INDISPONIVEL =
   "Não consegui concluir uma resposta confiável agora. Tente novamente " +
   "informando o procedimento ou o que você precisa saber. Para confirmar " +

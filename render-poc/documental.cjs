@@ -69,6 +69,7 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const { getFirestore, FieldValue } = carregar('firebase-admin/firestore');
         const firestore = getFirestore(app, DATABASE_ID);
         const fluxo = criarFluxoPerguntaLivre({ fonte: firestore, geracao: { lerAmbiente,
+            registrarDiagnostico: dado => console.info('SYLVINHO_DIAGNOSTICO', JSON.stringify(dado)),
             registrarEvento: (codigo, motivo) => console.info('SYLVINHO_IA', codigo, ...(motivo ? [motivo] : [])) } });
         if (lerAmbiente().SYLVINHO_IA_PROVIDER === 'openrouter') {
             const { VERSAO_FLUXO_CONVERSA } = require('../functions/lib/assistente/geracao/conversa.js');

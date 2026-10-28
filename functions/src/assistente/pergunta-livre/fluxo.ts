@@ -16,7 +16,9 @@ export interface OpcoesPerguntaLivre {
  * @return {object} Dependencias do handler e fluxo para teste local.
  */
 export function criarFluxoPerguntaLivre(opcoes: OpcoesPerguntaLivre) {
-  const recuperarConhecimento = criarBuscaDocumental(opcoes.fonte);
+  const recuperarConhecimento = criarBuscaDocumental(
+    opcoes.fonte, opcoes.geracao?.registrarDiagnostico,
+  );
   // Nao herda ativacao de process.env nesta preparacao offline.
   // Uma composicao autorizada precisa fornecer lerAmbiente explicitamente.
   const gerarResposta = criarGeradorConfiguravel({

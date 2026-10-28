@@ -495,11 +495,13 @@ export function selecionarDocumentosOriginais(
  * Consulta somente conhecimento ativo e aplica selecao original restrita.
  * @param {FonteConhecimento} firestore Fonte somente-leitura.
  * @param {unknown} pergunta Pergunta de entrada.
+ * @param {Function} diagnosticar Observador opcional, so recebe contagens.
  * @return {Promise<DocumentoPreparado[]>} Chunks selecionados.
  */
 export async function recuperarConhecimentoRelevante(
   firestore: FonteConhecimento,
   pergunta: unknown,
+  diagnosticar?: (resumo: {lidos: number; selecionados: number}) => void,
 ): Promise<DocumentoPreparado[]> {
   const snapshot = await firestore
     .collection("conhecimento")
@@ -508,5 +510,11 @@ export async function recuperarConhecimentoRelevante(
   const chunks: unknown[] = [];
   snapshot.forEach((chunk) => chunks.push(chunk));
 
-  return selecionarDocumentosOriginais(chunks, pergunta);
+  const selecionados = selecionarDocumentosOriginais(chunks, pergunta);
+  try {
+    diagnosticar?.({lidos: chunks.length, selecionados: selecionados.length});
+  } catch {
+    // Telemetria nao altera a selecao nem provoca uma nova leitura do banco.
+  }
+  return selecionados;
 }

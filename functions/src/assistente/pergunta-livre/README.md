@@ -72,3 +72,11 @@ A referencia operacional do fluxo OpenRouter e o guia de ativacao do Render.
 As pendencias Gemini descritas acima pertencem ao caminho legado separado;
 nao substituem as condicoes OpenRouter. A revisao conversa-v2 nao precisa de
 nova variavel de ambiente, nao envia historico e nao libera IA para visitantes.
+
+
+Diagnostico operacional opcional: `geracao.registrarDiagnostico` recebe somente
+codigos e contagens de busca, contexto preparado, proposta e revisao. A fabrica
+Render escreve esses eventos como `SYLVINHO_DIAGNOSTICO`. A consulta continua
+unica e nao registra dados; falha do logger e ignorada. Consultar a secao
+“Comprovar leitura e envio dos documentos” no guia OpenRouter para interpretar
+as etapas sem confundir busca bem-sucedida com resposta aprovada.
