@@ -7,6 +7,7 @@ export type DiagnosticoAssistente = {
 } | {etapa: "BUSCA_FALHOU"} | {
   etapa: "CONTEXTO_FILTRADO";
   avaliados: number; permitidos: number; descartados: number;
+  sinalizados: number;
   motivos: readonly MotivoTextoBloqueado[];
 } | {
   etapa: "CONTEXTO_PREPARADO" | "PROPOSTA_RECEBIDA" |

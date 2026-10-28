@@ -200,6 +200,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         emitirDiagnostico(opcoes.registrarDiagnostico, {
           etapa: "CONTEXTO_FILTRADO", avaliados: cs.length,
           permitidos: filtro.permitidos.length,
+          sinalizados: filtro.sinalizados,
           descartados: filtro.descartados, motivos: filtro.motivos,
         });
         cs = filtro.permitidos;

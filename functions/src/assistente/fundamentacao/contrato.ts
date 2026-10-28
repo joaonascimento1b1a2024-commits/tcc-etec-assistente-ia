@@ -91,6 +91,43 @@ export type MotivoTextoBloqueado = "INSTRUCAO_SUSPEITA" | "CREDENCIAL" |
   "CONTATO_OU_IDENTIFICADOR";
 
 /**
+ * Procura valores de identificacao, sem tratar prosa apos dois-pontos como ID.
+ * Numeracao de passos e quantidade de copias nao sao valores preenchidos.
+ * @param {string} texto Texto documental normalizado, sem alterar a fonte.
+ * @return {boolean} Sinal de identificador; nao e garantia de anonimato.
+ */
+function identificadorDocumental(texto: string): boolean {
+  const rotulos = new RegExp(
+    "\\b(matricula|cpf|rg|ra|rm)\\s*" +
+    "(?:(?:numero|n[º°o.]|e|eh)\\s*)?[:#=-]?\\s*" +
+    "([a-z]{0,8}\\d[\\w./-]*)\\b", "gu");
+  let achado: RegExpExecArray | null;
+  while ((achado = rotulos.exec(texto)) !== null) {
+    const valor = achado[2];
+    const depois = texto.slice(achado.index + achado[0].length);
+    const antes = achado[0].slice(0, achado[0].lastIndexOf(valor));
+    if (/^\d{1,2}$/u.test(valor)) {
+      // CPF: 2 copias / RG: 1 (uma) via, sem ignorar outros IDs no texto.
+      if (/^\s*(?:\([a-z ]{1,20}\)\s*)?(?:copias?|vias?)\b/u
+        .test(depois)) continue;
+      const passo = new RegExp(
+        "^[.)]\\s+(?:apresentar|entregar|preencher|solicitar|receber|" +
+        "conferir|verificar|efetuar|realizar|providenciar|comparecer|" +
+        "requerer|observar|acessar|assinar)\\b", "u");
+      if (achado[1] === "matricula" && /[:\n]/u.test(antes) &&
+        passo.test(depois)) continue;
+    }
+    // Cabecalho seguido de codigo de secao (B1 - Inicial...), sem atribuicao.
+    if (achado[1] === "matricula" && /^[a-z]\d{1,2}$/u.test(valor) &&
+      /\n/u.test(antes) && !/[:#=]/u.test(antes) &&
+      /^\s*[-–]\s+[a-z]/u.test(depois)) continue;
+    return true;
+  }
+  return /\bminha matricula\s+(?:e|eh)\b/u.test(texto) ||
+    /\bmatricula\s*[#=]\s*\w+/u.test(texto);
+}
+
+/**
  * Categoria fechada; nunca retorna o trecho ou valor detectado.
  * @param {string} texto Texto ja validado e limitado.
  * @param {string} uso Documento permite rotulos sem identificacao preenchida.
@@ -130,21 +167,14 @@ export function motivoTextoBloqueado(
   const identificadores = new RegExp(
     "\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b|" +
     "\\b\\d{2}\\s?\\d{4,5}[- ]?\\d{4}\\b", "u");
-  // Excecoes pequenas para cabecalhos/rotulos completos de formularios.
-  // So afetam a deteccao; o texto enviado/citado nunca e reescrito.
-  const rotuloMatricula = new RegExp(
-    "^\\s*(?:numero da )?matricula\\s*:\\s*(?:_{2,}|\\.{3,}|" +
-    "(?:documentos|requisitos|procedimentos|orientacoes)" +
-    "(?: necessarios| obrigatorios)?)\\s*$", "gmu");
-  const matricula = uso === "documento" ?
-    n.replace(rotuloMatricula, "") : n;
   if (instrucao.test(n) || papeis.test(n)) return "INSTRUCAO_SUSPEITA";
   if (exfiltracao.test(n) || /\bBearer\s+\S+|PRIVATE KEY/iu.test(texto)) {
     return "CREDENCIAL";
   }
   if (pessoais.test(n)) return "DECLARACAO_PESSOAL";
   if (nomePreenchido.test(n)) return "NOME_PREENCHIDO";
-  if (matriculaPessoal.test(matricula) || documentoPessoal.test(n)) {
+  if (uso === "documento" ? identificadorDocumental(n) :
+    matriculaPessoal.test(n) || documentoPessoal.test(n)) {
     return "IDENTIFICADOR_PESSOAL";
   }
   if (identificadores.test(n) ||

@@ -12,7 +12,9 @@ import type {TrechoDocumental} from "../resposta-documental";
 export function filtrarContextosIA(chunks: readonly TrechoDocumental[]) {
   const fontesBloqueadas = new Set<string>();
   const motivos = new Set<MotivoTextoBloqueado>();
+  let sinalizados = 0;
   for (const chunk of chunks) {
+    let sinalizado = false;
     // Campos que podem integrar o pedido ou o baseline da moderacao final.
     const campos = [chunk.titulo, chunk.secao, chunk.conteudo,
       chunk.categoria, chunk.tipoConteudo, chunk.id, chunk.documentoId];
@@ -20,13 +22,16 @@ export function filtrarContextosIA(chunks: readonly TrechoDocumental[]) {
     for (const valor of [...campos, campos.join("\n")]) {
       const motivo = motivoTextoBloqueado(valor || "", "documento");
       if (motivo) {
+        sinalizado = true;
         fontesBloqueadas.add(chunk.documentoId!);
         motivos.add(motivo);
       }
     }
+    if (sinalizado) sinalizados++;
   }
   const permitidos = chunks.filter((c) =>
     !fontesBloqueadas.has(c.documentoId!));
-  return {permitidos, descartados: chunks.length - permitidos.length,
+  return {permitidos, sinalizados,
+    descartados: chunks.length - permitidos.length,
     motivos: Object.freeze([...motivos].sort())};
 }

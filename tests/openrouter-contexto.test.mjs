@@ -26,8 +26,8 @@ for (const rotulo of ['Informe o número da matrícula no formulário.',
 for (const [valor, motivo] of [
   ['Número da matrícula: TESTE123', 'IDENTIFICADOR_PESSOAL'],
   ['Número da matrícula é TESTE123', 'IDENTIFICADOR_PESSOAL'],
-  ['Matrícula: PESSOA', 'IDENTIFICADOR_PESSOAL'],
-  ['Matrícula: documentos necessários TESTE123', 'IDENTIFICADOR_PESSOAL'],
+  ['Matrícula: PESSOA123', 'IDENTIFICADOR_PESSOAL'],
+  ['Matrícula: documentos necessários. RM: TESTE123', 'IDENTIFICADOR_PESSOAL'],
   ['Matrícula: ______\nCPF 12345678901', 'IDENTIFICADOR_PESSOAL'],
   ['RG 12345678', 'IDENTIFICADOR_PESSOAL'],
   ['Nome completo: Pessoa Sintética', 'NOME_PREENCHIDO'],
@@ -109,7 +109,7 @@ test('tres fontes recuperadas: uma privada nao zera duas fontes permitidas', asy
   assert.equal(f.chamadas[3].texto, r, 'moderacao final recebe apenas fontes permitidas');
   const filtro = f.diagnosticos.find(d => d.etapa === 'CONTEXTO_FILTRADO');
   assert.deepEqual(filtro, {etapa: 'CONTEXTO_FILTRADO', avaliados: 3, permitidos: 2,
-    descartados: 1, motivos: ['NOME_PREENCHIDO']});
+    descartados: 1, sinalizados: 1, motivos: ['NOME_PREENCHIDO']});
   assert.ok(f.eventos.some(e => e.codigo === 'GERADA'));
   assert.doesNotMatch(JSON.stringify([f.chamadas, f.diagnosticos, f.eventos, r]), /Pessoa Sintética/);
   for (const segredo of [uid, pergunta, texto, docs[0].id, docs[0].documentoId, env.OPENROUTER_API_KEY]) {
