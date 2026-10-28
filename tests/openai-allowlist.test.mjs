@@ -139,16 +139,16 @@ test('requisicoes de UIDs diferentes nao compartilham autorizacao', async () => 
   assert.match(a, /^Resposta gerada por IA/); assert.equal(b, baseline);
   assert.equal(f.contadores().criacoes, 1);
 });
-test('frontend atual exibe resposta generativa como texto integral seguro e preserva formato documental', async () => {
+test('frontend reconhece resposta generativa legada e preserva fontes e texto original', async () => {
   const contexto = {};
   vm.runInNewContext(readFileSync(new URL('../public/Logado/Home/resposta-documental-view.js', import.meta.url), 'utf8'), contexto);
   assert.ok(contexto.apresentacaoDocumental.analisar(baseline));
   const f = fixture(); const texto = await f.gerar(pergunta, chunks, {uid: autorizado});
-  const container = {textContent: ''};
-  Object.defineProperty(container, 'innerHTML', {set() {throw Error('NAO_INTERPRETAR_HTML');}});
-  assert.equal(contexto.apresentacaoDocumental.renderizar(container, texto), false);
-  assert.equal(container.textContent, texto);
-  assert.ok(container.textContent.endsWith(baseline));
+  const dados = contexto.apresentacaoDocumental.analisar(texto);
+  assert.ok(dados.resposta);
+  assert.match(dados.aviso, /^Resposta gerada por IA/);
+  assert.deepEqual(dados.citacoes, contexto.apresentacaoDocumental.analisar(baseline).citacoes);
+  assert.ok(texto.endsWith(baseline));
   assert.equal(texto.length <= 2400, true);
 });
 test('build e cadeia Render apontam para os modulos locais compilados', async () => {

@@ -134,7 +134,7 @@ allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
    e aplicar a configuracao pelo processo de deploy do operador. Fazer uma
    pergunta de teste com evidencia valida e sem dados pessoais. Usar novo
    `messageId`; repetir um ID ja respondido devolve historico sem nova IA.
-6. Confirmar `SYLVINHO_IA_FLUXO conversa-v6` no log ao inicializar as
+6. Confirmar `SYLVINHO_IA_FLUXO conversa-v8` no log ao inicializar as
    dependencias documentais (primeira requisicao que as utiliza). Esse marcador
    identifica esta revisao do fluxo; nao comprova configuracao, saldo ou IA.
    Conferir tambem o commit do deploy. Usar nova mensagem, pois historico salvo
@@ -368,7 +368,7 @@ Esta revisao acrescenta `SYLVINHO_DIAGNOSTICO` com apenas codigos e contagens:
 | --- | --- |
 | `BUSCA_CONCLUIDA`, `lidos`, `selecionados` | Quantos chunks a consulta retornou e quantos passaram na selecao. Nao e o total de documentos do banco. |
 | `BUSCA_FALHOU` | A consulta ou preparacao falhou; nao apresentar como base vazia. |
-| `CONTEXTO_FILTRADO`, `avaliados`, `permitidos`, `descartados`, `motivos` | Na v6, contagens de chunks antes/depois da verificacao local e categorias fechadas de bloqueio. Uma fonte bloqueada retira todos os seus chunks selecionados. Nao prova envio ao provedor. |
+| `CONTEXTO_FILTRADO`, `avaliados`, `permitidos`, `descartados`, `sinalizados`, `motivos` | Contagens antes/depois do filtro. Desde a v7, `sinalizados` conta os chunks que acionaram a heuristica; `descartados` inclui outros chunks da mesma fonte bloqueada. Nao prova envio ao provedor. |
 | `CONTEXTO_PREPARADO`, `contextos`, `evidencias` | Quantidades no pedido preparado, antes das chamadas. Nao prova envio bem-sucedido. |
 | `PROPOSTA_RECEBIDA` | A etapa de proposta retornou; as contagens correspondem ao pedido enviado ao provedor. Nao comprova a correção ou compreensao semantica pelo modelo. |
 | `REVISAO_APROVADA`, `REVISAO_CORRIGIDA` ou `REVISAO_REPROVADA`, `tipo` | Resultado da revisao e categoria da resposta validada (ou da proposta, em caso de recusa). A mesma linha informa as quantidades, uso de documentos e `motivoRevisao` no contrato atual. |
@@ -394,7 +394,7 @@ revisao rejeitar, o problema esta depois da recuperacao; isso nao autoriza
 concluir que falta conexao com o banco nem que a resposta deve ser liberada.
 
 Aplicar pelo processo de publicacao do backend; nao ha nova variavel, endpoint,
-consulta ao banco ou chamada paga adicional. Conferir `conversa-v6` e enviar uma
+consulta ao banco ou chamada paga adicional. Conferir `conversa-v8` e enviar uma
 nova mensagem com conta autorizada, pois replay devolve a resposta ja salva sem
 refazer busca/IA. Em requisicoes simultaneas, nao associar linhas apenas pela
 proximidade: cada linha de revisao traz suas proprias contagens. Logs nao incluem
@@ -511,7 +511,7 @@ restantes podem nao bastar; nesse caso, esclarecer ou explicar a limitacao.
 Se todas forem bloqueadas, continua `contexto_indisponivel` e nenhum trecho e
 enviado. Uma aprovacao do revisor nao recupera fontes que foram excluidas.
 
-Apos publicar o backend, conferir `conversa-v6`, enviar nova mensagem e ler
+Apos publicar o backend atual, conferir `conversa-v8`, enviar nova mensagem e ler
 `CONTEXTO_FILTRADO`. `permitidos > 0` com `PROPOSTA_RECEBIDA` contendo contextos
 e evidencias positivos comprova que a proposta recebeu os trechos permitidos.
 Se `permitidos=0`, a categoria permite ao operador revisar a base no ambiente
@@ -531,3 +531,87 @@ ajuste final no aviso de fontes parciais, 70 testes de contexto, diagnostico,
 revisao e HTTP/persistencia foram repetidos e passaram. Incluem bloqueio total,
 fontes restantes, rotulos vazios, identificadores preenchidos, metadados,
 isolamento por documento, revisor, ZDR, replay e ausencia de dados nos logs.
+
+## Correcao de prosa confundida com identificacao (conversa-v7)
+
+Foi reproduzido localmente o falso positivo com a citacao administrativa
+informada na conversa: `documentação de matrícula: estritamente nas datas...`.
+O padrao antigo interpretava qualquer palavra apos `matricula:` como um valor
+de identificacao. A exclusao por fonte ampliava esse falso positivo para os
+demais trechos selecionados do mesmo documento.
+
+A v7 substitui esse criterio no modo documental: procura um valor preenchido
+numerico/alfanumerico, mantendo atribuicoes pessoais explicitas e demais
+detectores. Prosa depois de dois-pontos, passos como `Matrícula: 1. Apresentar...`,
+quantidades como `RG: 2 cópias` e cabecalhos seguidos de codigo de secao deixam
+de ser considerados identificadores por si so. A verificacao continua pelo
+restante do texto; por exemplo, a quantidade de copias nao libera um CPF
+preenchido na mesma frase. Nao remove ou reescreve conteudo das fontes.
+
+O cenario de regressao usa o trecho informado, dois trechos sinteticos e
+511 distratores sinteticos, totalizando 514 registros e tres selecionados.
+Testa envio dos tres contextos, citacoes, revisao e quatro chamadas. Inserir
+um identificador ficticio em um trecho volta a bloquear a fonte inteira.
+Nao e uma copia ou auditoria dos 514 registros reais do Firestore.
+
+## Linguagem voltada ao aluno e fontes recolhidas (conversa-v8)
+
+A geracao e a revisao editora compartilham orientacoes de linguagem simples:
+resposta direta, frases curtas, palavras comuns, tratamento por voce e
+explicacao de termos indispensaveis. Rotinas internas, como guardar pastas,
+organizar fotos ou marcar planilhas, nao podem virar obrigacoes do aluno.
+Simplificar nao autoriza omitir prazos, condicoes, excecoes ou classificacao.
+Falta de informacao deve apontar o que falta, evitando termos como contexto
+insuficiente. Nao ha resposta fixa de matricula ou nova chamada de IA.
+
+O revisor pode usar `corrigir/CLAREZA` para simplificar uma resposta correta,
+sem recusa por mero estilo. Atribuicao indevida de tarefa interna pode ser
+corrigida com `ESCOPO_INCORRETO`. Citacoes e validacao local continuam iguais.
+Os testes simulam a correcao e validam sua passagem pelo fluxo; nao demonstram
+que um modelo real seguira a orientacao em todas as perguntas.
+
+A apresentacao do chat passa a reconhecer respostas geradas com o bloco
+documental no final. Mostra o aviso de IA e a explicacao; todas as citacoes
+ficam no controle nativo `Ver fontes`. Os IDs internos e o texto integral
+continuam acessiveis em `Ver resposta e referências completas`. A referencia
+nao e apagada do HTTP nem do historico. O aviso de fontes parciais permanece
+visivel. Formatos nao reconhecidos usam o texto original inteiro. Somente
+textContent e elementos DOM sao usados, sem interpretar HTML do modelo.
+O modo documental sem IA conserva a primeira citacao visivel.
+
+Publicacao pelo operador (nao executada nesta tarefa):
+
+1. Enviar o commit revisado para a branch conectada ao servico Render. Em
+   Deploys, usar `Manual Deploy > Deploy latest commit` se o deploy automatico
+   nao ocorrer; conferir o commit e o marcador `conversa-v8` apos nova pergunta.
+   Build: `npm --prefix functions ci --include=dev && npm --prefix render-poc run build`.
+   Start: `node render-poc/server.cjs`. Root Directory continua vazia.
+2. Publicar tambem o frontend: no projeto ja configurado, executar
+   `firebase deploy --only hosting --project tcc-ia-d8891`. Isso atualiza a
+   apresentacao e nao publica Functions nem regras do banco. O seletor de
+   referencias so muda no site apos esta etapa.
+3. Recarregar a pagina e enviar uma nova pergunta. Novas respostas usam as
+   orientacoes novas. Respostas antigas nao sao reescritas; podem ser
+   apresentadas com fontes recolhidas quando o formato for reconhecido.
+4. Confirmar resposta direta, ausencia de tarefas internas atribuidas ao aluno,
+   `Ver fontes` expansivel e referencias preservadas ao reabrir a conversa.
+   Conferir `PROPOSTA_RECEBIDA` com evidencias e `GERADA` no teste autorizado.
+
+Nenhuma nova variavel de ambiente ou configuracao OpenRouter e necessaria.
+Auth, propriedade das conversas, allowlist, ZDR, limites, quatro chamadas e
+revisao permanecem. Nao houve deploy, push ou chamada paga nesta verificacao.
+As instrucoes de publicacao foram conferidas na documentacao oficial:
+[Render](https://render.com/docs/deploys#manual-deploys) e
+[Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart#deploy_your_site).
+
+Validacao v8: build do Render e lint aprovados numa copia temporaria identica
+dos arquivos alterados (a escrita de compilados no checkout estava restrita).
+733 testes passaram, incluindo a compatibilidade com respostas legadas apos
+atualizar a expectativa de apresentacao. Cobertura de recolhimento de uma a
+tres fontes, historico/CRLF, aviso parcial, texto original, formatos incompletos,
+HTML tratado como texto e correcao de clareza seguida de moderacao final.
+Cinco cenarios HTTP locais nao foram reexecutados nesta rodada por restricao
+de abertura de conexao local; um teste da amostra documental original foi
+excluido por ausencia do arquivo. Sem ensaio visual em navegador ou chamada
+real ao modelo: os testes da interface usam DOM simulado. A linguagem final
+do Gemini deve ser conferida pelo operador com novas perguntas apos publicar.

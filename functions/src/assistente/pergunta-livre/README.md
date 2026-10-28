@@ -71,7 +71,7 @@ Nenhuma chamada real, mudanca de flags ou publicacao foi executada.
 
 A referencia operacional do fluxo OpenRouter e o guia de ativacao do Render.
 As pendencias Gemini descritas acima pertencem ao caminho legado separado;
-nao substituem as condicoes OpenRouter. A revisao conversa-v6 nao precisa de
+nao substituem as condicoes OpenRouter. A revisao conversa-v8 nao precisa de
 nova variavel de ambiente, nao envia historico e nao libera IA para visitantes.
 
 
@@ -99,3 +99,13 @@ documentais genericos nao sao confundidos com identificacao preenchida. Se
 houver exclusoes, proposta/revisor recebem `fontes_parciais` e a resposta com
 fonte recebe aviso dessa limitacao. Bloqueio de todas as fontes continua sem
 envio de documentos; `GERADA` e revisao aprovada, isoladamente, nao provam RAG.
+
+Na v7, prosa depois de `matricula:` deixa de ser classificada como identificador
+preenchido; numeros de documentos continuam bloqueados. A contagem `sinalizados`
+distingue deteccao direta de exclusao dos demais chunks da mesma fonte.
+Na v8, geracao/revisao usam linguagem simples e distinguem passos do aluno de
+rotinas da secretaria. O revisor pode simplificar com `corrigir/CLAREZA` na
+mesma chamada, preservando referencias literais. O frontend exibe primeiro
+a explicacao e permite expandir as fontes. Texto HTTP, persistencia e replay
+permanecem integrais. Publicar tanto o backend quanto o Hosting para aplicar
+as duas partes; detalhes no guia de ativacao.

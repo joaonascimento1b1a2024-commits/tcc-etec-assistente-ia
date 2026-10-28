@@ -35,7 +35,7 @@
         if (!vistos.size) return null;
         return visiveis.join(' — ');
     }
-    function analisar(original) {
+    function analisarDocumental(original) {
         if (typeof original !== 'string' || original.length > 2400) return null;
         const texto = original;
         const inicio = texto.search(/\r?\n\r?\n1\. /u);
@@ -56,6 +56,29 @@
         if (!citacoes.length || citacoes.length > 3 || reconstruido !== resto) return null;
         return {introducao, citacoes};
     }
+    function analisar(original) {
+        const documental = analisarDocumental(original);
+        if (documental) return documental;
+        if (typeof original !== 'string' || original.length > 2400) return null;
+        const avisos = [
+            'Resposta gerada por IA; confira as fontes oficiais.',
+            'Resposta gerada por IA; parte das fontes não pôde ser utilizada. Confira as fontes oficiais.',
+        ];
+        const separador = original.match(/\r?\n\r?\n/u);
+        if (!separador) return null;
+        const aviso = original.slice(0, separador.index);
+        if (!avisos.includes(aviso)) return null;
+        const corpo = original.slice(separador.index + separador[0].length);
+        // So recolhe fontes se todo o sufixo corresponder ao formato conhecido.
+        // Prefixos inesperados, truncamento ou ambiguidade preservam texto puro.
+        const candidatos = [];
+        for (const quebra of corpo.matchAll(/\r?\n\r?\n/gu)) {
+            const resposta = corpo.slice(0, quebra.index);
+            const fontes = analisarDocumental(corpo.slice(quebra.index + quebra[0].length));
+            if (resposta.trim() && fontes) candidatos.push({aviso, resposta, ...fontes});
+        }
+        return candidatos.length === 1 ? candidatos[0] : null;
+    }
     function renderizar(container, original) {
         const dados = analisar(original);
         if (!dados) { container.textContent = original; return false; }
@@ -74,6 +97,20 @@
             return bloco;
         };
         container.classList.add('documental');
+        if (dados.resposta) {
+            container.append(criar('p', 'documental-introducao', dados.aviso));
+            container.append(criar('div', 'documental-resposta-ia', dados.resposta));
+            const fontes = criar('details', 'documental-detalhes');
+            fontes.append(criar('summary', '', 'Ver fontes'));
+            fontes.append(criar('p', 'documental-introducao', dados.introducao));
+            dados.citacoes.forEach(item => fontes.append(citacao(item)));
+            const originalCompleto = criar('details', 'documental-detalhes documental-original');
+            originalCompleto.append(criar('summary', '', 'Ver resposta e referências completas'));
+            originalCompleto.append(criar('div', 'documental-texto-original', original));
+            fontes.append(originalCompleto);
+            container.append(fontes);
+            return true;
+        }
         container.append(criar('p', 'documental-introducao', dados.introducao));
         container.append(citacao(dados.citacoes[0]));
         if (dados.citacoes.length > 1) {

@@ -1,6 +1,7 @@
 import {copiarDadosEstritos} from "../fundamentacao/contrato";
 import {
-  CRITERIOS_REVISAO_CONVERSA, SCHEMA_CONVERSA, validarConversa,
+  CRITERIOS_REVISAO_CONVERSA, ORIENTACAO_LINGUAGEM, SCHEMA_CONVERSA,
+  validarConversa,
 } from "./conversa";
 import type {RespostaConversa} from "./conversa";
 import type {EvidenciaGeracao, MotivoProposta} from "./contrato";
@@ -25,7 +26,13 @@ export const SCHEMA_REVISAO_EDITORA = {
     respostas: {type: "array", maxItems: 1, items: SCHEMA_CONVERSA},
   },
 };
-export const INSTRUCAO_REVISAO_EDITORA = CRITERIOS_REVISAO_CONVERSA +
+export const INSTRUCAO_REVISAO_EDITORA = CRITERIOS_REVISAO_CONVERSA + " " +
+  ORIENTACAO_LINGUAGEM +
+  "Se uma resposta correta estiver burocratica ou dificil para o aluno, " +
+  "use corrigir com motivo CLAREZA para simplificar a explicacao. " +
+  "Nao recuse apenas por estilo. Se ela atribuir ao aluno uma tarefa " +
+  "interna da secretaria, corrija com ESCOPO_INCORRETO. Preserve somente " +
+  "passos sustentados destinados a quem perguntou, sem mudar citacoes. " +
   " Retorne JSON com decisao, motivo e respostas. Se a proposta atende " +
   "aos criterios, aprovar, SEM_PROBLEMA e respostas vazio. Quando " +
   "puder resolver o problema, corrigir com o motivo concreto e uma unica " +
