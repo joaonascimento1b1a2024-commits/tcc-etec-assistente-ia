@@ -134,7 +134,7 @@ allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
    e aplicar a configuracao pelo processo de deploy do operador. Fazer uma
    pergunta de teste com evidencia valida e sem dados pessoais. Usar novo
    `messageId`; repetir um ID ja respondido devolve historico sem nova IA.
-6. Confirmar `SYLVINHO_IA_FLUXO conversa-v3` no log ao inicializar as
+6. Confirmar `SYLVINHO_IA_FLUXO conversa-v5` no log ao inicializar as
    dependencias documentais (primeira requisicao que as utiliza). Esse marcador
    identifica esta revisao do fluxo; nao comprova configuracao, saldo ou IA.
    Conferir tambem o commit do deploy. Usar nova mensagem, pois historico salvo
@@ -172,10 +172,12 @@ configuracao, chave ou allowlist. O motivo fica apenas no log operacional.
 | `EVIDENCIAS_INSUFICIENTES`, `FONTES_INVALIDAS` | Contexto documental nao elegivel. |
 | `OCUPADO`, `LIMITE_LOCAL` | Uma geracao por vez ou limite por minuto atingido. |
 | `ENTRADA_INSEGURA`, `REVISAO_REPROVADA`, `SAIDA_INSEGURA`, `SAIDA_EXCESSIVA` | Validacao de conteudo ou tamanho final. |
+| `REVISAO_FORMATO_INVALIDO`, `REVISAO_CORRECAO_INVALIDA` | Decisao do revisor malformada ou resposta corrigida que falhou na validacao local. Conferir `motivoRevisao` no diagnostico. |
 | `PROPOSTA_SCHEMA_INVALIDO`, `PROPOSTA_TEXTO_INVALIDO`, `PROPOSTA_REFERENCIA_INVALIDA` | Estrutura, afirmacao ou referencia rejeitada pela validacao local. |
 | `PROPOSTA_VAZIA` | O modelo retornou afirmacoes vazias; conserva a resposta documental. |
 | `PROPOSTA_CITACAO_DIVERGENTE` | A citacao retornada nao coincide exatamente com a evidencia enviada. |
-| `PROPOSTA_NUMEROS_DIVERGENTES`, `PROPOSTA_CONDICOES_DIVERGENTES` | Numeros ou marcadores de condicao/negacao divergem da fonte. |
+| `PROPOSTA_NUMEROS_DIVERGENTES` | Na conversa-v5, a afirmacao introduz um numero ausente das citacoes. Nos caminhos legados, numeros tambem nao podem ser omitidos. |
+| `PROPOSTA_CONDICOES_DIVERGENTES` | Comparacao literal de marcadores nos caminhos legados. Na conversa-v5, o revisor avalia o significado das condicoes, sem exigir palavras identicas. |
 
 Versoes anteriores registravam apenas `PROPOSTA_INVALIDA` para esses casos.
 Esse codigo antigo nao permite determinar retroativamente a causa exata e
@@ -368,12 +370,12 @@ Esta revisao acrescenta `SYLVINHO_DIAGNOSTICO` com apenas codigos e contagens:
 | `BUSCA_FALHOU` | A consulta ou preparacao falhou; nao apresentar como base vazia. |
 | `CONTEXTO_PREPARADO`, `contextos`, `evidencias` | Quantidades no pedido preparado, antes das chamadas. Nao prova envio bem-sucedido. |
 | `PROPOSTA_RECEBIDA` | A etapa de proposta retornou; as contagens correspondem ao pedido enviado ao provedor. Nao comprova a correção ou compreensao semantica pelo modelo. |
-| `REVISAO_APROVADA` ou `REVISAO_REPROVADA`, `tipo` | Resultado da revisao e categoria validada da proposta. A mesma linha informa as quantidades e o uso de documentos. |
+| `REVISAO_APROVADA`, `REVISAO_CORRIGIDA` ou `REVISAO_REPROVADA`, `tipo` | Resultado da revisao e categoria da resposta validada (ou da proposta, em caso de recusa). A mesma linha informa as quantidades, uso de documentos e `motivoRevisao` no contrato atual. |
 | `uso=DOCUMENTAL` | O pedido contem evidencias documentais. |
 | `uso=SEM_EVIDENCIAS` | Nao ha citacoes elegiveis; a IA recebeu somente a pergunta para orientar ou esclarecer. |
 | `uso=CONTEXTO_BLOQUEADO` | Trechos foram excluidos do envio pelo filtro de dados; a pergunta segura pode seguir. |
 
-Exemplo ilustrativo de uma resposta rejeitada apesar de ter recebido documentos:
+Exemplo ilustrativo dos logs antigos (v3) de uma resposta rejeitada apesar de ter recebido documentos:
 
 ```text
 SYLVINHO_DIAGNOSTICO {"etapa":"BUSCA_CONCLUIDA","lidos":40,"selecionados":2}
@@ -391,7 +393,7 @@ revisao rejeitar, o problema esta depois da recuperacao; isso nao autoriza
 concluir que falta conexao com o banco nem que a resposta deve ser liberada.
 
 Aplicar pelo processo de publicacao do backend; nao ha nova variavel, endpoint,
-consulta ao banco ou chamada paga adicional. Conferir `conversa-v3` e enviar uma
+consulta ao banco ou chamada paga adicional. Conferir `conversa-v5` e enviar uma
 nova mensagem com conta autorizada, pois replay devolve a resposta ja salva sem
 refazer busca/IA. Em requisicoes simultaneas, nao associar linhas apenas pela
 proximidade: cada linha de revisao traz suas proprias contagens. Logs nao incluem
@@ -402,3 +404,61 @@ Validado localmente com Firebase e transporte OpenRouter simulados, incluindo
 revisao reprovada com documentos, base vazia, fonte nao admitida, privacidade,
 erro de leitura, erro do provedor e replay. Nao foi inspecionado o conteudo do
 Firestore real nem feita chamada de IA real nesta verificacao.
+
+## Revisao que corrige e aceita sinteses (conversa-v5)
+
+A v4 ja introduziu a revisao editora: o OpenRouter retorna `aprovar`, `corrigir`
+ou `recusar`. Quando houver um ajuste possivel, o revisor devolve a resposta
+completa corrigida, conferida contra as fontes, na mesma chamada. Se faltar
+suporte documental, pode trocar a afirmacao por esclarecimento ou explicacao
+pertinente do que falta confirmar. Nao ha aprovacao forcada de uma recusa.
+
+A v5 elimina dois conflitos na validacao local desse fluxo: trocar `somente`
+por `apenas` nao bloqueia uma parafrase; resumir uma evidencia nao obriga repetir
+numeros de detalhes independentes da pergunta. O revisor continua responsavel
+por identificar se a omissao muda o sentido, remove uma condicao relevante ou
+atribui um numero ao procedimento errado. A validacao local ainda exige
+citacoes exatas, IDs conhecidos, formato correto e ausencia de numeros novos
+e dados pessoais detectaveis. Os validadores dos caminhos legados permanecem
+literais. Essas regras locais, isoladamente, nao autorizam publicar uma resposta.
+
+O resultado aprovado ou corrigido passa pela moderacao final antes de `GERADA`.
+Continuam quatro chamadas, sem nova tentativa: moderacao de entrada, proposta,
+revisao editora e moderacao final, dentro do mesmo prazo total. Uma recusa
+concreta, correcao invalida ou timeout ainda leva ao fallback.
+
+`motivoRevisao` identifica a decisao com codigos fechados: `SEM_PROBLEMA`,
+`CLAREZA`, `SEM_SUPORTE`, `CONTRADICAO`, `CONDICAO_RELEVANTE`, `ESCOPO_INCORRETO`,
+`PERGUNTA_AMBIGUA` ou `SEGURANCA`. Para erros de contrato, informa
+`FORMATO_INVALIDO` ou o motivo da validacao da correcao, como
+`PROPOSTA_CITACAO_DIVERGENTE`. Nao grava justificativa livre ou conteudo enviado.
+
+Exemplo sintetico de uma condicao recuperada pelo revisor:
+
+```text
+SYLVINHO_IA_FLUXO conversa-v5
+SYLVINHO_DIAGNOSTICO {"etapa":"REVISAO_CORRIGIDA","contextos":1,"evidencias":3,"uso":"DOCUMENTAL","tipo":"documental","motivoRevisao":"CONDICAO_RELEVANTE"}
+SYLVINHO_IA GERADA
+```
+
+Para verificar no Render, publicar o commit que contem a v5 usando os comandos
+de build/start acima, conferir o marcador e enviar uma nova mensagem com conta
+autorizada. Nao ha nova variavel nem necessidade de alterar o frontend. Um log
+`conversa-v3` identifica o fluxo anterior; sua recusa booleana nao permite saber
+retroativamente a causa semantica. As contagens positivas de contextos e
+evidencias em `PROPOSTA_RECEBIDA` indicam que a proposta recebeu documentos.
+
+Os testes simulam a pergunta de renovacao com um contexto e tres evidencias,
+aprovacao de parafrase, correcao de condicao, pedido de esclarecimento, recusa
+por contradicao, correcao invalida, moderacao final e timeout. Usam apenas
+fontes e transporte sinteticos; nao medem qualidade semantica do modelo real.
+Nenhum deploy ou chamada real ao OpenRouter faz parte desta verificacao local.
+
+Verificacao local em 28/10/2026 com Node 24.22.1: build do Render (que compila
+functions) e lint aprovados; 567 testes de IA/busca/fundamentacao aprovados,
+incluindo 29 cenarios novos de revisao e persistencia da resposta corrigida
+com replay sem duplicacao. Os quatro testes HTTP inicialmente impedidos pela
+restricao de conexao local passaram apos habilitar esse recurso. Na verificacao
+adicional de acesso/historico/visitante, 95 de 96 passaram. A falha preexistente
+e de uma expectativa de link na pagina inicial: o teste exige `./Chat/chat.html`,
+enquanto o HTML ja usa `Chat/chat.html`. Nenhuma dessas duas partes foi alterada.

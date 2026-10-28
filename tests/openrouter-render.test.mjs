@@ -20,9 +20,10 @@ const env = {
   SYLVINHO_IA_OPENROUTER_MODALIDADE_APROVADA: 'true',
 };
 
-test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', async t => {
+for (const decisao of ['aprovar', 'corrigir']) test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay: '+decisao, async t => {
   const realFetch = globalThis.fetch;
   const chamadas = [], logs = [];
+  const propostaTexto = decisao === 'corrigir' ? 'Segundo o trecho fornecido, '+texto : texto;
   t.mock.method(console, 'info', (...items) => logs.push(items));
   t.mock.method(globalThis, 'fetch', async (url, init) => {
     // Nenhuma conexao externa: interceptar todo o transporte do provedor.
@@ -32,8 +33,13 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
     assert.equal(init.headers.Authorization, 'Bearer chave-ficticia');
     const props = body.response_format.json_schema.schema.properties;
     const dados = JSON.parse(body.messages[1].content);
-    const valor = props.segura ? {segura: true} : props.decisao ? {decisao: 'aprovar', motivo: 'SEM_PROBLEMA', respostas: []} : props.sustentada ? {sustentada: true} :
-      {tipo: "documental", mensagem: "", afirmacoes: [{texto, referencias: [{id: dados.evidencias[0].id, citacao: dados.evidencias[0].texto}]}]};
+    const evidencias = props.decisao ? dados.pedido.evidencias : dados.evidencias;
+    const resposta = valorTexto => ({tipo: 'documental', mensagem: '', afirmacoes: [{texto: valorTexto,
+      referencias: [{id: evidencias[0].id, citacao: evidencias[0].texto}]}]});
+    const valor = props.segura ? {segura: true} : props.decisao ? {
+      decisao, motivo: decisao === 'corrigir' ? 'CLAREZA' : 'SEM_PROBLEMA',
+      respostas: decisao === 'corrigir' ? [resposta(texto)] : [],
+    } : resposta(propostaTexto);
     return new Response(JSON.stringify({choices: [{finish_reason: 'stop',
       message: {role: 'assistant', content: JSON.stringify(valor)}}]}));
   });
@@ -96,10 +102,17 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   const bodies = await Promise.all(rs.map(r => r.json()));
   assert.ok(bodies.every(b => b.resposta === bodies[0].resposta));
   assert.match(bodies[0].resposta, /^Resposta gerada por IA/);
+  assert.ok(bodies[0].resposta.includes(texto));
+  if (decisao === 'corrigir') {
+    assert.equal(bodies[0].resposta.includes(propostaTexto), false);
+    const moderada = JSON.parse(chamadas[3].messages[1].content).texto;
+    assert.equal(moderada, bodies[0].resposta);
+  }
   assert.equal(chamadas.length, 4); assert.equal(gravacoes, 1);
   assert.equal(conversa.titulo, 'Titulo preservado');
   assert.deepEqual(conversa.mensagens.slice(0, 2), legado);
   assert.equal(conversa.mensagens.length, 4);
+  assert.equal(conversa.mensagens[3].texto, bodies[0].resposta);
   assert.deepEqual(await (await post(payload)).json(), bodies[0]);
   assert.equal(chamadas.length, 4); assert.equal(gravacoes, 1);
   assert.equal((await post({...payload, pergunta: 'Outra pergunta'})).status, 409);
@@ -111,7 +124,7 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   for (const segredo of [uid, pergunta, texto, env.OPENROUTER_API_KEY, mid, cid]) {
     assert.equal(JSON.stringify(logs).includes(segredo), false);
   }
-  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v4').length, 1);
+  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v5').length, 1);
   const diagnosticos = logs.filter(l => l[0] === 'SYLVINHO_DIAGNOSTICO').map(l => JSON.parse(l[1]));
   assert.deepEqual(diagnosticos.filter(d => d.etapa === 'BUSCA_CONCLUIDA'), [
     {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1},
@@ -120,7 +133,8 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   assert.deepEqual(diagnosticos.filter(d => d.etapa === 'PROPOSTA_RECEBIDA'), [
     {etapa: 'PROPOSTA_RECEBIDA', contextos: 1, evidencias: 1, uso: 'DOCUMENTAL'},
   ]);
-  assert.ok(diagnosticos.some(d => d.etapa === 'REVISAO_APROVADA' && d.tipo === 'documental'));
+  const etapa = decisao === 'corrigir' ? 'REVISAO_CORRIGIDA' : 'REVISAO_APROVADA';
+  assert.ok(diagnosticos.some(d => d.etapa === etapa && d.tipo === 'documental'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA GERADA'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA FALLBACK UID_NAO_AUTORIZADO'));
 });

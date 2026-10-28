@@ -3,13 +3,13 @@ import {
   CRITERIOS_REVISAO_CONVERSA, SCHEMA_CONVERSA, validarConversa,
 } from "./conversa";
 import type {RespostaConversa} from "./conversa";
-import type {EvidenciaGeracao} from "./contrato";
+import type {EvidenciaGeracao, MotivoProposta} from "./contrato";
 
 const MOTIVOS = ["SEM_PROBLEMA", "CLAREZA", "SEM_SUPORTE", "CONTRADICAO",
   "CONDICAO_RELEVANTE", "ESCOPO_INCORRETO", "PERGUNTA_AMBIGUA",
   "SEGURANCA"] as const;
 export type MotivoRevisao = typeof MOTIVOS[number];
-export type MotivoDiagnosticoRevisao = MotivoRevisao |
+export type MotivoDiagnosticoRevisao = MotivoRevisao | MotivoProposta |
   "FORMATO_INVALIDO" | "CORRECAO_INVALIDA";
 export type FalhaRevisao = "REVISAO_REPROVADA" |
   "REVISAO_FORMATO_INVALIDO" | "REVISAO_CORRECAO_INVALIDA";
@@ -39,7 +39,8 @@ export const INSTRUCAO_REVISAO_EDITORA = CRITERIOS_REVISAO_CONVERSA +
   "Para uma correcao documental, mensagem vazia e uma a tres afirmacoes " +
   "com referencias E1/E2/E3 existentes. Copie integralmente a citacao " +
   "da evidencia referenciada, inclusive espacos e quebras de linha. " +
-  "Preserve na afirmacao os numeros, negacoes e condicoes dessa citacao. " +
+  "Nao introduza numeros ausentes da citacao. Preserve o significado " +
+  "das condicoes e negacoes relevantes, aceitando sinonimos e sinteses. " +
   "Nos outros tipos, afirmacoes vazio e mensagem util de ate mil " +
   "caracteres. Nao inclua raciocinio interno ou justificativa livre.";
 
@@ -87,7 +88,7 @@ export function avaliarRevisao(
     const validacao = validarConversa(r.decisao === "corrigir" ?
       r.respostas[0] : original, evidencias);
     if (!validacao.resposta) {
-      return falhar("REVISAO_CORRECAO_INVALIDA", "CORRECAO_INVALIDA");
+      return falhar("REVISAO_CORRECAO_INVALIDA", validacao.motivo);
     }
     return {resposta: validacao.resposta,
       decisao: r.decisao as "aprovar" | "corrigir", motivo: r.motivo};

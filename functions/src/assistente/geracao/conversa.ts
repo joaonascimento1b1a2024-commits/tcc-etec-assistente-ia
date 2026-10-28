@@ -11,7 +11,7 @@ export interface RespostaConversa extends PropostaGerada {
 }
 const TIPOS = ["documental", "esclarecimento", "sem_base", "fora_escopo",
   "conversa", "geral"];
-export const VERSAO_FLUXO_CONVERSA = "conversa-v4";
+export const VERSAO_FLUXO_CONVERSA = "conversa-v5";
 export const RESPOSTA_INDISPONIVEL =
   "Não consegui concluir uma resposta confiável agora. Tente novamente " +
   "informando o procedimento ou o que você precisa saber. Para confirmar " +
@@ -43,9 +43,11 @@ export const INSTRUCAO_CONVERSA =
   "No tipo documental, mensagem deve ser vazia e afirmacoes deve conter " +
   "de uma a tres respostas diretas com referencias E1/E2/E3. Copie citacoes " +
   "exatamente, inclusive espacos e quebras de linha escapadas em JSON. " +
-  "Preserve numeros, negacoes, condicoes e excecoes da evidencia; " +
-  "identifique o procedimento ao qual a regra pertence. Considere todos " +
-  "os contextos. Nao invente regras, contatos, prazos, artigos ou fontes. " +
+  "Nao introduza numeros ausentes da evidencia. Preserve o significado " +
+  "das negacoes, condicoes e excecoes aplicaveis ao que afirma; pode usar " +
+  "sinonimos e omitir detalhes independentes da pergunta. Identifique " +
+  "o procedimento ao qual a regra pertence. Considere todos os contextos. " +
+  "Nao invente regras, contatos, prazos, artigos ou fontes. " +
   "Nos demais tipos, afirmacoes deve ser vazio e mensagem deve conter " +
   "ate mil caracteres, com resposta direta e proximo passo quando util. " +
   "Em geral, pode usar conhecimento geral para explicar o assunto, " +
@@ -91,7 +93,7 @@ export const INSTRUCAO_REVISAO_CONVERSA = CRITERIOS_REVISAO_CONVERSA +
   "nesses criterios; caso contrario, sustentada=false.";
 
 /**
- * Separa respostas factuais de mensagens que nao estabelecem regras.
+ * Valida estrutura/fontes; nao autoriza publicar sem revisao semantica.
  * @param {unknown} entrada JSON nao confiavel do modelo.
  * @param {EvidenciaGeracao[]} evidencias Evidencias locais elegiveis.
  * @return {object} Resposta validada ou codigo sem conteudo pessoal.
@@ -109,7 +111,9 @@ export function validarConversa(
       !Array.isArray(p.afirmacoes)) return falhar("PROPOSTA_SCHEMA_INVALIDO");
     if (p.tipo === "documental") {
       if (p.mensagem !== "") return falhar("PROPOSTA_SCHEMA_INVALIDO");
-      const a = avaliarGeracao({afirmacoes: p.afirmacoes}, evidencias);
+      const a = avaliarGeracao(
+        {afirmacoes: p.afirmacoes}, evidencias, "sintese_revisada",
+      );
       if (!a.proposta) return falhar(a.motivo);
     } else if (p.afirmacoes.length || !p.mensagem.trim() ||
       p.mensagem.length > 1000 || /[<>]|https?:|www\./iu.test(p.mensagem) ||

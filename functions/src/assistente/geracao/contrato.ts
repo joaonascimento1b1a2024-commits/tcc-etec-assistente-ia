@@ -77,10 +77,12 @@ function campos(valor: unknown, nomes: string[]):
  * Rejeita alteracoes objetivas. Nao prova implicacao semantica de parafrases.
  * @param {unknown} entrada Proposta do provedor.
  * @param {EvidenciaGeracao[]} evidencias IDs/citacoes internos.
+ * @param {string} modo Sintese exige revisao semantica posterior obrigatoria.
  * @return {AvaliacaoGeracao} Copia valida ou codigo seguro de recusa.
  */
 export function avaliarGeracao(
   entrada: unknown, evidencias: readonly EvidenciaGeracao[],
+  modo: "literal" | "sintese_revisada" = "literal",
 ): AvaliacaoGeracao {
   const falhar = (motivo: MotivoProposta): AvaliacaoGeracao =>
     ({proposta: null, motivo});
@@ -89,9 +91,9 @@ export function avaliarGeracao(
     if (!campos(p, ["afirmacoes"]) || !Array.isArray(p.afirmacoes) ||
       p.afirmacoes.length > 3) return falhar("PROPOSTA_SCHEMA_INVALIDO");
     if (!p.afirmacoes.length) return falhar("PROPOSTA_VAZIA");
-    const numeros = (s: string): string => [...new Set(
+    const numeros = (s: string): string[] => [...new Set(
       s.match(/\d+(?:[.,:/-]\d+)*(?:\s*%)?/gu) || [],
-    )].sort().join("|");
+    )].sort();
     const marcadores = new RegExp(
       "\\b(nao|nunca|jamais|sem|salvo|exceto|somente|apenas|se|caso|quando|" +
       "desde|proibid[oa]s?|permitid[oa]s?|obrigatori[oa]s?|opcional|" +
@@ -117,13 +119,20 @@ export function avaliarGeracao(
         citacoes.push(e.texto);
       }
       const fonte = citacoes.join(" ");
-      if (numeros(a.texto) !== numeros(fonte)) {
-        return falhar("PROPOSTA_NUMEROS_DIVERGENTES");
-      }
+      const numerosTexto = numeros(a.texto);
+      const numerosFonte = numeros(fonte);
+      // Resumo pode omitir numeros alheios, nunca introduzir outro valor.
+      // A relevancia de uma omissao e conferida pelo revisor semantico.
+      const numerosValidos = modo === "sintese_revisada" ?
+        numerosTexto.every((n) => numerosFonte.includes(n)) :
+        numerosTexto.join("|") === numerosFonte.join("|");
+      if (!numerosValidos) return falhar("PROPOSTA_NUMEROS_DIVERGENTES");
       const sinais = (s: string): string => [...new Set(
         normalizarTexto(s).match(marcadores) || [],
       )].sort().join("|");
-      if (sinais(a.texto) !== sinais(fonte)) {
+      // Somente/apenas e outras parafrases nao sao comparacoes lexicais.
+      // No fluxo revisado, sentido/condicoes sao decisao do revisor.
+      if (modo !== "sintese_revisada" && sinais(a.texto) !== sinais(fonte)) {
         return falhar("PROPOSTA_CONDICOES_DIVERGENTES");
       }
     }

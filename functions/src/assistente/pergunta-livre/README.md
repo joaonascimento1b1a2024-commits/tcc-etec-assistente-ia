@@ -11,7 +11,8 @@ A interface independente de provedor e ProvedorGeracao, em geracao/contrato.ts:
 moderar, propor e verificar. Nao foi criada outra interface concorrente. O gateway
 existente preserva contratos, citacoes literais, revisao, limites, timeout e
 fallback documental nos provedores legados. No OpenRouter, o contrato tambem
-oferece conversar/verificarConversa: admite resposta com fonte, esclarecimento,
+oferece conversar/revisarConversa (verificarConversa para compatibilidade):
+admite resposta com fonte, esclarecimento,
 orientacao geral, saudacao ou explicacao da falta de base. Falhas apos os gates
 retornam uma mensagem local, sem listar trechos possivelmente desconexos.
 Visitantes e IA desativada continuam documentais. Essas verificacoes nao provam
@@ -70,7 +71,7 @@ Nenhuma chamada real, mudanca de flags ou publicacao foi executada.
 
 A referencia operacional do fluxo OpenRouter e o guia de ativacao do Render.
 As pendencias Gemini descritas acima pertencem ao caminho legado separado;
-nao substituem as condicoes OpenRouter. A revisao conversa-v2 nao precisa de
+nao substituem as condicoes OpenRouter. A revisao conversa-v5 nao precisa de
 nova variavel de ambiente, nao envia historico e nao libera IA para visitantes.
 
 
@@ -80,3 +81,12 @@ Render escreve esses eventos como `SYLVINHO_DIAGNOSTICO`. A consulta continua
 unica e nao registra dados; falha do logger e ignorada. Consultar a secao
 “Comprovar leitura e envio dos documentos” no guia OpenRouter para interpretar
 as etapas sem confundir busca bem-sucedida com resposta aprovada.
+
+Na conversa-v5, validacao local aceita parafrases e omissao de numeros alheios
+ao resumo, preservando citacoes literais e bloqueando numeros novos. A revisao
+semantica continua obrigatoria: verifica condicoes/negacoes relevantes e pode
+aprovar, corrigir a resposta ou recusar por problema concreto. Uma correcao
+passa pela mesma validacao local e pela moderacao final, sem quinta chamada.
+O diagnostico inclui `REVISAO_CORRIGIDA` e `motivoRevisao` com codigos seguros;
+nao registra o texto da proposta nem a justificativa do modelo. O modo literal
+dos provedores legados permanece inalterado.
