@@ -8,6 +8,8 @@ import type {
 import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
 import {validarConversa, RESPOSTA_INDISPONIVEL} from "./conversa";
 import {avaliarRevisao} from "./revisao";
+import {filtrarContextosIA} from "./contexto";
+import {gerarRespostaDocumental} from "../resposta-documental";
 import type {FalhaRevisao} from "./revisao";
 import {avaliarGeracao} from "./contrato";
 import type {
@@ -165,19 +167,12 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         }
         return fallback("DADOS_BLOQUEADOS_PERGUNTA");
       }
-      if (contextoBloqueado) {
-        if (!conversacional) return fallback("DADOS_BLOQUEADOS_CONTEXTO");
-        // Nao recorta trechos privados nem omite condicoes seletivamente.
-        // Todo o contexto fica local; a IA recebe apenas a pergunta segura.
-        alternativa = "Nao consegui confirmar essa informacao nos documentos " +
-          "disponiveis. Informe o procedimento sobre o qual voce precisa " +
-          "de ajuda, sem dados pessoais, ou consulte a secretaria academica.";
-        evento("SEGURANCA", "DADOS_BLOQUEADOS_CONTEXTO");
+      if (contextoBloqueado && !conversacional) {
+        return fallback("DADOS_BLOQUEADOS_CONTEXTO");
       }
-      const temEvidencias = baseline.status === "trechos_encontrados" &&
-        baseline.citacoes.length > 0 && baseline.citacoes.every((c) =>
-        c.fonte.natureza === "documental");
-      if (!temEvidencias && !conversacional) {
+      if (!conversacional && (baseline.status !== "trechos_encontrados" ||
+        !baseline.citacoes.length || baseline.citacoes.some((c) =>
+        c.fonte.natureza !== "documental"))) {
         return fallback("EVIDENCIAS_INSUFICIENTES");
       }
       const modelo = (provedor === "openrouter" ? env.OPENROUTER_MODEL :
@@ -193,21 +188,36 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         !Number.isSafeInteger(limite) || limite < 1 || limite > 20) {
         return fallback("CONFIGURACAO_INVALIDA");
       }
-      const cs = copiarDadosEstritos(chunks, 24000) as TrechoDocumental[];
+      let cs = copiarDadosEstritos(chunks, 24000) as TrechoDocumental[];
       if (cs.some((c) => c.ativo !== true ||
         !FONTES_ORIGINAIS.includes(c.documentoId || "")) ||
         new Set(cs.map((c) => c.id)).size !== cs.length) {
         return fallback("FONTES_INVALIDAS");
       }
-      const bloquearContexto = contextoBloqueado ||
-        (conversacional && cs.some((c) =>
-          textoSuspeito([c.titulo, c.secao].join("\n"))));
-      if (bloquearContexto && !contextoBloqueado) {
-        alternativa = "Nao consegui confirmar essa informacao nos documentos " +
-          "disponiveis. Consulte a secretaria academica para confirmar.";
-        evento("SEGURANCA", "DADOS_BLOQUEADOS_CONTEXTO");
+      let fontesParciais = false;
+      if (conversacional) {
+        const filtro = filtrarContextosIA(cs);
+        emitirDiagnostico(opcoes.registrarDiagnostico, {
+          etapa: "CONTEXTO_FILTRADO", avaliados: cs.length,
+          permitidos: filtro.permitidos.length,
+          descartados: filtro.descartados, motivos: filtro.motivos,
+        });
+        cs = filtro.permitidos;
+        fontesParciais = filtro.descartados > 0;
+        // Recria citacoes/fontes exclusivamente dos documentos permitidos.
+        baseline = gerarRespostaDocumental(pergunta as string, cs);
+        if (fontesParciais) {
+          evento("SEGURANCA", "DADOS_BLOQUEADOS_CONTEXTO");
+          alternativa = "Nao consegui confirmar essa informacao nos " +
+            "documentos disponiveis. Consulte a secretaria academica " +
+            "para confirmar.";
+        }
       }
-      const usarEvidencias = temEvidencias && !bloquearContexto;
+      const bloquearContexto = fontesParciais && cs.length === 0;
+      const temEvidencias = baseline.status === "trechos_encontrados" &&
+        baseline.citacoes.length > 0 && baseline.citacoes.every((c) =>
+        c.fonte.natureza === "documental");
+      const usarEvidencias = temEvidencias;
       const citacoes = usarEvidencias ? baseline.citacoes : [];
       const evidencias = citacoes.map((c, i) => {
         const contexto = cs.findIndex((d) => d.id === c.fonte.chunkId &&
@@ -217,14 +227,16 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         }
         return Object.freeze({id: `E${i + 1}`, texto: c.texto, contexto});
       });
+      const situacao: PedidoGeracao["situacao"] = bloquearContexto ?
+        "contexto_indisponivel" : fontesParciais ? "fontes_parciais" :
+          !usarEvidencias ? "sem_evidencias" : undefined;
       const pedido: PedidoGeracao = Object.freeze({
         pergunta: pergunta as string,
         evidencias: Object.freeze(evidencias),
         contextos: Object.freeze(usarEvidencias ? cs.map((c) =>
           conversacional ? [c.titulo, c.secao, c.conteudo].filter(Boolean)
             .join("\n") : c.conteudo || "") : []),
-        ...(!usarEvidencias ? {situacao: bloquearContexto ?
-          "contexto_indisponivel" as const : "sem_evidencias" as const} : {}),
+        ...(situacao ? {situacao} : {}),
       });
       if (conversacional) alternativa ??= RESPOSTA_INDISPONIVEL;
       if (agora() - inicioJanela >= 60000) {
@@ -293,7 +305,9 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
             resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
               "\n\n" + baseline!.resposta : resposta.mensagem;
           const aviso = resposta.tipo === "documental" ?
-            "Resposta gerada por IA; confira as fontes oficiais." :
+            fontesParciais ? "Resposta gerada por IA; parte das fontes " +
+              "não pôde ser utilizada. Confira as fontes oficiais." :
+              "Resposta gerada por IA; confira as fontes oficiais." :
             resposta.tipo === "geral" ?
               "Orientação geral gerada por IA; não é uma regra da escola." :
               "Resposta gerada por IA.";

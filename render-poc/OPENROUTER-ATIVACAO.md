@@ -134,7 +134,7 @@ allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
    e aplicar a configuracao pelo processo de deploy do operador. Fazer uma
    pergunta de teste com evidencia valida e sem dados pessoais. Usar novo
    `messageId`; repetir um ID ja respondido devolve historico sem nova IA.
-6. Confirmar `SYLVINHO_IA_FLUXO conversa-v5` no log ao inicializar as
+6. Confirmar `SYLVINHO_IA_FLUXO conversa-v6` no log ao inicializar as
    dependencias documentais (primeira requisicao que as utiliza). Esse marcador
    identifica esta revisao do fluxo; nao comprova configuracao, saldo ou IA.
    Conferir tambem o commit do deploy. Usar nova mensagem, pois historico salvo
@@ -368,6 +368,7 @@ Esta revisao acrescenta `SYLVINHO_DIAGNOSTICO` com apenas codigos e contagens:
 | --- | --- |
 | `BUSCA_CONCLUIDA`, `lidos`, `selecionados` | Quantos chunks a consulta retornou e quantos passaram na selecao. Nao e o total de documentos do banco. |
 | `BUSCA_FALHOU` | A consulta ou preparacao falhou; nao apresentar como base vazia. |
+| `CONTEXTO_FILTRADO`, `avaliados`, `permitidos`, `descartados`, `motivos` | Na v6, contagens de chunks antes/depois da verificacao local e categorias fechadas de bloqueio. Uma fonte bloqueada retira todos os seus chunks selecionados. Nao prova envio ao provedor. |
 | `CONTEXTO_PREPARADO`, `contextos`, `evidencias` | Quantidades no pedido preparado, antes das chamadas. Nao prova envio bem-sucedido. |
 | `PROPOSTA_RECEBIDA` | A etapa de proposta retornou; as contagens correspondem ao pedido enviado ao provedor. Nao comprova a correção ou compreensao semantica pelo modelo. |
 | `REVISAO_APROVADA`, `REVISAO_CORRIGIDA` ou `REVISAO_REPROVADA`, `tipo` | Resultado da revisao e categoria da resposta validada (ou da proposta, em caso de recusa). A mesma linha informa as quantidades, uso de documentos e `motivoRevisao` no contrato atual. |
@@ -393,7 +394,7 @@ revisao rejeitar, o problema esta depois da recuperacao; isso nao autoriza
 concluir que falta conexao com o banco nem que a resposta deve ser liberada.
 
 Aplicar pelo processo de publicacao do backend; nao ha nova variavel, endpoint,
-consulta ao banco ou chamada paga adicional. Conferir `conversa-v5` e enviar uma
+consulta ao banco ou chamada paga adicional. Conferir `conversa-v6` e enviar uma
 nova mensagem com conta autorizada, pois replay devolve a resposta ja salva sem
 refazer busca/IA. Em requisicoes simultaneas, nao associar linhas apenas pela
 proximidade: cada linha de revisao traz suas proprias contagens. Logs nao incluem
@@ -441,7 +442,7 @@ SYLVINHO_DIAGNOSTICO {"etapa":"REVISAO_CORRIGIDA","contextos":1,"evidencias":3,"
 SYLVINHO_IA GERADA
 ```
 
-Para verificar no Render, publicar o commit que contem a v5 usando os comandos
+Para verificar no Render, publicar o commit que contem a v6 usando os comandos
 de build/start acima, conferir o marcador e enviar uma nova mensagem com conta
 autorizada. Nao ha nova variavel nem necessidade de alterar o frontend. Um log
 `conversa-v3` identifica o fluxo anterior; sua recusa booleana nao permite saber
@@ -462,3 +463,71 @@ restricao de conexao local passaram apos habilitar esse recurso. Na verificacao
 adicional de acesso/historico/visitante, 95 de 96 passaram. A falha preexistente
 e de uma expectativa de link na pagina inicial: o teste exige `./Chat/chat.html`,
 enquanto o HTML ja usa `Chat/chat.html`. Nenhuma dessas duas partes foi alterada.
+
+## Contextos bloqueados e aproveitamento das fontes (conversa-v6)
+
+`BUSCA_CONCLUIDA` com selecionados positivos, seguido de contextos/evidencias
+zero e `uso=CONTEXTO_BLOQUEADO`, significa que a consulta encontrou trechos mas
+o filtro local os excluiu do envio. `REVISAO_APROVADA` com `tipo=sem_base` e
+`GERADA` nesse caso confirma uma resposta gerada sem fontes, nao leitura dos
+documentos pelo modelo. Nao e falha de credito ou configuracao OpenRouter.
+O antigo codigo generico nao revela qual texto acionou o filtro.
+
+Antes da v6, um trecho suspeito zerava todos os contextos. Agora a verificacao
+atua por `documentoId`: se um chunk ou metadado tem risco detectado, todos os
+chunks selecionados dessa fonte ficam locais, preservando as demais fontes.
+Nao mascara dados nem recorta frases de um documento; evita liberar uma regra
+e eliminar uma condicao do mesmo documento. Pergunta, estrutura, allowlist de
+fontes e gates sao verificados antes. Citacoes e fontes da resposta sao refeitas
+apenas com o material permitido, inclusive para a moderacao final.
+
+O modo documental reconhece mencoes genericas a numero da matricula e rotulos
+inteiros como `Matrícula: documentos necessários` ou `Número da matrícula: ____`.
+Essas excecoes nao alteram o texto original enviado/citado. Identificadores
+preenchidos, nomes rotulados, contatos, credenciais e instrucoes suspeitas
+continuam bloqueados. A verificacao inclui os campos concatenados para detectar
+rotulos/valores separados entre titulo e conteudo. O filtro da pergunta e os
+fluxos legados mantem o comportamento anterior. Heuristicas nao garantem que
+todo dado pessoal sera reconhecido; documentos precisam de curadoria aprovada.
+
+Exemplo sintetico (tres chunks de fontes distintas, uma bloqueada):
+
+```text
+SYLVINHO_IA_FLUXO conversa-v6
+SYLVINHO_DIAGNOSTICO {"etapa":"CONTEXTO_FILTRADO","avaliados":3,"permitidos":2,"descartados":1,"motivos":["NOME_PREENCHIDO"]}
+SYLVINHO_DIAGNOSTICO {"etapa":"PROPOSTA_RECEBIDA","contextos":2,"evidencias":1,"uso":"DOCUMENTAL"}
+```
+
+`motivos` contem apenas `INSTRUCAO_SUSPEITA`, `CREDENCIAL`, `DECLARACAO_PESSOAL`,
+`NOME_PREENCHIDO`, `IDENTIFICADOR_PESSOAL` ou `CONTATO_OU_IDENTIFICADOR`.
+Sao sinais da heuristica, nao confirmacao de que se trata de dado pessoal real.
+Nao ha nomes, valores detectados, IDs, perguntas ou documentos nos logs.
+
+Se parte das fontes foi descartada, proposta e revisao recebem
+`situacao=fontes_parciais`: devem limitar afirmacoes ao material recebido,
+sem apresentar uma lista de exigencias como completa. A resposta documental
+inclui aviso local de que parte das fontes nao pode ser utilizada. Fontes
+restantes podem nao bastar; nesse caso, esclarecer ou explicar a limitacao.
+Se todas forem bloqueadas, continua `contexto_indisponivel` e nenhum trecho e
+enviado. Uma aprovacao do revisor nao recupera fontes que foram excluidas.
+
+Apos publicar o backend, conferir `conversa-v6`, enviar nova mensagem e ler
+`CONTEXTO_FILTRADO`. `permitidos > 0` com `PROPOSTA_RECEBIDA` contendo contextos
+e evidencias positivos comprova que a proposta recebeu os trechos permitidos.
+Se `permitidos=0`, a categoria permite ao operador revisar a base no ambiente
+administrativo autorizado; nao copiar documentos ou dados pessoais para logs
+ou chat. Contatos publicos tambem podem acionar a heuristica: nao ha liberacao
+automatica por serem publicos. Sem nova variavel, alteracao no frontend, nova
+consulta ao Firestore ou chamada adicional de IA. Revisao, quatro etapas,
+timeout total, ZDR, autenticacao, allowlist, historico e replay continuam ativos.
+
+Esta alteracao e local, testada com fontes e transportes sinteticos; nao
+inspeciona os tres trechos reais mostrados no log nem garante que todos serao
+liberados. Nao foi realizado deploy nem chamada real ao OpenRouter.
+
+Verificacao v6: build do Render e lint aprovados em Node 24.22.1; 679 testes
+de IA, recuperacao, fundamentacao, autenticacao e historico passaram. Apos o
+ajuste final no aviso de fontes parciais, 70 testes de contexto, diagnostico,
+revisao e HTTP/persistencia foram repetidos e passaram. Incluem bloqueio total,
+fontes restantes, rotulos vazios, identificadores preenchidos, metadados,
+isolamento por documento, revisor, ZDR, replay e ausencia de dados nos logs.

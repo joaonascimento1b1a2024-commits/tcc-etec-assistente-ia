@@ -4,6 +4,7 @@ import {criarFluxoPerguntaLivre} from '../functions/lib/assistente/pergunta-livr
 import {criarClienteOpenRouter} from '../functions/lib/assistente/geracao/openrouter.js';
 import {RESPOSTA_INDISPONIVEL} from '../functions/lib/assistente/geracao/conversa.js';
 import {criarChunk, pergunta, texto} from './fixtures/fundamentacao-sintetica.mjs';
+import {FONTES_ORIGINAIS} from '../functions/lib/rag/recuperacao.js';
 
 // Sem rede, dados de alunos ou configuracao real do processo.
 const uid = 'usuario-sintetico';
@@ -59,7 +60,7 @@ test('revisao reprovada mostra que evidencias foram enviadas sem publicar propos
   const f = preparar({rejeitar: true});
   assert.equal(await f.responder(), RESPOSTA_INDISPONIVEL);
   assert.deepEqual(f.contagens(), {leituras: 1, desserializacoes: 1});
-  assert.deepEqual(etapas(f), ['BUSCA_CONCLUIDA', 'CONTEXTO_PREPARADO', 'PROPOSTA_RECEBIDA', 'REVISAO_REPROVADA']);
+  assert.deepEqual(etapas(f), ['BUSCA_CONCLUIDA', 'CONTEXTO_FILTRADO', 'CONTEXTO_PREPARADO', 'PROPOSTA_RECEBIDA', 'REVISAO_REPROVADA']);
   assert.deepEqual(f.diagnosticos[0], {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1});
   assert.deepEqual(f.diagnosticos.at(-1), {etapa: 'REVISAO_REPROVADA', contextos: 1,
     evidencias: 1, uso: 'DOCUMENTAL', tipo: 'documental', motivoRevisao: 'SEM_SUPORTE'});
@@ -97,6 +98,21 @@ test('contexto privado foi lido mas nao foi enviado ao OpenRouter', async () => 
   assert.deepEqual(f.chamadas[1].contextos, []);
   assert.doesNotMatch(JSON.stringify([f.diagnosticos, f.chamadas]), /Pessoa Sintética/);
 });
+test('busca com tres fontes preserva duas apos bloquear uma e refaz citacoes', async () => {
+  const docs = [criarChunk(texto+' Nome completo: Pessoa Sintética.'),
+    criarChunk(texto, {id: 'fonte-sintetica-2', documentoId: FONTES_ORIGINAIS[1]}),
+    criarChunk(texto, {id: 'fonte-sintetica-3', documentoId: FONTES_ORIGINAIS[2]})];
+  const f = preparar({docs});
+  const r = await f.responder();
+  assert.match(r, /^Resposta gerada por IA/);
+  assert.deepEqual(f.contagens(), {leituras: 1, desserializacoes: 3});
+  assert.deepEqual(f.diagnosticos[0], {etapa: 'BUSCA_CONCLUIDA', lidos: 3, selecionados: 3});
+  assert.equal(recebida(f).contextos, 2);
+  assert.ok(recebida(f).evidencias > 0);
+  assert.equal(f.chamadas.length, 4);
+  assert.equal(f.chamadas[2].pedido.situacao, 'fontes_parciais');
+  assert.doesNotMatch(JSON.stringify([r, f.chamadas, f.diagnosticos]), /Pessoa Sintética/);
+});
 test('falha Firestore nao e diagnosticada como base vazia e nao chama modelo', async () => {
   const f = preparar({falharBusca: true});
   await assert.rejects(f.responder(), /BUSCA_DOCUMENTAL_INDISPONIVEL/);
@@ -106,7 +122,7 @@ test('falha Firestore nao e diagnosticada como base vazia e nao chama modelo', a
 test('falha de transporte nao comprova proposta recebida nem revisao', async () => {
   const f = preparar({falharTransporte: true});
   assert.equal(await f.responder(), RESPOSTA_INDISPONIVEL);
-  assert.deepEqual(etapas(f), ['BUSCA_CONCLUIDA', 'CONTEXTO_PREPARADO']);
+  assert.deepEqual(etapas(f), ['BUSCA_CONCLUIDA', 'CONTEXTO_FILTRADO', 'CONTEXTO_PREPARADO']);
   assert.equal(f.chamadas.length, 1);
 });
 test('logger falhando nao repete busca nem muda geracao', async () => {

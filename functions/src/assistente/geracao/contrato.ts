@@ -1,4 +1,6 @@
-import {copiarDadosEstritos, textoSuspeito} from "../fundamentacao/contrato";
+import {
+  copiarDadosEstritos, textoSuspeito, motivoTextoBloqueado,
+} from "../fundamentacao/contrato";
 import type {RespostaConversa} from "./conversa";
 import {normalizarTexto} from "../../rag/recuperacao";
 
@@ -11,7 +13,8 @@ export interface PedidoGeracao {
   readonly pergunta: string;
   readonly contextos: readonly string[];
   readonly evidencias: readonly EvidenciaGeracao[];
-  readonly situacao?: "sem_evidencias" | "contexto_indisponivel";
+  readonly situacao?: "sem_evidencias" | "contexto_indisponivel" |
+    "fontes_parciais";
 }
 export interface AfirmacaoGerada {
   texto: string;
@@ -102,7 +105,9 @@ export function avaliarGeracao(
       if (!campos(a, ["texto", "referencias"]) ||
         typeof a.texto !== "string" || !a.texto.trim() ||
         a.texto.length > 420 || /[<>]/u.test(a.texto) ||
-        textoSuspeito(a.texto) || !Array.isArray(a.referencias) ||
+        (modo === "sintese_revisada" ?
+          motivoTextoBloqueado(a.texto, "documento") :
+          textoSuspeito(a.texto)) || !Array.isArray(a.referencias) ||
         !a.referencias.length || a.referencias.length > 3) {
         return falhar("PROPOSTA_TEXTO_INVALIDO");
       }

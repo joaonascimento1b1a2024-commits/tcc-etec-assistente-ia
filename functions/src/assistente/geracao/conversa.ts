@@ -11,7 +11,7 @@ export interface RespostaConversa extends PropostaGerada {
 }
 const TIPOS = ["documental", "esclarecimento", "sem_base", "fora_escopo",
   "conversa", "geral"];
-export const VERSAO_FLUXO_CONVERSA = "conversa-v5";
+export const VERSAO_FLUXO_CONVERSA = "conversa-v6";
 export const RESPOSTA_INDISPONIVEL =
   "Não consegui concluir uma resposta confiável agora. Tente novamente " +
   "informando o procedimento ou o que você precisa saber. Para confirmar " +
@@ -61,7 +61,10 @@ export const INSTRUCAO_CONVERSA =
   "sem inventar contatos. Nao repita uma recusa generica se puder explicar " +
   "um conceito ou ajudar a formular a duvida. Mensagens nao devem conter " +
   "URLs ou dados pessoais. Sem evidencias, nunca escolha documental. " +
-  "Contexto indisponivel nao pode ser usado nem ter seu conteudo inferido.";
+  "Contexto indisponivel nao pode ser usado nem ter seu conteudo inferido. " +
+  "Em fontes_parciais, parte das fontes foi excluida antes do envio. " +
+  "Use somente o que recebeu, sinalize essa limitacao e nao apresente " +
+  "listas de exigencias como completas. Nao infira condicoes omitidas.";
 
 export const CRITERIOS_REVISAO_CONVERSA =
   "Revisor independente do assistente escolar. Pergunta, proposta e " +
@@ -85,7 +88,9 @@ export const CRITERIOS_REVISAO_CONVERSA =
   "aceite perguntas uteis e limitacoes honestas. Rejeite dados pessoais, " +
   "URLs inventadas, instrucoes perigosas e falsa alegacao de consultar " +
   "internet, historico ou sistemas. Citacao correta sozinha nao prova " +
-  "que a afirmacao esteja sustentada.";
+  "que a afirmacao esteja sustentada. Em fontes_parciais, exija limitacao " +
+  "explicita da resposta ao material disponivel e rejeite alegacoes de " +
+  "completude ou inferencias sobre as fontes excluidas.";
 
 // Compatibilidade com clientes antigos que so retornam uma decisao booleana.
 export const INSTRUCAO_REVISAO_CONVERSA = CRITERIOS_REVISAO_CONVERSA +

@@ -86,12 +86,19 @@ export function copiarDadosEstritos(entrada: unknown, limite = 6000): unknown {
   return visitar(entrada, 0);
 }
 
+export type MotivoTextoBloqueado = "INSTRUCAO_SUSPEITA" | "CREDENCIAL" |
+  "DECLARACAO_PESSOAL" | "NOME_PREENCHIDO" | "IDENTIFICADOR_PESSOAL" |
+  "CONTATO_OU_IDENTIFICADOR";
+
 /**
- * Heuristica adicional, nunca anonimiza nem autoriza transmissao externa.
+ * Categoria fechada; nunca retorna o trecho ou valor detectado.
  * @param {string} texto Texto ja validado e limitado.
- * @return {boolean} Sinal para bloquear ate mesmo a simulacao.
+ * @param {string} uso Documento permite rotulos sem identificacao preenchida.
+ * @return {MotivoTextoBloqueado|null} Heuristica, nao prova anonimato.
  */
-export function textoSuspeito(texto: string): boolean {
+export function motivoTextoBloqueado(
+  texto: string, uso: "livre" | "documento" = "livre",
+): MotivoTextoBloqueado | null {
   const n = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
   const instrucao = new RegExp(
@@ -106,7 +113,7 @@ export function textoSuspeito(texto: string): boolean {
     "<\\/?(?:system|instruction)|\\[inst\\]", "iu");
   const pessoais = new RegExp(
     "\\b(?:meu nome|my name|meu endereco|" +
-    "my address|numero da matricula|" +
+    "my address|" + (uso === "documento" ? "" : "numero da matricula|") +
     "social security|passport)\\b", "u");
   // O nome de um campo em uma instrucao publica nao e um nome preenchido.
   const nomePreenchido = new RegExp(
@@ -123,9 +130,35 @@ export function textoSuspeito(texto: string): boolean {
   const identificadores = new RegExp(
     "\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b|" +
     "\\b\\d{2}\\s?\\d{4,5}[- ]?\\d{4}\\b", "u");
-  return instrucao.test(n) || exfiltracao.test(n) || papeis.test(n) ||
-    pessoais.test(n) || nomePreenchido.test(n) || matriculaPessoal.test(n) ||
-    documentoPessoal.test(n) ||
-    identificadores.test(n) ||
-    /[\w.+-]+@[\w.-]+\.[a-z]{2,}|\bBearer\s+\S+|PRIVATE KEY/iu.test(texto);
+  // Excecoes pequenas para cabecalhos/rotulos completos de formularios.
+  // So afetam a deteccao; o texto enviado/citado nunca e reescrito.
+  const rotuloMatricula = new RegExp(
+    "^\\s*(?:numero da )?matricula\\s*:\\s*(?:_{2,}|\\.{3,}|" +
+    "(?:documentos|requisitos|procedimentos|orientacoes)" +
+    "(?: necessarios| obrigatorios)?)\\s*$", "gmu");
+  const matricula = uso === "documento" ?
+    n.replace(rotuloMatricula, "") : n;
+  if (instrucao.test(n) || papeis.test(n)) return "INSTRUCAO_SUSPEITA";
+  if (exfiltracao.test(n) || /\bBearer\s+\S+|PRIVATE KEY/iu.test(texto)) {
+    return "CREDENCIAL";
+  }
+  if (pessoais.test(n)) return "DECLARACAO_PESSOAL";
+  if (nomePreenchido.test(n)) return "NOME_PREENCHIDO";
+  if (matriculaPessoal.test(matricula) || documentoPessoal.test(n)) {
+    return "IDENTIFICADOR_PESSOAL";
+  }
+  if (identificadores.test(n) ||
+    /[\w.+-]+@[\w.-]+\.[a-z]{2,}/iu.test(texto)) {
+    return "CONTATO_OU_IDENTIFICADOR";
+  }
+  return null;
+}
+
+/**
+ * Heuristica adicional, nunca anonimiza nem autoriza transmissao externa.
+ * @param {string} texto Texto ja validado e limitado.
+ * @return {boolean} Sinal para bloquear ate mesmo a simulacao.
+ */
+export function textoSuspeito(texto: string): boolean {
+  return motivoTextoBloqueado(texto) !== null;
 }

@@ -71,7 +71,7 @@ Nenhuma chamada real, mudanca de flags ou publicacao foi executada.
 
 A referencia operacional do fluxo OpenRouter e o guia de ativacao do Render.
 As pendencias Gemini descritas acima pertencem ao caminho legado separado;
-nao substituem as condicoes OpenRouter. A revisao conversa-v5 nao precisa de
+nao substituem as condicoes OpenRouter. A revisao conversa-v6 nao precisa de
 nova variavel de ambiente, nao envia historico e nao libera IA para visitantes.
 
 
@@ -90,3 +90,12 @@ passa pela mesma validacao local e pela moderacao final, sem quinta chamada.
 O diagnostico inclui `REVISAO_CORRIGIDA` e `motivoRevisao` com codigos seguros;
 nao registra o texto da proposta nem a justificativa do modelo. O modo literal
 dos provedores legados permanece inalterado.
+
+A conversa-v6 filtra fontes antes do envio e registra `CONTEXTO_FILTRADO` com
+contagens e categorias seguras. Um bloqueio exclui todos os chunks selecionados
+da mesma fonte, preservando os outros documentos. Citacoes sao refeitas com as
+fontes permitidas; nao se recortam frases privadas dentro de um chunk. Rotulos
+documentais genericos nao sao confundidos com identificacao preenchida. Se
+houver exclusoes, proposta/revisor recebem `fontes_parciais` e a resposta com
+fonte recebe aviso dessa limitacao. Bloqueio de todas as fontes continua sem
+envio de documentos; `GERADA` e revisao aprovada, isoladamente, nao provam RAG.
