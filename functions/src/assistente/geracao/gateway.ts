@@ -7,6 +7,8 @@ import type {
 } from "../resposta-documental";
 import {FONTES_ORIGINAIS} from "../../rag/recuperacao";
 import {validarConversa, RESPOSTA_INDISPONIVEL} from "./conversa";
+import {avaliarRevisao} from "./revisao";
+import type {FalhaRevisao} from "./revisao";
 import {avaliarGeracao} from "./contrato";
 import type {
   PedidoGeracao, ProvedorGeracao, MotivoProposta,
@@ -20,7 +22,7 @@ import type {CodigoOpenRouter} from "./openrouter";
 
 export type AmbienteIA = Readonly<Record<string, string | undefined>>;
 export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
-export type MotivoFallback = CodigoOpenRouter | MotivoProposta |
+export type MotivoFallback = CodigoOpenRouter | MotivoProposta | FalhaRevisao |
   "UID_NAO_AUTORIZADO" |
   "IA_DESATIVADA" | "PROVEDOR_INVALIDO" | "APROVACAO_PENDENTE" |
   "MODALIDADE_PENDENTE" | "RETENCAO_BLOQUEADA" | "DADOS_BLOQUEADOS" |
@@ -255,21 +257,38 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         if (!entradaSegura) {
           evento("SEGURANCA"); return fallback("ENTRADA_INSEGURA");
         }
-        if (conversacional && cliente.conversar && cliente.verificarConversa) {
+        if (conversacional && cliente.conversar &&
+          (cliente.revisarConversa || cliente.verificarConversa)) {
           const recebida = await cliente.conversar(pedido, controller.signal);
           controller.signal.throwIfAborted();
           emitirDiagnostico(registrar, {etapa: "PROPOSTA_RECEBIDA", ...resumo});
           const validacao = validarConversa(recebida, evidencias);
           if (!validacao.resposta) return fallback(validacao.motivo);
-          const resposta = validacao.resposta;
-          const aprovada = await cliente.verificarConversa(
-            pedido, resposta, controller.signal,
-          );
-          controller.signal.throwIfAborted();
-          emitirDiagnostico(registrar, {etapa: aprovada ?
-            "REVISAO_APROVADA" : "REVISAO_REPROVADA",
-          ...resumo, tipo: resposta.tipo});
-          if (!aprovada) return fallback("REVISAO_REPROVADA");
+          let resposta = validacao.resposta;
+          if (cliente.revisarConversa) {
+            const revisao = avaliarRevisao(await cliente.revisarConversa(
+              pedido, resposta, controller.signal,
+            ), resposta, evidencias);
+            controller.signal.throwIfAborted();
+            emitirDiagnostico(registrar, {
+              etapa: !revisao.resposta ? "REVISAO_REPROVADA" :
+                revisao.decisao === "corrigir" ? "REVISAO_CORRIGIDA" :
+                  "REVISAO_APROVADA",
+              ...resumo, tipo: revisao.resposta?.tipo ?? resposta.tipo,
+              motivoRevisao: revisao.motivo,
+            });
+            if (!revisao.resposta) return fallback(revisao.codigo);
+            resposta = revisao.resposta;
+          } else {
+            const aprovada = await cliente.verificarConversa!(
+              pedido, resposta, controller.signal,
+            );
+            controller.signal.throwIfAborted();
+            emitirDiagnostico(registrar, {etapa: aprovada ?
+              "REVISAO_APROVADA" : "REVISAO_REPROVADA",
+            ...resumo, tipo: resposta.tipo});
+            if (!aprovada) return fallback("REVISAO_REPROVADA");
+          }
           const corpo = resposta.tipo === "documental" ?
             resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
               "\n\n" + baseline!.resposta : resposta.mensagem;

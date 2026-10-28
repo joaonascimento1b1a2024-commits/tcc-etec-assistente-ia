@@ -80,7 +80,7 @@ function fluxoSimulado(docs, respostaProposta) {
       const b = JSON.parse(init.body), dados = JSON.parse(b.messages[1].content);
       chamadas.push(dados);
       const schema = b.response_format.json_schema.schema.properties;
-      const valor = schema.segura ? {segura: true} : schema.sustentada ? {sustentada: true} :
+      const valor = schema.segura ? {segura: true} : schema.decisao ? {decisao: 'aprovar', motivo: 'SEM_PROBLEMA', respostas: []} : schema.sustentada ? {sustentada: true} :
         respostaProposta ? respostaProposta(dados) : !dados.evidencias.length ?
           {tipo: 'sem_base', mensagem: 'Não encontrei informação para confirmar essa exigência. Consulte a secretaria acadêmica.', afirmacoes: []} :
           {tipo: 'documental', mensagem: '', afirmacoes: [{texto: dados.evidencias[0].texto,

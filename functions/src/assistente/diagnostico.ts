@@ -1,9 +1,12 @@
+import type {MotivoDiagnosticoRevisao} from "./geracao/revisao";
+
 /** Somente contagens e codigos: nunca identidade, conteudo ou erro bruto. */
 export type DiagnosticoAssistente = {
   etapa: "BUSCA_CONCLUIDA"; lidos: number; selecionados: number;
 } | {etapa: "BUSCA_FALHOU"} | {
   etapa: "CONTEXTO_PREPARADO" | "PROPOSTA_RECEBIDA" |
-    "REVISAO_APROVADA" | "REVISAO_REPROVADA";
+    "REVISAO_APROVADA" | "REVISAO_CORRIGIDA" | "REVISAO_REPROVADA";
+  motivoRevisao?: MotivoDiagnosticoRevisao;
   contextos: number;
   evidencias: number;
   uso: "DOCUMENTAL" | "SEM_EVIDENCIAS" | "CONTEXTO_BLOQUEADO";

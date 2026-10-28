@@ -40,7 +40,8 @@ function preparar({docs = [criarChunk()], rejeitar = false, falharBusca = false,
       chamadas.push(dados);
       if (falharTransporte) throw Error('Detalhe remoto privado');
       const schema = body.response_format.json_schema.schema.properties;
-      const resposta = schema.segura ? {segura: true} : schema.sustentada ? {sustentada: !rejeitar} :
+      const resposta = schema.segura ? {segura: true} : schema.decisao ? {decisao: !rejeitar ? 'aprovar' : 'recusar',
+            motivo: !rejeitar ? 'SEM_PROBLEMA' : 'SEM_SUPORTE', respostas: []} : schema.sustentada ? {sustentada: !rejeitar} :
         dados.evidencias.length ? {tipo: 'documental', mensagem: '', afirmacoes: [{
           texto: dados.evidencias[0].texto, referencias: [{id: dados.evidencias[0].id, citacao: dados.evidencias[0].texto}]}]} :
           {tipo: 'sem_base', mensagem: 'Não consegui confirmar essa informação. Consulte a secretaria acadêmica.', afirmacoes: []};
@@ -61,7 +62,7 @@ test('revisao reprovada mostra que evidencias foram enviadas sem publicar propos
   assert.deepEqual(etapas(f), ['BUSCA_CONCLUIDA', 'CONTEXTO_PREPARADO', 'PROPOSTA_RECEBIDA', 'REVISAO_REPROVADA']);
   assert.deepEqual(f.diagnosticos[0], {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1});
   assert.deepEqual(f.diagnosticos.at(-1), {etapa: 'REVISAO_REPROVADA', contextos: 1,
-    evidencias: 1, uso: 'DOCUMENTAL', tipo: 'documental'});
+    evidencias: 1, uso: 'DOCUMENTAL', tipo: 'documental', motivoRevisao: 'SEM_SUPORTE'});
   assert.equal(f.chamadas.length, 3);
   assert.equal(f.chamadas[1].evidencias[0].texto, texto);
   assert.ok(f.chamadas[1].contextos[0].includes(texto));

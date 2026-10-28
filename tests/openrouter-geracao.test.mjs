@@ -46,7 +46,7 @@ function fixture(extra = {}, responder) {
         const schema = body.response_format.json_schema.schema;
         const dados = JSON.parse(body.messages[1].content);
         const valor = schema.properties.segura ? {segura: true} :
-          schema.properties.sustentada ? {sustentada: true} : dados.evidencias.length ? proposta(dados) :
+          schema.properties.decisao ? {decisao: 'aprovar', motivo: 'SEM_PROBLEMA', respostas: []} : schema.properties.sustentada ? {sustentada: true} : dados.evidencias.length ? proposta(dados) :
             {tipo: 'sem_base', mensagem: 'Não encontrei informação suficiente para confirmar. Consulte a secretaria acadêmica.', afirmacoes: []};
         return responder ? responder({body, dados, valor, init, indice: chamadas.length}) : resposta(valor);
       });
@@ -276,7 +276,7 @@ test('renovar minha matricula atravessa busca e quatro chamadas simuladas', asyn
       assert.equal(url, 'https://openrouter.ai/api/v1/chat/completions'); chamadas++;
       const b = JSON.parse(init.body), p = JSON.parse(b.messages[1].content);
       const schema = b.response_format.json_schema.schema.properties;
-      return resposta(schema.segura ? {segura: true} : schema.sustentada ? {sustentada: true} :
+      return resposta(schema.segura ? {segura: true} : schema.decisao ? {decisao: 'aprovar', motivo: 'SEM_PROBLEMA', respostas: []} : schema.sustentada ? {sustentada: true} :
         {tipo: "documental", mensagem: "", afirmacoes: [{texto: p.evidencias[0].texto,
           referencias: [{id: p.evidencias[0].id, citacao: p.evidencias[0].texto}]}]});
     });},

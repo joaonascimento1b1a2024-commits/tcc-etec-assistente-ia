@@ -29,7 +29,8 @@ function simular(saida, {revisao = true, moderacao = true, falhar = 0} = {}) {
         assert.equal(body.provider.zdr, true);
         const schema = body.response_format.json_schema.schema.properties;
         const resposta = schema.segura ? {segura: moderacao} :
-          schema.sustentada ? {sustentada: revisao} :
+          schema.decisao ? {decisao: revisao ? 'aprovar' : 'recusar',
+            motivo: revisao ? 'SEM_PROBLEMA' : 'SEM_SUPORTE', respostas: []} : schema.sustentada ? {sustentada: revisao} :
           typeof saida === 'function' ? saida(dados) : saida;
         return new Response(JSON.stringify({choices: [{finish_reason: 'stop',
           message: {role: 'assistant', content: JSON.stringify(resposta)}}]}));

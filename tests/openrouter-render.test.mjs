@@ -32,7 +32,7 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
     assert.equal(init.headers.Authorization, 'Bearer chave-ficticia');
     const props = body.response_format.json_schema.schema.properties;
     const dados = JSON.parse(body.messages[1].content);
-    const valor = props.segura ? {segura: true} : props.sustentada ? {sustentada: true} :
+    const valor = props.segura ? {segura: true} : props.decisao ? {decisao: 'aprovar', motivo: 'SEM_PROBLEMA', respostas: []} : props.sustentada ? {sustentada: true} :
       {tipo: "documental", mensagem: "", afirmacoes: [{texto, referencias: [{id: dados.evidencias[0].id, citacao: dados.evidencias[0].texto}]}]};
     return new Response(JSON.stringify({choices: [{finish_reason: 'stop',
       message: {role: 'assistant', content: JSON.stringify(valor)}}]}));
@@ -111,7 +111,7 @@ test('HTTP -> Firebase simulado -> busca -> OpenRouter -> transacao e replay', a
   for (const segredo of [uid, pergunta, texto, env.OPENROUTER_API_KEY, mid, cid]) {
     assert.equal(JSON.stringify(logs).includes(segredo), false);
   }
-  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v3').length, 1);
+  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v4').length, 1);
   const diagnosticos = logs.filter(l => l[0] === 'SYLVINHO_DIAGNOSTICO').map(l => JSON.parse(l[1]));
   assert.deepEqual(diagnosticos.filter(d => d.etapa === 'BUSCA_CONCLUIDA'), [
     {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1},

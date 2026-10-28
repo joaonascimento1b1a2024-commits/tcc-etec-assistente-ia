@@ -21,6 +21,8 @@ export interface PropostaGerada {afirmacoes: AfirmacaoGerada[]}
 /** Contrato independente do transporte/provedor, sempre injetavel em testes. */
 export interface ProvedorGeracao {
   conversar?(pedido: PedidoGeracao, signal: AbortSignal): Promise<unknown>;
+  revisarConversa?(pedido: PedidoGeracao, resposta: RespostaConversa,
+    signal: AbortSignal): Promise<unknown>;
   verificarConversa?(pedido: PedidoGeracao, resposta: RespostaConversa,
     signal: AbortSignal): Promise<boolean>;
   moderar(texto: string, signal: AbortSignal): Promise<boolean>;
