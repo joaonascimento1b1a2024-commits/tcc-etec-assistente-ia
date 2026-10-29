@@ -64,7 +64,7 @@ button {
     min-height: 36px;
     border-radius: 6px;
     background: var(--red);
-    font-size: 12px;
+    font-size: 0.875rem;
     font-weight: 600;
 }
 nav {
@@ -83,7 +83,7 @@ nav button {
     background: none;
     border: 0;
     text-align: left;
-    font-size: 12px;
+    font-size: 0.875rem;
     font-weight: 600;
 }
 nav span {
@@ -247,7 +247,7 @@ header p {
 #selection-count {
     flex: 1;
     color: #c6c6c6;
-    font-size: 13px;
+    font-size: 0.875rem;
 }
 .notice-card {
     flex-wrap: wrap;
@@ -266,7 +266,7 @@ header p {
     align-items: center;
     gap: 8px;
     min-height: 44px;
-    font-size: 13px;
+    font-size: 0.875rem;
     cursor: pointer;
 }
 input[type='checkbox'] {
@@ -305,7 +305,7 @@ input:disabled {
     display: inline-block;
     margin-top: 12px;
     color: #ffd48a;
-    font-size: 12px;
+    font-size: 0.875rem;
 }
 .feedback {
     padding: 12px;
@@ -397,7 +397,7 @@ dialog::backdrop {
     nav button {
         gap: 6px;
         padding: 4px;
-        font-size: 11px;
+        font-size: 0.875rem;
     }
     .content {
         margin-left: 0;

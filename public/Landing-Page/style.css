@@ -38,7 +38,7 @@ body {
 #principal {
     font-weight: bold;
     color: white;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Poppins, Arial, sans-serif;
     /* Limita a largura do título, mantendo o alinhamento da composição. */
     max-width: 450px;
 
@@ -58,7 +58,7 @@ body {
 /* Define a largura de leitura e o espaçamento do texto de apoio. */
 #corpo p {
     max-width: 430px;
-    font-family: Arial, sans-serif;
+    font-family: Poppins, Arial, sans-serif;
     font-size: clamp(1rem, 2.5vw, 1.1rem);
     line-height: 1.45;
     margin: 18px 0 0;
@@ -81,7 +81,7 @@ body {
     min-height: 42px;
     padding: 0 22px;
     border-radius: 6px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Poppins, Arial, sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     text-decoration: none;

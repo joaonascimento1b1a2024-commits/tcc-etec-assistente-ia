@@ -7,7 +7,7 @@
     max-width: 630px;
     margin: 12px auto;
     color: #ccc;
-    font-size: 12px;
+    font-size: 0.875rem;
     overflow-wrap: anywhere;
 }
 .message-form button:disabled,
@@ -38,7 +38,7 @@ body {
     background: #050505;
     color: var(--text);
     font-family: Poppins, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 1rem;
 }
 
 /* Faz botões e campos usarem a mesma fonte do restante da página. */
@@ -52,12 +52,12 @@ button {
     cursor: pointer;
 }
 
-/* Mantém o menu lateral fixo à esquerda, com largura de 186px. */
+/* Mantém o menu lateral fixo à esquerda, com largura de 196px. */
 .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
     z-index: 2;
-    width: 186px;
+    width: 196px;
     background: #0d0d0d;
     border-right: 2px solid #252525;
     padding: 14px;
@@ -104,7 +104,7 @@ nav {
     gap: 22px;
     align-items: center;
     font-weight: 600;
-    font-size: 11px;
+    font-size: 0.875rem;
 }
 
 /* Padroniza o espaço e a fonte dos ícones do menu. */
@@ -112,7 +112,7 @@ nav {
     width: 12px;
     font-size: 18px;
     text-align: center;
-    font-family: Arial;
+    font-family: Poppins, Arial, sans-serif;
 }
 
 /* Destaca em vermelho a opção atualmente selecionada. */
@@ -123,7 +123,7 @@ nav {
 /* Reserva espaço para o menu lateral e organiza a área principal sobre a imagem de fundo. */
 .app-content {
     min-height: 100vh;
-    margin-left: 186px;
+    margin-left: 196px;
     padding: 0 36px 14px;
     background:
         linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.7)),
@@ -181,7 +181,7 @@ nav {
 
 /* Torna o conjunto foto e nome clicável sem ultrapassar o cabeçalho. */
 .profile {
-    font-size: 12px;
+    font-size: 0.875rem;
     min-width: 0;
     max-width: 45%;
     min-height: 44px;
@@ -227,7 +227,7 @@ nav {
 /* Estiliza a pergunta abaixo da saudação. */
 .welcome p {
     margin: 0;
-    font-size: 12px;
+    font-size: 0.875rem;
 }
 
 /* Distribui os três atalhos de atendimento em colunas. */
@@ -267,14 +267,14 @@ nav {
 
 /* Formata o título do cartão, mantendo-o em uma linha. */
 .feature-card strong {
-    font-size: 11px;
+    font-size: 0.875rem;
     white-space: nowrap;
 }
 
 /* Formata a descrição curta do cartão. */
 .feature-card small {
     color: #ddd;
-    font-size: 10px;
+    font-size: 0.875rem;
     line-height: 14px;
 }
 
@@ -301,7 +301,7 @@ nav {
     border-radius: 9px;
     height: 32px;
     padding: 0 10px;
-    font-size: 11px;
+    font-size: 0.875rem;
 }
 
 /* Destaca a borda das sugestões quando o cursor passa sobre elas. */
@@ -332,7 +332,7 @@ nav {
     border: 0;
     outline: 0;
     background: transparent;
-    font-size: 11px;
+    font-size: 0.875rem;
 }
 
 /* Define a cor do texto de exemplo no campo vazio. */
@@ -428,7 +428,7 @@ nav {
     border-radius: 12px;
     background: #171717;
     color: #eee;
-    font-size: 12px;
+    font-size: 0.875rem;
     line-height: 1.6;
     white-space: pre-wrap;
 }

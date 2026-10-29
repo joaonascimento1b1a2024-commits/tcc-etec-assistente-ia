@@ -75,7 +75,7 @@ dialog {
         border-radius: 6px;
         background: var(--accent, var(--red, #ff0909));
         color: #fff;
-        font-size: 12px;
+        font-size: 0.875rem;
         font-weight: 600;
         text-decoration: none;
     }
@@ -97,7 +97,7 @@ dialog {
         width: 100%;
         min-height: 44px;
         padding: 4px;
-        font-size: 11px;
+        font-size: 0.875rem;
         font-weight: 600;
         text-align: left;
         overflow-wrap: anywhere;
@@ -155,7 +155,7 @@ dialog {
     }
 
     .feature-card small {
-        font-size: 12px;
+        font-size: 0.875rem;
         line-height: 1.5;
     }
 
