@@ -1,4 +1,5 @@
 import {normalizarTexto} from "../rag/recuperacao";
+import {limparReformulacao, normalizarProcedimentos} from "../rag/assuntos";
 
 export const LIMITES_CONTEXTO = Object.freeze({
   mensagens: 6, caracteres: 2000, porMensagem: 700,
@@ -38,6 +39,9 @@ function complemento(texto: string): string | undefined {
   if (/^(?:posso fazer pela internet|pode ser pela internet)$/u.test(n)) {
     return "Como solicitar pela internet";
   }
+  if (/^(?:nao sei como fazer(?: isso)?|nao faco ideia de como (?:faz|fazer) isso|como (?:faco|faz|fazer)(?: isso)?)$/u.test(n)) {
+    return "Como solicitar";
+  }
   return undefined;
 }
 
@@ -48,17 +52,14 @@ function complemento(texto: string): string | undefined {
  * @return {string|undefined} Rotulo constante, nunca trecho do historico.
  */
 function assuntoSeguro(texto: string): string | undefined {
-  const pedido = new RegExp("^(?:como (?:faco para |posso )?" +
-    "(?:solicitar|solicito|pedir|fazer|renovar)|como faco|qual e|qual|" +
-    "quais sao) ", "u");
-  const n = normalizarTexto(texto)
+  const pedido = new RegExp("^(?:de )?(?:como " +
+    "(?:(?:faco para|faco|posso) )?" +
+    "(?:(?:solicitar|solicito|pedir|fazer) )?|" +
+    "(?:fazer|quero|qual e|qual|quais sao) )", "u");
+  const n = limparReformulacao(normalizarProcedimentos(normalizarTexto(texto)))
     .replace(/^(?:por favor |gostaria de saber )/u, "")
     .replace(pedido, "")
     .replace(/^(?:a |o |uma |um |minha |meu )/u, "");
-  // Renovar matricula e matricula inicial sao assuntos distintos.
-  if (/\brenovar\b/u.test(normalizarTexto(texto)) && n === "matricula") {
-    return "renovação de matrícula";
-  }
   return ASSUNTOS.find((a) => a.padrao.test(n))?.nome;
 }
 

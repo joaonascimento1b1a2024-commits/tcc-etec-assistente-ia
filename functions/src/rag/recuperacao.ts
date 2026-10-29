@@ -1,3 +1,5 @@
+import {limparReformulacao, normalizarProcedimentos} from "./assuntos";
+
 export interface DocumentoPreparado {
   id: string;
   documentoId: string;
@@ -342,10 +344,7 @@ const FLEXOES: Record<string, string> = {
  * @return {string} Texto apenas para comparacao lexical.
  */
 function normalizarAssuntos(texto: unknown): string {
-  return normalizarTexto(texto)
-    .replace(/\bre matricula(s)?\b/gu, "rematricula$1")
-    .replace(/\b(?:renovacao|renovar) (?:da |de |a |minha )*matricula\b/gu,
-      "rematricula")
+  return normalizarProcedimentos(normalizarTexto(texto))
     .replace(/\b(?:presenca|assiduidade) minima\b/gu, "frequencia minima")
     .replace(/\bcalendario (?:escolar|letivo)\b/gu, "calendario academico");
 }
@@ -403,7 +402,8 @@ export function solicitaDeclaracao(pergunta: unknown): boolean {
 export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
   const cortesia = new RegExp("^(?:ola |oi )?(?:por favor |" +
     "gostaria de saber |poderia me informar |voce pode me informar )", "u");
-  let consulta = normalizarAssuntos(pergunta).replace(cortesia, "");
+  let consulta = limparReformulacao(normalizarAssuntos(pergunta))
+    .replace(cortesia, "");
   if (solicitaDeclaracao(pergunta) &&
       !/\b(modelos?|exemplos?)\b/u.test(consulta)) {
     // Apenas consulta de orientacao GERAL. Nao comprova emissao de um subtipo.

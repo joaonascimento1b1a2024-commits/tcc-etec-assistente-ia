@@ -1,3 +1,5 @@
+import {identificarProcedimento} from "./intencao";
+
 /** Politica local conservadora: intencoes desconhecidas pedem esclarecimento.
  * Nao usa modelo, dados pessoais ou historico externo.
  * O handler resolve complementos com o contexto autenticado.
@@ -46,7 +48,8 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
   const servico = /\b(?:rg|cpf|presenca minima|assiduidade minima|e-mail|email|telefone|matricula|rematricula|inscric(?:ao|oes)|vestibulinho|secretaria|frequencia|faltas|calendario|horarios?|cursos?|documentos?|declarac(?:ao|oes)|diploma|certificado|historico escolar|transferencia|trancamento|estagio|regimento|normas|biblioteca|bolsa|merenda|atendimento|uniforme|transporte escolar|reuniao|conselho de classe|recuperacao|segunda chamada|notas|boletim|aproveitamento)\b/u;
   // eslint-disable-next-line max-len
   const institucional = /(?:onde fica|endereco|telefone|contato|email|historia|quem (?:e|foi)|sobre).{0,60}(?:etec|escola|sylvio|sylvinho)|(?:etec|escola).{0,60}(?:endereco|telefone|contato|email|funciona|fundada)/u;
-  if (servico.test(n) || institucional.test(n)) {
+  if (servico.test(n) || institucional.test(n) ||
+    identificarProcedimento(entrada)) {
     return {categoria: "institucional"};
   }
   // Objetivo completo externo, sem objeto institucional reconhecido.

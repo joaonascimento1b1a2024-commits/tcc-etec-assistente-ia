@@ -1,4 +1,5 @@
 import {normalizarTexto} from "../rag/recuperacao";
+import {identificarProcedimento} from "./intencao";
 
 /**
  * Proximo passo sem contatos ou exigencias inventadas. Nao repete dados livres.
@@ -7,6 +8,15 @@ import {normalizarTexto} from "../rag/recuperacao";
  */
 export function orientarSemEvidencia(pergunta: string): string {
   const n = normalizarTexto(pergunta);
+  const procedimento = identificarProcedimento(pergunta);
+  if (procedimento) {
+    const falta = /\b(prazo|quanto tempo|data|quando)\b/u.test(n) ?
+      "um prazo ou uma data confirmados" :
+      "orientações completas e confirmadas";
+    return `Sobre ${procedimento}, não encontrei ${falta} nos documentos ` +
+      "disponíveis. Recomendo consultar a Secretaria Acadêmica para " +
+      "confirmar as informações sobre esse procedimento.";
+  }
   if (/\b(prazo|quanto tempo|data|quando)\b/u.test(n)) {
     return "Não encontrei um prazo ou uma data confirmados nos documentos " +
       "consultados. Confirme com a Secretaria Acadêmica: " +
