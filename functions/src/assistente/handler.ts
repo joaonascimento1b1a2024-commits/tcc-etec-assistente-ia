@@ -5,6 +5,7 @@ import {
   recuperarConhecimentoRelevante,
 } from "../rag/recuperacao.js";
 import type {DocumentoPreparado} from "../rag/recuperacao.js";
+import {resolverContextoConversacional} from "./contexto-conversacional.js";
 
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
@@ -285,14 +286,24 @@ export async function perguntarAssistenteHandler(
             conversaRef, gerada, deps, messageId, perguntaNormalizada,
           );
         }
+        const contexto = resolverContextoConversacional(
+          perguntaNormalizada, messageId, atualizadas,
+        );
+        if (contexto.esclarecimento) {
+          return adicionarRespostaBot(
+            conversaRef, contexto.esclarecimento, deps,
+            messageId, perguntaNormalizada,
+          );
+        }
+        const consulta = contexto.pergunta!;
         const chunks = deps.recuperarConhecimento ?
-          await deps.recuperarConhecimento(perguntaNormalizada) :
+          await deps.recuperarConhecimento(consulta) :
           await recuperarConhecimentoRelevante(
-            deps.firestore, perguntaNormalizada,
+            deps.firestore, consulta,
           );
         // Contexto exclusivamente do token verificado, nunca do corpo HTTP.
         const gerada = await deps.gerarResposta(
-          perguntaNormalizada, chunks, Object.freeze({uid: decodedToken.uid}),
+          consulta, chunks, Object.freeze({uid: decodedToken.uid}),
         );
         if (typeof gerada !== "string" || !gerada.trim()) {
           throw new Error("INVALID_GENERATOR_RESPONSE");

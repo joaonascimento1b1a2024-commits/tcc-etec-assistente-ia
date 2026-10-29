@@ -16,10 +16,26 @@
             ]
         }
     ],
-    "hosting": {
-        "public": "public",
-        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    },
+    "hosting": [
+        {
+            "target": "sylvinho",
+            "public": "public",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ]
+        },
+        {
+            "target": "antigo",
+            "public": "public",
+            "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+            ]
+        }
+    ],
     "emulators": {
         "auth": {
             "port": 9099

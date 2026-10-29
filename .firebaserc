@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "tcc-ia-d8891"
-  }
+  },
+  "targets": {
+    "tcc-ia-d8891": {
+      "hosting": {
+        "sylvinho": [
+          "sylvinho"
+        ],
+        "antigo": [
+          "tcc-ia-d8891"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

@@ -260,12 +260,13 @@ function selecionarPorTermos(
     .filter((doc): doc is DocumentoPreparado => Boolean(doc))
     .map((documento) => ({
       documento,
-      pontuacao: pontuarDocumento(canonico ? {
-        titulo: extrairTermosOriginais(documento.titulo).join(" "),
-        categoria: extrairTermosOriginais(documento.categoria).join(" "),
-        termosBusca: extrairTermosOriginais(documento.termosBusca).join(" "),
-        conteudo: extrairTermosOriginais(documento.conteudo).join(" "),
-      } : documento, termos),
+      pontuacao: (canonico ? relevanciaLocal(documento, termos) : 0) +
+        pontuarDocumento(canonico ? {
+          titulo: extrairTermosOriginais(documento.titulo).join(" "),
+          categoria: extrairTermosOriginais(documento.categoria).join(" "),
+          termosBusca: extrairTermosOriginais(documento.termosBusca).join(" "),
+          conteudo: extrairTermosOriginais(documento.conteudo).join(" "),
+        } : documento, termos),
     }))
     .filter(({pontuacao}) => pontuacao > 0)
     .sort((a, b) => {
@@ -278,12 +279,20 @@ function selecionarPorTermos(
     });
 
   const selecionados: DocumentoPreparado[] = [];
+  const vistos = new Set<string>();
   let caracteresUsados = 0;
 
   for (const {documento} of candidatos) {
     if (selecionados.length >= maxDocumentos) {
       break;
     }
+    // Apenas copias da mesma proveniencia; nao colapsar fontes ou paginas.
+    const identidade = JSON.stringify([
+      documento.documentoId, documento.titulo, documento.secao,
+      documento.tipoConteudo, documento.paginaInicial, documento.paginaFinal,
+      documento.conteudo.replace(/\s+/gu, " ").trim(),
+    ]);
+    if (canonico && vistos.has(identidade)) continue;
 
     const contextoDocumento = formatarDocumentoContexto(documento);
     const tamanhoSeparador = selecionados.length ? 2 : 0;
@@ -293,6 +302,7 @@ function selecionarPorTermos(
     }
 
     selecionados.push(documento);
+    vistos.add(identidade);
     caracteresUsados += tamanhoSeparador + contextoDocumento.length;
   }
 
@@ -322,7 +332,40 @@ const FLEXOES: Record<string, string> = {
   aprovar: "aprovacao", aprovado: "aprovacao", aprovados: "aprovacao",
   documentos: "documento", telefones: "telefone",
   modelos: "modelo", exemplos: "exemplo",
+  horarios: "horario", calendarios: "calendario",
+  academicos: "academico", escolares: "escolar",
 };
+
+/**
+ * Equivalencias restritas, compartilhadas com a citacao; nao reescreve fontes.
+ * @param {unknown} texto Consulta ou corpo documental.
+ * @return {string} Texto apenas para comparacao lexical.
+ */
+function normalizarAssuntos(texto: unknown): string {
+  return normalizarTexto(texto)
+    .replace(/\bre matricula(s)?\b/gu, "rematricula$1")
+    .replace(/\b(?:renovacao|renovar) (?:da |de |a |minha )*matricula\b/gu,
+      "rematricula")
+    .replace(/\b(?:presenca|assiduidade) minima\b/gu, "frequencia minima")
+    .replace(/\bcalendario (?:escolar|letivo)\b/gu, "calendario academico");
+}
+
+/**
+ * Prefere assunto reunido numa unidade e na secao, apos filtros de evidencia.
+ * Nao prova suporte semantico nem remove condicoes de trechos.
+ * @param {DocumentoPreparado} doc Documento integral.
+ * @param {string[]} termos Assuntos exigidos.
+ * @return {number} Bonus lexical limitado.
+ */
+function relevanciaLocal(doc: DocumentoPreparado, termos: string[]): number {
+  const secao = new Set(extrairTermosOriginais(doc.secao));
+  const unidade = doc.conteudo.split(/[.!?\n]/u).some((frase) => {
+    const palavras = new Set(extrairTermosOriginais(frase));
+    return termos.every((t) => palavras.has(t));
+  });
+  return (unidade ? 12 : 0) +
+    termos.filter((t) => secao.has(t)).length * 4;
+}
 
 /**
  * Equivalencias morfologicas pequenas, explicitas e testaveis.
@@ -332,11 +375,9 @@ const FLEXOES: Record<string, string> = {
 export function extrairTermosOriginais(texto: unknown): string[] {
   // Siglas de duas letras (RG, RA, RM etc.) sao assuntos, nao ruido.
   // Esta regra e compartilhada pela busca e pelas citacoes documentais.
-  const termos = normalizarTexto(texto).split(" ")
+  const termos = normalizarAssuntos(texto).split(" ")
     .filter((termo) => termo.length >= 2 && !PALAVRAS_COMUNS.has(termo))
     .map((termo) => FLEXOES[termo] || termo);
-  if (/\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
-    .test(normalizarTexto(texto))) termos.push("rematricula");
   return [...new Set(termos)];
 }
 
@@ -360,7 +401,9 @@ export function solicitaDeclaracao(pergunta: unknown): boolean {
  * @return {string[]} Termos de evidencia canonicos.
  */
 export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
-  let consulta = normalizarTexto(pergunta);
+  const cortesia = new RegExp("^(?:ola |oi )?(?:por favor |" +
+    "gostaria de saber |poderia me informar |voce pode me informar )", "u");
+  let consulta = normalizarAssuntos(pergunta).replace(cortesia, "");
   if (solicitaDeclaracao(pergunta) &&
       !/\b(modelos?|exemplos?)\b/u.test(consulta)) {
     // Apenas consulta de orientacao GERAL. Nao comprova emissao de um subtipo.
@@ -373,9 +416,6 @@ export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
   }
   const termos = extrairTermosOriginais(consulta)
     .filter((termo) => !TERMOS_PEDIDO.has(termo));
-  const renovacao =
-    /\b(?:renovacao (?:da |de )?matricula|renovar (?:a |minha )*matricula)\b/u
-      .test(normalizarTexto(pergunta));
   // "Na ETEC" situa uma norma da rede, mas nao e palavra obrigatoria
   // no corpo de cada artigo. Nao remove nomes de unidades ou condicoes.
   const normaFrequencia = termos.includes("frequencia") &&
@@ -386,8 +426,7 @@ export function extrairTermosConsultaOriginal(pergunta: unknown): string[] {
     !(etecGenerica && termo === "etec") &&
     !(termos.includes("frequencia") && termo === "aprovacao") &&
     !(termos.includes("declaracao") && termo === "escolar") &&
-    !["modelo", "exemplo"].includes(termo) &&
-    !(renovacao && ["renovacao", "renovar", "matricula"].includes(termo)));
+    !["modelo", "exemplo"].includes(termo));
 }
 
 /**
@@ -425,6 +464,11 @@ export function selecionarDocumentosOriginais(
   // obrigatorio: o artigo que define a frequencia nao usa essa palavra.
   const exigidos = extrairTermosConsultaOriginal(pergunta);
   if (!exigidos.length) return [];
+  // Nao escolher um procedimento quando a consulta mistura os dois.
+  // Comparacoes entre procedimentos exigem composicao contextual futura.
+  if (exigidos.includes("matricula") && exigidos.includes("rematricula")) {
+    return [];
+  }
   const candidatas = documentos
     .map((doc, indice) => prepararDocumento(doc, indice))
     .filter((doc): doc is DocumentoPreparado => Boolean(doc))
@@ -448,7 +492,8 @@ export function selecionarDocumentosOriginais(
         .map(normalizarTexto).filter(Boolean);
       if (exigidos.includes("rematricula") &&
           !/renovacao|rematricula/u.test(cabecalho)) return false;
-      if (exigidos.length === 1 && exigidos[0] === "matricula" &&
+      if (exigidos.includes("matricula") &&
+          !exigidos.includes("rematricula") &&
           !/b1 inicial|matricula inicial|das matriculas/u.test(cabecalho)) {
         return false;
       }

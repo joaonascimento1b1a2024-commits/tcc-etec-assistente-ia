@@ -1,4 +1,5 @@
 import type {DocumentoPreparado} from "../rag/recuperacao";
+import {orientarSemEvidencia} from "./encaminhamento";
 import {
   extrairTermosUteis, normalizarTexto, FONTES_ORIGINAIS,
   extrairTermosOriginais, extrairTermosConsultaOriginal, solicitaDeclaracao,
@@ -292,7 +293,9 @@ export function gerarRespostaDocumental(
   const recusar = (
     motivo: RespostaDocumental["motivo"], extra = "",
   ): RespostaDocumental => ({
-    resposta: extra ? `${extra} ${SEM_INFORMACAO}` : SEM_INFORMACAO,
+    resposta: extra ? `${extra} ${SEM_INFORMACAO}` :
+      motivo === "sem_evidencia" ? orientarSemEvidencia(pergunta) :
+        SEM_INFORMACAO,
     status: "informacao_insuficiente", motivo, citacoes: [],
   });
   const textoPergunta = textoSeguro(pergunta, 1000);
@@ -300,6 +303,17 @@ export function gerarRespostaDocumental(
     !Array.isArray(selecionados) ||
     selecionados.length > MAX_DOCUMENTOS_CONTEXTO) {
     return recusar("entrada_invalida");
+  }
+  // Sem historico neste contrato: nao adivinhar o assunto de uma continuacao.
+  // Mensagem deterministica de esclarecimento, nunca apresentada como geracao.
+  const incompleta = new RegExp(
+    "^(?:e )?(?:quanto tempo demora|quais documentos|como faco|qual o prazo)$",
+    "u");
+  if (incompleta.test(normalizarTexto(textoPergunta))) {
+    return {...recusar("sem_evidencia"), resposta:
+      "Sobre qual procedimento você quer saber: matrícula, renovação de " +
+      "matrícula, declaração escolar ou outro? Informe o assunto para " +
+      "que eu possa buscar a orientação nos documentos."};
   }
   // Chunks originais compartilham exatamente os termos e a procedencia do RAG.
   // O caminho legado continua isolado para nao mudar os contratos dos runners.

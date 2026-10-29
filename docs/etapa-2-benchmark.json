@@ -1,0 +1,742 @@
+{
+  "dados": "sinteticos",
+  "nota": "Compositor atual fixo nos dois braços; comparação da recuperação, não da geração por IA.",
+  "antes": {
+    "metricas": {
+      "perguntas": 36,
+      "precisaoFontes": 100,
+      "coberturaRespondiveis": 75,
+      "relevanciaPrimeiro": 75,
+      "abstencaoCorreta": 100,
+      "semEvidenciaDocumental": 41.67
+    },
+    "linhas": [
+      {
+        "pergunta": "Matrícula",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como faço minha matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "MATRÍCULAS",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Gostaria de saber como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Poderia me informar como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Rematrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como renovar minha matrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Renovação de matrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Re-matrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Por favor, como fazer rematrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como renovar a minha matrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Qual a frequência mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Frequência mínima para aprovação",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Qual a presença mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Assiduidade mínima",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Por favor, qual a frequência mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como pedir declaração?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Gostaria de saber como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Calendário acadêmico",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Calendário escolar",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Calendário letivo",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Por favor, calendário acadêmico",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Horário de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [
+          "atendimento"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Horários de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Por favor, horário de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [
+          "atendimento"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "E quanto tempo demora?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Quais documentos?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual o prazo para diploma?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Matrícula ou rematrícula?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Calendário acadêmico de 2035",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual a taxa de matrícula?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual o telefone da secretaria?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Declaração pela internet?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      }
+    ]
+  },
+  "depois": {
+    "metricas": {
+      "perguntas": 36,
+      "precisaoFontes": 100,
+      "coberturaRespondiveis": 100,
+      "relevanciaPrimeiro": 100,
+      "abstencaoCorreta": 100,
+      "semEvidenciaDocumental": 22.22
+    },
+    "linhas": [
+      {
+        "pergunta": "Matrícula",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como faço minha matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "MATRÍCULAS",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Gostaria de saber como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Poderia me informar como fazer matrícula?",
+        "esperados": [
+          "matricula"
+        ],
+        "obtidos": [
+          "matricula"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Rematrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como renovar minha matrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Renovação de matrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Re-matrícula",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, como fazer rematrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como renovar a minha matrícula?",
+        "esperados": [
+          "renovacao"
+        ],
+        "obtidos": [
+          "renovacao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Qual a frequência mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Frequência mínima para aprovação",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Qual a presença mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Assiduidade mínima",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, qual a frequência mínima?",
+        "esperados": [
+          "frequencia"
+        ],
+        "obtidos": [
+          "frequencia"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Como pedir declaração?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Gostaria de saber como solicitar declaração escolar?",
+        "esperados": [
+          "declaracao"
+        ],
+        "obtidos": [
+          "declaracao"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Calendário acadêmico",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Calendário escolar",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Calendário letivo",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, calendário acadêmico",
+        "esperados": [
+          "calendario"
+        ],
+        "obtidos": [
+          "calendario"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Horário de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [
+          "atendimento"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Horários de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [
+          "atendimento"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "Por favor, horário de atendimento da secretaria",
+        "esperados": [
+          "atendimento"
+        ],
+        "obtidos": [
+          "atendimento"
+        ],
+        "relevantes": 1,
+        "semEvidencia": false
+      },
+      {
+        "pergunta": "E quanto tempo demora?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Quais documentos?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual o prazo para diploma?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Matrícula ou rematrícula?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Calendário acadêmico de 2035",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual a taxa de matrícula?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Qual o telefone da secretaria?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      },
+      {
+        "pergunta": "Declaração pela internet?",
+        "esperados": [],
+        "obtidos": [],
+        "relevantes": 0,
+        "semEvidencia": true
+      }
+    ]
+  }
+}

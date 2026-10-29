@@ -220,7 +220,7 @@ test('página não importa persistência nem apresenta navegação da área loga
     assert.doesNotMatch(pageSource, /localStorage|sessionStorage|conversation-store|envio-pendente|firestore/);
     assert.doesNotMatch(html, /sidebar|Avisos\/|Serviços\/|Conversas\/|Configurações/);
     const landing = readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
-    assert.match(landing, /href="\.\/Chat\/chat.html"[^>]*>Ver como funciona/);
+    assert.match(landing, /href="(?:\.\/)?Chat\/chat.html"[^>]*>Ver como funciona/);
 });
 
 test('observador aguarda Firebase e não usa marcas antigas de login', async () => {
