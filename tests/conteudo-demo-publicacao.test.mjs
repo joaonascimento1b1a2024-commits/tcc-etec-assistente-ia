@@ -6,7 +6,9 @@ test('Avisos acadêmicos não carregam SDK, Firestore ou controles administrativ
     vm.runInNewContext(read('public/Logado/Avisos/avisos.js').replaceAll('import(', 'blocked('), { document: { documentElement: { dataset: { demoAcademica: 'true' } }, createElement: () => ({ textContent: '' }), querySelector: get }, window: {}, console, blocked() { assert.fail('Consulta institucional proibida'); } });
     await new Promise(resolve => setImmediate(resolve));
     assert.match(get('#noticeList').textContent, /Fixture de demonstração/); assert.equal(get('#retry').hidden, true);
-    assert.match(read('public/Logado/Avisos/avisos.html'), /data-demo-academica="prototipo"/);
+    // O isolamento da demonstracao continua disponivel, mas a pagina do site
+    // consulta os avisos publicados conforme a permissao da conta.
+    assert.doesNotMatch(read('public/Logado/Avisos/avisos.html'), /data-demo-academica=/);
 });
 test('Serviços mantém chat web sem prometer WhatsApp ou disponibilidade contínua', () => {
     const s = read('public/Logado/Serviços/servicos.html'); assert.doesNotMatch(s, /<script src="servicos.js"|href="https:\/\/web.whatsapp.com|Disponível 24 horas/);

@@ -27,7 +27,7 @@ test('avisos do prototipo nao mostram fixture nem consultam dados institucionais
         window: {}, console, blocked() {assert.fail('SDK/Firestore nao deve carregar');},
     });
     await new Promise(done => setImmediate(done));
-    assert.match(get('#noticeList').textContent, /não estão disponíveis neste protótipo/);
+    assert.match(get('#noticeList').textContent, /Aqui aparecerão os avisos institucionais/);
     assert.doesNotMatch(get('#noticeList').textContent, /Fixture|Cometa/);
     assert.equal(get('#retry').hidden, true);
 });
