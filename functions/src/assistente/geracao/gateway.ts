@@ -1,3 +1,6 @@
+import {classificarEscopo, FORA_ESCOPO,
+  ESCLARECER_ESCOPO, SOCIAL_ESCOPO} from "../escopo";
+import {orientarSemEvidencia} from "../encaminhamento";
 import {emitirDiagnostico} from "../diagnostico";
 import type {RegistrarDiagnostico} from "../diagnostico";
 import {prepararEvidencias} from "../fundamentacao/gateway";
@@ -110,6 +113,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
   return async (
     pergunta: unknown, chunks: unknown, contexto?: {readonly uid: string},
   ): Promise<string> => {
+    const escopo = classificarEscopo(pergunta);
+    if (escopo.resposta) return escopo.resposta;
     let baseline: RespostaDocumental | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const controller = new AbortController();
@@ -302,16 +307,21 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
             ...resumo, tipo: resposta.tipo});
             if (!aprovada) return fallback("REVISAO_REPROVADA");
           }
-          const corpo = resposta.tipo === "documental" ?
-            resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
-              "\n\n" + baseline!.resposta : resposta.mensagem;
+          // Mensagens livres nao podem transportar conhecimento geral,
+          // mesmo se rotuladas como conversa/esclarecimento/sem_base.
+          if (resposta.tipo !== "documental") {
+            return resposta.tipo === "fora_escopo" ? FORA_ESCOPO :
+              resposta.tipo === "esclarecimento" ? ESCLARECER_ESCOPO :
+                resposta.tipo === "conversa" ? SOCIAL_ESCOPO :
+                  orientarSemEvidencia(pergunta as string);
+          }
+          const corpo = resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
+            "\n\n" + baseline!.resposta;
           const aviso = resposta.tipo === "documental" ?
             fontesParciais ? "Resposta gerada por IA; parte das fontes " +
               "não pôde ser utilizada. Confira as fontes oficiais." :
               "Resposta gerada por IA; confira as fontes oficiais." :
-            resposta.tipo === "geral" ?
-              "Orientação geral gerada por IA; não é uma regra da escola." :
-              "Resposta gerada por IA.";
+            "Resposta gerada por IA.";
           const final = aviso + "\n\n" + corpo;
           if (final.length > 2400) return fallback("SAIDA_EXCESSIVA");
           if (!await cliente.moderar(final, controller.signal)) {

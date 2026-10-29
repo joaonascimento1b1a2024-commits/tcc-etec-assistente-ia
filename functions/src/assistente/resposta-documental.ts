@@ -1,3 +1,4 @@
+import {classificarEscopo} from "./escopo";
 import type {DocumentoPreparado} from "../rag/recuperacao";
 import {orientarSemEvidencia} from "./encaminhamento";
 import {
@@ -299,6 +300,15 @@ export function gerarRespostaDocumental(
     status: "informacao_insuficiente", motivo, citacoes: [],
   });
   const textoPergunta = textoSeguro(pergunta, 1000);
+  if (textoPergunta && Array.isArray(selecionados)) {
+    const escopo = classificarEscopo(pergunta);
+    if (escopo.resposta) {
+      return {
+        resposta: escopo.resposta, status: "informacao_insuficiente",
+        motivo: "sem_evidencia", citacoes: [],
+      };
+    }
+  }
   if (!textoPergunta || instrucaoSuspeita(textoPergunta) ||
     !Array.isArray(selecionados) ||
     selecionados.length > MAX_DOCUMENTOS_CONTEXTO) {

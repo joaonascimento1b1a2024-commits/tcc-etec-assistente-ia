@@ -128,7 +128,7 @@ test('instrucao generica sobre numero da matricula chega inteira e pode ser cita
 test('todos bloqueados: informa indisponibilidade sem enviar dados e sem inventar fonte', async () => {
   const f = simular();
   const r = await f.gerar([doc(0, texto+' Nome completo: Pessoa Sintética')]);
-  assert.equal(f.chamadas.length, 4);
+  assert.equal(f.chamadas.length, 3);
   assert.deepEqual(f.chamadas[1].contextos, []);
   assert.deepEqual(f.chamadas[1].evidencias, []);
   assert.equal(f.chamadas[1].situacao, 'contexto_indisponivel');

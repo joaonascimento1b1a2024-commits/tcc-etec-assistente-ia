@@ -1,3 +1,5 @@
+import {classificarEscopo, FORA_ESCOPO, ESCLARECER_ESCOPO, SOCIAL_ESCOPO} from '../functions/lib/assistente/escopo.js';
+import {orientarSemEvidencia} from '../functions/lib/assistente/encaminhamento.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {criarClienteOpenRouter} from '../functions/lib/assistente/geracao/openrouter.js';
@@ -51,15 +53,11 @@ for (const [pergunta, tipo, resposta] of [
 ]) test('pergunta sem evidencias recebe resposta pertinente simulada: '+pergunta, async () => {
   const f = simular(mensagem(tipo, resposta));
   const r = await f.gerar(pergunta);
-  assert.ok(r.endsWith(resposta));
-  assert.equal(f.chamadas.length, 4);
-  assert.equal(f.chamadas[1].dados.pergunta, pergunta);
-  assert.deepEqual(f.chamadas[1].dados.contextos, []);
-  assert.deepEqual(f.chamadas[1].dados.evidencias, []);
-  assert.equal(f.chamadas[1].dados.situacao, 'sem_evidencias');
-  assert.equal(f.eventos.at(-1).codigo, 'GERADA');
+  const local = classificarEscopo(pergunta).resposta;
+  if (local) {assert.equal(r,local);assert.equal(f.chamadas.length,0);}
+  else if (tipo === 'geral') {assert.equal(r,RESPOSTA_INDISPONIVEL);assert.equal(f.chamadas.length,2);}
+  else {assert.equal(r,tipo === 'esclarecimento' ? ESCLARECER_ESCOPO : tipo === 'fora_escopo' ? FORA_ESCOPO : orientarSemEvidencia(pergunta));assert.equal(f.chamadas.length,3);}
   assert.doesNotMatch(JSON.stringify(f.chamadas), /usuario-sintetico|mock-apenas/);
-  if (tipo === 'geral') assert.match(r, /não é uma regra da escola/);
 });
 
 test('RG sem procedimento pergunta antes de usar regra de transferencia', async () => {
@@ -68,7 +66,7 @@ test('RG sem procedimento pergunta antes de usar regra de transferencia', async 
     {titulo: 'Transferência experimental'});
   const resposta = 'Para qual procedimento você precisa do RG?';
   const f = simular(mensagem('esclarecimento', resposta));
-  assert.ok((await f.gerar(q, [doc])).endsWith(resposta));
+  assert.equal(await f.gerar(q, [doc]), ESCLARECER_ESCOPO);
   assert.match(f.chamadas[1].dados.contextos[0], /Transferência experimental/);
   assert.doesNotMatch(await simular(mensagem('esclarecimento', resposta)).gerar(q, [doc]), /Trecho documental/);
 });
@@ -96,15 +94,15 @@ for (const texto of ['Nome completo: Pessoa Sintética', 'Nome do aluno: Pessoa 
   test('identificacao sintetica continua bloqueada: '+texto, async () => {
     assert.equal(textoSuspeito(texto), true);
     const f = simular(mensagem('conversa', 'Olá!'));
-    assert.match(await f.gerar(texto), /sem nomes/);
+    assert.match(await f.gerar("Matrícula. " + texto), /sem nomes/);
     assert.equal(f.chamadas.length, 0);
   });
 }
 test('contexto privado e descartado integralmente mas pergunta segura chega ao modelo', async () => {
   const f = simular(mensagem('esclarecimento', 'Qual procedimento você deseja realizar?'));
   const r = await f.gerar('Preciso levar RG?', [criarChunk('Apresentar RG. Nome completo: Pessoa Sintética')]);
-  assert.match(r, /Qual procedimento/);
-  assert.equal(f.chamadas.length, 4);
+  assert.equal(r, ESCLARECER_ESCOPO);
+  assert.equal(f.chamadas.length, 3);
   assert.equal(f.eventos[0].motivo, 'DADOS_BLOQUEADOS_CONTEXTO');
   assert.equal(f.chamadas[1].dados.situacao, 'contexto_indisponivel');
   assert.deepEqual(f.chamadas[1].dados.contextos, []);
@@ -119,9 +117,9 @@ test('instrucoes genericas de formulario seguem com contexto para IA', async () 
 });
 for (const [saida, motivo] of [
   [mensagem('documental', ''), 'PROPOSTA_VAZIA'],
-  [mensagem('geral', '<script>'), 'PROPOSTA_TEXTO_INVALIDO'],
-  [mensagem('geral', 'Veja https://example.invalid'), 'PROPOSTA_TEXTO_INVALIDO'],
-  [mensagem('geral', 'Nome completo: Pessoa Sintética'), 'PROPOSTA_TEXTO_INVALIDO'],
+  [mensagem('sem_base', '<script>'), 'PROPOSTA_TEXTO_INVALIDO'],
+  [mensagem('sem_base', 'Veja https://example.invalid'), 'PROPOSTA_TEXTO_INVALIDO'],
+  [mensagem('sem_base', 'Nome completo: Pessoa Sintética'), 'PROPOSTA_TEXTO_INVALIDO'],
   [{tipo: 'geral', mensagem: 'Olá!', afirmacoes: [], extra: true}, 'PROPOSTA_SCHEMA_INVALIDO'],
 ]) test('resposta invalida retorna mensagem local e codigo: '+motivo, async () => {
   const f = simular(saida);
@@ -132,8 +130,8 @@ for (const [saida, motivo] of [
 test('revisor impede regra escolar inventada no tipo geral', async () => {
   const f = simular(mensagem('geral', 'A escola exige levar o RG para toda rematrícula.'), {revisao: false});
   assert.equal(await f.gerar('Preciso levar RG?'), RESPOSTA_INDISPONIVEL);
-  assert.equal(f.eventos.at(-1).motivo, 'REVISAO_REPROVADA');
-  assert.equal(f.chamadas.length, 3);
+  assert.equal(f.eventos.at(-1).motivo, 'PROPOSTA_SCHEMA_INVALIDO');
+  assert.equal(f.chamadas.length, 2);
 });
 test('erro HTTP nao produz lista de trechos e nao e rotulado como IA', async () => {
   const f = simular(null, {falhar: 503});
@@ -142,7 +140,7 @@ test('erro HTTP nao produz lista de trechos e nao e rotulado como IA', async () 
   assert.doesNotMatch(r, /gerada por IA|Trecho documental|transferência/);
   assert.equal(f.eventos.at(-1).motivo, 'OPENROUTER_SEM_ENDPOINT_COMPATIVEL');
 });
-test('validacao admite numeros gerais sem permitir regra documental sem fonte', () => {
-  assert.ok(validarConversa(mensagem('geral', '2 + 2 = 4.'), []).resposta);
+test('validacao rejeita conhecimento geral sem permitir regra documental sem fonte', () => {
+  assert.equal(validarConversa(mensagem('geral', '2 + 2 = 4.'), []).resposta, null);
   assert.equal(validarConversa(mensagem('documental', ''), []).resposta, null);
 });

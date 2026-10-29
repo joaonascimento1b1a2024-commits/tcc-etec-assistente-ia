@@ -223,9 +223,9 @@ test("limite1000 e aplicado depois de trim sem reduzir limite para700", async ()
         pergunta: "x".repeat(1001), conversationId: ID,
     }})).code, 400);
     assertSemTrabalho(s);
-    const valido = setup({initial: conversa([userMessage("x".repeat(1000))])});
+    const valido = setup({initial: conversa([userMessage("matricula " + "x".repeat(990))])});
     assert.equal((await valido.run({body: {
-        pergunta: "  " + "x".repeat(1000) + "  ", conversationId: ID,
+        pergunta: "  " + "matricula " + "x".repeat(990) + "  ", conversationId: ID,
     }})).code, 200);
     assert.equal(valido.calls.generator[0].pergunta.length, 1000);
 });
@@ -373,23 +373,23 @@ test("duas requisicoes iguais sao idempotentes: um bot, nenhum novo user", async
 });
 
 test("duas abas podem concluir fora de ordem sem perder mensagens", async () => {
-    const s = setup({initial: conversa([userMessage("pergunta A"), userMessage("pergunta B", 2, MID2)])});
+    const s = setup({initial: conversa([userMessage("matricula A"), userMessage("matricula B", 2, MID2)])});
     const a = deferred(), b = deferred(), started = deferred();
     let count = 0;
     s.deps.gerarResposta = async (pergunta) => {
         if (++count === 2) started.resolve();
-        await (pergunta === "pergunta A" ? a.promise : b.promise);
+        await (pergunta === "matricula A" ? a.promise : b.promise);
         return "resposta " + pergunta;
     };
-    const ra = s.run({body: {pergunta: "pergunta A", conversationId: ID}});
-    const rb = s.run({body: {pergunta: "pergunta B", conversationId: ID, messageId: MID2}});
+    const ra = s.run({body: {pergunta: "matricula A", conversationId: ID}});
+    const rb = s.run({body: {pergunta: "matricula B", conversationId: ID, messageId: MID2}});
     await started.promise;
     b.resolve();
     assert.equal((await rb).code, 200);
     a.resolve();
     assert.equal((await ra).code, 200);
     assert.deepEqual(s.rows.get(caminho()).mensagens.map((m) => m.texto),
-        ["pergunta A", "pergunta B", "resposta pergunta B", "resposta pergunta A"]);
+        ["matricula A", "matricula B", "resposta matricula B", "resposta matricula A"]);
 });
 
 test("duas respostas concorrentes em99 mensagens: uma200 outra409", async () => {
@@ -438,8 +438,8 @@ test("troca de sessao nao muda UID de requisicao ja autenticada", async () => {
 });
 
 test("sem score positivo contexto vazio nao inclui base inteira", async () => {
-    const s = setup({initial: conversa([userMessage("xyzxyz")])});
-    assert.equal((await s.run({body: {pergunta: "xyzxyz", conversationId: ID}})).code, 200);
+    const s = setup({initial: conversa([userMessage("matricula xyzxyz")])});
+    assert.equal((await s.run({body: {pergunta: "matricula xyzxyz", conversationId: ID}})).code, 200);
     assert.equal(s.calls.generator[0].chunks.length, 0);
 });
 

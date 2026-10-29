@@ -1,3 +1,4 @@
+import {classificarEscopo} from "./escopo";
 import type {Request, Response} from "express";
 import type {DocumentoPreparado} from "../rag/recuperacao.js";
 import {criarEndpointComCors} from "./http.js";
@@ -52,8 +53,13 @@ export function criarEndpointVisitante(
     chamadas++;
     ativas++;
     try {
-      const deps = obterDependencias();
       const pergunta = body.pergunta.trim();
+      const escopo = classificarEscopo(pergunta);
+      if (escopo.resposta) {
+        res.status(200).json({resposta: escopo.resposta});
+        return;
+      }
+      const deps = obterDependencias();
       const chunks = await deps.recuperarConhecimento(pergunta);
       const resposta = await deps.gerarResposta(pergunta, chunks);
       if (typeof resposta !== "string" || !resposta.trim()) {

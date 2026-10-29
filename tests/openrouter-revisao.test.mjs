@@ -140,9 +140,9 @@ test('correcao pode pedir esclarecimento sem publicar a exigencia anterior', asy
   const mensagem = 'Você está perguntando sobre renovação ou transferência?';
   const f = simular({revisao: corrigir({tipo: 'esclarecimento', mensagem, afirmacoes: []}, 'PERGUNTA_AMBIGUA')});
   const resposta = await f.responder();
-  assert.ok(resposta.endsWith(mensagem));
+  assert.equal(resposta, 'Sobre qual procedimento você quer saber?');
   assert.doesNotMatch(resposta, /42|Trecho documental/);
-  assert.equal(f.chamadas.length, 4);
+  assert.equal(f.chamadas.length, 3);
 });
 test('correcao com citacao inventada e rejeitada com motivo seguro', async () => {
   const f = simular({revisao: corrigir(documental(resumo, fonte + ' valor privado'))});

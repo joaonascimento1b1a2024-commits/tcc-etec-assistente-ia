@@ -1,3 +1,4 @@
+import {classificarEscopo} from "../escopo";
 import {recuperarConhecimentoRelevante} from "../../rag/recuperacao";
 import type {FonteConhecimento} from "../../rag/recuperacao";
 import {emitirDiagnostico} from "../diagnostico";
@@ -15,6 +16,7 @@ export function criarBuscaDocumental(
 ) {
   return async (entrada: unknown) => {
     const {texto} = interpretarPerguntaLivre(entrada);
+    if (classificarEscopo(texto).resposta) return [];
     try {
       return await recuperarConhecimentoRelevante(fonte, texto, (resumo) =>
         emitirDiagnostico(registrar, {etapa: "BUSCA_CONCLUIDA", ...resumo}));

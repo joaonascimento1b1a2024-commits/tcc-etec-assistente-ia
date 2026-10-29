@@ -1,3 +1,4 @@
+import {classificarEscopo} from "./escopo";
 import type {Request, Response} from "express";
 import type {DocumentReference, Firestore} from "firebase-admin/firestore";
 import {ErroAutenticacao, verificarAutenticacao} from "./autenticacao.js";
@@ -296,6 +297,12 @@ export async function perguntarAssistenteHandler(
           );
         }
         const consulta = contexto.pergunta!;
+        const escopo = classificarEscopo(consulta);
+        if (escopo.resposta) {
+          return adicionarRespostaBot(
+            conversaRef, escopo.resposta, deps, messageId, perguntaNormalizada,
+          );
+        }
         const chunks = deps.recuperarConhecimento ?
           await deps.recuperarConhecimento(consulta) :
           await recuperarConhecimentoRelevante(
