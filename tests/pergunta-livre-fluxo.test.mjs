@@ -212,7 +212,9 @@ for (const q of [perguntasLivres[1], perguntasLivres[2], 'Como funciona transpor
       assert.equal(s.pedidos[0].evidencias[0].texto, texto);
     }
     const replay = await post('Bearer simulacao'); assert.equal(replay.status, 200);
-    assert.deepEqual(await replay.json(), body); assert.equal(s.consultas.length, 1);
+    assert.deepEqual(await replay.json(), body);
+    // Fora do escopo institucional, a resposta e local e dispensa Firestore.
+    assert.equal(s.consultas.length, q.includes('interplanetário') ? 0 : 1);
     assert.equal(s.estado().mensagens.length, 2);
     assert.equal(s.estado().mensagens.filter(m => m.remetente === 'bot' && m.messageId === MID).length, 1);
   });

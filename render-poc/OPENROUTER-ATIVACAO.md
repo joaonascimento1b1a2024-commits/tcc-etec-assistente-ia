@@ -4,6 +4,10 @@ Implementado localmente e testavel com transporte simulado. Nenhuma chamada
 real de inferencia, credencial, deploy, push ou alteracao do banco faz parte
 desta entrega. Aprovar uma flag nao cria contrato, conta, credito ou permissao.
 
+O chat sem login agora pode usar a IA por opt-in separado no Render.
+Veja [ativacao de visitantes](VISITANTE-IA.md); a allowlist continua valendo
+para contas autenticadas.
+
 ## Fluxo migrado e elegibilidade
 
 `public/` (Firebase Hosting) -> Firebase Authentication -> Node no Render ->
@@ -67,7 +71,8 @@ segredos e allowlist vazios e aprovacoes falsas.
 | `OPENROUTER_MODEL` | `google/gemini-3.5-flash-lite` como exemplo confirmado no catalogo; reavaliar termos/custo/disponibilidade. |
 | `OPENROUTER_API_KEY` | Segredo real cadastrado exclusivamente no painel. Conta autorizada com credito/quota suficiente. |
 | `SYLVINHO_IA_ENABLED` | Inicialmente `false`; `true` somente apos cumprir as condicoes abaixo. |
-| `SYLVINHO_IA_UID_ALLOWLIST` | Inicialmente vazia; CSV privado com ate 20 UIDs Firebase autorizados, sem duplicatas ou itens vazios; cada UID aceita `[A-Za-z0-9_-]`, 1..128 caracteres. |
+| `SYLVINHO_IA_VISITANTE_ENABLED` | `false` por padrao; `true` libera IA sem login exclusivamente na rota publica do Render, com os demais gates mantidos. |
+| `SYLVINHO_IA_UID_ALLOWLIST` | Para contas autenticadas, inicialmente vazia; CSV privado com ate 20 UIDs Firebase autorizados, sem duplicatas ou itens vazios; cada UID aceita `[A-Za-z0-9_-]`, 1..128 caracteres. |
 | `SYLVINHO_IA_TIMEOUT_MS` | `20000`; inteiro entre 1 e 30000, prazo TOTAL das quatro chamadas. |
 | `SYLVINHO_IA_MAX_POR_MINUTO` | `5`; inteiro entre 1 e 20, por instancia, nao por usuario. |
 | `SYLVINHO_IA_INSTITUCIONAL_APROVADA` | `false` ate autorizacao institucional documentada para este fluxo. |
@@ -94,9 +99,10 @@ Ver [instrucoes oficiais do Render](https://render.com/docs/configure-environmen
 ## Condicoes de ativacao
 
 Todas as cinco aprovacoes devem ser `true` somente depois da decisao real.
-Tambem sao obrigatorios enabled, provider reconhecido, allowlist valida e UID
+Para contas autenticadas, sao obrigatorios enabled, provider reconhecido, allowlist valida e UID
 proveniente de token Firebase verificado, modelo/chave validos e limites validos.
-Visitante sem UID nunca chega ao provedor. O corpo HTTP nao pode liberar UID,
+Visitantes chegam ao OpenRouter apenas pelo opt-in publico separado,
+`SYLVINHO_IA_VISITANTE_ENABLED=true`. O corpo HTTP nao pode liberar UID,
 flag, modelo, chave ou URL, mesmo que contenha campos com esses nomes.
 
 No fluxo OpenRouter autorizado, perguntas seguras podem chegar a IA mesmo sem
@@ -109,8 +115,8 @@ localmente, sem envio. ZDR indisponivel nao autoriza outro roteamento.
 Falhas do provedor, rejeicao de resposta e limites, apos os gates, retornam
 uma mensagem local de continuidade em vez de despejar trechos como se fossem
 uma resposta. A mensagem local nao e identificada como gerada por IA. O modo
-documental continua disponivel para visitantes, IA desativada e acessos sem
-allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
+documental continua disponivel para visitantes sem opt-in, IA desativada e
+contas sem allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
 
 ## Passo a passo do operador (nao executado nesta tarefa)
 
@@ -143,7 +149,8 @@ allowlist/aprovacoes; nos provedores legados, o fallback permanece documental.
    painel OpenRouter. HTTP 200
    tambem pode ser fallback. Confirmar consumo/latencia sem exportar perguntas
    ou documentos para logs. Um sucesso simulado nao valida credito, IAM ou rede.
-7. Conferir visitante documental, UID externo documental, token invalido 401,
+7. Conferir visitante documental com o opt-in publico desativado (ou IA
+   revisada com ele ativado), UID externo documental, token invalido 401,
    origem externa 403 e replay sem bot duplicado. A demonstracao sintetica deve
    continuar indisponivel (catalogo 403) com `provider=openrouter`.
 8. Rollback: definir `SYLVINHO_IA_ENABLED=false` e aplicar no servico; remover
@@ -159,6 +166,7 @@ configuracao, chave ou allowlist. O motivo fica apenas no log operacional.
 
 | Codigo | Interpretacao |
 | --- | --- |
+| `VISITANTE_IA_DESATIVADA`, `VISITANTE_PROVEDOR_INVALIDO` | Opt-in publico ausente/desativado ou provedor diferente de OpenRouter. |
 | `UID_NAO_AUTORIZADO`, `IA_DESATIVADA`, `PROVEDOR_INVALIDO` | Identidade/allowlist ou ativacao. |
 | `APROVACAO_PENDENTE`, `MODALIDADE_PENDENTE`, `RETENCAO_BLOQUEADA`, `DADOS_BLOQUEADOS` | Gate de politica; modalidade legada continua separada. |
 | `CONFIGURACAO_INVALIDA`, `OPENROUTER_MODELO_INVALIDO` | Modelo, prazo ou limite invalido. |

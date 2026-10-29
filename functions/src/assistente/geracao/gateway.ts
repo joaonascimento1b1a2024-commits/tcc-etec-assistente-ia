@@ -26,9 +26,14 @@ import {
 import type {CodigoOpenRouter} from "./openrouter";
 
 export type AmbienteIA = Readonly<Record<string, string | undefined>>;
+// Identidade de conta ou acesso publico definido pela rota, nunca pelo body.
+export type ContextoGeracao =
+  {readonly uid: string; readonly publico?: never} |
+  {readonly publico: "visitante"; readonly uid?: never};
 export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
 export type MotivoFallback = CodigoOpenRouter | MotivoProposta | FalhaRevisao |
   "UID_NAO_AUTORIZADO" |
+  "VISITANTE_IA_DESATIVADA" | "VISITANTE_PROVEDOR_INVALIDO" |
   "IA_DESATIVADA" | "PROVEDOR_INVALIDO" | "APROVACAO_PENDENTE" |
   "MODALIDADE_PENDENTE" | "RETENCAO_BLOQUEADA" | "DADOS_BLOQUEADOS" |
   "DADOS_BLOQUEADOS_PERGUNTA" | "DADOS_BLOQUEADOS_CONTEXTO" |
@@ -111,7 +116,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
     }
   };
   return async (
-    pergunta: unknown, chunks: unknown, contexto?: {readonly uid: string},
+    pergunta: unknown, chunks: unknown, contexto?: ContextoGeracao,
   ): Promise<string> => {
     const escopo = classificarEscopo(pergunta);
     if (escopo.resposta) return escopo.resposta;
@@ -132,7 +137,15 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       if (!preparada.ok) throw new Error("GERACAO_ENTRADA_INVALIDA");
       baseline = preparada.baseline;
       const env = lerAmbiente();
-      if (!usuarioIAAutorizado(env, contexto?.uid)) {
+      if (contexto?.publico === "visitante" && contexto.uid === undefined) {
+        if (env.SYLVINHO_IA_VISITANTE_ENABLED !== "true") {
+          return fallback("VISITANTE_IA_DESATIVADA");
+        }
+        // A liberacao publica nao migra nem ativa os provedores legados.
+        if (env.SYLVINHO_IA_PROVIDER !== "openrouter") {
+          return fallback("VISITANTE_PROVEDOR_INVALIDO");
+        }
+      } else if (!usuarioIAAutorizado(env, contexto?.uid)) {
         return fallback("UID_NAO_AUTORIZADO");
       }
       const aprovacoes = ["SYLVINHO_IA_INSTITUCIONAL_APROVADA",

@@ -60,8 +60,9 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
         return {
             recuperarConhecimento: deps.recuperarConhecimento ||
                 (pergunta => recuperarConhecimentoRelevante(deps.firestore, pergunta)),
-            // Sem UID: preserva as restrições do gerador e a resposta documental.
-            gerarResposta: (pergunta, chunks) => deps.gerarResposta(pergunta, chunks),
+            // Contexto atribuido pela rota publica; o corpo nao define acesso.
+            // A mesma instancia do gerador compartilha limites com as contas.
+            gerarResposta: (pergunta, chunks, contexto) => deps.gerarResposta(pergunta, chunks, contexto),
         };
     }, () => validated.origins);
     const server = http.createServer(async (req, res) => {

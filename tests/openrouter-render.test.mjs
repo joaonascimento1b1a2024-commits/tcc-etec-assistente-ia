@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {once} from 'node:events';
 import {pergunta, criarChunk, texto} from './fixtures/fundamentacao-sintetica.mjs';
+import {VERSAO_FLUXO_CONVERSA} from '../functions/lib/assistente/geracao/conversa.js';
 const require = createRequire(import.meta.url);
 const {criarDependenciasDocumentais, lerConfiguracaoDocumental} = require('../render-poc/documental.cjs');
 const {criarServidor} = require('../render-poc/server.cjs');
@@ -124,7 +125,7 @@ for (const decisao of ['aprovar', 'corrigir']) test('HTTP -> Firebase simulado -
   for (const segredo of [uid, pergunta, texto, env.OPENROUTER_API_KEY, mid, cid]) {
     assert.equal(JSON.stringify(logs).includes(segredo), false);
   }
-  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO conversa-v8').length, 1);
+  assert.equal(logs.filter(l => l.join(' ') === 'SYLVINHO_IA_FLUXO '+VERSAO_FLUXO_CONVERSA).length, 1);
   const diagnosticos = logs.filter(l => l[0] === 'SYLVINHO_DIAGNOSTICO').map(l => JSON.parse(l[1]));
   assert.deepEqual(diagnosticos.filter(d => d.etapa === 'BUSCA_CONCLUIDA'), [
     {etapa: 'BUSCA_CONCLUIDA', lidos: 1, selecionados: 1},
@@ -136,5 +137,5 @@ for (const decisao of ['aprovar', 'corrigir']) test('HTTP -> Firebase simulado -
   const etapa = decisao === 'corrigir' ? 'REVISAO_CORRIGIDA' : 'REVISAO_APROVADA';
   assert.ok(diagnosticos.some(d => d.etapa === etapa && d.tipo === 'documental'));
   assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA GERADA'));
-  assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA FALLBACK UID_NAO_AUTORIZADO'));
+  assert.ok(logs.some(l => l.join(' ') === 'SYLVINHO_IA FALLBACK VISITANTE_IA_DESATIVADA'));
 });

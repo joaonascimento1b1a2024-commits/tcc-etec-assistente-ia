@@ -1,6 +1,6 @@
 import type {FonteConhecimento} from "../../rag/recuperacao";
 import {criarGeradorConfiguravel} from "../geracao/gateway";
-import type {OpcoesGerador} from "../geracao/gateway";
+import type {ContextoGeracao, OpcoesGerador} from "../geracao/gateway";
 import {criarBuscaDocumental} from "./busca";
 import {interpretarPerguntaLivre} from "./interpretacao";
 
@@ -28,7 +28,7 @@ export function criarFluxoPerguntaLivre(opcoes: OpcoesPerguntaLivre) {
   return Object.freeze({
     recuperarConhecimento,
     gerarResposta,
-    async responder(entrada: unknown, contexto?: {readonly uid: string}) {
+    async responder(entrada: unknown, contexto?: ContextoGeracao) {
       const {texto} = interpretarPerguntaLivre(entrada);
       const chunks = await recuperarConhecimento(texto);
       return gerarResposta(texto, chunks, contexto);

@@ -7,6 +7,7 @@ import {
 } from "../rag/recuperacao.js";
 import type {DocumentoPreparado} from "../rag/recuperacao.js";
 import {resolverContextoConversacional} from "./contexto-conversacional.js";
+import type {ContextoGeracao} from "./geracao/gateway";
 
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
@@ -59,7 +60,7 @@ export interface DependenciasAssistente {
   serverTimestamp: () => unknown;
   gerarResposta: (pergunta: string,
     chunks: readonly DocumentoPreparado[],
-    contexto?: {readonly uid: string}) => Promise<string>;
+    contexto?: ContextoGeracao) => Promise<string>;
   recuperarConhecimento?: (pergunta: string) => Promise<DocumentoPreparado[]>;
   agora?: () => number;
 }

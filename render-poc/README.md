@@ -15,7 +15,10 @@ POC exclusivamente mockada; nao afirma que houve deploy ou validacao online.
 - O gateway pode selecionar OpenRouter, Gemini direto ou OpenAI. Ao selecionar
   `openrouter`, moderacao, proposta, verificacao e moderacao final usam somente
   Gemini via OpenRouter; falhas voltam ao documental, sem outro provedor.
-- `/perguntarVisitante` nao recebe contexto UID e permanece documental.
+- `/perguntarVisitante` dispensa login e historico. Com
+  `SYLVINHO_IA_VISITANTE_ENABLED=true`, usa o mesmo gateway OpenRouter,
+  revisao e limites; sem essa flag, permanece documental. Consulte
+  [ativacao do chat sem login](VISITANTE-IA.md).
 - A demonstracao sintetica de `geracao/demonstracao.ts` usa Gemini direto,
   exige suas proprias aprovacoes e `provider=gemini`. Nao esta migrada e fica
   indisponivel com `provider=openrouter`. `SYLVINHO_DEMO_ACADEMICA` e outro

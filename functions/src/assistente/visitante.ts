@@ -6,7 +6,8 @@ import {criarEndpointComCors} from "./http.js";
 interface DependenciasVisitante {
   recuperarConhecimento: (pergunta: string) => Promise<DocumentoPreparado[]>;
   gerarResposta: (pergunta: string,
-    chunks: readonly DocumentoPreparado[]) => Promise<string>;
+    chunks: readonly DocumentoPreparado[],
+    contexto: {readonly publico: "visitante"}) => Promise<string>;
 }
 
 /**
@@ -61,7 +62,10 @@ export function criarEndpointVisitante(
       }
       const deps = obterDependencias();
       const chunks = await deps.recuperarConhecimento(pergunta);
-      const resposta = await deps.gerarResposta(pergunta, chunks);
+      // A rota atribui o acesso publico depois de validar o corpo estrito.
+      const resposta = await deps.gerarResposta(
+        pergunta, chunks, {publico: "visitante"},
+      );
       if (typeof resposta !== "string" || !resposta.trim()) {
         throw new Error("RESPOSTA_INVALIDA");
       }

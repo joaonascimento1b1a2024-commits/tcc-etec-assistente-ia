@@ -32,14 +32,17 @@ test('visitante responde sem token, UID, histórico ou dependência de escrita',
     assert.equal(r.code, 200);
     assert.deepEqual(r.body, { resposta: 'Resposta documental' });
     assert.equal(r.headers['Cache-Control'], 'no-store');
-    assert.deepEqual(run.calls, ['deps', ['busca', 'Matrícula'], ['geracao', 'Matrícula', []]]);
+    assert.deepEqual(run.calls, ['deps', ['busca', 'Matrícula'],
+        ['geracao', 'Matrícula', [], { publico: 'visitante' }]]);
 });
 
 test('corpo inválido ou tentativa de indicar usuário/histórico não executa busca', async () => {
     const run = backend();
     for (const body of [null, [], {}, { pergunta: '' }, { pergunta: '   ' }, { pergunta: 3 },
         { pergunta: 'a'.repeat(701) }, { pergunta: 'oi', conversationId: 'abc' },
-        { pergunta: 'oi', usuarioId: 'alice' }, { pergunta: 'oi', historico: [] }]) {
+        { pergunta: 'oi', usuarioId: 'alice' }, { pergunta: 'oi', historico: [] },
+        ...['uid', 'publico', 'contexto', 'provider', 'model', 'url', 'OPENROUTER_API_KEY',
+            'SYLVINHO_IA_VISITANTE_ENABLED'].map(key => ({ pergunta: 'Matrícula', [key]: 'injetado' }))]) {
         assert.equal((await run.request(body)).code, 400);
     }
     assert.deepEqual(run.calls, []);

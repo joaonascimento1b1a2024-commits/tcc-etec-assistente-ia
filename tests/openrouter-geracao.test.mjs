@@ -6,6 +6,7 @@ import {criarGeradorConfiguravel, politicaRetencaoIA} from '../functions/lib/ass
 import {RESPOSTA_INDISPONIVEL} from '../functions/lib/assistente/geracao/conversa.js';
 import {criarDemonstracaoGemini} from '../functions/lib/assistente/geracao/demonstracao.js';
 import {gerarRespostaDocumental} from '../functions/lib/assistente/resposta-documental.js';
+import {orientarSemEvidencia} from '../functions/lib/assistente/encaminhamento.js';
 import {pergunta, criarChunk, texto} from './fixtures/fundamentacao-sintetica.mjs';
 
 // Sem acesso a process.env, dados pessoais, rede ou credenciais reais.
@@ -243,10 +244,12 @@ test('filtro diferencia tema matricula de identificadores pessoais', async () =>
 });
 test('contexto com identificador continua bloqueado e motivo e explicito', async () => {
   const f = fixture();
-  await f.gerar(pergunta, [criarChunk(texto + ' Matrícula: ABC123.')], {uid});
-  assert.equal(f.chamadas.length, 4);
+  const resposta = await f.gerar(pergunta, [criarChunk(texto + ' Matrícula: ABC123.')], {uid});
+  // Sem fontes, o fluxo institucional retorna orientacao local apos a revisao.
+  assert.equal(resposta, orientarSemEvidencia(pergunta));
+  assert.equal(f.chamadas.length, 3);
   assert.equal(f.eventos[0].motivo, 'DADOS_BLOQUEADOS_CONTEXTO');
-  assert.equal(f.eventos.at(-1).codigo, 'GERADA');
+  assert.equal(f.eventos.some(e => e.codigo === 'GERADA'), false);
   assert.equal(JSON.stringify(f.chamadas).includes('ABC123'), false);
   const dados = JSON.parse(f.chamadas[1].body.messages[1].content);
   assert.deepEqual(dados.contextos, []);
