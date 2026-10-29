@@ -97,12 +97,13 @@ test('pergunta RG chega a quatro chamadas OpenRouter sem enviar trecho irrelevan
   assert.equal(f.chamadas.length, 4);
   assert.equal(JSON.stringify(f.chamadas).includes(distrator.conteudo), false);
 });
-test('sem assunto no corpus, IA explica a limitacao sem citacao desconexa', async () => {
+test('sem assunto no corpus, resposta local explica a limitacao apos revisao', async () => {
   const f = fluxoSimulado([distrator]);
   const r = await f.responder();
   assert.doesNotMatch(r, /organização curricular/);
-  assert.equal(f.chamadas.length, 4);
+  assert.equal(f.chamadas.length, 3);
   assert.match(r, /Não encontrei informação/);
+  assert.doesNotMatch(r, /Resposta gerada por IA/);
   assert.deepEqual(f.chamadas[1].evidencias, []);
 });
 test('recusa estruturada do modelo tem diagnostico especifico sem inventar resposta', async () => {

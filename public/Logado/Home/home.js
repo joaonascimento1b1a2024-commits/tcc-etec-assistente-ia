@@ -271,7 +271,11 @@ function addMessage(text, sender) {
     if (sender === 'bot') {
         const avatar = document.createElement('div');
         avatar.className = 'bot-avatar';
-        avatar.textContent = '🤖';
+        const logo = document.createElement('img');
+        logo.src = 'Logo s_fundo.png';
+        logo.alt = '';
+        avatar.setAttribute('aria-hidden', 'true');
+        avatar.append(logo);
         row.append(avatar);
     }
 

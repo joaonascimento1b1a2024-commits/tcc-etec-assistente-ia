@@ -36,7 +36,10 @@ function addMessage(text, role) {
     if (role === 'bot') {
         const avatar = document.createElement('div');
         avatar.className = 'bot-avatar';
-        avatar.textContent = 'IA';
+        const logo = document.createElement('img');
+        logo.src = '../Logado/Home/Logo s_fundo.png';
+        logo.alt = '';
+        avatar.append(logo);
         avatar.setAttribute('aria-hidden', 'true');
         row.append(avatar);
     }

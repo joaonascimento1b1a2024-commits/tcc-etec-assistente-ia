@@ -114,6 +114,9 @@ test('Home salva user uma vez e renderiza somente historico confirmado, nao corp
     await run.send();
     assert.deepEqual(run.counts(), { appends: 1, reads: 2, requests: 1 });
     assert.deepEqual(run.rendered(), ['Pergunta', 'Bot confirmado no banco']);
+    const logo = run.element('#messages').children[1].children[0].children[0];
+    assert.equal(logo.src, 'Logo s_fundo.png');
+    assert.equal(logo.alt, '');
     assert.equal(run.element('#messageInput').value, '');
     assert.equal(run.element('#messageInput').disabled, false);
     assert.equal(run.element('#newChat').disabled, false);

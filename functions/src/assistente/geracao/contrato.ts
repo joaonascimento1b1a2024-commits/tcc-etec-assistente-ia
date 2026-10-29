@@ -3,6 +3,7 @@ import {
 } from "../fundamentacao/contrato";
 import type {RespostaConversa} from "./conversa";
 import {normalizarTexto} from "../../rag/recuperacao";
+import type {ProcedimentoInstitucional} from "../intencao";
 
 export interface EvidenciaGeracao {
   readonly id: string;
@@ -11,6 +12,7 @@ export interface EvidenciaGeracao {
 }
 export interface PedidoGeracao {
   readonly pergunta: string;
+  readonly procedimento?: ProcedimentoInstitucional;
   readonly contextos: readonly string[];
   readonly evidencias: readonly EvidenciaGeracao[];
   readonly situacao?: "sem_evidencias" | "contexto_indisponivel" |

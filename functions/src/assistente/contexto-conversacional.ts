@@ -39,7 +39,10 @@ function complemento(texto: string): string | undefined {
   if (/^(?:posso fazer pela internet|pode ser pela internet)$/u.test(n)) {
     return "Como solicitar pela internet";
   }
-  if (/^(?:nao sei como fazer(?: isso)?|nao faco ideia de como (?:faz|fazer) isso|como (?:faco|faz|fazer)(?: isso)?)$/u.test(n)) {
+  const modo = new RegExp("^(?:nao sei como fazer(?: isso)?|" +
+    "nao faco ideia de como (?:faz|fazer) isso|" +
+    "como (?:faco|faz|fazer)(?: isso)?)$", "u");
+  if (modo.test(n)) {
     return "Como solicitar";
   }
   return undefined;

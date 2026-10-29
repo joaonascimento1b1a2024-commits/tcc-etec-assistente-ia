@@ -1,4 +1,5 @@
 import {classificarEscopo} from "./escopo";
+import {normalizarProcedimentos} from "../rag/assuntos";
 import type {DocumentoPreparado} from "../rag/recuperacao";
 import {orientarSemEvidencia} from "./encaminhamento";
 import {
@@ -338,7 +339,11 @@ export function gerarRespostaDocumental(
   const modeloSolicitado = originais && extrairTermosOriginais(textoPergunta)
     .some((termo) => ["modelo", "exemplo"].includes(termo));
   if (!termos.length) return recusar("sem_evidencia");
-  const perguntaNormalizada = normalizarTexto(textoPergunta);
+  // "Continuar estudando no proximo ano" nomeia a renovacao; nao solicita
+  // uma data vigente. Pedidos explicitos de atualidade continuam bloqueados.
+  const perguntaNormalizada = normalizarProcedimentos(
+    normalizarTexto(textoPergunta),
+  );
   // O contrato V1 nao comprova atualidade; nao consultar relogio ou inferi-la.
   if (/\b(atual|atuais|hoje|amanha|proximo|proxima)\b/u
     .test(perguntaNormalizada)) return recusar("sem_evidencia");

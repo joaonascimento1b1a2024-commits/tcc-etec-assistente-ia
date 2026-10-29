@@ -136,11 +136,12 @@ test('revisor recusa contradicao sem ser ignorado pelo gateway', async () => {
   assert.equal(f.eventos.at(-1).motivo, 'REVISAO_REPROVADA');
   assert.equal(f.diagnosticos.at(-1).motivoRevisao, 'CONTRADICAO');
 });
-test('correcao pode pedir esclarecimento sem publicar a exigencia anterior', async () => {
+test('correcao nao repete assunto ja informado nem publica exigencia anterior', async () => {
   const mensagem = 'Você está perguntando sobre renovação ou transferência?';
   const f = simular({revisao: corrigir({tipo: 'esclarecimento', mensagem, afirmacoes: []}, 'PERGUNTA_AMBIGUA')});
   const resposta = await f.responder();
-  assert.equal(resposta, 'Sobre qual procedimento você quer saber?');
+  assert.match(resposta, /renovação de matrícula.*não encontrei orientações/);
+  assert.doesNotMatch(resposta, /Sobre qual procedimento/);
   assert.doesNotMatch(resposta, /42|Trecho documental/);
   assert.equal(f.chamadas.length, 3);
 });

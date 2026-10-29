@@ -1,6 +1,7 @@
 import {classificarEscopo, FORA_ESCOPO,
   ESCLARECER_ESCOPO, SOCIAL_ESCOPO} from "../escopo";
 import {orientarSemEvidencia} from "../encaminhamento";
+import {identificarProcedimento} from "../intencao";
 import {emitirDiagnostico} from "../diagnostico";
 import type {RegistrarDiagnostico} from "../diagnostico";
 import {prepararEvidencias} from "../fundamentacao/gateway";
@@ -40,6 +41,7 @@ export type MotivoFallback = CodigoOpenRouter | MotivoProposta | FalhaRevisao |
   "EVIDENCIAS_INSUFICIENTES" | "CONFIGURACAO_INVALIDA" |
   "FONTES_INVALIDAS" | "OCUPADO" | "LIMITE_LOCAL" | "ENTRADA_INSEGURA" |
   "PROPOSTA_INVALIDA" | "REVISAO_REPROVADA" | "SAIDA_INSEGURA" |
+  "ESCLARECIMENTO_DESNECESSARIO" |
   "SAIDA_EXCESSIVA" | "GERACAO_TIMEOUT" | "GERACAO_INDISPONIVEL";
 export interface OpcoesGerador {
   lerAmbiente?: () => AmbienteIA;
@@ -249,8 +251,10 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       const situacao: PedidoGeracao["situacao"] = bloquearContexto ?
         "contexto_indisponivel" : fontesParciais ? "fontes_parciais" :
           !usarEvidencias ? "sem_evidencias" : undefined;
+      const procedimento = identificarProcedimento(pergunta);
       const pedido: PedidoGeracao = Object.freeze({
         pergunta: pergunta as string,
+        ...(procedimento ? {procedimento} : {}),
         evidencias: Object.freeze(evidencias),
         contextos: Object.freeze(usarEvidencias ? cs.map((c) =>
           conversacional ? [c.titulo, c.secao, c.conteudo].filter(Boolean)
@@ -323,6 +327,12 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           // Mensagens livres nao podem transportar conhecimento geral,
           // mesmo se rotuladas como conversa/esclarecimento/sem_base.
           if (resposta.tipo !== "documental") {
+            if (resposta.tipo === "esclarecimento" && procedimento) {
+              // O assunto ja esta explicito na pergunta ou foi resolvido
+              // pelo contexto autenticado. Nao reinicia o mesmo pedido.
+              alternativa = orientarSemEvidencia(pergunta as string);
+              return fallback("ESCLARECIMENTO_DESNECESSARIO");
+            }
             return resposta.tipo === "fora_escopo" ? FORA_ESCOPO :
               resposta.tipo === "esclarecimento" ? ESCLARECER_ESCOPO :
                 resposta.tipo === "conversa" ? SOCIAL_ESCOPO :

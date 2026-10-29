@@ -170,6 +170,9 @@ test('visitante conversa na página, novo chat e saída apagam tudo', async () =
     await p.send('Matrícula');
     assert.equal(p.navigations.length, 0);
     assert.equal(p.element('#messages').children.length, 2);
+    const logo = p.element('#messages').children[1].children[0].children[0];
+    assert.equal(logo.src, '../Logado/Home/Logo s_fundo.png');
+    assert.equal(logo.alt, '');
     assert.equal(p.element('#messageInput').value, '');
     p.events.get('#newChat:click')();
     assert.equal(p.element('#messages').children.length, 0);
