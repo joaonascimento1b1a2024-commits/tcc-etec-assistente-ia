@@ -20,6 +20,13 @@ const original = process.env.SYLVINHO_RAG_ORIGINAL_LOCAL === '1';
 if (original && academica) throw new Error('LOCAL_ORIGINAL_MODE_CONFLICT');
 const leitorOriginal = original ? require(path.join(root, 'local-e2e/original-corpus.cjs'))
     .criarLeitorOriginalLocal() : null;
+// Fixtures sintéticas deste roteiro usam o contrato lexical legado. Não são
+// fontes oficiais e não devem ser passadas ao seletor restrito de documentos.
+async function recuperarFixtures(pergunta) {
+    const { selecionarDocumentosRelevantes } = require(path.join(root, 'functions/lib/rag/recuperacao.js'));
+    const snapshot = await getFirestore(app).collection('conhecimento').where('ativo', '==', true).get();
+    return selecionarDocumentosRelevantes(snapshot.docs, pergunta);
+}
 let app;
 function localDependencies() {
     const checks = {
@@ -57,7 +64,7 @@ exports.perguntarAssistente = onRequest({ region: 'southamerica-east1', cors: fa
         return decoded;
     } },
     firestore: getFirestore(app),
-    ...(original ? {recuperarConhecimento: leitorOriginal} : academica ? { recuperarConhecimento: criarLeitorDemonstracao(getFirestore(app)) } : {}),
+    recuperarConhecimento: original ? leitorOriginal : academica ? criarLeitorDemonstracao(getFirestore(app)) : recuperarFixtures,
     serverTimestamp: () => FieldValue.serverTimestamp(),
     gerarResposta: async (pergunta, chunks) => {
         const contexto = chunks.map((chunk) => chunk.conteudo).join('\n');

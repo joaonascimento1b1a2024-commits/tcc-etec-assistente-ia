@@ -149,7 +149,7 @@ nav a:hover {
     padding: 32px clamp(24px, 6vw, 72px) 56px;
     background:
         linear-gradient(var(--overlay), var(--overlay)),
-        url('../Home/fundo 3.png') center / cover fixed;
+        url('../Home/fundo 3.webp') center / cover fixed;
 }
 h1 {
     margin: 0;

@@ -188,3 +188,8 @@ temp/
 
 # Snapshot documental de regressao: somente local, nao publicar no repositorio.
 /tests/dados/rag-original.json
+
+# Resultados e manifestos de execuções locais; fontes e testes ficam versionados.
+/docs/curadoria-local/avaliacao-*.json
+/docs/curadoria-local/verificacao-final.json
+/docs/curadoria-local/manifesto-entrega.json

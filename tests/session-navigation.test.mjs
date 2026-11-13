@@ -40,7 +40,7 @@ async function page(kind, { local = true, demo = true, appPresent = true } = {})
         document: { querySelector: node, querySelectorAll: () => [], createElement: () => node(Symbol()) },
         window: { location: { hostname: '127.0.0.1', search: '?conversa=abcdefghijklmnopqrst',
             replace: path => calls.push(['redirect', path]) }, etecTheme: { useAccount: uid => calls.push(['theme', uid]) } },
-        URLSearchParams, AbortController, console: { error() {} },
+        URLSearchParams, AbortController, setTimeout, clearTimeout, console: { error() {} },
         mockImport: async path => {
             const name = Object.keys(modules).find(key => path.includes(key));
             assert.ok(name, 'Import inesperado: ' + path); return modules[name];

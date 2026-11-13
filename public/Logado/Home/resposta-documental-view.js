@@ -98,8 +98,8 @@
         };
         container.classList.add('documental');
         if (dados.resposta) {
-            container.append(criar('p', 'documental-introducao', dados.aviso));
             container.append(criar('div', 'documental-resposta-ia', dados.resposta));
+            container.append(criar('p', 'documental-introducao', dados.aviso));
             const fontes = criar('details', 'documental-detalhes');
             fontes.append(criar('summary', '', 'Ver fontes'));
             fontes.append(criar('p', 'documental-introducao', dados.introducao));

@@ -117,6 +117,31 @@ test('Cliente nao possui acesso a SDK Firestore nem persistencia bot', () => {
     assert.doesNotMatch(source, /firebase|setDoc|updateDoc|append\(|runTransaction|GEMINI_API_KEY/i);
 });
 
+test('falha temporária carrega somente motivo e espera validados, sem repetir HTTP', async () => {
+    let calls = 0;
+    await assert.rejects(perguntarAssistente({...base, fetchImpl: async () => {
+        calls++;
+        return {ok: false, status: 429, json: async () => ({codigo: 'LIMITE_USO', retryAfterSeconds: 30, error: '<script>não exibir</script>'})};
+    }}), error => {
+        assert.equal(error.code, 'HTTP_429');
+        assert.equal(error.motivo, 'LIMITE_USO');
+        assert.equal(error.retryAfterSeconds, 30);
+        assert.equal(error.retentavel, true);
+        assert.doesNotMatch(error.message, /script/);
+        return true;
+    });
+    assert.equal(calls, 1);
+});
+
+test('metadados de espera inválidos e motivos desconhecidos não são aceitos', async () => {
+    await assert.rejects(perguntarAssistente({...base, fetchImpl: async () => ({ok: false, status: 503, json: async () => ({codigo: 'INDISPONIVEL', retryAfterSeconds: 999999})})}), error => {
+        assert.equal(error.code, 'HTTP_503');assert.equal(error.retryAfterSeconds, undefined);return true;
+    });
+    await assert.rejects(perguntarAssistente({...base, fetchImpl: async () => ({ok: false, status: 503, json: async () => ({codigo: 'MOTIVO_DESCONHECIDO', retryAfterSeconds: 10})})}), error => {
+        assert.equal(error.motivo, undefined);assert.equal(error.retentavel, undefined);return true;
+    });
+});
+
 
 const require = createRequire(import.meta.url);
 const {OFFICIAL_ORIGINS} = require('../render-poc/producao.cjs');

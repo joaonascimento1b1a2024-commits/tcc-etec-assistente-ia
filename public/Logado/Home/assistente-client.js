@@ -62,7 +62,21 @@ async function solicitarAssistente({
                 redirect: 'error',
             });
             verificarSessao();
-            if (!response.ok) throw falha(`HTTP_${response.status}`);
+            if (!response.ok) {
+                const error = falha(`HTTP_${response.status}`);
+                if ([429, 503].includes(response.status)) {
+                    try {
+                        const detalhe = await response.json();
+                        if (['LIMITE_USO', 'OCUPADO', 'TEMPO_EXCEDIDO', 'RESPOSTA_NAO_VALIDADA', 'INDISPONIVEL'].includes(detalhe?.codigo)) {
+                            error.motivo = detalhe.codigo;
+                            error.retentavel = true;
+                            if (Number.isInteger(detalhe.retryAfterSeconds) && detalhe.retryAfterSeconds >= 1 && detalhe.retryAfterSeconds <= 300)
+                                error.retryAfterSeconds = detalhe.retryAfterSeconds;
+                        }
+                    } catch { /* Não exibir nem interpretar prosa remota de erro. */ }
+                }
+                throw error;
+            }
             let data;
             try {
                 data = await response.json();
@@ -88,7 +102,8 @@ async function solicitarAssistente({
         return await Promise.race([operacao(), interrompido]);
     } catch (error) {
         const conhecidos = /^(HTTP_\d+|SESSAO_INVALIDA|TOKEN_INVALIDO|TIMEOUT|JSON_INVALIDO|RESPOSTA_INVALIDA)$/;
-        throw falha(conhecidos.test(error?.code) ? error.code : 'REDE_OU_TOKEN');
+        if (conhecidos.test(error?.code)) throw error;
+        throw falha('REDE_OU_TOKEN');
     } finally {
         clearTimeout(timer);
         signal?.removeEventListener('abort', cancelar);

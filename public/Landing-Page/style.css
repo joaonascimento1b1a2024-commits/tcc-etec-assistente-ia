@@ -19,7 +19,7 @@ body {
     background-color: black;
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-        url('arquivos/fundo1_landingPage.png');
+        url('arquivos/fundo1_landingPage.webp');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -181,7 +181,7 @@ body {
     font-weight: 700; /* Texto em negrito */
     text-decoration: none; /* Remove o sublinhado do link */
     display: inline-block;
-    transition: all 0.3s ease; /* Transição suave ao passar o mouse */
+    transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease; /* Transição suave ao passar o mouse */
 }
 
 /* Efeito Hover (ao passar o mouse por cima do botão) */

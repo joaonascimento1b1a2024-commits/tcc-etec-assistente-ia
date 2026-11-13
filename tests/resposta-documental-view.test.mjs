@@ -10,6 +10,16 @@ const intro='Trechos documentais relacionados a pergunta (citacoes, nao uma inte
 const quote='A frequência mínima é de 75% conforme a disposição documental de teste.';
 const reference='Regimento Comum; documento: doc-teste; trecho: chunk-teste; secao: artigo 83; pagina 26';
 const response=(n=1)=>intro+Array.from({length:n},(_,i)=>`\n\n${i+1}. Trecho documental: "${quote}"\nFonte: ${reference}.`).join('');
+test('resposta gerada aparece antes do aviso e as fontes ficam em details',()=>{
+ const c=container();
+ const natural='A frequência mínima é de 75%.';
+ assert.equal(renderizar(c,'Resposta gerada por IA; confira as fontes oficiais.\n\n'+natural+'\n\n'+response()),true);
+ assert.equal(c.children[0].className,'documental-resposta-ia');
+ assert.equal(c.children[0].textContent,natural);
+ assert.equal(c.children[1].textContent,'Resposta gerada por IA; confira as fontes oficiais.');
+ assert.equal(c.children[2].tagName,'details');
+ assert.equal(c.children[2].children[0].textContent,'Ver fontes');
+});
 class Element {
  constructor(tag,doc){this.tagName=tag;this.ownerDocument=doc;this.children=[];this.className='';this.raw='';this.classList={add:name=>{this.className+=' '+name}};}
  set textContent(value){this.raw=String(value);this.children=[];}

@@ -1,6 +1,7 @@
 // Executado no <head> para restaurar a preferência antes de desenhar a página.
 (() => {
     const themeKey = 'etec:theme';
+    const areaLogada = /\/Logado\//i.test(location.pathname);
     const assetBase = new URL('.', document.currentScript.src);
     const logoName = 'etec_ra_central_matao_sylvio_de_mattos_carvalho_';
     const normalize = (theme) => (theme === 'light' ? 'light' : 'dark');
@@ -22,7 +23,7 @@
 
     // Prévia local: o cache só muda depois da confirmação do salvamento.
     function apply(theme) {
-        document.documentElement.dataset.theme = normalize(theme);
+        document.documentElement.dataset.theme = areaLogada ? normalize(theme) : 'dark';
         updateLogos();
     }
 

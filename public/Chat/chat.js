@@ -22,6 +22,7 @@ function lock(locked) {
 function clearChat() {
     activeRequest?.abort();
     activeRequest = null;
+    window.sylvinhoUI?.setBusy(false);
     messages.replaceChildren();
     messages.hidden = true;
     welcome.hidden = false;
@@ -45,6 +46,7 @@ function addMessage(text, role) {
     }
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
+    bubble.sylvinhoOriginalText = text;
     if (role === 'bot' && window.apresentacaoDocumental)
         window.apresentacaoDocumental.renderizar(bubble, text);
     else bubble.textContent = text;
@@ -70,6 +72,7 @@ async function sendMessage(text) {
     }
     const controller = new AbortController();
     activeRequest = controller;
+    window.sylvinhoUI?.setBusy(true);
     lock(true);
     const row = addMessage(pergunta, 'user');
     input.value = '';
@@ -93,6 +96,7 @@ async function sendMessage(text) {
     } finally {
         if (activeRequest === controller) {
             activeRequest = null;
+            window.sylvinhoUI?.setBusy(false);
             lock(!ready);
             input.focus();
         }
@@ -111,6 +115,7 @@ async function startSession() {
         ready = false;
         activeRequest?.abort();
         activeRequest = null;
+        window.sylvinhoUI?.setBusy(false);
         lock(true);
         retry.hidden = false;
         status.textContent = 'Não foi possível verificar sua sessão. Confira a conexão e tente novamente.';
@@ -147,3 +152,7 @@ window.addEventListener('pagehide', () => {
 });
 window.addEventListener('pageshow', event => { if (event.persisted) void startSession(); });
 void startSession();
+
+// Enter envia; Shift+Enter mantém uma quebra de linha; composição não envia.
+const composerField=document.querySelector('#messageInput');
+composerField.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault(); document.querySelector('#messageForm').requestSubmit();}});

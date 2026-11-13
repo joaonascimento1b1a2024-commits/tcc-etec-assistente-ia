@@ -1,0 +1,3277 @@
+[
+  {
+    "id": "material-b-001",
+    "pergunta": "B1. Identificação e contato — Nome",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Nome: Etec Sylvio de Mattos Carvalho (código 103), Matão/SP. Escola técnica estadual do Centro Paula Souza (CPS/CEETEPS). [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-002",
+    "pergunta": "B1. Identificação e contato — Endereço",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Endereço: Rua Cesário Mota, 644, Centro, Matão/SP, CEP 15990-050. (O aluno escreveu \"Motta\"; grafia oficial no site: \"Mota\".) [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-003",
+    "pergunta": "B1. Identificação e contato — Telefones",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Telefones: (16) 3383-9200 (rodapé do site); fixo (16) 3382-6878 (página de contato). O folder do Regimento 2024 traz ainda (16) 3382-1226 para a Secretaria. [?] Três números fixos: confirmar qual é o principal antes de afirmar. Até lá, indicar o WhatsApp da Secretaria.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-004",
+    "pergunta": "B1. Identificação e contato — WhatsApp Secretaria Acadêmica",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "WhatsApp Secretaria Acadêmica: (16) 99637-1226 (também aparece como 55 16 99637-1226). [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-005",
+    "pergunta": "B1. Identificação e contato — WhatsApp Orientação e Apoio Educacional",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "WhatsApp Orientação e Apoio Educacional: (16) 99716-1071. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-006",
+    "pergunta": "B1. Identificação e contato — WhatsApp geral da escola",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "WhatsApp geral da escola: (16) 99189-2181 (55 16 99189-2181). [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-007",
+    "pergunta": "B1. Identificação e contato — E-mails",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "E-mails: Diretoria e103dir@cps.sp.gov.br; Administrativa e103adm@cps.sp.gov.br; Acadêmica/Secretaria e103acad@cps.sp.gov.br; APM e103apm@cps.sp.gov.br. [C] (No site, o link do e-mail acadêmico aponta para o da Diretoria: tratar e103acad como o da Secretaria, conforme folder oficial 2024.)",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-008",
+    "pergunta": "B1. Identificação e contato — Redes",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Redes: Instagram @etecsylviodemattos; Facebook /etecsmc; LinkedIn /school/etecsylviodemattos. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-009",
+    "pergunta": "B1. Identificação e contato — Site",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Site: https://etecmatao.cps.sp.gov.br/ — atualizado raramente (último post de blog 21/12/2023, eventos de 2024). O Instagram é o canal vivo. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-010",
+    "pergunta": "B1. Identificação e contato — Ouvidoria",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "contato",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B1. Identificação e contato"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Ouvidoria: https://fala.sp.gov.br/ ; Transparência: http://www.transparencia.sp.gov.br/ ; SIC: http://www.sic.sp.gov.br/ [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-011",
+    "pergunta": "B2. Horários — A escola funciona de segunda a sexta, das 07h às 23h. [C]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "A escola funciona de segunda a sexta, das 07h às 23h. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-012",
+    "pergunta": "B2. Horários — Secretaria Acadêmica",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Secretaria Acadêmica**: segunda a sexta, 9h às 14h e 18h30 às 21h. [C – folder do Regimento 2021-2024, versão 26/02/2024] O aluno disse \"manhã, tarde e noite com pausa para o almoço\": compatível. Pausa entre 14h e 18h30. Confirmar se ainda vale em 2026. [?]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-013",
+    "pergunta": "B2. Horários — Turnos de aula (lidos do folder oficial; confirmar nos horários de 2026)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Turnos de aula** (lidos do folder oficial; confirmar nos horários de 2026): [?]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-014",
+    "pergunta": "B2. Horários — Manhã 7h10–12h30",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Manhã 7h10–12h30: M-Tec Mecatrônica, M-Tec Informática para Internet e Enfermagem.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-015",
+    "pergunta": "B2. Horários — Tarde 13h00–18h20.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Tarde 13h00–18h20.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-016",
+    "pergunta": "B2. Horários — Noite 18h40–22h40 (M-Tec noturno) e 19h00–23h00 (demais técnicos).",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Noite 18h40–22h40 (M-Tec noturno) e 19h00–23h00 (demais técnicos).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-017",
+    "pergunta": "B2. Horários — Administração funciona em parceria com escolas estaduais (E.E. Prof. Henrique Morato 7h–12h35; E.E. Jardim Buscardi 7h–11h50, tarde 13h20–16h). Dado lido de imagem do folder",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Administração funciona em parceria com escolas estaduais (E.E. Prof. Henrique Morato 7h–12h35; E.E. Jardim Buscardi 7h–11h50, tarde 13h20–16h). Dado lido de imagem do folder: verificar antes de afirmar.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-018",
+    "pergunta": "B2. Horários — Intervalo/merenda",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Intervalo/merenda**: intervalo por volta de 10h20, com merenda (refeitório) e cantina. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-019",
+    "pergunta": "B2. Horários — Atraso",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Atraso**: o aluno que chega atrasado assina uma prancheta/lista na entrada. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-020",
+    "pergunta": "B2. Horários — Saída antes do fim das aulas [C]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "rotina",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B2. Horários"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Saída antes do fim das aulas** [C]: só com liberação da Diretora, Coordenação Pedagógica, Orientação ou Secretaria. Menores de 18 anos só saem com o responsável presencialmente (autorização dos pais). Maiores de 18 seguem o horário normal, salvo situações extraordinárias. O Regimento Comum também proíbe sair da escola durante as atividades sem autorização (dos pais, se menor, e da Direção).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-021",
+    "pergunta": "B3. Atendimento da Secretaria — Atende aluno, responsável e ex-aluno. [A]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "secretaria",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B3. Atendimento da Secretaria"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Atende aluno, responsável e ex-aluno. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-022",
+    "pergunta": "B3. Atendimento da Secretaria — Declaração de matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "secretaria",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B3. Atendimento da Secretaria"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Declaração de matrícula**: normalmente sai na hora ou em até 1 dia. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-023",
+    "pergunta": "B3. Atendimento da Secretaria — Cancelamento de matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "secretaria",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B3. Atendimento da Secretaria"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Cancelamento de matrícula**: processo simples, feito na Secretaria. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-024",
+    "pergunta": "B3. Atendimento da Secretaria — Documentos escolares (histórico, certificados, diplomas) são emitidos pela Secretaria Acadêmica (Diretoria de Serviços Acadêmicos); prazos e modelos seguem o \"Sistema ETEC de Procedimentos Acadêmicos\". [C – Regimento Comum art. 35]. Prazo da 2ª via, valor e requisitos",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "secretaria",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B3. Atendimento da Secretaria"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Documentos escolares (histórico, certificados, diplomas) são emitidos pela Secretaria Acadêmica (Diretoria de Serviços Acadêmicos); prazos e modelos seguem o \"Sistema ETEC de Procedimentos Acadêmicos\". [C – Regimento Comum art. 35]. Prazo da 2ª via, valor e requisitos: não informados → \"a Secretaria confirma\". [?]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-025",
+    "pergunta": "B3. Atendimento da Secretaria — Pedido de transferência (sair da escola)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "secretaria",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B3. Atendimento da Secretaria"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Pedido de transferência (sair da escola): é expedida quando solicitada pelo aluno ou, se menor, pelo responsável. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-026",
+    "pergunta": "B4. Matrícula, renovação e permanência — Matrícula inicial (novo aluno aprovado no Vestibulinho)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Matrícula inicial** (novo aluno aprovado no Vestibulinho): feita na Secretaria, de forma presencial ou remota conforme orientação da chamada, com documentos. Menores de idade comparecem com o responsável. [A + C]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-027",
+    "pergunta": "B4. Matrícula, renovação e permanência — Idade para matricular sozinho",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Idade para matricular sozinho**: a partir de 16 anos o próprio candidato pode matricular-se; menor de 16 só pelo responsável legal. Exige concordância com o Regimento. [C Regimento Comum art. 64]. Na prática da escola, o aluno disse que menores precisam do responsável: orientar assim. [A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-028",
+    "pergunta": "B4. Matrícula, renovação e permanência — Documentos da matrícula (Vestibulinho 1º sem 2027 – Manual do Candidato) [C]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Documentos da matrícula** (Vestibulinho 1º sem 2027 – Manual do Candidato) [C]: documento de identidade, CPF, 1 foto 3x4 recente, histórico escolar + certificado de conclusão (ou declaração de conclusão). Ensino Médio integrado (M-Tec): comprovar conclusão do Ensino Fundamental. Técnico: comprovar Ensino Médio concluído ou matrícula na 2ª série do Ensino Médio. Enfermagem: exige 18 anos completos até 31/01/2027. Não entregar a documentação no prazo = indeferimento e a vaga passa ao próximo classificado.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-029",
+    "pergunta": "B4. Matrícula, renovação e permanência — Matrícula confirmada nas séries/módulos iniciais em até 5 dias letivos; faltar todos esses dias sem justificativa leva ao cancelamento. [C art. 64 §4]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Matrícula confirmada** nas séries/módulos iniciais em até 5 dias letivos; faltar todos esses dias sem justificativa leva ao cancelamento. [C art. 64 §4]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-030",
+    "pergunta": "B4. Matrícula, renovação e permanência — Pode ocorrer matrícula inicial até 30 dias corridos depois do início das aulas, respeitada a ordem de classificação. [C art. 64 §5]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Pode ocorrer matrícula inicial até 30 dias corridos depois do início das aulas, respeitada a ordem de classificação. [C art. 64 §5]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-031",
+    "pergunta": "B4. Matrícula, renovação e permanência — Não existe matrícula condicional. [C art. 67 §1]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Não existe matrícula condicional.** [C art. 67 §1]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-032",
+    "pergunta": "B4. Matrícula, renovação e permanência — Renovação de matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Renovação de matrícula**: feita online pelo NSA (https://nsaetec.com.br/), no período do Calendário Escolar, geralmente no fim do ano. [A + C calendário]. Diferença: matrícula = entrada de aluno novo; renovação = continuidade de quem já estuda.",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-033",
+    "pergunta": "B4. Matrícula, renovação e permanência — Perdi o prazo da renovação",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Perdi o prazo da renovação**: o Regimento diz que matrícula e renovação ocorrem na época do calendário e não há condicional; não há regra específica de prazo extra → \"a Secretaria avalia o seu caso, procure logo\". [?]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-034",
+    "pergunta": "B4. Matrícula, renovação e permanência — Abandono",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Abandono**: 15 dias consecutivos sem ir às aulas e sem justificar, mesmo após contato por telefone/mensagem, a escola lança \"abandono\" e libera a vaga. [C art. 67 §2]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-035",
+    "pergunta": "B4. Matrícula, renovação e permanência — Trancamento",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Trancamento**: permitido a pedido do aluno (ou responsável se menor), a critério da Direção, ouvido o Conselho de Classe, uma vez por série/módulo. Para voltar: renovar a matrícula no período seguinte e depender de o curso/série/turno existir e de eventuais mudanças de currículo. [C art. 67 §3]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-036",
+    "pergunta": "B4. Matrícula, renovação e permanência — Transferência para cá",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Transferência para cá**: recebida a qualquer época se houver vaga e histórico escolar; entre Etecs basta vaga + histórico; de fora do CPS pode haver avaliação de competências; se houver mais candidatos que vagas, processo classificatório com critérios públicos; pode exigir estudos complementares. [C arts. 72–73]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-037",
+    "pergunta": "B4. Matrícula, renovação e permanência — Aproveitamento de estudos",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Aproveitamento de estudos**: a escola pode reconhecer estudos anteriores/experiência por comissão de 3 professores; não vale para o 1º módulo/série. [C art. 53]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-038",
+    "pergunta": "B4. Matrícula, renovação e permanência — Referência de 40 alunos por classe (1,2 m² por aluno). [C art. 69]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "matricula",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B4. Matrícula, renovação e permanência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Referência de 40 alunos por classe (1,2 m² por aluno). [C art. 69]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-039",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Avaliação por conceitos",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Avaliação por conceitos**: MB (Muito Bom), B (Bom), R (Regular), I (Insatisfatório). Não existe nota numérica de aprovação. [C art. 77] (Atenção: \"I\" é Insatisfatório, não \"irregular/insuficiente\".)",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-040",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Avaliação é contínua, acumulativa, com foco em competências; o professor apresenta no início do período o plano de trabalho com instrumentos e critérios. [C arts. 76, 104-VIII]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Avaliação é contínua, acumulativa, com foco em competências; o professor apresenta no início do período o plano de trabalho com instrumentos e critérios. [C arts. 76, 104-VIII]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-041",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Bimestres",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Bimestres**: a escola trabalha com 4 bimestres no ano. [A + C calendário]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-042",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Semana de provas e Simula ETEC",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Semana de provas e Simula ETEC**: existe semana de prova; o Simula ETEC tem 45 questões por dia e vale nota. [A, verificar detalhes e disciplinas]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-043",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Para ser promovido",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Para ser promovido**: conceitos MB, B ou R nos componentes + frequência mínima + decisão do Conselho de Classe. [C art. 84]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-044",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Frequência mínima",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Frequência mínima: 75%** do total de horas de efetivo trabalho escolar (somando todos os componentes). Abaixo de 75% = retido. Apurada independente do rendimento (nota boa não compensa falta). [C arts. 82, 83, 87]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-045",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Problemas de saúde",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Problemas de saúde**: a escola deve usar procedimentos de compensação de ausência (trabalhos de pesquisa, avaliações especiais escritas/orais). [C art. 83 p.ú.] Prazo de entrega de atestado e abono de falta: não definidos no Regimento Comum → Secretaria/Orientação confirma. [?]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-046",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Recuperação",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Recuperação**: quem tem rendimento insatisfatório tem direito a estudos de recuperação contínua ao longo do semestre/ano, com diagnóstico e metodologias diferenciadas, acompanhada pelo professor e pela Orientação Educacional. A forma exata depende do professor. [C art. 79 + A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-047",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Dependência = progressão parcial [C arts. 86–89]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Dependência = progressão parcial** [C arts. 86–89]:",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-048",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Até 3 componentes com \"I\"",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Até 3 componentes com \"I\": a critério do Conselho de Classe, o aluno pode seguir para a série/módulo seguinte em progressão parcial, cumprindo programa especial de estudos.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-049",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Mais de 3 componentes com \"I\"",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Mais de 3 componentes com \"I\": retido.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-050",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Até 3 com \"I\" e Conselho considera inapto",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Até 3 com \"I\" e Conselho considera inapto: retido.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-051",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Acumula no máximo 3 componentes em progressão parcial (mesmo de séries/módulos diferentes). Reprovar numa dependência não reprova a série regular.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Acumula no máximo 3 componentes em progressão parcial (mesmo de séries/módulos diferentes). Reprovar numa dependência não reprova a série regular.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-052",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Série/módulo final",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Série/módulo final: não há progressão parcial; qualquer componente com \"I\" (inclusive dependências antigas) retém. Exceção: por proposta de professor e decisão do Conselho, quem tem até 3 componentes pode ser promovido.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-053",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Componentes práticos e estágio obrigatório em dependência devem ser cursados presencialmente.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Componentes práticos e estágio obrigatório em dependência devem ser cursados presencialmente.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-054",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — O aluno diz que dependência é rara na escola. [A – não usar como regra]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "O aluno diz que dependência é rara na escola. [A – não usar como regra]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-055",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Retido",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Retido**: pode cursar só os componentes em que ficou retido, mediante pedido seu (ou do responsável se menor). [C art. 54]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-056",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Conselho de Classe decide promoção/retenção (diretor, coordenadores, orientação, professores da classe e representantes de alunos; só os professores votam retenção/promoção). Resultados são divulgados conforme o calendário. [C arts. 12–13]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Conselho de Classe** decide promoção/retenção (diretor, coordenadores, orientação, professores da classe e representantes de alunos; só os professores votam retenção/promoção). Resultados são divulgados conforme o calendário. [C arts. 12–13]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-057",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Reconsideração/recurso",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Reconsideração/recurso**: durante o ano, pedido de reconsideração à direção; contra o resultado final, pedido à direção e, da decisão da escola, recurso à Unidade do Ensino Médio e Técnico do CEETEPS. Reclassificação a pedido: até 10 dias corridos da divulgação do resultado final. Demais prazos seguem o Sistema ETEC de Procedimentos Acadêmicos (não temos o texto) → orientar a Secretaria. [C arts. 62, 90–92]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-058",
+    "pergunta": "B5. Avaliação, notas, frequência, recuperação, dependência — Ensino Médio",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B5. Avaliação, notas, frequência, recuperação, dependência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Ensino Médio**: 3 séries anuais, cada uma com 2 semestres letivos. [C art. 42]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-059",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Uniforme",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Uniforme**: camiseta do uniforme é obrigatória; custa cerca de R$ 50 (valor informado pelo aluno, não está no documento). Chinelo e calçado aberto são proibidos. [C folder + A para o valor]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-060",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Celular/notebook na aula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Celular/notebook** na aula: apenas com autorização prévia do professor. (O aluno disse \"celular proibido\"; a regra oficial é \"só com autorização do professor\" — usar a oficial.) [C]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-061",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Laboratórios",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Laboratórios**: proibido levar eletrônicos, alimentos e fumar. Regulamento de uso aprovado pelo Conselho de Escola em 08/04/2019. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-062",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Proibido ao aluno [C art. 115]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Proibido ao aluno** [C art. 115]: fumar; álcool/drogas ou comparecer sob efeito; materiais de risco; jogos sem caráter educativo; violência física, psicológica ou moral, preconceito e discriminação; danificar patrimônio; fazer coletas/campanhas sem autorização; sair durante as atividades sem autorização; gravar áudio/imagem sem autorização prévia do professor ou da direção; divulgar imagens captadas na escola sem autorização do diretor.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-063",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Deveres [C art. 114]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Deveres** [C art. 114]: conhecer e cumprir o Regimento; ser pontual e assíduo; respeitar colegas, professores e servidores; zelar pelas instalações; indenizar danos comprovados; vestir-se adequadamente.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-064",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Direitos [C art. 112]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Direitos** [C art. 112]: representar a turma nos conselhos; orientação educacional; recorrer de avaliações; conhecer critérios e planos no início do período; ser ouvido; recuperação contínua; participar de atividades extraclasse.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-065",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Penalidades [C arts. 117–118]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Penalidades** [C arts. 117–118]: analisadas caso a caso, com tratamento educativo: advertência, repreensão por escrito, suspensão (até 3 dias, podendo ser trocada por atividades socioeducativas) e transferência compulsória (medida extrema, referendada pelo Conselho de Escola). Direito a ampla defesa. Menor: responsáveis avisados; casos graves vão ao Conselho Tutelar; indícios de crime à autoridade policial.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-066",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Pais/responsáveis [C arts. 119–120]",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Pais/responsáveis** [C arts. 119–120]: direito de ser informados de frequência e rendimento; dever de acompanhar, comparecer às reuniões, responder por danos causados por menor.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-067",
+    "pergunta": "B6. Disciplina, uniforme e regras de convivência — Regimento da Etec válido para a gestão 2023-2027 (folder oficial). Instituições auxiliares",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "regras_gerais",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B6. Disciplina, uniforme e regras de convivência"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Regimento da Etec válido para a gestão 2023-2027 (folder oficial). Instituições auxiliares: APM e Grêmio Estudantil. [C]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-068",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Matrículas/renovação",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Matrículas/renovação: 16/01 e 15/07 (matrícula).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-069",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Início das aulas",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Início das aulas: 04/02 e 09/02 (conforme turma/curso: confirmar).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-070",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Carnaval",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Carnaval: 16 a 18/02.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-071",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Eleição do Grêmio",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Eleição do Grêmio: 13 e 14/04.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-072",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Fim do 1º bimestre",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Fim do 1º bimestre: 23/04.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-073",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Semana Paulo Freire",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Semana Paulo Freire: 04 a 08/05.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-074",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Reunião de pais",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Reunião de pais: 16/05; 01/08; 07/11.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-075",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Fim do 1º semestre",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Fim do 1º semestre: 03/07. Recesso: 08 a 22/07. Início do 2º semestre: 27/07.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-076",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — 30ª Feira Tecnológica",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "30ª Feira Tecnológica: 21 a 25/09.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-077",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Fim do 3º bimestre",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Fim do 3º bimestre: 07/10.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-078",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Renovação anual de matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Renovação anual de matrícula: 15 a 21/12 (renovação semestral: 29/06 a 03/07).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-079",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Fim do 2º semestre",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Fim do 2º semestre: 21/12. Resultados finais: 23/12. Recesso: 24 a 31/12.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-080",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — PDF oficial",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "PDF oficial: https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf (só dar o link se pedirem).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-081",
+    "pergunta": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026 — Regra",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "calendario",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B7. Calendário escolar 2026 (Etec 103; versão alterada em 20/03/2026) — vigência até 31/12/2026"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Regra: não usar essas datas para responder sobre 2027.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-082",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Inscrições",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Inscrições: terminaram em 10/11/2026 (prorrogadas, conforme aviso do Instagram). Hoje (12/11/2026) já encerrou.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-083",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Atendimento diferenciado/PcD",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Atendimento diferenciado/PcD: resultado em 12/11; recurso 13/11; resultado do recurso 16/11.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-084",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Locais de prova divulgados em 02/12/2026.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Locais de prova divulgados em 02/12/2026.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-085",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Prova",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Prova: 06/12/2026, 13h30** (portões abrem 12h30 e fecham 13h30). Duração 4 horas. 50 questões, 1 ponto cada.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-086",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Gabarito",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Gabarito: 09/12 às 15h. Questionamento do gabarito até 10/12 às 15h.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-087",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Classificação",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Classificação: 11/01/2027 às 15h.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-088",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Convocações e matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Convocações e matrícula: 1ª chamada 13/01 (matrícula 14–15/01); 2ª 20/01 (21–22/01); 3ª 27/01 (28–29/01); 4ª 03/02 (04–05/02).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-089",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Taxa de inscrição",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Taxa de inscrição: R$ 50; até 5 inscrições por candidato.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-090",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Pontuação acrescida",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Pontuação acrescida: 3%, 10% e 13% (critérios de bonificação do Manual; para o detalhe de quem recebe, orientar a ler o Manual).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-091",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Documentos de matrícula",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Documentos de matrícula: ver B4.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-092",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Instagram",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Instagram: vagas remanescentes de 2º módulo anunciadas (verificar data do post e validade antes de usar). [instagram, validade curta]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-093",
+    "pergunta": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram — Vestibulinho é feito no site https",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "vestibulinho",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B8. Vestibulinho — 1º semestre de 2027 (Manual do Candidato) — datas expiram"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Vestibulinho é feito no site https://www.vestibulinhoetec.com.br/home/ (não foi possível ler as páginas dele nesta coleta).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-094",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Ensino Médio com Habilitação Profissional (M-Tec) — 3 anos, 3.000 h, 3 séries anuais; diploma de Ensino Médio com habilitação técnica; permite atuar como técnico e seguir para o ensino superior.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Ensino Médio com Habilitação Profissional (M-Tec)** — 3 anos, 3.000 h, 3 séries anuais; diploma de Ensino Médio com habilitação técnica; permite atuar como técnico e seguir para o ensino superior.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-095",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Informática para Internet (M-Tec). Eixo Informação e Comunicação. 1ª série",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Informática para Internet (M-Tec). Eixo Informação e Comunicação. 1ª série: Auxiliar Técnico de Informática para Internet; 2ª série: Desenvolvedor de Aplicações Web e Mobile; 3ª série concluída: Técnico em Informática para Internet.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-096",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Mecatrônica (M-Tec). Eixo Controle e Processos Industriais. 1ª série",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Mecatrônica (M-Tec). Eixo Controle e Processos Industriais. 1ª série: Auxiliar Técnico em Mecatrônica; 2ª: Assistente Técnico de Mecatrônica; 3ª concluída: Técnico em Mecatrônica.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-097",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Mecatrônica noturno (M-Tec-N)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Mecatrônica noturno (M-Tec-N): mesmo conteúdo e carga, à noite.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-098",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Técnicos modulares (para quem já cursa ou concluiu o Ensino Médio; diploma exige Ensino Médio concluído)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Técnicos modulares** (para quem já cursa ou concluiu o Ensino Médio; diploma exige Ensino Médio concluído)",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-099",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Administração",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Administração: 1.200 h, 3 semestres. Eixo Gestão e Negócios. Módulo I: Auxiliar Administrativo; I+II: Assistente Administrativo; I a III: Técnico em Administração. Pela modalidade AMS dá continuidade na Fatec (Processos Gerenciais).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-100",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Desenvolvimento de Sistemas",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Desenvolvimento de Sistemas: 1.200 h, 3 semestres. Módulo I: Auxiliar em Desenvolvimento de Sistemas; I+II: Programador de Computadores; I a III: Técnico em Desenvolvimento de Sistemas.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-101",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Eletrotécnica",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Eletrotécnica: 1.200 h, 3 semestres. Módulo I sem terminalidade; I+II: Operador e Instalador de Circuitos Elétricos Prediais; I a III: Técnico em Eletrotécnica.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-102",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Mecânica",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Mecânica: 1.200 h, 3 semestres (a página cita um Módulo IV: [?] confirmar). I+II: Assistente Técnico de Processos Industriais; I a III: Assistente Técnico em Mecânica.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-103",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Enfermagem (existe, sim)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Enfermagem (existe, sim)**: 4 semestres/4 módulos; 1.902 h (noite) ou 1.961 h (dia), com estágio supervisionado de 654 h. Eixo Ambiente e Saúde. Módulos 1 e 2: Auxiliar de Enfermagem; módulo 4 concluído: Técnico em Enfermagem. Exige 18 anos para ingresso (Manual 1SEM2027). Estágio de Enfermagem NÃO pode ser dispensado (Regimento art. 51).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-104",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Especialização",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Especialização**: Urgência e Emergência (APH, Atendimento Pré-Hospitalar), módulo único de 463 h; exige Técnico em Enfermagem ou equivalente.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-105",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Cursos que aparecem em redes/calendário mas não no site (Programação de Jogos Digitais, Logística, EaD)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Cursos que aparecem em redes/calendário mas não no site (Programação de Jogos Digitais, Logística, EaD): [?] não afirmar.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-106",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Coordenações por curso existem (nomes em https",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Coordenações por curso existem (nomes em https://etecmatao.cps.sp.gov.br/nucleo-pedagogico/, página de 2024: não citar nomes sem confirmar).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-107",
+    "pergunta": "B9. Cursos (site oficial; confirmar grades e turnos 2026) — Regra de promoção do M-Tec",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "cursos",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B9. Cursos (site oficial; confirmar grades e turnos 2026)"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Regra de promoção do M-Tec: ver B5.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-108",
+    "pergunta": "B10. Estágio e TCC — Estágio",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "estagio_tcc",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B10. Estágio e TCC"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Estágio**: ato educativo supervisionado; pode ser obrigatório (se estiver no plano do curso) ou opcional. A escola tem Grupo/Relações Institucionais de estágio que orienta e acompanha. Egresso que já atua na área pode ser dispensado total ou parcialmente após avaliação, exceto Enfermagem. A carga entra no histórico. [C arts. 49–52 + A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-109",
+    "pergunta": "B10. Estágio e TCC — TCC",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "estagio_tcc",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B10. Estágio e TCC"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**TCC**: trabalho científico com tema do curso, apoiado por professores; 120 h adicionais registradas no histórico; apresentado em evento aberto à comunidade ao fim de cada semestre; segundo o aluno, acontece no 3º ano com apresentação para banca de professores. Não há prazos, critérios e modelos publicados → Coordenação do curso. [C site + A]",
+    "origemDeclarada": "AL_ou_mista",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-110",
+    "pergunta": "B10. Estágio e TCC — Diploma técnico",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "estagio_tcc",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B10. Estágio e TCC"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**Diploma técnico**: exige Ensino Médio concluído, currículo cumprido e estágio supervisionado, se obrigatório. Concluiu módulo: certificado de módulo. [C art. 93]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-111",
+    "pergunta": "B11. Infraestrutura — 13 salas de aula com multimídia (som, computador, TV); 9 laboratórios de informática.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "13 salas de aula com multimídia (som, computador, TV); 9 laboratórios de informática.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-112",
+    "pergunta": "B11. Infraestrutura — Oficina mecânica; laboratórios de CNC, robótica e CLP, hidráulica e pneumática, metrologia e ensaios de materiais.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Oficina mecânica; laboratórios de CNC, robótica e CLP, hidráulica e pneumática, metrologia e ensaios de materiais.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-113",
+    "pergunta": "B11. Infraestrutura — Laboratórios de eletrônica analógica, eletrônica digital, comandos e máquinas elétricas, instalações elétricas e 2 de elétrica.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Laboratórios de eletrônica analógica, eletrônica digital, comandos e máquinas elétricas, instalações elétricas e 2 de elétrica.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-114",
+    "pergunta": "B11. Infraestrutura — Laboratório de enfermagem e de ciências da natureza.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Laboratório de enfermagem e de ciências da natureza.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-115",
+    "pergunta": "B11. Infraestrutura — Sala maker, sala multiuso, auditório, biblioteca, quadra poliesportiva coberta, estacionamento, refeitório, Centro de Memória Profa. Sandra Maria Matavelli (aberto em 04/06/2018), sala dos professores.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Sala maker, sala multiuso, auditório, biblioteca, quadra poliesportiva coberta, estacionamento, refeitório, Centro de Memória Profa. Sandra Maria Matavelli (aberto em 04/06/2018), sala dos professores.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-116",
+    "pergunta": "B11. Infraestrutura — 7 salas administrativas, almoxarifado, central de informática.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "7 salas administrativas, almoxarifado, central de informática.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-117",
+    "pergunta": "B11. Infraestrutura — Acessibilidade (rampa, elevador, banheiro adaptado) e horário da biblioteca",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "infraestrutura",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B11. Infraestrutura"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Acessibilidade (rampa, elevador, banheiro adaptado) e horário da biblioteca: não informados → perguntar à escola. [?]",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-118",
+    "pergunta": "B12. Estrutura, setores e órgãos — Direção, Coordenação Pedagógica, Orientação e Apoio Educacional (apoia quem tem dificuldade de aprendizagem ou conflito; faz mediação com a família), Secretaria Acadêmica (documentos/escrituração), Relações Institucionais (estágio, parcerias).",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Direção, Coordenação Pedagógica, Orientação e Apoio Educacional (apoia quem tem dificuldade de aprendizagem ou conflito; faz mediação com a família), Secretaria Acadêmica (documentos/escrituração), Relações Institucionais (estágio, parcerias).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-119",
+    "pergunta": "B12. Estrutura, setores e órgãos — Nomes atuais dos ocupantes dos cargos",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "pendente",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Nomes atuais dos ocupantes dos cargos: confirmar com o setor; identificação pessoal omitida.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-120",
+    "pergunta": "B12. Estrutura, setores e órgãos — Conselho de Escola",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Conselho de Escola: órgão deliberativo (aprova normas de convivência, calendário, referenda transferência compulsória); reúne-se no mínimo 2 vezes por semestre.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-121",
+    "pergunta": "B12. Estrutura, setores e órgãos — Grêmio Estudantil",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Grêmio Estudantil: existe, com coordenações de geral, financeiro, social, comunicação, esportes, cultura e relações acadêmicas. Eleição 2026: 13 e 14/04.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-122",
+    "pergunta": "B12. Estrutura, setores e órgãos — APM",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "APM: entidade privada sem fins lucrativos que apoia a escola (melhorias, alunos carentes, manutenção, atividades culturais). Valor da contribuição: não informado → e103apm@cps.sp.gov.br.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-123",
+    "pergunta": "B12. Estrutura, setores e órgãos — CIPA",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "setores",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B12. Estrutura, setores e órgãos"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "CIPA: prevenção de acidentes (CLT arts. 162–165 e NR-5).",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-124",
+    "pergunta": "B13. Sistemas — NSA (notas, faltas, renovação)",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "sistemas",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B13. Sistemas"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "**NSA** (notas, faltas, renovação): https://nsaetec.com.br/. Se o aluno não consegue acessar (senha etc.): Secretaria.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-125",
+    "pergunta": "B13. Sistemas — E-mail institucional",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "sistemas",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B13. Sistemas"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "E-mail institucional: http://www.etec.sp.gov.br/",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-126",
+    "pergunta": "B13. Sistemas — Vestibulinho",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "sistemas",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B13. Sistemas"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Vestibulinho: https://www.vestibulinhoetec.com.br/home/",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-127",
+    "pergunta": "B13. Sistemas — Centro Paula Souza",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "sistemas",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B13. Sistemas"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Centro Paula Souza: https://www.cps.sp.gov.br/ ; CPS Carreiras: https://carreiras.cps.sp.gov.br/",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-128",
+    "pergunta": "B14. História e identidade — Criada em 03/06/1986 (Decreto Estadual 25.326) como Escola Técnica Estadual de 2º Grau de Matão. 40 anos em 03/06/2026.",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "historia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B14. História e identidade"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Criada em 03/06/1986 (Decreto Estadual 25.326) como Escola Técnica Estadual de 2º Grau de Matão. 40 anos em 03/06/2026.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-129",
+    "pergunta": "B14. História e identidade — 1987",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "historia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B14. História e identidade"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "1987: recebe o nome do Prof. Dr. Sylvio de Mattos Carvalho (primeiro diretor do Ginásio Municipal). Cursos iniciais: Mecânica, Eletrônica, Eletrotécnica.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-130",
+    "pergunta": "B14. História e identidade — 1994",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "historia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B14. História e identidade"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "1994: passa ao Centro Paula Souza. 1997: Enfermagem. 1999: ensino médio. 2004: Mecatrônica. 2010: Administração (semipresencial) e Informática para Internet. 2015: ensino médio integrado em Informática para Internet e Mecatrônica. 2017: última turma de ensino médio comum.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  },
+  {
+    "id": "material-b-131",
+    "pergunta": "B14. História e identidade — Missão",
+    "variacoes": [],
+    "resposta": null,
+    "categoria": "historia",
+    "aplicaSe": null,
+    "vigencia": null,
+    "quemConfirmou": null,
+    "fonte": [
+      {
+        "tipo": "material_recebido",
+        "arquivo": "SYLVINHO-material-completo-para-codex.md",
+        "sha256": "ee2f9a683ab6a81b2ac99239ac1940c131465a60972c7ea407b492894bd9f499",
+        "secao": "B14. História e identidade"
+      }
+    ],
+    "status": "em_revisao",
+    "versao": 1,
+    "substitui": [],
+    "alegacaoRecebida": "Missão: educação profissional pública de qualidade, alinhada ao mercado e ao desenvolvimento sustentável, com respeito à dignidade humana, diversidade, meio ambiente e pluralidade cultural. Visão: ser referência regional em educação profissional pública, com tradição de inovação e inclusão.",
+    "origemDeclarada": "OF_ou_indefinida",
+    "procedimentoLocal": null,
+    "nota": "Proposta, não indexada. Só os fatos atômicos conferidos em fatos-conferidos.mjs podem responder."
+  }
+]

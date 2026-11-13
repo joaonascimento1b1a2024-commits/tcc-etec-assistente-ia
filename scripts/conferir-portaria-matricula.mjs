@@ -1,0 +1,12 @@
+import {createRequire} from 'node:module';
+import {resolve} from 'node:path';
+import {writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+const url='https://assets.fatvestibulares.com.br/vestibulinhoetec/documentos/1SEM-27/Calendario-Matricula.pdf?v=2027011';
+const r=await fetch(url,{signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('HTTP_'+r.status);
+const b=Buffer.from(await r.arrayBuffer());if(b.subarray(0,5).toString()!=='%PDF-')throw Error('NAO_PDF');
+const path='.cache/curadoria-sylvinho/sources/portaria-matricula-2027.pdf';writeFileSync(path,b);
+const {extrairPdf}=createRequire(resolve('../sylvinho-backend/functions/package.json'))('./ingestao/extrairPdf.js');
+const paginas=await extrairPdf(path);
+writeFileSync('.cache/curadoria-sylvinho/portaria-2027.json',JSON.stringify({url,indiceOficial:'https://vestibulinho.etec.sp.gov.br/calendario/',sha256:createHash('sha256').update(b).digest('hex'),paginas,conferidoEm:new Date().toISOString()},null,2));
+for(const p of paginas.filter(p=>[4,5].includes(p.pagina)))console.log('PAGINA',p.pagina,p.texto);

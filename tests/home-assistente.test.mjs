@@ -10,7 +10,7 @@ const clientSource = readFileSync(new URL('../public/Logado/Home/assistente-clie
 const { perguntarAssistente: clienteReal } = await import(`data:text/javascript;base64,${Buffer.from(clientSource).toString('base64')}`);
 const pendingSource = readFileSync(new URL('../public/Logado/Home/envio-pendente.js', import.meta.url), 'utf8');
 const pendingModule = await import(`data:text/javascript;base64,${Buffer.from(pendingSource).toString('base64')}`);
-function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, appendFailOnce, realClient, pendingRaw, readBlocked = false, removeBlocked = false, confirmed = true, timeoutMs = 30000, endpoint = 'http://localhost/mock' } = {}) {
+function scenario({ fail, failOnce, failCode, retryMeta = {}, retryWaiting, failRead, waiting, appendFail, appendFailOnce, realClient, pendingRaw, readBlocked = false, removeBlocked = false, confirmed = true, timeoutMs = 30000, endpoint = 'http://localhost/mock' } = {}) {
     const elements = new Map();
     const events = new Map();
     let navigations = 0, confirmations = 0, allocations = 0;
@@ -57,7 +57,7 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
         document: { querySelector: element, querySelectorAll: () => [], createElement: () => element(Symbol()) },
         window: { location: { search: '', assign() { navigations++; }, replace() {} }, history: { replaceState() {} },
             confirm() { confirmations++; return confirmed; } },
-        URLSearchParams, AbortController, console, crypto: { randomUUID: () => { allocations++; return randomUUID(); } },
+        URLSearchParams, AbortController, console, setTimeout, clearTimeout, crypto: { randomUUID: () => { allocations++; return randomUUID(); } },
         mockImport: async (path) => {
             if (path.endsWith('envio-pendente.js')) return {
                 carregarEnvioPendente: (uid) => pendingModule.carregarEnvioPendente(uid, storage),
@@ -83,7 +83,8 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
                     return { ok: true, json: async () => ({ resposta: 'Nao renderizar este texto HTTP' }) };
                 } });
                 if (waiting) await waiting;
-                if (fail || (failOnce && requests === 1)) throw Object.assign(new Error('HTTP 500'), { code: failCode });
+                if (retryWaiting && requests > 1) await retryWaiting;
+                if (fail || (failOnce && requests === 1)) throw Object.assign(new Error('HTTP 500'), { code: failCode }, retryMeta);
                 if (!options.sessaoAtual()) throw new Error('Sessao trocada');
                 // Apenas o servidor simulado grava bot; a resposta HTTP e distinta.
                 if (!persisted.some((m) => m.remetente === 'bot' && m.messageId === options.messageId))
@@ -101,6 +102,7 @@ function scenario({ fail, failOnce, failCode, failRead, waiting, appendFail, app
         element, rendered, persisted, ids, criacoes,
         excluir: () => { existe = false; persisted.length = 0; },
         newChat: () => events.get('#newChat:click')(),
+        retry: () => events.get('#retrySend:click')(),
         navigation: () => ({ navigations, confirmations }),
         allocations: () => allocations,
         rawPending: () => values.get('sylvinho:pendente:alice'),
@@ -133,6 +135,51 @@ test('timeout preserva pendência e recuperação usa mesmo ID sem duplicar user
     assert.deepEqual(run.ids, [original.messageId, original.messageId]);
     assert.equal(run.persisted.length, 2);
     assert.equal(run.pending(), null);
+});
+
+test('botão de nova tentativa recupera a pergunta salva e não duplica mensagens', async () => {
+    const run = scenario({failOnce: true, failCode: 'HTTP_503'});
+    await run.send();
+    const envio = run.pending();
+    assert.equal(run.element('#retrySend').hidden, false);
+    assert.equal(run.element('#retrySend').disabled, false);
+    assert.equal(envio.aguardarNovaTentativa, true);
+    assert.equal(run.persisted.length, 1);
+    await run.retry();
+    assert.deepEqual(run.ids, [envio.messageId, envio.messageId]);
+    assert.equal(run.persisted.length, 2);
+    assert.equal(run.pending(), null);
+    assert.equal(run.element('#retrySend').hidden, true);
+});
+
+test('cliques repetidos no retry durante a resposta não geram novos envios', async () => {
+    let release;
+    const espera = new Promise(resolve => {release = resolve;});
+    const run = scenario({failOnce: true, failCode: 'HTTP_503', retryWaiting: espera});
+    await run.send();
+    const retry = run.retry();
+    await run.retry();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(run.counts().requests, 2);
+    release();await retry;
+    assert.equal(run.persisted.length, 2);
+    assert.equal(new Set(run.ids).size, 1);
+});
+
+test('limite de uso mantém retry bloqueado durante a espera e preserva o prazo', async () => {
+    const run = scenario({failOnce: true, failCode: 'HTTP_429', retryMeta: {motivo: 'LIMITE_USO', retentavel: true, retryAfterSeconds: 30}});
+    await run.send();
+    assert.match(run.element('#chatStatus').textContent, /limite de uso/);
+    assert.equal(run.element('#retrySend').hidden, false);
+    assert.equal(run.element('#retrySend').disabled, true);
+    assert.ok(run.pending().tentarApos > Date.now());
+    await run.retry();assert.equal(run.counts().requests, 1);
+    run.switchSession();await run.retry();assert.equal(run.counts().requests, 1);
+});
+
+test('falha de autenticação não oferece retry como substituto do login', async () => {
+    const run = scenario({fail: true, failCode: 'HTTP_401'});
+    await run.send();assert.equal(run.element('#retrySend').hidden, true);assert.ok(run.pending());
 });
 
 test('Home e cliente real integram token body e sincronizacao sem duplicar bot', async () => {

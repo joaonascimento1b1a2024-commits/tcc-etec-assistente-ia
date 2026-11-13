@@ -1,0 +1,38 @@
+import {createRequire} from 'node:module';
+import {resolve} from 'node:path';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {localizarPlaywright} from '../local-e2e/environment.mjs';
+const {chromium}=createRequire(resolve(localizarPlaywright(),'package.json'))('playwright');
+const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+try {
+ const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:5000/Logado/Home/home.html');
+ await page.waitForFunction(()=>document.querySelector('#messageInput')?.disabled===false);
+ await page.locator('#messageInput').fill('Qual é a frequência mínima exigida?');
+ const posted=page.waitForResponse(r=>r.url().startsWith('http://127.0.0.1:5002/')&&r.request().method()==='POST'&&typeof r.request().postDataJSON()?.pergunta==='string');
+ await page.locator('#messageForm button[type=submit]').click();
+ await page.waitForFunction(()=>document.querySelector('#chatStatus')?.textContent==='Conversa atualizada.',null,{timeout:65000});
+ const response=await page.locator('.message-row.bot .bubble').evaluate(el=>el.sylvinhoOriginalText);
+ const httpResponse=await posted;
+ assert.equal(httpResponse.status(),200);
+ assert.match(response,/Resposta gerada por IA/,'Não aprovar fallback como geração real');
+ assert.match(response,/75%/);assert.doesNotMatch(response,/MARCADOR_|documento-ficticio/);
+ assert.equal(await page.locator('.documental-resposta-ia').count(),1);
+ assert.equal(await page.locator('.documental-detalhes').first().getAttribute('open'),null);
+ const id=new URL(page.url()).searchParams.get('conversa');
+ await page.reload();await page.waitForFunction(()=>document.querySelector('#messageInput')?.disabled===false);
+ assert.equal(await page.locator('.message-row.bot .bubble').evaluate(el=>el.sylvinhoOriginalText),response);
+ assert.equal(await page.locator('.message-row.bot').count(),1);
+ const token=await page.evaluate(async()=>{const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js');return getAuth().currentUser.getIdToken();});
+ const endpoint=httpResponse.url();
+ const replay=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:httpResponse.request().postData()});
+ assert.equal(replay.status,200);assert.equal((await replay.json()).resposta,response);
+ assert.equal((await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,401);
+ await page.locator('.documental-detalhes').first().locator('summary').first().click();
+ assert.match(await page.locator('.documental-fonte').first().innerText(),/26/);
+ fs.mkdirSync('.cache/chat-rag',{recursive:true});await page.screenshot({path:'.cache/chat-rag/chat-real.png',fullPage:true});
+ assert.deepEqual(errors,[]);
+ fs.writeFileSync('.cache/chat-rag/navegador.json',JSON.stringify({data:new Date().toISOString(),geminiReal:true,conversationId:id,resposta:response,fontesRecolhidasInicialmente:true,recarregamentoSemDuplicacao:true,replayConfirmado:true,semTokenBloqueado:true,pageErrors:errors},null,2));
+ console.log(JSON.stringify({geminiReal:true,persistencia:true,fontes:true,pageErrors:errors}));
+} finally {await browser.close();}

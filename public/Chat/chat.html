@@ -4,15 +4,13 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Converse com o Sylvinho | Assistente ETEC IA</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="../Logado/Home/home.css" />
         <link rel="stylesheet" href="../Arquivos-Universais/theme.css" />
         <link rel="stylesheet" href="chat.css" />
         <script src="../Arquivos-Universais/theme.js"></script>
         <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <link rel="stylesheet" href="../Arquivos-Universais/visual.css" />
+<script defer src="../Arquivos-Universais/ui.js"></script>
 </head>
     <body>
         <header class="guest-header">
@@ -44,7 +42,7 @@
                 <button id="retrySession" class="guest-reset" type="button" hidden>Tentar verificar novamente</button>
                 <form id="messageForm" class="message-form" autocomplete="off">
                     <label class="sr-only" for="messageInput">Sua mensagem</label>
-                    <input id="messageInput" type="text" placeholder="Pergunte ao Sylvinho..." maxlength="700" autocomplete="off" aria-describedby="privacyNote chatStatus" required disabled />
+                    <textarea id="messageInput" placeholder="Pergunte ao Sylvinho..." maxlength="700" autocomplete="off" aria-describedby="privacyNote chatStatus" required disabled  rows="1"></textarea>
                     <button class="send" type="submit" aria-label="Enviar mensagem" disabled>→</button>
                 </form>
                 <p id="privacyNote" class="guest-note">Conversa temporária: as mensagens não são salvas e desaparecem ao sair ou recarregar.</p>

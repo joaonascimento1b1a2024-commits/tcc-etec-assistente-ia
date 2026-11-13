@@ -1,61 +1,38 @@
 <!doctype html>
-<!-- Landing Page pública: apresentação do assistente e acesso ao login. -->
-<html lang="pt-br">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <link rel="stylesheet" href="./Landing-Page/style.css" />
-        <link rel="stylesheet" href="./Arquivos-Universais/theme.css" />
-        <script src="./Arquivos-Universais/theme.js"></script>
-    <link rel="stylesheet" href="Arquivos-Universais/visual.css" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />
-<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Conheça o Sylvinho, assistente de inteligência artificial desenvolvido para facilitar o acesso às informações da secretaria da ETEC Sylvio de Mattos Carvalho." />
+<title>Sylvinho | Assistente da secretaria ETEC</title>
+<link rel="stylesheet" href="Landing-Page/animacoes-scroll.css" />
+<script defer src="Landing-Page/animacoes-scroll.js"></script>
+<script defer src="Landing-Page/navegacao-secoes.js"></script>
+<link rel="stylesheet" href="Landing-Page/style.css" /><link rel="stylesheet" href="Arquivos-Universais/theme.css" /><link rel="stylesheet" href="Arquivos-Universais/visual.css" /><link rel="stylesheet" href="Landing-Page/landing.css" />
+<script src="Arquivos-Universais/theme.js"></script><script defer src="Arquivos-Universais/ui.js"></script><script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 </head>
-
-    <body>
-        <!-- Cabeçalho com as logos institucionais e os links de navegação. -->
-        <header class="header">
-            <div class="logo-group">
-                <img
-                    class="logoEtec"
-                    src="./Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
-                    alt="logo etec Sylvio de Mattos Cavalho" />
-                <img
-                    class="logoEtec"
-                    src="./Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
-                    alt="logo Centro Paula Souza e Governo do estado de São Paulo" />
-            </div>
-            <!-- Links de navegação -->
-            <nav class="nav-menu">
-                <a href="#" class="nav-link active">Início</a>
-                <a href="Sobre/sobre.html" class="nav-link">Sobre</a>
-                <a href="Login/login.html" class="btn-acessar">Acessar</a>
-            </nav>
-        </header>
-
-        <!-- Conteúdo principal da página inicial. -->
-        <div id="corpo">
-            <div id="principal">
-                <h1>
-                    Tire suas dúvidas<br />em segundos.<br />A
-                    <span style="color: red">IA</span> da secretaria<br />da
-                    <span style="color: red">ETEC</span>
-                </h1>
-            </div>
-            <div>
-                <p>
-                    Um assistente inteligente que responde perguntas acadêmicas, orienta alunos e
-                    facilita o atendimento da secretaria escolar.
-                </p>
-                <div class="hero-actions">
-                    <!-- A ação principal abre o login; o segundo link aguarda uma seção de destino. -->
-                    <a href="./Login/login.html" class="hero-button hero-button-primary"
-                        >Começar agora →</a
-                    >
-                    <a href="Chat/chat.html" class="hero-button hero-button-secondary">Ver como funciona</a>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+<body class="landing-page">
+<a class="landing-skip" href="#apresentacao">Ir para o conteúdo</a>
+<header class="header landing-header">
+ <a class="landing-brands" href="#inicio" aria-label="ETEC Sylvio de Mattos Carvalho — início"><span class="landing-etec"><img src="Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" width="188" height="100" alt="ETEC Sylvio de Mattos Carvalho, Matão" /></span><span class="landing-government"><img src="Landing-Page/arquivos/figma/marcas-cps-sp.png" width="2023" height="734" alt="Centro Paula Souza e Governo do Estado de São Paulo" /></span></a>
+ <nav class="nav-menu" aria-label="Navegação principal"><a class="nav-link active" href="#inicio" aria-current="page">Início</a><a class="nav-link" href="#sobre">Sobre</a><a class="nav-link" href="#servicos">Serviços</a><a class="btn-acessar" href="Login/login.html">Acessar</a></nav>
+</header>
+<main class="landing-content" id="inicio">
+ <section class="landing-hero" aria-labelledby="apresentacao"><div class="hero-copy">
+  <h1 id="apresentacao">Tire suas dúvidas<br />em segundos.<br />A <span>IA</span> da secretaria<br />da <span>ETEC</span></h1>
+  <p>Um assistente inteligente que responde perguntas acadêmicas, orienta alunos e facilita o atendimento da secretaria escolar.</p>
+  <div class="hero-actions"><a href="Login/login.html" class="hero-button hero-button-primary">Começar agora →</a><a href="Chat/chat.html" class="hero-button hero-button-secondary">Ver como funciona</a></div>
+ </div></section>
+ <section class="landing-about" id="sobre" aria-labelledby="sobre-titulo"><div class="about-copy"><h2 id="sobre-titulo">Mais Tecnologia,<br />mais agilidade,<br />mais <span>conexão</span>.</h2><p>Nossa IA foi desenvolvida para transformar o atendimento da secretaria, oferecendo respostas rápidas e precisas com base em documentos e regras da instituição.</p></div><div class="benefit-panel"><article><h3>Foco no aluno</h3><p>Respostas claras para dúvidas acadêmicas e administrativas</p></article><article><h3>Informações seguras</h3><p>Base de conhecimento confiável com dados da instituição.</p></article><article><h3>Atendimento 24/7</h3><p>Disponível para ajudar sempre que você precisa.</p></article><article><h3>Menos filas</h3><p>Redução do tempo de espera e mais eficiência no atendimento.</p></article></div></section>
+ <figure class="landing-product"><img src="Landing-Page/arquivos/figma/notebook.webp" width="1536" height="1024" loading="lazy" alt="Ilustração do Sylvinho em um notebook: conversa com o assistente da secretaria sobre um fundo de circuitos vermelhos." /></figure>
+ <section class="landing-how" id="como-funciona" aria-labelledby="como-titulo"><h2 id="como-titulo">Simples, rápido e <span>eficiente</span></h2><ol class="landing-steps"><li><span class="step-circle" aria-hidden="true"><img src="Landing-Page/arquivos/figma/etapa-1.svg" alt="" /><b>1</b></span><h3>Faça login</h3><p>Acesse o sistema com o seu e-mail institucional ou conta Google.</p></li><li><span class="step-circle" aria-hidden="true"><img src="Landing-Page/arquivos/figma/etapa-2.svg" alt="" /><b>2</b></span><h3>Digite sua dúvida</h3><p>Escreva sua pergunta de forma natural no chat da IA.</p></li><li><span class="step-circle" aria-hidden="true"><img src="Landing-Page/arquivos/figma/etapa-3.svg" alt="" /><b>3</b></span><h3>Receba a resposta</h3><p>Obtenha respostas precisas e instantâneas em segundos.</p></li></ol></section>
+ <section class="landing-resources" id="servicos" aria-labelledby="servicos-titulo"><h2 id="servicos-titulo">Informações que facilitam<br />sua <span>vida acadêmica.</span></h2><div class="resource-grid"><article><span class="service-icon icon-folder" aria-hidden="true"></span><h3>Acesso a documentos</h3><p>Consulte documentos institucionais de forma rápida e inteligente.</p></article><article><span class="service-icon icon-calendar" aria-hidden="true"></span><h3>Horários e eventos</h3><p>Atendimento e eventos sempre atualizados.</p></article><article><span class="service-icon icon-bookmark" aria-hidden="true"></span><h3>Orientações acadêmicas</h3><p>Respostas sobre matrículas, cursos, regras e muito mais.</p></article><article><span class="service-icon icon-chat" aria-hidden="true"></span><h3>Dúvidas frequentes</h3><p>Respostas para dúvidas mais comuns de alunos e responsáveis.</p></article><article><span class="service-icon icon-alarm" aria-hidden="true"></span><h3>Atendimento ágil</h3><p>Menos espera, mais agilidade no seu dia a dia.</p></article></div>
+ <section class="landing-cta" aria-labelledby="cta-titulo"><div><h2 id="cta-titulo">Pronto para sanar<br />suas dúvidas?</h2><p>Acesse agora o sistema e tenha<br />a secretaria sempre com você.</p></div><div class="cta-actions"><a class="hero-button hero-button-primary" href="Login/login.html">Começar agora →</a><a class="hero-button hero-button-secondary" href="Criar-Conta/cadastro.html">Cadastrar</a></div></section>
+ </section>
+</main>
+<footer class="landing-footer"><img class="footer-divider" src="Landing-Page/arquivos/figma/divisor.svg" alt="" /><div class="footer-columns">
+ <div class="footer-marks"><span class="landing-government"><img src="Landing-Page/arquivos/figma/marcas-cps-sp.png" width="2023" height="734" alt="Centro Paula Souza e Governo do Estado de São Paulo" /></span><div class="social-marks" aria-label="Redes sociais representadas no protótipo"><img src="Landing-Page/arquivos/figma/facebook.svg" alt="Facebook" loading="lazy" /><img src="Landing-Page/arquivos/figma/linkedin.svg" alt="LinkedIn" loading="lazy" /><img src="Landing-Page/arquivos/figma/youtube.svg" alt="YouTube" loading="lazy" /><img src="Landing-Page/arquivos/figma/instagram.svg" alt="Instagram" loading="lazy" /></div></div>
+ <div class="footer-about"><h2>Sobre o projeto</h2><p>Sistema de IA desenvolvido para auxiliar no atendimento da secretaria da ETEC Sylvio de Mattos Carvalho, trazendo mais agilidade e eficiência para o dia a dia.</p></div>
+ <div class="footer-team"><h2>Desenvolvido por</h2><ul><li>João Victor Coelho do Nascimento</li><li>Felipo Paganin Ramon</li><li>Jacob Marinho dos Santos</li><li>Guilherme Comunhão Gardini</li><li>João Eduardo Finêncio</li></ul></div>
+ <div class="footer-school"><p>Técnico em Informática para a Internet</p><p>ETEC Sylvio de Mattos Carvalho</p><a href="Sobre/sobre.html">Conheça a equipe →</a></div>
+</div></footer>
+</body></html>

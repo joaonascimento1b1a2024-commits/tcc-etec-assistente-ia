@@ -28,19 +28,19 @@
 :root[data-theme='light'] :is(.app-content, .content, .page-shell) {
     background:
         linear-gradient(#ffffffed, #ffffffed),
-        url('../Logado/Home/fundo 3.png') center / cover fixed;
+        url('../Logado/Home/fundo 3.webp') center / cover fixed;
 }
 
 :root[data-theme='light'] .services-content {
     background:
         linear-gradient(#ffffffed, #ffffffed),
-        url('../Landing-Page/arquivos/fundo1_landingPage.png') center / cover no-repeat;
+        url('../Landing-Page/arquivos/fundo1_landingPage.webp') center / cover no-repeat;
 }
 
 :root[data-theme='light'] .login-page {
     background:
         linear-gradient(#ffffffed, #ffffffed),
-        url('../Login/Arquivos/fundo 7.png') center / cover no-repeat;
+        url('../Login/Arquivos/fundo 7.webp') center / cover no-repeat;
 }
 
 :root[data-theme='light'] .sidebar {

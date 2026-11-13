@@ -26,7 +26,7 @@ body {
     position: relative;
     min-height: 100svh;
     overflow: hidden;
-    background: #050608 url('../Login/Arquivos/fundo 7.png') center center / cover no-repeat;
+    background: #050608 url('../Login/Arquivos/fundo 7.webp') center center / cover no-repeat;
 }
 
 .custom-alt {

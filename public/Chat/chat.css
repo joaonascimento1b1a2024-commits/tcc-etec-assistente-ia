@@ -53,3 +53,19 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--red); outline-o
     .guest-messages .bubble { max-width: calc(100% - 44px); padding: 12px; }
     .guest-messages .message-row { gap: 10px; }
 }
+
+/* Altura útil real: cabeçalho e compositor ficam acessíveis, conteúdo rola. */
+body:has(.guest-main) { height:min(100dvh,var(--chat-viewport-height,100dvh)); min-height:0; overflow:hidden; display:flex; flex-direction:column; }
+.guest-header { flex-shrink:0; }
+.guest-main { flex:1; min-height:0; padding-bottom:max(12px,env(safe-area-inset-bottom)); overflow:hidden; }
+.guest-toolbar,.guest-composer { flex-shrink:0; }
+.guest-welcome { flex:1; min-height:0; margin:0; overflow-y:auto; overscroll-behavior:contain; padding-block:24px; }
+.guest-messages { flex:1 1 0; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+.guest-composer { margin-top:0; padding-top:8px; }
+/* Em janela visual baixa, reserva espaço para conversa, envio e aviso de privacidade.
+   O cabeçalho volta quando o teclado fecha; o botão Nova conversa permanece. */
+body[data-chat-compact-height] .guest-header { display:none; }
+body[data-chat-compact-height] .guest-main { padding-top:8px; }
+body[data-chat-compact-height] .guest-messages { padding-block:8px; }
+body[data-chat-compact-height] .chat-status { margin-block:4px; }
+body[data-chat-compact-height] .guest-note { margin-top:6px; }

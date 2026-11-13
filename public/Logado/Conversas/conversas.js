@@ -10,6 +10,9 @@ let selected;
 let busy = false;
 let unsubscribe;
 let sessionVersion = 0;
+let allConversations=[];
+const historySearch=document.querySelector('#historySearch');
+historySearch.addEventListener('input',()=>render(allConversations));
 
 // Configura o diálogo compartilhado, seus textos e o foco conforme a ação escolhida.
 function openDialog(item, action) {
@@ -35,10 +38,13 @@ function openDialog(item, action) {
 
 // A lista é atualizada em tempo real, incluindo mudanças feitas em outra aba.
 function render(items) {
+    allConversations=items;
+    const term=historySearch.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
+    items=items.filter(item=>String(item.titulo||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').includes(term));
     list.replaceChildren();
     status.textContent = items.length
-        ? `${items.length} conversa(s) salva(s)`
-        : 'Você ainda não tem conversas. Clique em Nova mensagem para começar.';
+        ? `${items.length} conversa(s) encontrada(s)`
+        : allConversations.length ? 'Nenhuma conversa corresponde a essa busca.' : 'Você ainda não tem conversas. Clique em Nova mensagem para começar.';
     for (const item of items) {
         const card = document.createElement('li');
         card.className = 'conversation-card';
@@ -152,6 +158,7 @@ async function start() {
 }
 // Limpa o conteúdo para não confundir uma falha de consulta com um histórico atualizado.
 function showError(error) {
+    allConversations=[];
     list.replaceChildren();
     status.textContent =
         'Não foi possível carregar as conversas. Verifique a conexão e as permissões do Firebase e recarregue a página.';
