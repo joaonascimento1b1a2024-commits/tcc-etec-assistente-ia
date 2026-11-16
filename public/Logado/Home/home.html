@@ -5,58 +5,57 @@
         <!-- Define a codificação de caracteres e adapta a página à largura do dispositivo. -->
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>@media (min-width:721px) and (prefers-reduced-motion:no-preference) { @view-transition { navigation:auto; } }</style>
         <title>Assistente ETEC IA</title>
 
         <!-- Antecipa a conexão com o Google Fonts e carrega os pesos usados da fonte Poppins. -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-            rel="stylesheet" />
-
         <!-- Carrega os estilos desta página, incluindo os ajustes para telas menores. -->
         <link rel="stylesheet" href="home.css" />
         <link rel="stylesheet" href="../../Arquivos-Universais/theme.css" />
         <script src="../../Arquivos-Universais/theme.js"></script>
+        <script src="../shell-init.js"></script>
         <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <link rel="stylesheet" href="../../Arquivos-Universais/visual.css" />
     <link rel="stylesheet" href="../layout.css" />
+    <link rel="stylesheet" href="../shell.css" />
+<script defer src="../../Arquivos-Universais/ui.js"></script>
 </head>
 
     <body>
+        <a class="shell-skip-link" href="#conteudo">Ir para a conversa</a>
         <!-- Menu lateral: identificação da escola, nova conversa e opções de navegação. -->
         <aside class="sidebar">
             <!-- Logo da escola com tamanho adaptado à largura do menu. -->
             <div class="school-logo">
-                <img src="etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" id="etec" alt="Logo Etec">
+                <img src="etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png" id="etec" alt="Logo Etec" width="863" height="544" />
             </div>
 
             <!-- O JavaScript usa este ID para limpar as mensagens e voltar à tela inicial. -->
-            <button class="new-chat" id="newChat">+ Novo chat</button>
+            <button class="new-chat" id="newChat"><span class="new-chat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14 M5 12h14"></path></svg></span><span class="new-chat-label">Novo chat</span></button>
 
             <!-- data-page identifica o item destacado; Conversas abre o histórico salvo. -->
             <nav aria-label="Menu principal">
                 <a class="nav-link active" href="home.html" data-page="home"
-                    ><span>⌂</span> Início</a
+                    ><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg></span><span class="nav-label">Início</span></a
                 >
                 <a class="nav-link" href="../Conversas/conversas.html" data-page="chat"
-                    ><span>▤</span> Conversas</a
+                    ><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11a8 8 0 0 1-8 8H7l-5 3 2-6a8 8 0 1 1 17-5Z M8 10h8 M8 14h5"></path></svg></span><span class="nav-label">Conversas</span></a
                 >
-                <a class="nav-link" href="../Avisos/avisos.html"><span>♧</span> Avisos</a>
-                <a class="nav-link" href="../Serviços/servicos.html"><span>▱</span> Serviços</a>
+                <a class="nav-link" href="../Avisos/avisos.html"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4"></path></svg></span><span class="nav-label">Avisos</span></a>
+                <a class="nav-link" href="../Serviços/servicos.html"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5h6l2 2h10v13H3Z"></path></svg></span><span class="nav-label">Serviços</span></a>
                 <a class="nav-link" id="settingsLink" href="../Configurações Aluno/configAl.html"
-                    ><span>⚙</span> Configurações</a
+                    ><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 3-1 3-3 1-2 3 2 2-1 4 3 2 3-1 3 3 3-2v-3l3-2-1-4-3-1-1-3z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg></span><span class="nav-label">Configurações</span></a
                 >
             </nav>
         </aside>
 
         <!-- Área principal: cabeçalho, tela inicial, conversa e barra de mensagem. -->
-        <main class="app-content">
+        <main class="app-content" id="conteudo" tabindex="-1">
             <!-- Cabeçalho com a identificação do assistente e os dados do perfil. -->
             <header class="topbar">
                 <div class="assistant-brand">
                     <span class="assistant-avatar"><img id="logo" src="Logo s_fundo.png" alt="Logo Sylvinho"></span>
-                    <span>Assistente ETEC IA</span>
+                    <span class="assistant-identity">Sylvinho</span>
                 </div>
 
                 <!-- Foto e nome formam um único link, acessível também pelo teclado. -->
@@ -146,6 +145,7 @@
             <!-- Formulário compartilhado pelas duas telas; o JavaScript trata o envio. -->
             <!-- Informa conexão, salvamento e falhas sem confundir uma demonstração com resposta real. -->
             <p id="chatStatus" role="status" class="chat-status">Conectando à sua conta...</p>
+            <button id="retrySend" type="button" class="retry-send" hidden disabled>Tentar novamente</button>
             <section id="demonstracaoPanel" class="demonstracao-panel" hidden aria-label="Demonstração restrita de IA">
                 <p>Demonstração sintética — não é informação escolar oficial.</p>
                 <label for="demonstracaoSelect">Selecione uma pergunta autorizada</label>
@@ -159,21 +159,10 @@
                 <label class="sr-only" for="messageInput">Sua mensagem</label>
 
                 <!-- Campo com limite de 700 caracteres digitados e preenchimento automático desativado. -->
-                <input
-                    id="messageInput"
-                    type="text"
+                <textarea id="messageInput"
                     autocomplete="off"
                     placeholder="Digite sua mensagem..."
-                    maxlength="700" />
-
-                <!-- Botão reservado para anexos; ainda não possui ação no JavaScript. -->
-                <button
-                    class="attachment"
-                    type="button"
-                    aria-label="Anexar arquivo"
-                    title="Anexar arquivo (em breve)">
-                    ⌕
-                </button>
+                    maxlength="700"  rows="1"></textarea>
 
                 <!-- Dispara o evento submit do formulário para enviar a mensagem. -->
                 <button class="send" type="submit" aria-label="Enviar mensagem">→</button>

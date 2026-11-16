@@ -128,7 +128,7 @@ nav a:hover {
     padding: 32px clamp(22px, 4vw, 56px) 64px;
     background:
         linear-gradient(#0009, #0009),
-        url('../../Landing-Page/arquivos/fundo1_landingPage.png') center / cover no-repeat;
+        url('../../Landing-Page/arquivos/fundo1_landingPage.webp') center / cover no-repeat;
 }
 
 /* Colunas com largura flexível: texto à esquerda e instruções à direita. */

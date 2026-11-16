@@ -15,7 +15,7 @@ const { javaHome, cli } = localizarFerramentas();
 const runtimeModules = localizarPlaywright();
 const localRequire = createRequire(resolve(runtimeModules, 'package.json'));
 const { chromium } = localRequire('playwright');
-prepare();
+prepare({geminiLocal:process.argv.includes('--gemini-local')});
 const home = resolve(stage, `isolated-home-sprint3-${Date.now()}`);
 mkdirSync(home, { recursive: true });
 const env = { ...process.env, JAVA_HOME: javaHome, PATH: `${javaHome}/bin;${process.env.PATH}`,
@@ -38,6 +38,7 @@ for (const name of Object.keys(env)) {
 const delay = (ms) => new Promise((done) => setTimeout(done, ms));
 const states = [];
 let browser;
+let page;
 let child;
 let logs = '';
 const requests = [];
@@ -66,7 +67,8 @@ try {
     assert.equal(existsSync(env.GOOGLE_APPLICATION_CREDENTIALS), false);
     const cliVersion = spawnSync(process.execPath, [cli, '--version'], { cwd: stage, env, encoding: 'utf8' });
     assert.equal(cliVersion.status, 0, 'CLI deve funcionar no HOME isolado');
-    assert.match(cliVersion.stdout.trim(), /^15\.(33|34)\.\d+$/);
+    const version = cliVersion.stdout.trim().split(/\r?\n/).at(-1);
+    assert.match(version, /^15\.(33|34)\.\d+$/);
     const java = spawnSync(resolve(javaHome, 'bin/java.exe'), ['-version'], { encoding: 'utf8' });
     assert.equal(java.status, 0);
     assert.match(java.stderr, /version "21\./);
@@ -77,7 +79,7 @@ try {
             server.listen(port, '127.0.0.1', () => server.close(done));
         });
     }
-    console.log('Java 21, CLI ' + cliVersion.stdout.trim() + ', portas e isolamento demo confirmados.');
+    console.log('Java 21, CLI ' + version + ', portas e isolamento demo confirmados.');
     states.push('artefato Firestore local reutilizado; nenhum download');
     child = spawn(process.execPath, [cli, 'emulators:start', '--only', 'auth,firestore,functions,hosting',
         '--project', project, '--config', resolve(stage, 'firebase.json')], { cwd: stage, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -115,7 +117,8 @@ try {
             fields: encode(fixture(ativo)).mapValue.fields,
         } })) }) });
     states.push('dois chunks ficticios gravados exclusivamente no emulador');
-    browser = await chromium.launch({ channel: 'msedge', headless: true, args: ['--disable-background-networking', '--disable-component-update', '--disable-sync'] });
+    const executablePath = process.env.SYLVINHO_BROWSER_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
+    browser = await chromium.launch({ executablePath, headless: true, args: ['--disable-background-networking', '--disable-component-update', '--disable-sync'] });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     await context.route('**/*', (route) => {
         const url = new URL(route.request().url());
@@ -126,9 +129,11 @@ try {
     });
     context.on('request', (request) => {
         const url = new URL(request.url());
-        requests.push({ method: request.method(), origin: url.origin, path: url.pathname });
+        const body = request.method() === 'POST' && url.href === endpoint ? request.postDataJSON() : null;
+        requests.push({ method: request.method(), origin: url.origin, path: url.pathname,
+            ...(body ? {tipo:body.acao === 'catalogo_demonstracao' ? 'catalogo' : 'pergunta'} : {}) });
     });
-    const page = await context.newPage();
+    page = await context.newPage();
     page.on('pageerror', (error) => pageErrors.push(error.message.split('\n')[0].replace(/\?\S+/g, '?[redacted]').slice(0, 300)));
     await page.goto('http://127.0.0.1:5000/Logado/Home/home.html');
     await page.waitForFunction(() => globalThis.__LOCAL_E2E__ && document.querySelector('#chatStatus')?.textContent === 'As mensagens são salvas na sua conta.' && !document.querySelector('#messageInput').disabled, null, { timeout: 45000 });
@@ -138,7 +143,7 @@ try {
     assert.equal(session.firestore, '127.0.0.1:8080');
     states.push('conta anonima ficticia autenticada; Auth/Firestore explicitamente conectados antes da Home');
     await page.locator('#messageInput').fill('Como faço minha matrícula?');
-    const post = page.waitForResponse((response) => response.url() === endpoint && response.request().method() === 'POST');
+    const post = page.waitForResponse((response) => response.url() === endpoint && response.request().method() === 'POST' && typeof response.request().postDataJSON()?.pergunta === 'string');
     await page.locator('#messageForm [type="submit"]').click();
     const response = await post;
     assert.equal(response.status(), 200);
@@ -157,7 +162,7 @@ try {
     assert.match(items[1].texto, /MARCADOR_ATIVO_MATRICULA/);
     assert.match(items[1].texto, /documento-ficticio/);
     assert.doesNotMatch(items[1].texto, /MARCADOR_INATIVO_PROIBIDO/);
-    assert.deepEqual(await page.locator('#messages .bubble').allTextContents(), items.map((item) => item.texto));
+    assert.deepEqual(await page.locator('#messages .bubble').evaluateAll(elements => elements.map(el => el.sylvinhoOriginalText ?? el.textContent)), items.map((item) => item.texto));
     states.push('pergunta e resposta documental persistidas uma unica vez e exibidas');
     const token = await page.evaluate(async () => {
         const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js');
@@ -192,24 +197,24 @@ try {
     const conversationLink = page.locator(`.conversation-link[href$="conversa=${conversationId}"]`);
     await conversationLink.waitFor({ state: 'visible', timeout: 30000 });
     await conversationLink.click();
-    await page.waitForFunction((count) => !document.querySelector('#messageInput').disabled &&
+    await page.waitForFunction((count) => document.querySelector('#messageInput')?.disabled === false &&
         document.querySelectorAll('#messages .bubble').length === count, items.length);
     assert.equal((await page.evaluate(() => globalThis.__LOCAL_E2E__)).uid, session.uid);
-    assert.deepEqual(await page.locator('#messages .bubble').allTextContents(), items.map((item) => item.texto));
+    assert.deepEqual(await page.locator('#messages .bubble').evaluateAll(elements => elements.map(el => el.sylvinhoOriginalText ?? el.textContent)), items.map((item) => item.texto));
     states.push('conversa reaberta pelo historico com mesmo UID e mesmas mensagens');
     await page.reload();
-    await page.waitForFunction((count) => !document.querySelector('#messageInput').disabled &&
+    await page.waitForFunction((count) => document.querySelector('#messageInput')?.disabled === false &&
         document.querySelectorAll('#messages .bubble').length === count, items.length);
     assert.equal((await page.evaluate(() => globalThis.__LOCAL_E2E__)).uid, session.uid);
     states.push('recarregamento preserva conta demo e conversa');
     await page.locator('#messageInput').fill('Qual o procedimento para transporte interplanetario?');
-    const refusalPost = page.waitForResponse((r) => r.url() === endpoint && r.request().method() === 'POST');
+    const refusalPost = page.waitForResponse((r) => r.url() === endpoint && r.request().method() === 'POST' && typeof r.request().postDataJSON()?.pergunta === 'string');
     await page.locator('#messageForm [type="submit"]').click();
     const refusalResponse = await refusalPost;
     assert.equal(refusalResponse.status(), 200);
     const refusal = await refusalResponse.json();
-    assert.match(refusal.resposta, /Nao ha informacao suficiente/);
-    assert.match(refusal.resposta, /secretaria/);
+    assert.match(refusal.resposta, /secretaria|acad[eê]mic/i);
+    assert.doesNotMatch(refusal.resposta, /MARCADOR_ATIVO|MARCADOR_INATIVO/);
     await page.waitForFunction(() => document.querySelector('#chatStatus').textContent === 'Conversa atualizada.' &&
         document.querySelectorAll('#messages .bubble').length === 6);
     const finalSaved = await localJson(`${documents}/users/${session.uid}/conversas/${conversationId}`, { headers: { Authorization: 'Bearer owner' } });
@@ -220,7 +225,7 @@ try {
     assert.deepEqual(finalItems.slice(0, 4), items);
     assert.equal(finalItems[5].texto, refusal.resposta);
     assert.equal(finalItems.filter((item) => item.remetente === 'bot').length, 3);
-    assert.deepEqual(await page.locator('#messages .bubble').allTextContents(), finalItems.map((item) => item.texto));
+    assert.deepEqual(await page.locator('#messages .bubble').evaluateAll(elements => elements.map(el => el.sylvinhoOriginalText ?? el.textContent)), finalItems.map((item) => item.texto));
     states.push('pergunta sem evidencia recebe recusa e persiste somente um bot');
     let lostMessageId;
     const loseResponse = async (route) => {
@@ -234,7 +239,7 @@ try {
     await context.route(endpoint, loseResponse);
     await page.locator('#messageInput').fill('Como faço minha matrícula?');
     await page.locator('#messageForm [type="submit"]').click();
-    await page.waitForFunction(() => document.querySelector('#chatStatus').textContent.includes('Recarregue para recuperar'));
+    await page.waitForFunction(() => /recarregue para recuperar/i.test(document.querySelector('#chatStatus').textContent));
     const pendingId = await page.evaluate((uid) => JSON.parse(sessionStorage.getItem(`sylvinho:pendente:${uid}`)).messageId, session.uid);
     assert.equal(pendingId, lostMessageId);
     await page.reload();
@@ -246,17 +251,18 @@ try {
     assert.equal(recoveredMessages.length, 8);
     assert.equal(recoveredMessages.filter((m) => m.mapValue.fields.messageId?.stringValue === lostMessageId).length, 2);
     finalItems = recoveredMessages.map((m) => ({ remetente: m.mapValue.fields.remetente.stringValue, texto: m.mapValue.fields.texto.stringValue }));
-    assert.deepEqual(await page.locator('#messages .bubble').allTextContents(), finalItems.map((m) => m.texto));
+    assert.deepEqual(await page.locator('#messages .bubble').evaluateAll(elements => elements.map(el => el.sylvinhoOriginalText ?? el.textContent)), finalItems.map((m) => m.texto));
     states.push('resposta HTTP perdida apos commit; recarga recupera mesmo messageId sem duplicar pergunta ou bot');
     const evidence = JSON.parse(readFileSync(resolve(stage, 'function-evidence.json'), 'utf8'));
     assert.equal(evidence.uid, session.uid);
     assert.equal(evidence.tokenValidado, true);
-    assert.equal(evidence.geracoes, 4);
+    // O escopo institucional recusa a pergunta externa antes do gerador.
+    assert.equal(evidence.geracoes, 3);
     assert.equal(evidence.resultados[0].ativoNoContexto, true);
     assert.equal(evidence.resultados[0].status, 'trechos_encontrados');
-    assert.equal(evidence.resultados[2].status, 'informacao_insuficiente');
+    assert.ok(evidence.resultados.every(item => item.status === 'trechos_encontrados'));
     assert.equal(evidence.inativoNoContexto, false);
-    assert.equal(requests.filter((item) => item.origin === 'http://127.0.0.1:5001' && item.method === 'POST').length, 4);
+    assert.equal(requests.filter((item) => item.origin === 'http://127.0.0.1:5001' && item.method === 'POST' && item.tipo === 'pergunta').length, 4);
     assert.equal(pageErrors.length, 0, 'JavaScript da Home sem erros');
     // A Home original solicita Google Fonts. Preservamos HTML/CSS e o bloqueio:
     // somente essa tentativa de asset conhecido pode existir, sem sair da rede.
@@ -270,8 +276,15 @@ try {
     writeFileSync(resolve(stage, 'result.json'), JSON.stringify(result, null, 2));
     writeFileSync(resolve(stage, 'emulators-sanitized.log'), logs);
     console.log(JSON.stringify({ success: true, uid: session.uid, conversationId, messages: finalItems.length, evidence, ports: result.ports, states }, null, 2));
+    if (process.argv.includes('--keep-open')) {
+        await browser.close();
+        browser = null;
+        console.log('CHAT_LOCAL_READY http://127.0.0.1:5000/Logado/Home/home.html — Auth/Firestore locais e respostas documentais com fixtures sintéticas; Gemini não está ligado a este servidor.');
+        await new Promise(done => { process.once('SIGINT', done); process.once('SIGTERM', done); });
+    }
 } catch (error) {
-    writeFileSync(resolve(stage, 'failure.json'), JSON.stringify({ error: error.code || error.message, reason: error.message, states, pageErrors, blocked }, null, 2));
+    const interfaceState = page ? await page.evaluate(() => ({status:document.querySelector('#chatStatus')?.textContent, composerDisabled:document.querySelector('#messageInput')?.disabled, local:!!globalThis.__LOCAL_E2E__})).catch(() => null) : null;
+    writeFileSync(resolve(stage, 'failure.json'), JSON.stringify({ error: error.code || error.message, reason: error.message, states, pageErrors, blocked, interfaceState }, null, 2));
     writeFileSync(resolve(stage, 'emulators-sanitized.log'), logs);
     console.error('LOCAL_E2E_FAILED:', error.code || error.message);
     process.exitCode = 1;

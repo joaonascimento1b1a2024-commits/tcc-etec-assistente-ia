@@ -4,7 +4,7 @@
 /* Indica o estado real do salvamento sem ocupar a área dos balões. */
 .chat-status {
     width: 100%;
-    max-width: 630px;
+    max-width: var(--content-width, 820px);
     margin: 12px auto;
     color: #ccc;
     font-size: 0.875rem;
@@ -127,7 +127,7 @@ nav {
     padding: 0 36px 14px;
     background:
         linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.7)),
-        url('fundo 3.png') center/cover fixed;
+        url('fundo 3.webp') center/cover fixed;
     display: flex;
     flex-direction: column;
 }
@@ -207,10 +207,10 @@ nav {
     outline-offset: 2px;
 }
 
-/* Organiza a tela de boas-vindas e limita sua largura a 630px. */
+/* Organiza a tela de boas-vindas e usa a largura compartilhada da conversa. */
 .home-screen {
     flex: 1;
-    max-width: 630px;
+    max-width: var(--content-width, 820px);
     width: 100%;
     margin: 0 auto;
     padding-top: 20px;
@@ -313,7 +313,7 @@ nav {
 /* Organiza o campo de mensagem e os botões dentro de uma barra arredondada. */
 .message-form {
     height: 45px;
-    max-width: 630px;
+    max-width: var(--content-width, 820px);
     width: 100%;
     margin: 0 auto;
     border: 1px solid #bbb;
@@ -366,7 +366,7 @@ nav {
 /* Organiza a conversa e suas sugestões na área principal. */
 .chat-screen {
     flex: 1;
-    max-width: 630px;
+    max-width: var(--content-width, 820px);
     width: 100%;
     margin: 0 auto;
     min-height: 0;
@@ -572,3 +572,7 @@ nav {
 .demonstracao-panel select { display: block; width: 100%; }
 .demonstracao-panel :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .demonstracao-panel button:disabled { opacity: 0.6; cursor: default; }
+.retry-send[hidden] { display: none; }
+.retry-send { flex: 0 0 auto; align-self: flex-start; margin: 0 1rem 0.5rem; min-height: 44px; max-width: calc(100% - 2rem); padding: 0.5rem 0.9rem; font: inherit; color: var(--text); background: var(--panel, #252525); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.retry-send:disabled { opacity: 0.6; cursor: wait; }
+.retry-send:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

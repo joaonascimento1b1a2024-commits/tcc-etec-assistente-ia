@@ -110,7 +110,7 @@ nav a:hover {
     padding: 18px clamp(24px, 6vw, 72px) 32px;
     background:
         linear-gradient(#0003, #0003),
-        url('../Home/fundo 3.png') center / cover fixed;
+        url('../Home/fundo 3.webp') center / cover fixed;
 }
 h1 {
     font-size: clamp(26px, 3vw, 32px);

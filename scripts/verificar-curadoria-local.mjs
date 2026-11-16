@@ -1,0 +1,24 @@
+import {readFileSync,writeFileSync,readdirSync,statSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const baseline=['resposta-documental-view','rag-gemini-real-local','local-e2e-isolation','assistente-handler','assistente-client','envio-pendente','home-assistente','gemini-geracao','gemini-ensaio-sintetico','conversa-natural-local'].map(n=>'tests/'+n+'.test.mjs');
+const args=['--test','--test-reporter=tap','--test-skip-pattern=formato real gerado',...baseline,'tests/curadoria-local.test.mjs'];
+const result=spawnSync(process.execPath,args,{encoding:'utf8',windowsHide:true,maxBuffer:10*1024*1024});
+writeFileSync('.cache/curadoria-sylvinho/regressao-final.log',result.stdout+result.stderr);
+const output=result.stdout||'';
+const count=name=>Number(new RegExp('^# '+name+' (\\d+)','m').exec(output)?.[1]);
+const backup=JSON.parse(readFileSync('.cache/curadoria-sylvinho/backup.json','utf8'));
+const inalterados=backup.manifest.filter(f=>f.arquivo).map(f=>{
+ const current=readFileSync(f.arquivo),original=readFileSync(backup.diretorio+'/'+f.arquivo);
+ const somenteFormatacao=f.arquivo==='functions/src/assistente/handler.ts'&&current.toString('utf8').replace(/\s/g,'')===original.toString('utf8').replace(/\s/g,'');
+ return {arquivo:f.arquivo,inalterado:sha(current)===f.sha256,somenteFormatacao};
+});
+const paths=['knowledge-local','local-e2e/curadoria-local.mjs','local-e2e/gemini-curado.mjs','local-e2e/embeddings-curados.mjs','scripts/preparar-curadoria-local.mjs','scripts/conferir-fontes-curadoria.mjs','scripts/conferir-portaria-matricula.mjs','scripts/gerar-colecao-curada-local.mjs','scripts/indexar-embeddings-curados.mjs','scripts/avaliar-curadoria-local.mjs','scripts/avaliar-gemini-curado-real.mjs','scripts/consultar-curadoria-local.mjs','scripts/verificar-curadoria-local.mjs','tests/curadoria-local.test.mjs'];
+const files=paths.flatMap(p=>statSync(p).isDirectory()?readdirSync(p).map(n=>p+'/'+n):[p]);
+const syntax=files.filter(p=>p.endsWith('.mjs')).map(p=>({arquivo:p,ok:spawnSync(process.execPath,['--check',p],{windowsHide:true}).status===0}));
+const secrets=files.filter(p=>/AIza[0-9A-Za-z_-]{30,}|-----BEGIN (?:RSA )?PRIVATE KEY-----/.test(readFileSync(p,'utf8')));
+const summary={data:new Date().toISOString(),comando:[process.execPath,...args],exitCode:result.status,testes:count('tests'),passaram:count('pass'),falharam:count('fail'),ignorados:count('skipped'),inalterados,sintaxe:syntax,segredosEncontrados:secrets};
+writeFileSync('docs/curadoria-local/verificacao-final.json',JSON.stringify(summary,null,2));
+console.log(JSON.stringify({...summary,comando:undefined,sintaxe:{arquivos:syntax.length,ok:syntax.every(r=>r.ok)},inalterados:{arquivos:inalterados.length,ok:inalterados.every(r=>r.inalterado||r.somenteFormatacao)}},null,2));
+if(result.status||summary.falharam||!syntax.every(r=>r.ok)||!inalterados.every(r=>r.inalterado||r.somenteFormatacao)||secrets.length)process.exitCode=1;

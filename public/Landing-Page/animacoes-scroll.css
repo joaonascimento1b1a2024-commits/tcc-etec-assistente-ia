@@ -1,0 +1,19 @@
+/* Movimento opcional: o conteúdo permanece visível sem JavaScript. */
+.landing-page {
+ --landing-motion-duration:350ms;
+ --landing-motion-fast:160ms;
+ --landing-motion-easing:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion:no-preference) {
+ .landing-page .hero-button {
+  transition:transform var(--landing-motion-fast) var(--landing-motion-easing);
+ }
+ .landing-page .hero-button:active { transform:scale(.98); }
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+ .landing-page .hero-button:hover { transform:translateY(-2px); }
+ .landing-page .hero-button:active { transform:scale(.98); }
+}
+@media (prefers-reduced-motion:reduce) {
+ .landing-page .hero-button { transition:none!important; transform:none!important; }
+}

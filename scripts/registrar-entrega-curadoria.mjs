@@ -1,0 +1,11 @@
+import {readFileSync,writeFileSync,readdirSync,statSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+const nomes=['preparar-curadoria-local','conferir-fontes-curadoria','conferir-portaria-matricula','gerar-colecao-curada-local','indexar-embeddings-curados','avaliar-curadoria-local','avaliar-gemini-curado-real','consultar-curadoria-local','verificar-curadoria-local','registrar-entrega-curadoria','reverter-curadoria-local'];
+const files=nomes.map(n=>'scripts/'+n+'.mjs').concat(['local-e2e/curadoria-local.mjs','local-e2e/embeddings-curados.mjs','local-e2e/gemini-curado.mjs','tests/curadoria-local.test.mjs']);
+const walk=path=>readdirSync(path).flatMap(n=>{const p=path+'/'+n;return statSync(p).isDirectory()?walk(p):[p];});
+files.push(...walk('knowledge-local'),...walk('docs/curadoria-local').filter(p=>!p.endsWith('/manifesto-entrega.json')),...walk('.cache/curadoria-sylvinho'));
+const backup=JSON.parse(readFileSync('.cache/curadoria-sylvinho/backup.json','utf8'));
+const manifest={versao:1,data:new Date().toISOString(),backup:backup.diretorio,novos:[...new Set(files)].sort().map(arquivo=>({arquivo,sha256:hash(arquivo)})),restaurar:[{arquivo:'functions/src/assistente/handler.ts',sha256Atual:hash('functions/src/assistente/handler.ts'),sha256Original:backup.manifest.find(f=>f.arquivo==='functions/src/assistente/handler.ts').sha256}],nota:'Nenhuma reversão foi executada. Novos arquivos só podem ser removidos se seus hashes continuarem iguais; alterações posteriores impedem reversão automática.'};
+writeFileSync('docs/curadoria-local/manifesto-entrega.json',JSON.stringify(manifest,null,2));
+console.log(JSON.stringify({novos:manifest.novos.length,restaurar:manifest.restaurar.length,backup:manifest.backup}));

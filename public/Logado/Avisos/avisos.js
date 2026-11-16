@@ -35,6 +35,10 @@ let management;
 let sessionVersion = 0;
 let queryVersion = 0;
 let startVersion = 0;
+const categoryFilter=document.querySelector('#noticeCategory');
+const filterSummary=document.querySelector('#filterSummary');
+function filterNotices(){let count=0;for(const card of list.children){card.hidden=Boolean(categoryFilter.value&&card.dataset.category!==categoryFilter.value);if(!card.hidden)count++;}filterSummary.textContent=categoryFilter.value ? count+' aviso(s) nesta categoria.' : ''; }
+categoryFilter.addEventListener('change',filterNotices);
 
 // Ícones locais: nenhum HTML recebido do banco é interpretado.
 const icons = {
@@ -62,6 +66,7 @@ function createCard(data) {
     card.querySelector('.notice-copy p').textContent = data.descricao;
     card.querySelector('.draft-label').hidden = data.publicado !== false;
     const category = Object.hasOwn(icons, data.categoria) ? data.categoria : 'geral';
+    card.querySelector('li').dataset.category=category;
     const icon = card.querySelector('.notice-icon');
     icon.classList.add(`category-${category}`);
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -76,6 +81,7 @@ function createCard(data) {
 
 function clearNotices() {
     queryVersion++;
+    filterSummary.textContent=''; categoryFilter.value='';
     unsubscribeNotices?.();
     unsubscribeNotices = undefined;
     management?.dispose();
@@ -230,6 +236,7 @@ async function start() {
                             const fragment = document.createDocumentFragment();
                             notices.forEach((data) => fragment.append(createCard(data)));
                             list.replaceChildren(fragment);
+                            filterNotices();
                             management?.updateNotices(notices);
 
                             // Não confunde cache vazio com confirmação de que o banco está vazio.

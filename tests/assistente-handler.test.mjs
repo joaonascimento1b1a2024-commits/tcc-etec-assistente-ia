@@ -5,6 +5,7 @@ import origemSintetica from "./fixtures/matricula-sintetica.cjs";
 import {
     perguntarAssistenteHandler, montarPromptSistema,
     MAX_PERGUNTA_LENGTH, MAX_MENSAGENS,
+    ErroRespostaTemporaria,
 } from "../functions/lib/assistente/handler.js";
 import {selecionarDocumentosRelevantes}
     from "../functions/lib/rag/recuperacao.js";
@@ -136,6 +137,71 @@ function assertSemTrabalho(s, {auth = 1} = {}) {
     assert.equal(s.calls.generator.length, 0);
     assert.equal(s.calls.transactions, 0);
 }
+
+test("falha tecnica preserva user sem gravar bot e retry reutiliza o mesmo ID", async () => {
+    const s = setup();
+    let chamadas = 0;
+    s.deps.responderConversa = async () => {
+        if (++chamadas === 1) throw new ErroRespostaTemporaria("INDISPONIVEL", 2);
+        return "Resposta recuperada";
+    };
+    const falha = await s.run();
+    assert.equal(falha.code, 503);
+    assert.equal(falha.body.codigo, "INDISPONIVEL");
+    assert.equal(falha.body.retryAfterSeconds, 2);
+    assert.equal(falha.headers["Retry-After"], "2");
+    assert.equal(s.rows.get(caminho()).mensagens.length, 1);
+    assert.equal(s.calls.commits, 0);
+    const resposta = await s.run();
+    assert.equal(resposta.body.resposta, "Resposta recuperada");
+    assert.equal(s.rows.get(caminho()).mensagens.length, 2);
+    assert.equal((await s.run()).body.resposta, "Resposta recuperada");
+    assert.equal(chamadas, 2);
+});
+
+test("limite de uso devolve 429 e espera sem substituir resposta por aviso", async () => {
+    const s = setup();
+    s.deps.responderConversa = async () => {
+        throw new ErroRespostaTemporaria("LIMITE_USO", 30);
+    };
+    const r = await s.run();
+    assert.equal(r.code, 429);
+    assert.equal(r.body.codigo, "LIMITE_USO");
+    assert.equal(s.rows.get(caminho()).mensagens.length, 1);
+});
+
+test("composicao curada recebe apenas historico anterior da conversa autenticada", async () => {
+    const s = setup({initial: conversa([
+        userMessage("oi", 1, MID2),
+        {remetente: "bot", texto: "Oi!", enviadoEm: 2},
+        userMessage("matricula", 3, MID),
+        userMessage("mensagem posterior", 4, "message-sylvinho-000003"),
+    ])});
+    let calls = 0;
+    s.deps.responderConversa = async (pergunta, historico, contexto) => {
+        calls++;
+        assert.equal(pergunta, "matricula");
+        assert.deepEqual(contexto, {uid: "alice"});
+        assert.deepEqual(historico.map(m => m.texto), ["oi", "Oi!"]);
+        assert.ok(Object.isFrozen(historico));
+        return "Resposta curada";
+    };
+    const r = await s.run();
+    assert.equal(r.code, 200);
+    assert.equal(r.body.resposta, "Resposta curada");
+    assert.equal(s.calls.generator.length, 0);
+    assert.equal((await s.run()).body.resposta, "Resposta curada");
+    assert.equal(calls, 1);
+});
+
+test("composicao curada nao atende sem token ou conversa de outro usuario", async () => {
+    const s = setup();
+    let calls = 0;
+    s.deps.responderConversa = async () => {calls++; return "Nao chamar";};
+    assert.equal((await s.run({authorization: ""})).code, 401);
+    assert.equal((await s.run({authorization: "Bearer tokenB"})).code, 404);
+    assert.equal(calls, 0);
+});
 
 test("POST valido integra RAG V1 e acrescenta exclusivamente bot", async () => {
     const initial = conversa([userMessage("MATRÍCULA")]);

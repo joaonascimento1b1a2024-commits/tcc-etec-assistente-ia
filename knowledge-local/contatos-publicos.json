@@ -1,0 +1,138 @@
+[
+  {
+    "id": "whatsapp-secretaria",
+    "valor": "(16) 99637-1226",
+    "digitos": "16996371226",
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": "ixo: Telefone/WhatsApp Secretaria Acadêmica: (16) 99637-1226 (WhatsApp) Orientação E Apoio Educacional: (16)99716-1071 (WhatsApp) Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          2
+        ],
+        "evidencia": "Dos Direitos dos Alunos (Artigos 112 e 113 do Regimento Comum das Escolas Técnicas Estaduais) Artigo 112 - São direitos dos alunos: I - concorrer à representação nos órgãos colegiados, nas instituições auxiliares e no órgão representativo dos alunos; II - participar na elaboração de normas disciplinares e de uso de dependências comuns; III - receber orientação educacional e/ou pedagógica, individualmente ou em grupo; IV - recorrer à Direção ou aos setores próprios da ETEC para resolver eventuais dificuldades que encontrar na solução de problemas relativos a sua vida escolar; V - recorrer dos resultados de avaliação de seu rendimento, nos termos previstos pela legislação; VI - requerer ou representar ao Diretor da ETEC sobre assuntos de sua vida escolar, na defesa dos seus direitos, nos casos omissos deste Regimento; VII - ser comunicado sobre os resultados da avaliação e critérios utilizados de cada componente curricular; VIII - ser informado, no início do período letivo, dos planos de trabalho dos componentes curriculares do módulo ou série em que está matriculado; IX - ser ouvido e obter respostas em suas reclamações e pedidos; X - ser respeitado e valorizado em sua individualidade, sem comparações ou preferências; XI - ter facultado o acesso e a participação nas atividades escolares, incluindo as atividades extraclasse promovidas pela ETEC; XII - ter garantida a avaliação de sua aprendizagem, de acordo com a legislação; XIII - ter garantia de todas as condições de aprendizagem, mediante procedimentos de recuperação contínua ao longo do semestre/ano letivo. Artigo 113 – Os órgãos representativos dos alunos terão seus objetivos voltados à integração da comunidade escolar visando à maior participação do processo educativo e à gestão democrática da ETEC. Parágrafo único - A Etec propiciará condições para a instituição e o funcionamento de órgãos representativos dos alunos. CAPÍTULO X Dos Deveres e Proibições (Artigos 114 e 115 do Regimento Comum das Escolas Técnicas Estaduais) Artigo 114 - São deveres dos alunos: I - conhecer, fazer conhecer, cumprir este Regimento, outras normas e regulamentos vigentes na escola; II - comparecer pontual e assiduamente às aulas e atividades escolares programadas, sejam presenciais ou de forma remota, empenhando-se no êxito de sua execução; III - respeitar os colegas, os professores e demais servidores da escola; IV - representar seus pares no Conselho de Classe, Conselho de Escola ou outro órgão de representatividade; V - participar nas atividades educativas ou formativas desenvolvidas na escola, bem como nas demais atividades que requeiram a participação dos alunos; VI - zelar pela preservação, conservação e limpeza das instalações, material didático, mobiliário e espaços verdes da escola, fazendo uso correto dos mesmos; VII - indenizar prejuízo causado por danos às instalações ou perda de qualquer material de propriedade do CEETEPS, das instituições auxiliares, ou de colegas, quando ficar comprovada sua responsabilidade; VIII - trajar-se adequadamente em qualquer dependência da escola, de modo a manter-se o respeito mútuo e a atender às normas de higiene e segurança pessoal e coletiva; IX - respeitar a propriedade dos bens pertencentes aos colegas, professores e funcionários administrativos e não se apossar de objetos alheios. Artigo 115 - É vedado ao aluno: I - apresentar condutas que comprometam o trabalho escolar e o convívio social; II - ausentar-se da sala de aula e/ou ambiente virtual, durante as aulas, sem justificativas; III - fumar em qualquer das dependências escolares; IV - introduzir, portar, guardar, vender, distribuir, fazer uso de substâncias entorpecentes ou de bebidas alcoólicas, comparecer embriagado ou sob efeito de tais substâncias na ETEC; V - introduzir, portar, ter sob sua guarda ou utilizar nas dependências da escola qualquer material que possa causar riscos à saúde, à segurança e à integridade física, sua ou de outros; VI - ocupar-se, durante as aulas, de assuntos ou utilizar materiais e equipamentos alheios ao processo de ensino e de aprendizagem; VII - praticar jogos sem caráter educativo nas dependências da ETEC; VIII - praticar quaisquer atos de violência física, psicológica ou moral contra pessoas, ou ter atitudes que caracterizam preconceito e discriminação; IX - praticar quaisquer atos que possam causar danos ao patrimônio da escola ou de outrem nas dependências da ETEC; X - promover coletas ou subscrições ou outro tipo de campanha, sem autorização da Direção da Unidade ETEC; XI - retirar-se da unidade durante as atividades escolares, da residência de alunos (alojamentos) e/ou ambientes de aprendizagem sem autorização dos pais ou responsáveis, se menor de idade, e da Direção da Unidade ETEC; XII - desabonar a imagem dos membros da comunidade escolar e da instituição de qualquer modo e/ou circunstância; XIII - captar sons ou imagens, designadamente, de atividades letivas e não letivas, sem autorização prévia dos professores ou dos responsáveis pela direção da escola, bem como, quando for o caso, de qualquer membro da comunidade escolar ou educativa cuja imagem possa, ainda que involuntariamente, ficar registrada; XIV - difundir, na escola ou fora dela, nomeadamente, via Internet ou através de outros meios de comunicação, sons ou imagens captadas nos momentos letivos e não letivos, sem autorização do diretor da escola. CAPÍTULO XI Das Penalidades (Artigos 117 e 118 do Regimento Comum das Escolas Técnicas Estaduais) A inobservância das normas disciplinares contidas nesse regimento interno, bem como nos artigos 114 e 115 do Regimento Comum das Escolas Técnicas Estaduais, sujeita o aluno às penas de advertência, de repreensão por escrito, de suspensão e de transferência compulsória pela Direção da Etec, de acordo com a gravidade da ocorrência. É assegurado ao aluno o direito de ampla defesa nos prazos estabelecidos pela notificação. DAS DISPOSIÇÕES GERAIS Art. 1º: Regimento aprovado pelo Conselho de Escola, válido para a Gestão de 2023-2027, podendo sofrer alterações conforme necessidade da Unidade Escolar mediante aprovação do respectivo órgão deliberativo. Art. 2º: Qualquer assunto ou problema não tratado neste documento será resolvido pela Direção da Escola, com base no Regimento Comum das Escolas Técnicas. NOTA DA ETEC: Nenhum servidor da Unidade Escolar responsabilizar-se-á pela perda de qualquer pertence (objeto pessoal) do aluno. Etec Sylvio de Mattos Carvalho Rua Cesário Mota, 644 – 15990-050 – Matão – SP Telefones: (16) 3382-1226 / 99637-1226 (WhatsApp) Home Page: www.etecmatao.com.br Instagram: @etecsylviodemattos Facebook: http://www.facebook.com/etecmatao E-mail para contato: e103acad@cps.sp.gov.br Horário de funcionamento da Secretaria Acadêmica: de segunda à sexta-feira, das 9h às 14h e das 18h30 às 21h. REGIMENTO ESCOLAR Aprovado pelo Conselho de Escola Versão revisada em 26 de fevereiro de 2024",
+        "conferidoEm": "2026-11-12"
+      }
+    ],
+    "observacao": null
+  },
+  {
+    "id": "whatsapp-orientacao",
+    "valor": "(16) 99716-1071",
+    "digitos": "16997161071",
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": "26 (WhatsApp) Orientação E Apoio Educacional: (16)99716-1071 (WhatsApp) Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": null
+  },
+  {
+    "id": "whatsapp-geral",
+    "valor": "(16) 99189-2181",
+    "digitos": "16991892181",
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": "https://wa.me/+5516991892181",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": null
+  },
+  {
+    "id": "email-diretoria",
+    "valor": "e103dir@cps.sp.gov.br",
+    "digitos": null,
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": " Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a. Turma de Formandos da Etec Sylvio de Mattos Carvalho Colação de Grau ",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": null
+  },
+  {
+    "id": "email-administrativa",
+    "valor": "e103adm@cps.sp.gov.br",
+    "digitos": null,
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": ": e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a. Turma de Formandos da Etec Sylvio de Mattos Carvalho Colação de Grau da 51ª e 52ª Turmas de Formandos da Etec Coleta ",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": null
+  },
+  {
+    "id": "email-academica",
+    "valor": "e103acad@cps.sp.gov.br",
+    "digitos": null,
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": "ativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a. Turma de Formandos da Etec Sylvio de Mattos Carvalho Colação de Grau da 51ª e 52ª Turmas de Formandos da Etec Coleta de Lixo Eletrônico Campanha de Vacinação Pr",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          2
+        ],
+        "evidencia": "Dos Direitos dos Alunos (Artigos 112 e 113 do Regimento Comum das Escolas Técnicas Estaduais) Artigo 112 - São direitos dos alunos: I - concorrer à representação nos órgãos colegiados, nas instituições auxiliares e no órgão representativo dos alunos; II - participar na elaboração de normas disciplinares e de uso de dependências comuns; III - receber orientação educacional e/ou pedagógica, individualmente ou em grupo; IV - recorrer à Direção ou aos setores próprios da ETEC para resolver eventuais dificuldades que encontrar na solução de problemas relativos a sua vida escolar; V - recorrer dos resultados de avaliação de seu rendimento, nos termos previstos pela legislação; VI - requerer ou representar ao Diretor da ETEC sobre assuntos de sua vida escolar, na defesa dos seus direitos, nos casos omissos deste Regimento; VII - ser comunicado sobre os resultados da avaliação e critérios utilizados de cada componente curricular; VIII - ser informado, no início do período letivo, dos planos de trabalho dos componentes curriculares do módulo ou série em que está matriculado; IX - ser ouvido e obter respostas em suas reclamações e pedidos; X - ser respeitado e valorizado em sua individualidade, sem comparações ou preferências; XI - ter facultado o acesso e a participação nas atividades escolares, incluindo as atividades extraclasse promovidas pela ETEC; XII - ter garantida a avaliação de sua aprendizagem, de acordo com a legislação; XIII - ter garantia de todas as condições de aprendizagem, mediante procedimentos de recuperação contínua ao longo do semestre/ano letivo. Artigo 113 – Os órgãos representativos dos alunos terão seus objetivos voltados à integração da comunidade escolar visando à maior participação do processo educativo e à gestão democrática da ETEC. Parágrafo único - A Etec propiciará condições para a instituição e o funcionamento de órgãos representativos dos alunos. CAPÍTULO X Dos Deveres e Proibições (Artigos 114 e 115 do Regimento Comum das Escolas Técnicas Estaduais) Artigo 114 - São deveres dos alunos: I - conhecer, fazer conhecer, cumprir este Regimento, outras normas e regulamentos vigentes na escola; II - comparecer pontual e assiduamente às aulas e atividades escolares programadas, sejam presenciais ou de forma remota, empenhando-se no êxito de sua execução; III - respeitar os colegas, os professores e demais servidores da escola; IV - representar seus pares no Conselho de Classe, Conselho de Escola ou outro órgão de representatividade; V - participar nas atividades educativas ou formativas desenvolvidas na escola, bem como nas demais atividades que requeiram a participação dos alunos; VI - zelar pela preservação, conservação e limpeza das instalações, material didático, mobiliário e espaços verdes da escola, fazendo uso correto dos mesmos; VII - indenizar prejuízo causado por danos às instalações ou perda de qualquer material de propriedade do CEETEPS, das instituições auxiliares, ou de colegas, quando ficar comprovada sua responsabilidade; VIII - trajar-se adequadamente em qualquer dependência da escola, de modo a manter-se o respeito mútuo e a atender às normas de higiene e segurança pessoal e coletiva; IX - respeitar a propriedade dos bens pertencentes aos colegas, professores e funcionários administrativos e não se apossar de objetos alheios. Artigo 115 - É vedado ao aluno: I - apresentar condutas que comprometam o trabalho escolar e o convívio social; II - ausentar-se da sala de aula e/ou ambiente virtual, durante as aulas, sem justificativas; III - fumar em qualquer das dependências escolares; IV - introduzir, portar, guardar, vender, distribuir, fazer uso de substâncias entorpecentes ou de bebidas alcoólicas, comparecer embriagado ou sob efeito de tais substâncias na ETEC; V - introduzir, portar, ter sob sua guarda ou utilizar nas dependências da escola qualquer material que possa causar riscos à saúde, à segurança e à integridade física, sua ou de outros; VI - ocupar-se, durante as aulas, de assuntos ou utilizar materiais e equipamentos alheios ao processo de ensino e de aprendizagem; VII - praticar jogos sem caráter educativo nas dependências da ETEC; VIII - praticar quaisquer atos de violência física, psicológica ou moral contra pessoas, ou ter atitudes que caracterizam preconceito e discriminação; IX - praticar quaisquer atos que possam causar danos ao patrimônio da escola ou de outrem nas dependências da ETEC; X - promover coletas ou subscrições ou outro tipo de campanha, sem autorização da Direção da Unidade ETEC; XI - retirar-se da unidade durante as atividades escolares, da residência de alunos (alojamentos) e/ou ambientes de aprendizagem sem autorização dos pais ou responsáveis, se menor de idade, e da Direção da Unidade ETEC; XII - desabonar a imagem dos membros da comunidade escolar e da instituição de qualquer modo e/ou circunstância; XIII - captar sons ou imagens, designadamente, de atividades letivas e não letivas, sem autorização prévia dos professores ou dos responsáveis pela direção da escola, bem como, quando for o caso, de qualquer membro da comunidade escolar ou educativa cuja imagem possa, ainda que involuntariamente, ficar registrada; XIV - difundir, na escola ou fora dela, nomeadamente, via Internet ou através de outros meios de comunicação, sons ou imagens captadas nos momentos letivos e não letivos, sem autorização do diretor da escola. CAPÍTULO XI Das Penalidades (Artigos 117 e 118 do Regimento Comum das Escolas Técnicas Estaduais) A inobservância das normas disciplinares contidas nesse regimento interno, bem como nos artigos 114 e 115 do Regimento Comum das Escolas Técnicas Estaduais, sujeita o aluno às penas de advertência, de repreensão por escrito, de suspensão e de transferência compulsória pela Direção da Etec, de acordo com a gravidade da ocorrência. É assegurado ao aluno o direito de ampla defesa nos prazos estabelecidos pela notificação. DAS DISPOSIÇÕES GERAIS Art. 1º: Regimento aprovado pelo Conselho de Escola, válido para a Gestão de 2023-2027, podendo sofrer alterações conforme necessidade da Unidade Escolar mediante aprovação do respectivo órgão deliberativo. Art. 2º: Qualquer assunto ou problema não tratado neste documento será resolvido pela Direção da Escola, com base no Regimento Comum das Escolas Técnicas. NOTA DA ETEC: Nenhum servidor da Unidade Escolar responsabilizar-se-á pela perda de qualquer pertence (objeto pessoal) do aluno. Etec Sylvio de Mattos Carvalho Rua Cesário Mota, 644 – 15990-050 – Matão – SP Telefones: (16) 3382-1226 / 99637-1226 (WhatsApp) Home Page: www.etecmatao.com.br Instagram: @etecsylviodemattos Facebook: http://www.facebook.com/etecmatao E-mail para contato: e103acad@cps.sp.gov.br Horário de funcionamento da Secretaria Acadêmica: de segunda à sexta-feira, das 9h às 14h e das 18h30 às 21h. REGIMENTO ESCOLAR Aprovado pelo Conselho de Escola Versão revisada em 26 de fevereiro de 2024",
+        "conferidoEm": "2026-11-12"
+      }
+    ],
+    "observacao": "Texto público e folder conferidos; mailto do site divergente não é usado."
+  },
+  {
+    "id": "email-apm",
+    "valor": "e103apm@cps.sp.gov.br",
+    "digitos": null,
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/apm/",
+      "sha256": "71bb07ae57e3cf9b07f6e8a080ae9051b0443ad2a4a62c4d4b03705a50ca0b50",
+      "evidencia": "no Médio) Rosana Karin Gonçalves Vitucci Contato: e103apm@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a. Turma de Formandos da Etec Sylvio de Mattos Carvalho Colação de Grau da 51ª e 52ª Turmas de Formandos da Etec Coleta de Lixo Eletrônico Campanha de Vacinação Pro",
+      "conferidoEm": "2026-11-12T13:13:32.111Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": null
+  }
+]

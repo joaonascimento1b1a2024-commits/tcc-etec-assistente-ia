@@ -19,6 +19,43 @@ let conversationId = new URLSearchParams(window.location.search).get('conversa')
 let sending = false;
 let sessionVersion = 0;
 const chatStatus = document.querySelector('#chatStatus');
+const retrySend = document.querySelector('#retrySend');
+let retryAction = null;
+let retryTimer = null;
+retrySend.hidden = true;
+retrySend.disabled = true;
+
+function clearRetry() {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+    retryAction = null;
+    retrySend.hidden = true;
+    retrySend.disabled = true;
+    retrySend.textContent = 'Tentar novamente';
+}
+
+function showRetry(pergunta, tentarApos, version, uid) {
+    clearRetry();
+    const aguardar = Math.min(300000, Math.max(0, tentarApos - Date.now()));
+    retryAction = { pergunta, version, uid, tentarApos: Date.now() + aguardar };
+    retrySend.hidden = false;
+    retrySend.disabled = aguardar > 0;
+    retrySend.textContent = aguardar > 0 ? 'Aguarde para tentar novamente' : 'Tentar novamente';
+    if (aguardar > 0) {
+        retryTimer = setTimeout(() => {
+            if (version !== sessionVersion || authenticatedUser?.uid !== uid || !retryAction) return;
+            retrySend.disabled = sending;
+            retrySend.textContent = 'Tentar novamente';
+        }, aguardar);
+        retryTimer?.unref?.();
+    }
+}
+
+retrySend.addEventListener('click', () => {
+    if (!retryAction || retrySend.disabled || sending || retryAction.version !== sessionVersion || retryAction.uid !== authenticatedUser?.uid) return;
+    retrySend.disabled = true;
+    return sendMessage(retryAction.pergunta);
+});
 const demonstracaoPanel = document.querySelector('#demonstracaoPanel');
 const demonstracaoSelect = document.querySelector('#demonstracaoSelect');
 const demonstracaoPergunta = document.querySelector('#demonstracaoPergunta');
@@ -154,6 +191,7 @@ async function loadAuthenticatedProfile() {
             authSDK.getAuth(app),
             async (user) => {
                 const version = ++sessionVersion;
+                clearRetry();
                 activeRequest?.abort();
                 reiniciarDemonstracao();
                 authenticatedUser = user;
@@ -213,7 +251,17 @@ async function loadAuthenticatedProfile() {
                     void carregarDemonstracao(user, version);
                     if (demonstracaoPendente) chatStatus.textContent =
                         "Demonstração pendente preservada. Use Retomar demonstração pendente para reenviar com o mesmo identificador.";
-                    else if (pendente) await sendMessage(pendente.pergunta);
+                    else if (pendente?.aguardarNovaTentativa) {
+                        const concluida = saved?.mensagens.some(m => m.remetente === 'bot' && m.messageId === pendente.messageId);
+                        if (concluida) {
+                            const { concluirEnvioPendente } = await import('./envio-pendente.js');
+                            if (version !== sessionVersion) return;
+                            concluirEnvioPendente(user.uid);
+                        } else {
+                            chatStatus.textContent = 'A pergunta está salva, mas a resposta não foi concluída. Use Tentar novamente para recuperar o mesmo envio.';
+                            showRetry(pendente.pergunta, pendente.tentarApos || 0, version, user.uid);
+                        }
+                    } else if (pendente) await sendMessage(pendente.pergunta);
                 } catch (error) {
                     if (version !== sessionVersion) return;
                     chatStatus.textContent =
@@ -231,6 +279,7 @@ async function loadAuthenticatedProfile() {
 // Mantém o acesso às configurações mesmo se houver falha ao consultar a sessão.
 function handleProfileError(error) {
     sessionVersion++;
+    clearRetry();
     activeRequest?.abort();
     authenticatedUser = null;
     conversationStore = null;
@@ -282,6 +331,7 @@ function addMessage(text, sender) {
     // textContent exibe a mensagem como texto, sem interpretar HTML.
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
+    bubble.sylvinhoOriginalText = text;
     if (sender === 'bot' && globalThis.apresentacaoDocumental)
         globalThis.apresentacaoDocumental.renderizar(bubble, text);
     else bubble.textContent = text;
@@ -317,7 +367,10 @@ async function sendMessage(text, perguntaId) {
     const request = new AbortController();
     activeRequest = request;
     let userSaved = false;
+    let envioAtual = null;
+    let pendenciasAtuais = null;
     sending = true;
+    window.sylvinhoUI?.setBusy(true);
     lockComposer(true);
     newChat.disabled = true;
     if (!demo) messageInput.value = cleanText;
@@ -329,6 +382,7 @@ async function sendMessage(text, perguntaId) {
             import('./envio-pendente.js'),
         ]);
         const config = resolverAssistenteConfig();
+        pendenciasAtuais = pendencias;
         if (!config.endpoint) throw Object.assign(new Error('Assistente ainda não configurado.'), { code: 'ENDPOINT_NAO_CONFIGURADO' });
         if (version !== sessionVersion) return;
         if (demo) {
@@ -342,7 +396,9 @@ async function sendMessage(text, perguntaId) {
         let envio = pendencias.carregarEnvioPendente(user.uid);
         const primeiraTentativa = !envio;
         if (envio && (envio.pergunta !== cleanText || envio.perguntaId !== perguntaId)) {
-            chatStatus.textContent = 'Existe uma pergunta pendente. Recarregue para recuperá-la antes de enviar outra.';
+            chatStatus.textContent = retryAction
+                ? 'Existe uma pergunta pendente. Use Tentar novamente para recuperá-la ou abra um novo chat.'
+                : 'Existe uma pergunta pendente. Recarregue para recuperá-la antes de enviar outra.';
             return;
         }
         if (!envio) {
@@ -359,6 +415,8 @@ async function sendMessage(text, perguntaId) {
         const id = await store.append(envio.conversationId, envio.pergunta, envio.messageId,
             envio.enviadoEm, { create: primeiraTentativa && envio.novaConversa });
         userSaved = true;
+        envioAtual = envio;
+        clearRetry();
         envio.novaConversa = false;
         pendencias.guardarEnvioPendente(user.uid, envio);
         if (version !== sessionVersion) return;
@@ -373,8 +431,10 @@ async function sendMessage(text, perguntaId) {
         showChat();
         for (const message of saved.mensagens)
             addMessage(message.texto, message.remetente === 'bot' ? 'bot' : 'user');
-        chatStatus.textContent = config.timeoutMs > 30000
+        chatStatus.textContent = config.timeoutMs >= 120000
             ? 'Mensagem salva. Aguardando resposta... O servidor pode levar até dois minutos para iniciar.'
+            : config.timeoutMs > 30000
+            ? 'Mensagem salva. A IA está preparando a resposta...'
             : 'Mensagem salva. Aguardando resposta...';
         await perguntarAssistente({
             user, ...(envio.perguntaId ? { perguntaId: envio.perguntaId } : { pergunta: cleanText }), conversationId: id,
@@ -403,7 +463,17 @@ async function sendMessage(text, perguntaId) {
         if (demo && ['HTTP_403', 'HTTP_401', 'SESSAO_INVALIDA', 'DEMONSTRACAO_INVALIDA'].includes(error.code)) {
             demonstracaoCatalogo = []; demonstracaoPanel.hidden = true;
         }
-        chatStatus.textContent = demo && ['HTTP_403', 'DEMONSTRACAO_INVALIDA'].includes(error.code)
+        chatStatus.textContent = !demo && userSaved && (error.retentavel || error.code === 'HTTP_429')
+            ? error.motivo === 'LIMITE_USO' || error.code === 'HTTP_429'
+                ? 'A IA atingiu um limite de uso. Aguarde antes de tentar novamente. Sua pergunta está salva.'
+                : error.motivo === 'OCUPADO'
+                ? 'O assistente está atendendo outra pergunta. Aguarde um instante. Sua pergunta está salva.'
+                : error.motivo === 'TEMPO_EXCEDIDO'
+                ? 'A resposta demorou mais que o esperado. Sua pergunta está salva; você pode tentar novamente.'
+                : error.motivo === 'RESPOSTA_NAO_VALIDADA'
+                ? 'Não consegui concluir uma resposta segura agora. Sua pergunta está salva; você pode tentar novamente.'
+                : 'A IA está temporariamente indisponível. Sua pergunta está salva; você pode tentar novamente.'
+            : demo && ['HTTP_403', 'DEMONSTRACAO_INVALIDA'].includes(error.code)
             ? 'Demonstração não autorizada ou expirada. O modo documental permanece disponível; nenhuma geração foi repetida.'
             : error.code === 'ENDPOINT_NAO_CONFIGURADO' || error.code === 'AMBIENTE_LOCAL_INVALIDO'
             ? 'O assistente não está configurado para este ambiente. Nenhuma pergunta foi salva.'
@@ -411,22 +481,33 @@ async function sendMessage(text, perguntaId) {
             ? 'Sua sessão expirou ou não pôde ser validada. A pergunta foi salva. Entre novamente e recarregue para recuperar o envio com o mesmo identificador.'
             : demo && userSaved
             ? 'Pergunta demonstrativa salva; resposta não confirmada. Use Retomar demonstração pendente para tentar com o mesmo identificador. Não há repetição automática.'
-            : userSaved && ['HTTP_502', 'HTTP_503', 'HTTP_504'].includes(error.code)
-            ? 'O assistente está temporariamente indisponível. A pergunta foi salva. Aguarde e recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
+            : userSaved && ['HTTP_500', 'HTTP_502', 'HTTP_503', 'HTTP_504'].includes(error.code)
+            ? 'O assistente está temporariamente indisponível. A pergunta foi salva. Use Tentar novamente para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
             : userSaved && error.code === 'REDE_OU_TOKEN'
-            ? 'Não foi possível conectar ao assistente ou obter a sessão. A pergunta foi salva. Confira a conexão e o login e recarregue para recuperar o envio com o mesmo identificador.'
+            ? 'Não foi possível conectar ao assistente ou obter a sessão. A pergunta foi salva. Confira a conexão e o login e use Tentar novamente para recuperar o envio com o mesmo identificador.'
             : userSaved && error.code === 'TIMEOUT'
-            ? 'O servidor demorou para responder. Sua pergunta está salva. Recarregue para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
+            ? 'O servidor demorou para responder. Sua pergunta está salva. Use Tentar novamente para recuperar o envio com o mesmo identificador, sem duplicar a mensagem.'
             : userSaved
             ? 'A pergunta foi salva, mas não foi possível confirmar a resposta. Recarregue para recuperar o envio com o mesmo identificador; se a conversa foi excluída, cancele a pendência.'
             : error.code
             ? 'Falha de conexão ou permissão. Confira o histórico antes de reenviar.'
             : error.message;
+        const recuperavel = userSaved && !demo && !['HTTP_400', 'HTTP_401', 'HTTP_403', 'HTTP_404', 'HTTP_409', 'SESSAO_INVALIDA', 'TOKEN_INVALIDO', 'PENDENCIA_INVALIDA'].includes(error.code);
+        if (recuperavel && envioAtual) {
+            const espera = Number.isInteger(error.retryAfterSeconds) ? Math.min(300, Math.max(0, error.retryAfterSeconds)) : error.code === 'HTTP_429' ? 30 : 0;
+            envioAtual.aguardarNovaTentativa = true;
+            envioAtual.tentarApos = Date.now() + espera * 1000;
+            try { pendenciasAtuais.guardarEnvioPendente(user.uid, envioAtual); } catch { /* A pendência já existente conserva o mesmo ID. */ }
+            showRetry(cleanText, envioAtual.tentarApos, version, user.uid);
+        }
     } finally {
         sending = false;
+        window.sylvinhoUI?.setBusy(false);
         if (activeRequest === request) activeRequest = null;
         newChat.disabled = false;
         lockComposer(!conversationStore || !authenticatedUser);
+        if (retryAction && retryAction.version === sessionVersion && retryAction.uid === authenticatedUser?.uid && Date.now() >= retryAction.tentarApos)
+            retrySend.disabled = false;
         if (version === sessionVersion) {
             if (demo && !demonstracaoPanel.hidden) demonstracaoSelect.focus();
             else messageInput.focus();
@@ -462,6 +543,7 @@ newChat.addEventListener('click', async () => {
                 ? 'Existe um envio pendente. Cancelar a recuperação e abrir uma nova conversa?'
                 : 'Não foi possível ler a pendência local. Descartar sua recuperação e abrir uma nova conversa? Nenhuma conversa salva será apagada.';
             if (!window.confirm(aviso)) return;
+            clearRetry();
             const descarte = pendencias.descartarEnvioPendente(authenticatedUser.uid);
             if (!descarte.persistente) {
                 // Sem armazenamento, manter o descarte explícito nesta página evita
@@ -481,6 +563,7 @@ newChat.addEventListener('click', async () => {
         }
     }
     // A navegação limpa apenas a seleção; o histórico já salvo não é apagado.
+    clearRetry();
     window.location.assign('home.html');
 });
 
@@ -495,3 +578,7 @@ demonstracaoRecuperar.addEventListener('click', () => {
         p.pergunta === demonstracaoPendente.pergunta);
     if (item) return sendMessage(item.pergunta, item.perguntaId);
 });
+
+// Enter envia; Shift+Enter mantém uma quebra de linha; composição não envia.
+const composerField=document.querySelector('#messageInput');
+composerField.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault(); document.querySelector('#messageForm').requestSubmit();}});

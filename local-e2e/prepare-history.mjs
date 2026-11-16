@@ -3,7 +3,8 @@ import { resolve } from 'node:path';
 import { prepare as prepareAuth, stage as authStage, root } from './prepare-auth.mjs';
 export { root };
 export const stage = resolve(root, '.cache/local-e2e');
-export function prepare({ authMode = 'anonymous', academica = false, original = false } = {}) {
+export function prepare({ authMode = 'anonymous', academica = false, original = false, geminiLocal = false } = {}) {
+    if (typeof geminiLocal !== 'boolean') throw new Error('LOCAL_GEMINI_FLAG_INVALID');
     if (!['anonymous', 'password'].includes(authMode)) throw new Error('LOCAL_AUTH_MODE_REQUIRED');
     if (typeof original !== 'boolean' || original && academica) throw new Error('LOCAL_ORIGINAL_MODE_INVALID');
     if (typeof academica !== 'boolean') throw new Error('LOCAL_ACADEMIC_MODE_INVALID');
@@ -40,6 +41,11 @@ export function prepare({ authMode = 'anonymous', academica = false, original = 
         .replace('connect-src http://127.0.0.1:9099 http://127.0.0.1:8080;',
             'connect-src http://127.0.0.1:9099 http://127.0.0.1:8080 http://127.0.0.1:5001;');
     config.functions = [{ source: 'functions', codebase: 'local-history-lote2' }];
+    if (geminiLocal) {
+        const from='http://127.0.0.1:5001;';
+        const to='http://127.0.0.1:5001 http://127.0.0.1:5002;';
+        config.hosting.headers[0].headers[0].value=config.hosting.headers[0].headers[0].value.replace(from,to);
+    }
     config.emulators.functions = { host: '127.0.0.1', port: 5001 };
     mkdirSync(resolve(stage, 'functions'), { recursive: true });
     cpSync(resolve(root, 'local-e2e/function.cjs'), resolve(stage, 'functions/index.cjs'));

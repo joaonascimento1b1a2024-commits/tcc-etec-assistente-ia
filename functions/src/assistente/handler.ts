@@ -11,6 +11,23 @@ import type {ContextoGeracao} from "./geracao/gateway";
 
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
+export type MotivoFalhaTemporaria = "LIMITE_USO" | "OCUPADO" |
+  "TEMPO_EXCEDIDO" | "RESPOSTA_NAO_VALIDADA" | "INDISPONIVEL";
+
+/** Falha tecnica recuperavel; nao pode ser gravada como resposta do bot. */
+export class ErroRespostaTemporaria extends Error {
+  readonly esperaSegundos: number;
+  /**
+   * @param {MotivoFalhaTemporaria} motivo Categoria publica sem dados internos.
+   * @param {number} esperaSegundos Espera minima antes da proxima tentativa.
+   */
+  constructor(readonly motivo: MotivoFalhaTemporaria,
+    esperaSegundos = 2) {
+    super("O assistente nao conseguiu concluir a resposta.");
+    this.esperaSegundos = Number.isFinite(esperaSegundos) ?
+      Math.min(300, Math.max(1, Math.ceil(esperaSegundos))) : 2;
+  }
+}
 const requisicoesEmAndamento =
   new WeakMap<object, Map<string, Promise<string>>>();
 
@@ -46,6 +63,12 @@ function respostaExistente(
 }
 
 export interface DependenciasAssistente {
+  responderConversa?: (
+    pergunta: string, historico: readonly MensagemIdentificada[],
+    contexto: ContextoGeracao,
+  ) => Promise<string>;
+  resolverContexto?: typeof resolverContextoConversacional;
+  classificarEscopo?: typeof classificarEscopo;
   demonstracao?: {
     listarPerguntas(uid: string): readonly {
       perguntaId: string; pergunta: string;
@@ -288,7 +311,35 @@ export async function perguntarAssistenteHandler(
             conversaRef, gerada, deps, messageId, perguntaNormalizada,
           );
         }
-        const contexto = resolverContextoConversacional(
+        if (deps.responderConversa) {
+          const posicao = atualizadas.findIndex((m) =>
+            !!m && typeof m === "object" &&
+            (m as MensagemIdentificada).remetente === "user" &&
+            (m as MensagemIdentificada).messageId === messageId);
+          const historico = atualizadas.slice(0, posicao)
+            .filter((m): m is MensagemIdentificada =>
+              !!m && typeof m === "object" &&
+              typeof (m as MensagemIdentificada).texto === "string" &&
+              ["user", "bot"].includes(
+                (m as MensagemIdentificada).remetente,
+              ))
+            .slice(-24)
+            .map((m) => Object.freeze({
+              texto: m.texto, remetente: m.remetente,
+            }));
+          const gerada = await deps.responderConversa(
+            perguntaNormalizada, Object.freeze(historico),
+            Object.freeze({uid: decodedToken.uid}),
+          );
+          if (typeof gerada !== "string" || !gerada.trim()) {
+            throw new Error("INVALID_GENERATOR_RESPONSE");
+          }
+          return adicionarRespostaBot(
+            conversaRef, gerada, deps, messageId, perguntaNormalizada,
+          );
+        }
+        const contexto = (deps.resolverContexto ??
+          resolverContextoConversacional)(
           perguntaNormalizada, messageId, atualizadas,
         );
         if (contexto.esclarecimento) {
@@ -298,7 +349,7 @@ export async function perguntarAssistenteHandler(
           );
         }
         const consulta = contexto.pergunta!;
-        const escopo = classificarEscopo(consulta);
+        const escopo = (deps.classificarEscopo ?? classificarEscopo)(consulta);
         if (escopo.resposta) {
           return adicionarRespostaBot(
             conversaRef, escopo.resposta, deps, messageId, perguntaNormalizada,
@@ -327,6 +378,14 @@ export async function perguntarAssistenteHandler(
     const resposta = await operacao;
     return res.status(200).json({resposta});
   } catch (error) {
+    if (error instanceof ErroRespostaTemporaria) {
+      res.set("Retry-After", String(error.esperaSegundos));
+      return res.status(error.motivo === "LIMITE_USO" ? 429 : 503).json({
+        error: "Não foi possível concluir a resposta agora.",
+        codigo: error.motivo,
+        retryAfterSeconds: error.esperaSegundos,
+      });
+    }
     const mensagem = error instanceof Error ? error.message : "";
     if (mensagem === "DEMO_NAO_AUTORIZADA") {
       return res.status(403).json({error: "Demonstração não autorizada."});

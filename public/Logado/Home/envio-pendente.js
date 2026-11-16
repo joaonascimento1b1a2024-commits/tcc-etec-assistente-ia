@@ -16,6 +16,8 @@ export function carregarEnvioPendente(uid, storage) {
         !envio.pergunta.trim() || envio.pergunta.length > 700 ||
         !Number.isSafeInteger(envio.enviadoEm) || envio.enviadoEm < 0 ||
         typeof envio.novaConversa !== 'boolean' ||
+        (envio.aguardarNovaTentativa !== undefined && typeof envio.aguardarNovaTentativa !== 'boolean') ||
+        (envio.tentarApos !== undefined && (!Number.isSafeInteger(envio.tentarApos) || envio.tentarApos < 0)) ||
         (envio.perguntaId !== undefined && (typeof envio.perguntaId !== 'string' ||
           !/^[a-z0-9-]{1,80}$/.test(envio.perguntaId) ||
           !envio.pergunta.startsWith('Demonstração sintética; não é informação escolar oficial.\n')))) throw invalida();

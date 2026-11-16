@@ -1,0 +1,270 @@
+/* Navegação e cabeçalho compartilhados. Referência: lateral publicada de 196px.
+   Este arquivo vem após layout.css; não modifica autenticação nem o chat. */
+:root {
+    --shell-panel: #101011;
+    --shell-line: #29292d;
+    --shell-text: #f5f5f7;
+    --shell-muted: #a9a9b2;
+    --shell-active: #ff8585;
+    --shell-active-bg: #c6000026;
+    --shell-hover: #ffffff0a;
+    --shell-resize-duration: 180ms;
+    --shell-resize-easing: cubic-bezier(.4, 0, .2, 1);
+    --shell-navigation-duration: 280ms;
+}
+:root[data-theme='light'] {
+    --shell-panel: #fff;
+    --shell-line: #dedee4;
+    --shell-text: #25252c;
+    --shell-muted: #64646f;
+    --shell-active: #a50000;
+    --shell-active-bg: #ffeded;
+    --shell-hover: #f3f3f6;
+}
+.shell-ready .sidebar {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: var(--sidebar-width);
+    height: min(100dvh, var(--chat-viewport-height, 100dvh));
+    padding: 20px 12px 12px;
+    background: var(--shell-panel);
+    color: var(--shell-text);
+    border-right: 1px solid var(--shell-line);
+    z-index: 30;
+    gap: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #7777 transparent;
+}
+.shell-ready .sidebar .school-logo { width: 100%; max-width: none; margin: 0 0 24px; flex-shrink: 0; }
+.shell-ready .sidebar .school-logo img { width: 130px; max-width: 100%; height: auto; }
+.shell-ready .sidebar .new-chat {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 12px;
+    margin: 0 0 26px;
+    border: 1px solid #ff585854;
+    border-radius: 10px;
+    background: linear-gradient(110deg, #c60000, #db1313);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+    box-shadow: 0 4px 16px #c6000026;
+    isolation: isolate;
+    overflow: hidden;
+}
+.sidebar .new-chat::after {
+    content: '';
+    position: absolute;
+    inset: -50% auto -50% -50%;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, #ffffff30, transparent);
+    transform: translateX(-100%) rotate(20deg);
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+.sidebar .new-chat:is(:hover,:focus-visible) { border-color: #ff9292; box-shadow: 0 4px 22px #f0000045; }
+.sidebar .new-chat:is(:hover,:focus-visible)::after { transform: translateX(550%) rotate(20deg); opacity: 1; }
+.new-chat-icon, .sidebar .nav-icon { display: grid; place-items: center; flex: 0 0 20px; width: 20px; }
+.new-chat-icon svg, .sidebar .nav-icon svg { display: block; width: 20px; height: 20px; }
+.shell-ready .sidebar nav { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; margin: 0 0 24px; }
+.shell-ready .sidebar nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: var(--shell-text);
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+    grid-column: auto;
+}
+.shell-ready .sidebar nav .nav-icon { flex: 0 0 20px; width: 20px; }
+.sidebar nav .nav-label { flex: 1; min-width: 0; width: auto; font: inherit; text-align: left; }
+.shell-ready .sidebar nav a:is(.active,[aria-current='page']) {
+    color: var(--shell-active);
+    background: var(--shell-active-bg);
+    border-color: #e83b3b55;
+    font-weight: 600;
+}
+.shell-ready .sidebar nav a:hover { background: var(--shell-hover); border-color: var(--shell-line); color: var(--shell-text); }
+.shell-ready .sidebar nav a:is(.active,[aria-current='page']):hover { background: var(--shell-active-bg); border-color: var(--shell-active); color: var(--shell-active); }
+.shell-ready .sidebar nav a:hover .nav-icon { transform: translateX(2px); }
+.shell-ready .sidebar nav a:focus-visible,
+.sidebar-collapse:focus-visible, .mobile-menu-toggle:focus-visible { outline: 2px solid var(--shell-active); outline-offset: 2px; }
+.sidebar-collapse {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-shrink: 0;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px;
+    margin-top: auto;
+    border: 1px solid var(--shell-line);
+    border-radius: 9px;
+    color: var(--shell-muted);
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.sidebar-collapse svg { width: 18px; height: 18px; flex-shrink: 0; }
+.sidebar-collapse:hover { background: var(--shell-hover); color: var(--shell-text); }
+.shell-mobile-bar, .mobile-menu-toggle { display: none; }
+.shell-skip-link { position: fixed; z-index: 60; top: 8px; left: 8px; min-height: 44px; padding: 10px 16px; border-radius: 8px; color: #fff; background: #a50000; transform: translateY(-160%); }
+.shell-skip-link:focus-visible { transform: translateY(0); }
+.sidebar-backdrop { position: fixed; inset: 0; z-index: 29; padding: 0; border: 0; background: #0009; backdrop-filter: blur(3px); cursor: default; }
+.topbar {
+    flex-shrink: 0;
+    height: auto;
+    min-height: 48px;
+    margin: 0 calc(-1 * var(--chat-inline-space, 0px)) 10px;
+    padding: 2px var(--chat-inline-space, 12px);
+    border: 0;
+    border-bottom: 1px solid var(--shell-line);
+    border-radius: 0;
+    color: var(--shell-text);
+    background: var(--shell-panel);
+    gap: 12px;
+}
+.assistant-brand { gap: 10px; min-width: 0; }
+.assistant-avatar { height: 28px; width: 28px; flex-shrink: 0; background: transparent; border: 0; }
+.assistant-avatar #logo { width: 28px; height: 28px; }
+.assistant-identity { min-width: 0; color: var(--shell-text); font-size: 14px; font-weight: 500; }
+.shell-ready .app-content .topbar { box-shadow: none; }
+.topbar .profile { gap: 8px; max-width: 45%; min-height: 44px; padding: 4px; border: 0; border-radius: 4px; color: var(--shell-text); }
+.topbar .profile:hover { background: var(--shell-hover); }
+.profile #profileName { font-size: 14px; }
+.topbar .profile .profile-fallback { display: grid; place-items: center; height: 28px; width: 28px; flex: 0 0 28px; color: var(--shell-muted); }
+.profile-fallback svg { width: 22px; height: 22px; }
+.topbar .profile img { width: 30px; height: 30px; border: 0; }
+.profile:has(#profileImage:not([hidden])) .profile-fallback { display: none; }
+.app-content:has(#messageForm) { --chat-inline-space: clamp(20px, 4vw, 56px); padding-inline: var(--chat-inline-space); }
+body:has(.app-content #messageForm) { height: min(100dvh, var(--chat-viewport-height, 100dvh)); min-height: 0; }
+.app-content .welcome h1 { font-size: clamp(1.625rem, 3vw, 2rem); }
+.app-content .feature-card { min-height: 108px; padding: 16px 14px; gap: 16px; }
+.app-content .feature-card strong { font-size: 14px; }
+.app-content .feature-card small { font-size: 14px; line-height: 1.5; }
+.app-content .card-icon svg { width: 26px; height: 26px; }
+.app-content .message-form { min-height: 48px; }
+.app-content .message-form textarea { min-height: 46px; padding: 10px 12px; }
+.app-content .bubble { font-size: 16px; }
+.app-content :is(.home-suggestions,.chat-suggestions) button { font-size: 14px; }
+@media (min-width: 721px) {
+    :root[data-sidebar-collapsed='true'] { --sidebar-width: 76px; }
+    .shell-ready :is(.app-content,.content,.services-content) { margin-left: var(--sidebar-width); }
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar { padding-inline: 12px; padding-top: 20px; }
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar .school-logo { display: none; }
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar .new-chat { margin-top: 0; margin-bottom: 26px; padding: 10px; }
+    :is(:root,body)[data-sidebar-collapsed='true'] :is(.new-chat-label,.nav-label,.sidebar-collapse-label) { display: none; }
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar nav a,
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar-collapse { justify-content: center; gap: 0; padding: 10px; }
+    :is(:root,body)[data-sidebar-collapsed='true'] .sidebar-collapse svg { transform: rotate(180deg); }
+}
+/* A navegação entre documentos preserva a lateral e dissolve apenas o conteúdo.
+   Sem suporte à API, links e histórico continuam com o comportamento nativo. */
+@media (min-width: 721px) { .shell-ready main { animation: none; } }
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+    .shell-ready .sidebar { view-transition-name: sylvinho-sidebar; }
+    ::view-transition-group(root),
+    ::view-transition-group(sylvinho-sidebar) {
+        animation-duration: var(--shell-navigation-duration);
+        animation-timing-function: ease-in-out;
+    }
+    ::view-transition-old(root), ::view-transition-new(root) {
+        animation-duration: var(--shell-navigation-duration);
+        animation-timing-function: ease-in-out;
+    }
+    ::view-transition-old(sylvinho-sidebar) { animation: none; opacity: 0; }
+    ::view-transition-new(sylvinho-sidebar) { animation: none; }
+}
+@media (max-width: 720px) {
+    .shell-ready .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: min(280px, calc(100vw - 36px));
+        height: min(100dvh, var(--chat-viewport-height, 100dvh));
+        padding: max(20px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+        transform: translateX(-105%);
+        pointer-events: none;
+    }
+    .shell-ready .sidebar[data-menu-open='true'] { transform: translateX(0); pointer-events: auto; }
+    .shell-ready .sidebar nav { position: static; display: grid; max-height: none; padding: 0; grid-template-columns: 1fr; border: 0; box-shadow: none; background: transparent; }
+    .shell-ready .sidebar nav a:last-child { grid-column: auto; }
+    .shell-ready .sidebar .school-logo { margin-bottom: 24px; }
+    .shell-ready .sidebar .new-chat { width: 100%; font-size: 14px; margin-bottom: 24px; }
+    .shell-ready :is(.app-content,.content,.services-content) { margin-left: 0; padding-inline: 12px; }
+    .shell-ready.sidebar-drawer-open { overflow: hidden; }
+    .mobile-menu-toggle { display: grid; place-items: center; flex: 0 0 44px; width: 44px; min-height: 44px; padding: 10px; border: 1px solid var(--shell-line); border-radius: 9px; color: var(--shell-text); background: var(--shell-panel); cursor: pointer; }
+    .mobile-menu-toggle svg { width: 20px; height: 20px; }
+    .shell-mobile-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: var(--shell-text); }
+    .shell-mobile-title { font-size: 15px; font-weight: 600; }
+    .app-content:has(#messageForm) { --chat-inline-space: 12px; }
+    .topbar { min-height: 48px; margin-bottom: 6px; gap: 8px; }
+    .topbar .assistant-brand { flex: 1; gap: 8px; }
+    .topbar .assistant-avatar { width: 30px; height: 30px; }
+    .topbar .assistant-avatar #logo { width: 28px; height: 28px; }
+    .topbar .profile { flex-shrink: 0; max-width: 45%; }
+    .app-content .feature-cards { gap: 8px; margin-block: 16px; }
+    .app-content .feature-card { min-height: 72px; padding: 10px 12px; }
+    .app-content .bubble { font-size: 16px; }
+    .app-content .message-form :is(textarea,input) { font-size: 16px; }
+    .app-content .chat-suggestions { max-height: min(18dvh, 100px); }
+    .app-content .chat-suggestions button { font-size: 12px; min-height: 44px; }
+    .app-content .chat-status { font-size: 12px; margin-block: 6px; }
+    dialog { max-width: calc(100vw - 24px); max-height: 85dvh; }
+}
+@media (max-width: 480px) {
+    .topbar .profile { padding: 5px; min-width: 44px; min-height: 44px; justify-content: center; }
+    .profile #profileName { display: none; }
+}
+@media (max-height: 520px) and (max-width: 720px) {
+    .topbar { min-height: 50px; }
+    .assistant-identity > span { display: none; }
+    .chat-screen .chat-suggestions { display: none; }
+    .app-content .chat-status { margin-block: 3px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .shell-ready .sidebar { transition: transform 180ms ease-out; }
+    .sidebar .nav-icon { transition: transform 150ms ease-out; }
+    .sidebar .new-chat::after { transition: transform 600ms ease-out, opacity 180ms ease-out; }
+    .sidebar .new-chat:active { transform: scale(.98); }
+}
+/* A largura e o espaço reservado mudam juntos, somente no desktop.
+   Sem transição no carregamento: ela é habilitada pelo primeiro clique. */
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+    .shell-ready.shell-resizing .sidebar {
+        transition: width var(--shell-resize-duration) var(--shell-resize-easing);
+        overflow-x: hidden;
+    }
+    .shell-ready.shell-resizing :is(.app-content,.content,.services-content) {
+        transition: margin-left var(--shell-resize-duration) var(--shell-resize-easing);
+    }
+}
+@media (prefers-reduced-motion: reduce) { .sidebar .new-chat::after { display: none; } }
+@media (forced-colors: active) {
+    .shell-ready .sidebar nav a:is(.active,[aria-current='page']) { outline: 2px solid Highlight; color: Highlight; }
+    .sidebar-backdrop { background: Canvas; opacity: .8; }
+}

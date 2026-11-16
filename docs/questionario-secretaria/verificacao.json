@@ -1,0 +1,108 @@
+{
+  "total": 480,
+  "lotes": 24,
+  "porLote": [
+    {
+      "categoria": "secretaria",
+      "total": 20
+    },
+    {
+      "categoria": "matricula",
+      "total": 20
+    },
+    {
+      "categoria": "documentos",
+      "total": 20
+    },
+    {
+      "categoria": "calendario",
+      "total": 20
+    },
+    {
+      "categoria": "avaliacao_frequencia",
+      "total": 20
+    },
+    {
+      "categoria": "transferencia_cancelamento",
+      "total": 20
+    },
+    {
+      "categoria": "estagio_tcc",
+      "total": 20
+    },
+    {
+      "categoria": "beneficios",
+      "total": 20
+    },
+    {
+      "categoria": "regras_gerais",
+      "total": 20
+    },
+    {
+      "categoria": "cursos",
+      "total": 20
+    },
+    {
+      "categoria": "contatos_confirmacao",
+      "total": 20
+    },
+    {
+      "categoria": "vestibulinho_detalhes",
+      "total": 20
+    },
+    {
+      "categoria": "matricula_excecoes",
+      "total": 20
+    },
+    {
+      "categoria": "rotina_escolar",
+      "total": 20
+    },
+    {
+      "categoria": "uniforme_alimentacao",
+      "total": 20
+    },
+    {
+      "categoria": "sistemas_acesso",
+      "total": 20
+    },
+    {
+      "categoria": "acessibilidade_inclusao",
+      "total": 20
+    },
+    {
+      "categoria": "infraestrutura_biblioteca",
+      "total": 20
+    },
+    {
+      "categoria": "estagio_tcc_detalhes",
+      "total": 20
+    },
+    {
+      "categoria": "avaliacao_familia_detalhes",
+      "total": 20
+    },
+    {
+      "categoria": "cursos_oferta_detalhes",
+      "total": 20
+    },
+    {
+      "categoria": "seguranca_privacidade",
+      "total": 20
+    },
+    {
+      "categoria": "gestao_base_sylvinho",
+      "total": 20
+    },
+    {
+      "categoria": "projetos_participacao",
+      "total": 20
+    }
+  ],
+  "originaisPreservadas": 200,
+  "idsUnicos": true,
+  "semDuplicataExataNormalizada": true,
+  "respostasNovasPreenchidas": 0,
+  "originaisInalterados": true,
+  "arquivo": "C:\\Programação\\tcc-etec-assistente-ia\\docs\\questionario-secretaria\\QUESTIONARIO-COMPLETO-SYLVINHO.md"
+}
