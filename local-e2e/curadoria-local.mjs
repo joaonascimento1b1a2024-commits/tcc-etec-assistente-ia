@@ -1,6 +1,7 @@
 // Motor novo e isolado. Não é importado pelo servidor atual.
 import {createHash} from 'node:crypto';
-import {resolverConversaCurada} from './contexto-curado.mjs';
+import {resolverConversaCurada,solicitaFonte} from './contexto-curado.mjs';
+import {aguardarComSinal} from './concorrencia-curada.mjs';
 import {motivoTextoBloqueado} from '../functions/lib/assistente/fundamentacao/contrato.js';
 export const normalizar=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9%]+/g,' ').trim();
 const aliases=s=>normalizar(s).replace(/\brematricula\b/g,'renovacao matricula').replace(/\bdp\b/g,'dependencia').replace(/\bpresenca\b/g,'frequencia').replace(/\bqnt\b/g,'quantas').replace(/\boq\b/g,'que').replace(/\bquatro\b/g,'4').replace(/\bterceiro\b/g,'3');
@@ -10,6 +11,7 @@ export const textoIndice=r=>[r.pergunta,...r.variacoes,r.resposta].join('\n');
 export const hashIndice=rs=>createHash('sha256').update(JSON.stringify(rs.map(r=>[r.id,textoIndice(r)]))).digest('hex');
 function dataValida(d){return /^\d{4}-\d{2}-\d{2}$/.test(d||'')&&!Number.isNaN(Date.parse(d))&&new Date(d).toISOString().slice(0,10)===d;}
 export function elegivel(r,{hoje=new Date().toISOString().slice(0,10),ano,curso,turno,idade}={}){
+ if(!dataValida(hoje))return false;
  if(r.status!=='aprovado'||!r.resposta?.trim()||!r.quemConfirmou||!Array.isArray(r.fonte)||!r.fonte.length)return false;
  if(r.conflito||r.fonte.some(f=>{
   const publica=/^https:\/\//.test(f.url||'');
@@ -21,9 +23,12 @@ export function elegivel(r,{hoje=new Date().toISOString().slice(0,10),ano,curso,
  if((v.inicio&&!dataValida(v.inicio))||(v.fim&&!dataValida(v.fim)))return false;
  if(v.inicio&&v.inicio>hoje||v.fim&&v.fim<hoje||v.ano&&ano&&v.ano!==Number(ano)||v.anos?.length&&ano&&!v.anos.includes(Number(ano)))return false;
  const s=r.aplicaSe||{};
+ if(['cursos','turnos','idades'].some(c=>s[c]!==undefined&&!Array.isArray(s[c])))return false;
+ if(['cursos','turnos'].some(c=>s[c]?.some(x=>typeof x!=='string'||!x.trim())))return false;
+ if(s.idades?.some(x=>!x||!Number.isFinite(x.min)||!Number.isFinite(x.max)||x.min<0||x.min>x.max))return false;
  for(const [campo,valor] of [['cursos',curso],['turnos',turno]]){
   if(valor&&s[campo]?.length&&!s[campo].map(normalizar).includes(normalizar(valor)))return false;
-  if(!valor&&s[campo]?.length&&campo==='turnos')return false;
+  if(!valor&&s[campo]?.length)return false;
  }
  if(s.idades?.length&&(!Number.isFinite(idade)||!s.idades.some(x=>idade>=x.min&&idade<=x.max)))return false;
  return true;
@@ -43,23 +48,61 @@ export function criarFiltroContatos(contatos){
  };
 }
 function cos(a,b){if(!Array.isArray(a)||!Array.isArray(b)||a.length!==b.length||!a.length||![...a,...b].every(Number.isFinite))return 0;let dot=0,aa=0,bb=0;for(let i=0;i<a.length;i++){dot+=a[i]*b[i];aa+=a[i]**2;bb+=b[i]**2;}return aa&&bb?dot/Math.sqrt(aa*bb):0;}
-export function criarBuscaCurada({registros,vetores=null,embeddingConsulta=null,limiar=.42}){
+export function criarBuscaCurada({registros,vetores=null,embeddingConsulta=null,limiar=.42,registrar=()=>{}}){
+ const ids=new Set();
+ for(const r of registros){
+  if(typeof r?.id!=='string'||!/^[a-z0-9-]{1,100}$/.test(r.id))throw Error('BASE_ID_INVALIDO');
+  if(ids.has(r.id))throw Error('BASE_ID_DUPLICADO');
+  ids.add(r.id);
+ }
  const fingerprint=hashIndice(registros);
- return async (pergunta,escopo={})=>{
+ return async (pergunta,escopo={}, {signal}={})=>{
+  signal?.throwIfAborted();
+  const inicio=Date.now(),diagnostico={embedding:{estado:'nao_necessario',codigo:null,ms:0},ms:0};
+  const finalizar=result=>{
+   diagnostico.ms=Date.now()-inicio;
+   try{registrar('BUSCA_CURADA',{modo:result.modo,motivo:result.motivo,vetorial:diagnostico.embedding.estado,codigo:diagnostico.embedding.codigo,embeddingMs:diagnostico.embedding.ms,buscaMs:diagnostico.ms,candidatos:result.candidatos.length,selecionados:result.selecionados.length});}catch{/* Diagnóstico não interfere na resposta. */}
+   return {...result,diagnostico};
+  };
   const ano=pergunta.match(/\b20\d{2}\b/)?.[0]||escopo.ano;
   const qn=normalizar(pergunta);
   const curso=escopo.curso||['enfermagem','logistica','mecatronica','mecanica','eletrotecnica','administracao','desenvolvimento de sistemas'].find(c=>qn.includes(c));
   const soCalendario=/\brecesso\b|\b(inicio|comec).*\baulas?\b|\baulas?\b.*\b20\d{2}\b/.test(qn);
   // Todos os canais recebem somente candidatos já filtrados.
-  const elegiveis=registros.filter(r=>elegivel(r,{...escopo,ano,curso})&&(!soCalendario||r.categoria==='calendario')&&(!escopo.categoria||r.categoria===escopo.categoria));
+  // Candidatos específicos podem justificar esclarecimento, mas só os que
+  // atendem ao escopo declarado podem participar do contexto de geração.
+  const elegiveis=registros.filter(r=>elegivel(r,{...escopo,ano,curso:curso||r.aplicaSe?.cursos?.[0]})&&(!soCalendario||r.categoria==='calendario')&&(!escopo.categoria||r.categoria===escopo.categoria));
   const substituidos=new Set(elegiveis.flatMap(r=>r.substitui||[]));
   const ativos=elegiveis.filter(r=>!substituidos.has(r.id));
   const conflitos=new Set(ativos.filter(r=>ativos.some(x=>x.id!==r.id&&(x.chaveFato||normalizar(x.pergunta))===(r.chaveFato||normalizar(r.pergunta))&&normalizar(x.resposta)!==normalizar(r.resposta))).map(r=>r.id));
-  const rows=ativos.filter(r=>!conflitos.has(r.id)).map(r=>({r,body:tokens(textoIndice(r)),query:tokens([r.pergunta,...r.variacoes].join(' '))}));
-  if(!rows.length)return {candidatos:[],selecionados:[],modo:'sem_candidatos',motivo:'ESCOPO_OU_VIGENCIA'};
-  const q=[...new Set(tokens(pergunta))];if(!q.length)return {candidatos:[],selecionados:[],modo:'bm25',motivo:'SEM_TERMOS'};
+  const semConflito=ativos.filter(r=>!conflitos.has(r.id));
+  const q=[...new Set(tokens(pergunta))];
+  const pontuacaoCurso=!curso&&q.length?Math.max(0,...semConflito.filter(r=>r.aplicaSe?.cursos?.length).map(r=>{
+   if([r.pergunta,...r.variacoes].some(x=>aliases(x)===aliases(pergunta)))return 1;
+   const termos=tokens([r.pergunta,...r.variacoes].join(' '));
+   return q.filter(t=>termos.includes(t)).length/q.length*.8;
+  })):0;
+  const precisaCurso=pontuacaoCurso>=limiar;
+  const esclarecer=modo=>finalizar({candidatos:[],selecionados:[],modo,motivo:'CURSO_NECESSARIO',esclarecimento:'Qual é o seu curso?'});
+  const rows=semConflito.filter(r=>elegivel(r,{...escopo,ano,curso})).map(r=>({r,body:tokens(textoIndice(r)),query:tokens([r.pergunta,...r.variacoes].join(' '))}));
+  if(!rows.length)return precisaCurso?esclarecer('sem_candidatos'):finalizar({candidatos:[],selecionados:[],modo:'sem_candidatos',motivo:'ESCOPO_OU_VIGENCIA'});
+  if(!q.length)return finalizar({candidatos:[],selecionados:[],modo:'bm25',motivo:'SEM_TERMOS'});
+  // Sem outro match exato, nenhum vizinho geral supera o candidato restrito
+  // exato. Resolve a falta de curso sem latência nem custo de embedding.
+  if(pontuacaoCurso===1&&!rows.some(({r})=>[r.pergunta,...r.variacoes].some(x=>aliases(x)===aliases(pergunta))))return esclarecer('bm25');
   let vector=null;
-  if(vetores?.hash===fingerprint&&embeddingConsulta){try{vector=await embeddingConsulta(pergunta);}catch{/* Fallback lexical explícito. */}}
+  if(vetores?.hash===fingerprint&&embeddingConsulta){
+   const startEmbedding=Date.now();
+   try{
+    vector=await aguardarComSinal(embeddingConsulta(pergunta,{signal}),signal);
+    if(!Array.isArray(vector)||!vector.length||!vector.every(Number.isFinite)||!vector.some(v=>v!==0))throw Error('VETOR_INVALIDO');
+    diagnostico.embedding.estado='ativo';
+   }catch(e){
+    if(signal?.aborted)throw e;
+    vector=null;diagnostico.embedding.estado='falha';
+    diagnostico.embedding.codigo=/^HTTP_\d{3}$/.test(e?.message)?e.message:['VETOR_INVALIDO','CHAVE_AUSENTE'].includes(e?.message)?e.message:e?.name==='TimeoutError'?'TIMEOUT':'EMBEDDING_INDISPONIVEL';
+   }finally{diagnostico.embedding.ms=Date.now()-startEmbedding;}
+  }else diagnostico.embedding.estado=!vetores?'sem_indice':vetores.hash!==fingerprint?'indice_desatualizado':'sem_consulta';
   const modo=vector?'hibrido':'bm25';
   const avg=rows.reduce((s,r)=>s+r.body.length,0)/Math.max(1,rows.length);
   const ranked=rows.map(({r,body,query})=>{
@@ -75,7 +118,8 @@ export function criarBuscaCurada({registros,vetores=null,embeddingConsulta=null,
   const candidatos=ranked.filter(r=>r.bm25>0||r.sem>.65).sort((a,b)=>b.score-a.score||a.registro.id.localeCompare(b.registro.id)).slice(0,15);
   const reranked=candidatos.sort((a,b)=>b.confianca-a.confianca||b.bm25-a.bm25||a.registro.prioridade-b.registro.prioridade);
   const selecionados=reranked.filter(r=>r.confianca>=limiar).slice(0,5);
-  return {candidatos,selecionados,modo,motivo:selecionados.length?'OK':'SEM_CONFIANCA',nota:'Escore heurístico, não probabilidade calibrada.'};
+  if(precisaCurso&&(!selecionados.length||pontuacaoCurso>selecionados[0].confianca))return esclarecer(modo);
+  return finalizar({candidatos,selecionados,modo,motivo:selecionados.length?'OK':'SEM_CONFIANCA',nota:'Escore heurístico, não probabilidade calibrada.'});
  };
 }
 export function reescreverPergunta(pergunta,historico=[]){return resolverConversaCurada(pergunta,historico).pergunta||pergunta;}
@@ -95,7 +139,9 @@ export function criarPoliticaCurada({contatos}){
  const secretaria=contatos.find(c=>c.id==='whatsapp-secretaria'&&c.status==='aprovado'&&c.fonte?.evidencia);
  const fallback=()=>secretaria?'Essa parte a Secretaria confirma melhor. Chame no WhatsApp '+secretaria.valor+'.':'Essa parte a Secretaria confirma melhor. Procure a Secretaria Acadêmica.';
  return {fallback,planejar(pergunta,historico=[],escopo={}){
+  const pedirFonte=solicitaFonte(pergunta);
   const contexto=resolverConversaCurada(pergunta,historico,escopo);
+  if(pedirFonte&&(!contexto.tema||contexto.usaHistorico)&&historico.at(-1)?.remetente==='bot'&&historico.at(-1).texto===fallback())return {direta:'Esse detalhe ainda precisa de confirmação da Secretaria. Não tenho uma referência confirmada para ele.',tipo:'pendente'};
   if(contexto.esclarecimento)return {direta:contexto.esclarecimento,tipo:'esclarecimento'};
   const p=contexto.pergunta,n=normalizar(p);
   if(/^(oi|ola|oie|bom dia|boa tarde|boa noite)$/.test(n))return {direta:historico.length?'Como posso ajudar com a escola?':'Oi! Sou o Sylvinho. Como posso ajudar você com a escola?',tipo:'social'};
@@ -109,7 +155,8 @@ export function criarPoliticaCurada({contatos}){
   if(contexto.intencao==='canal'||contexto.intencao==='documentos'&&contexto.tema!=='matrícula inicial'||contexto.intencao==='responsavel'&&contexto.tema==='renovação da matrícula')return {direta:fallback(),tipo:'pendente',pergunta:p};
   if(contexto.intencao==='prazo'&&contexto.tema==='renovação da matrícula')return {pergunta:p,categoria:'calendario',tipo:'buscar'};
   // Impede usar respostas vizinhas como resposta para informação operacional ausente.
-  if(/camiseta|uniforme/.test(n)&&/quanto|preco|custa|valor/.test(n)||/merenda|simula etec|biblioteca|logistica|jogos digitais|horario.*secretaria|declaracao de matricula|cancel.*matricula|banca|renov.*nsa/.test(n))return {direta:fallback(),tipo:'pendente',pergunta:p};
+  if(/camiseta|uniforme/.test(n)&&/quanto|preco|custa|valor/.test(n)||/merenda|simula etec|biblioteca|jogos digitais|horario.*secretaria|declaracao de matricula|cancel.*matricula|banca|renov.*nsa/.test(n))return {direta:fallback(),tipo:'pendente',pergunta:p};
+  if(pedirFonte)return {pergunta:p,pedirFonte:true,tipo:'buscar'};
   if(/perder|perdi|atras/.test(n)&&/prazo/.test(n)&&/renov/.test(n))return {pergunta:'Perdi o prazo da renovação, o que faço?',tipo:'buscar'};
   if(/de onde|qual o artigo|onde esta|tem link/.test(n))return {pergunta:/perda do prazo de renovacao/.test(n)?'Perdi o prazo da renovação, o que faço?':p.replace(/.*\(sobre /,'').replace(/\)$/,''),pedirFonte:true,tipo:'buscar'};
   return {pergunta:p,tipo:'buscar'};

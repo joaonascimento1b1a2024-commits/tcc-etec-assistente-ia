@@ -2,6 +2,7 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {performance} from 'node:perf_hooks';
 import {criarBuscaCurada,criarPoliticaCurada,criarFiltroContatos} from '../local-e2e/curadoria-local.mjs';
 import {casos} from '../knowledge-local/casos-avaliacao.mjs';
+import {resolverConversaCurada} from '../local-e2e/contexto-curado.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8')),contatos=JSON.parse(readFileSync('knowledge-local/contatos-publicos.json','utf8'));
 const politica=criarPoliticaCurada({contatos}),filtro=criarFiltroContatos(contatos);
 let vetores=null,queries=null;
@@ -10,11 +11,12 @@ const buscar=criarBuscaCurada({registros,vetores,embeddingConsulta:queries?(asyn
 const resultados=[];
 for(let i=0;i<casos.length;i++){
  const [pergunta,esperado,op={}]=casos[i],start=performance.now(),plano=politica.planejar(pergunta,op.historico||[]);
- const busca=plano.direta?null:await buscar(plano.pergunta,{hoje:'2026-11-12',...op.escopo});
+ const contexto=resolverConversaCurada(pergunta,op.historico||[],op.escopo||{});
+ const busca=plano.direta?null:await buscar(plano.pergunta,{hoje:'2026-11-12',...contexto.escopo,categoria:plano.categoria});
  const top=busca?.selecionados[0]?.registro;
  // Rascunho de política/recuperação, NÃO é uma resposta gerada pelo Gemini.
- const rascunho=plano.direta||top?.resposta||politica.fallback();
- const escolhido=plano.direta?(plano.tipo==='pendente'?null:plano.tipo):top?.id||null;
+ const rascunho=plano.direta||busca?.esclarecimento||top?.resposta||politica.fallback();
+ const escolhido=plano.direta?(plano.tipo==='pendente'?null:plano.tipo):busca?.esclarecimento?'esclarecimento':top?.id||null;
  const passou=escolhido===esperado&&(!op.semSaudacao||!/^oi|^ola/i.test(rascunho))&&!filtro(rascunho,'documento');
  resultados.push({id:i+1,pergunta,esperado,escolhido,passou,modo:busca?.modo||'politica',ms:performance.now()-start,rascunho,fonteSolicitada:!!op.fonte,candidatos:busca?.selecionados.map(x=>({id:x.registro.id,confianca:x.confianca}))||[]});
 }
