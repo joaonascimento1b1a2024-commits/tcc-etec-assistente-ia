@@ -2388,5 +2388,69 @@
     "procedimentoLocal": null,
     "prioridade": 4,
     "origem": "faq_curada"
+  },
+  {
+    "id": "tecnico-concomitante",
+    "pergunta": "Posso fazer dois cursos ao mesmo tempo?",
+    "variacoes": [
+      "posso fazer dois cursos",
+      "fazer o tecnico junto com o ensino medio",
+      "posso fazer o tecnico e o ensino medio ao mesmo tempo",
+      "estudar em dois cursos na etec",
+      "fazer duas matriculas",
+      "tecnico concomitante",
+      "cursar dois tecnicos ao mesmo tempo"
+    ],
+    "resposta": "Sim, o curso técnico pode ser feito ao mesmo tempo que o ensino médio, na forma concomitante. Para entrar no primeiro módulo do técnico, é preciso ser classificado no processo seletivo e já ter concluído o ensino médio ou estar matriculado na 2ª ou 3ª série. Sobre fazer dois cursos técnicos ao mesmo tempo, o Regimento não traz uma regra; a Secretaria confirma.",
+    "categoria": "matricula",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": null
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-16",
+      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Dois técnicos simultâneos: sem regra no Regimento, pendente de confirmação da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 43",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "432b0ebc55c90471a94df3dfe500ca01ba7af03d7833d76f280e85fa35afbb78",
+        "paginas": [
+          16
+        ],
+        "evidencia": "Artigo 43 - A Educação Profissional Técnica de Nível Médio será desenvolvida em articulação com o Ensino Médio, podendo ser oferecida de forma: I- integrada; II-concomitante III-concomitante intercomplementar IV- subsequente.",
+        "conferidoEm": "2026-11-16",
+        "semCertificacaoDeAlteracoesPosteriores": true
+      },
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 66",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "432b0ebc55c90471a94df3dfe500ca01ba7af03d7833d76f280e85fa35afbb78",
+        "paginas": [
+          22
+        ],
+        "evidencia": "Artigo 66 - São condições para matrícula no ensino técnico concomitante subsequente: I- no primeiro módulo: a) ter sido classificado no processo seletivo, de acordo com o número de vagas, assegurado o direito dos alunos retidos e com trancamento de matrícula, nos termos desse Regimento; e b) ter concluído o Ensino Médio ou estar matriculado na segunda ou terceira séries.",
+        "conferidoEm": "2026-11-16",
+        "semCertificacaoDeAlteracoesPosteriores": true
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
   }
 ]
