@@ -9,6 +9,7 @@ const { criarDependencias, criarFabricaDependencias, MOCK_RESPONSE } = require('
 const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
 const { criarDiagnosticoConhecimento } = require('./conhecimento.cjs');
 const { criarDiagnosticoRag } = require('./rag.cjs');
+const { resolverMotor } = require('./motor-curado.cjs');
 
 function respostaExpress(res) {
     const adapter = {
@@ -51,6 +52,12 @@ async function lerCorpo(req) {
 function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
     const validated = validarConfiguracao(config);
     const factory = criarFabricaDependencias(validated, { obterDependencias });
+    // Identifica motor e revisão no health do modo documental, sem segredos.
+    const saudeMotor = validated.mode === 'documental' ? (() => {
+        const motor = resolverMotor(process.env);
+        const revisao = /^[0-9a-f]{7,40}$/.test(process.env.RENDER_GIT_COMMIT || '') ? process.env.RENDER_GIT_COMMIT.slice(0, 7) : undefined;
+        return { motor: motor.efetivo, ...(motor.motivo ? { motorSolicitado: motor.solicitado } : {}), ...(revisao ? { revisao } : {}) };
+    })() : {};
     const diagnostic = criarDiagnosticoAutenticado(factory, () => validated.origins);
     const knowledgeDiagnostic = criarDiagnosticoConhecimento(factory, () => validated.origins);
     const ragDiagnostic = criarDiagnosticoRag(factory, () => validated.origins);
@@ -63,6 +70,7 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
             // Contexto atribuido pela rota publica; o corpo nao define acesso.
             // A mesma instancia do gerador compartilha limites com as contas.
             gerarResposta: (pergunta, chunks, contexto) => deps.gerarResposta(pergunta, chunks, contexto),
+            ...(deps.responderVisitante ? { responderVisitante: deps.responderVisitante } : {}),
         };
     }, () => validated.origins);
     const server = http.createServer(async (req, res) => {
@@ -77,7 +85,7 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
             const path = new URL(req.url, 'http://localhost').pathname;
             if (path === '/health') {
                 if (req.method !== 'GET') output.set('Allow', 'GET').status(405).json({ error: 'Metodo nao permitido.' });
-                else output.status(200).json({ status: 'ok', service: 'sylvinho-backend' });
+                else output.status(200).json({ status: 'ok', service: 'sylvinho-backend', ...saudeMotor });
                 return;
             }
             const diagnosticRoute = path === '/diagnostico/auth' && validated.mode === 'auth-diagnostic';

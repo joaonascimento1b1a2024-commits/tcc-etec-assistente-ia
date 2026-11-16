@@ -663,3 +663,26 @@ test('erro do gerador e resposta invalida nao gravam bot',async()=>{
  const s=setup();s.deps.gerarResposta=async()=>{throw new Error('detalhe privado');};
  const r=await s.run();assert.equal(r.code,500);assert.deepEqual(r.body,{error:'Erro interno no servidor do assistente.'});
 });
+
+test("motor curado sem evidencia (null) devolve a vez ao fluxo documental", async () => {
+    const s = setup();
+    let curado = 0;
+    s.deps.responderConversa = async () => {curado++; return null;};
+    const r = await s.run();
+    assert.equal(r.code, 200);
+    assert.equal(r.body.resposta, "Resposta controlada");
+    assert.equal(curado, 1);
+    assert.equal(s.calls.generator.length, 1);
+    assert.equal(bots(s).length, 1);
+});
+
+test("motor curado com retorno vazio ou indefinido continua rejeitado", async () => {
+    for (const valor of [undefined, "", "   "]) {
+        const s = setup();
+        s.deps.responderConversa = async () => valor;
+        const r = await s.run();
+        assert.equal(r.code, 500);
+        assert.equal(s.calls.generator.length, 0);
+        assert.equal(s.rows.get(caminho()).mensagens.length, 1);
+    }
+});

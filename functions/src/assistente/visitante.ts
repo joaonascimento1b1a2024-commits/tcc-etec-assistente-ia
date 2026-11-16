@@ -2,8 +2,11 @@ import {classificarEscopo} from "./escopo";
 import type {Request, Response} from "express";
 import type {DocumentoPreparado} from "../rag/recuperacao.js";
 import {criarEndpointComCors} from "./http.js";
+import {ErroRespostaTemporaria} from "./handler.js";
 
 interface DependenciasVisitante {
+  /** Motor curado opcional; null = sem evidencia, segue o fluxo documental. */
+  responderVisitante?: (pergunta: string) => Promise<string | null>;
   recuperarConhecimento: (pergunta: string) => Promise<DocumentoPreparado[]>;
   gerarResposta: (pergunta: string,
     chunks: readonly DocumentoPreparado[],
@@ -61,15 +64,28 @@ export function criarEndpointVisitante(
         return;
       }
       const deps = obterDependencias();
-      const chunks = await deps.recuperarConhecimento(pergunta);
-      // A rota atribui o acesso publico depois de validar o corpo estrito.
-      const resposta = await deps.gerarResposta(
-        pergunta, chunks, {publico: "visitante"},
-      );
+      let resposta = deps.responderVisitante ?
+        await deps.responderVisitante(pergunta) : null;
+      if (resposta === null) {
+        const chunks = await deps.recuperarConhecimento(pergunta);
+        // A rota atribui o acesso publico depois de validar o corpo estrito.
+        resposta = await deps.gerarResposta(
+          pergunta, chunks, {publico: "visitante"},
+        );
+      }
       if (typeof resposta !== "string" || !resposta.trim()) {
         throw new Error("RESPOSTA_INVALIDA");
       }
       res.status(200).json({resposta});
+    } catch (error) {
+      // Mesmo contrato da rota autenticada para falhas recuperaveis.
+      if (!(error instanceof ErroRespostaTemporaria)) throw error;
+      res.set("Retry-After", String(error.esperaSegundos));
+      res.status(error.motivo === "LIMITE_USO" ? 429 : 503).json({
+        error: "Não foi possível concluir a resposta agora.",
+        codigo: error.motivo,
+        retryAfterSeconds: error.esperaSegundos,
+      });
     } finally {
       ativas--;
     }

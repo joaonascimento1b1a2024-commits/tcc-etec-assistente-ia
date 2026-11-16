@@ -5,6 +5,7 @@ const { origensPermitidas } = require('../functions/lib/assistente/http.js');
 const DOCUMENTAL_SERVICE_ACCOUNT_EMAIL = 'sylvinho-backend@tcc-ia-d8891.iam.gserviceaccount.com';
 const { criarFluxoPerguntaLivre } = require('../functions/lib/assistente/pergunta-livre/fluxo.js');
 const { PROJECT_ID, DATABASE_ID, CREDENTIAL_PATH, OFFICIAL_ORIGINS, lerModoDemonstracao } = require('./producao.cjs');
+const { criarMotorCurado, resolverMotor } = require('./motor-curado.cjs');
 
 function validarConfiguracaoDocumental(config) {
     if (config.demonstracao !== undefined && typeof config.demonstracao !== 'boolean') throw new Error('DEMO_FLAG_INVALID');
@@ -34,6 +35,7 @@ function lerConfiguracaoDocumental(env) {
     if (forbidden.some(key => env[key] !== undefined) ||
         env.NODE_TLS_REJECT_UNAUTHORIZED !== undefined && env.NODE_TLS_REJECT_UNAUTHORIZED !== '1')
         throw new Error('DOCUMENTAL_UNSAFE_ENVIRONMENT');
+    resolverMotor(env);
     return validarConfiguracaoDocumental({
         mode: 'documental', ...(lerModoDemonstracao(env) ? { demonstracao: true } : {}), host: '0.0.0.0', port: env.PORT === undefined ? 10000 : Number(env.PORT),
         origins: env.ASSISTENTE_CORS_ORIGINS || '', projectId: env.GCLOUD_PROJECT,
@@ -75,12 +77,19 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
             const { VERSAO_FLUXO_CONVERSA } = require('../functions/lib/assistente/geracao/conversa.js');
             console.info('SYLVINHO_IA_FLUXO', VERSAO_FLUXO_CONVERSA);
         }
-        return { auth: getAuth(app), firestore,
+        const deps = { auth: getAuth(app), firestore,
             demonstracao: criarDemonstracaoGemini({ lerAmbiente,
                 registrarEvento: codigo => console.info('SYLVINHO_IA_DEMO', codigo) }),
             recuperarConhecimento: fluxo.recuperarConhecimento,
             serverTimestamp: () => FieldValue.serverTimestamp(),
             gerarResposta: fluxo.gerarResposta };
+        // Com SYLVINHO_MOTOR=fluxo (padrão) o objeto acima segue idêntico ao anterior.
+        const motor = resolverMotor(lerAmbiente());
+        console.info('SYLVINHO_MOTOR', JSON.stringify(motor));
+        if (motor.efetivo === 'fluxo') return deps;
+        const curado = criarMotorCurado({ modo: motor.efetivo, lerAmbiente,
+            registrar: (codigo, dados) => console.info('SYLVINHO_MOTOR', codigo, JSON.stringify(dados)) });
+        return { ...deps, responderConversa: curado.responderConversa, responderVisitante: curado.responderVisitante };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }
 }
 

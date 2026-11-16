@@ -66,7 +66,7 @@ export interface DependenciasAssistente {
   responderConversa?: (
     pergunta: string, historico: readonly MensagemIdentificada[],
     contexto: ContextoGeracao,
-  ) => Promise<string>;
+  ) => Promise<string | null>;
   resolverContexto?: typeof resolverContextoConversacional;
   classificarEscopo?: typeof classificarEscopo;
   demonstracao?: {
@@ -331,12 +331,15 @@ export async function perguntarAssistenteHandler(
             perguntaNormalizada, Object.freeze(historico),
             Object.freeze({uid: decodedToken.uid}),
           );
-          if (typeof gerada !== "string" || !gerada.trim()) {
-            throw new Error("INVALID_GENERATOR_RESPONSE");
+          // null = motor curado sem evidencia: segue o fluxo documental abaixo.
+          if (gerada !== null) {
+            if (typeof gerada !== "string" || !gerada.trim()) {
+              throw new Error("INVALID_GENERATOR_RESPONSE");
+            }
+            return adicionarRespostaBot(
+              conversaRef, gerada, deps, messageId, perguntaNormalizada,
+            );
           }
-          return adicionarRespostaBot(
-            conversaRef, gerada, deps, messageId, perguntaNormalizada,
-          );
         }
         const contexto = (deps.resolverContexto ??
           resolverContextoConversacional)(

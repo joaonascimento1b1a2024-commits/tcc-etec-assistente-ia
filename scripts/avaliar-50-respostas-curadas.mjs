@@ -9,7 +9,7 @@ const read=p=>JSON.parse(readFileSync(p,'utf8'));
 const registros=read('knowledge-local/faq-curada.json'),contatos=read('knowledge-local/contatos-publicos.json');
 const fatos=registros.filter(r=>r.categoria!=='contato');
 const casos=[...fatos.map(r=>({id:r.id,pergunta:r.pergunta,esperado:r.id})),...fatos.slice(0,50-fatos.length).map(r=>({id:r.id+'-variacao',pergunta:r.variacoes[0],esperado:r.id}))].slice(0,50);
-const hash=createHash('sha256').update(JSON.stringify(casos)+JSON.stringify(registros)+readFileSync('local-e2e/gemini-curado.mjs')+readFileSync('local-e2e/contexto-curado.mjs')+readFileSync('local-e2e/curadoria-local.mjs')).digest('hex');
+const hash=createHash('sha256').update(JSON.stringify(casos)+JSON.stringify(registros)+readFileSync('render-poc/motor-curado/gemini-curado.mjs')+readFileSync('render-poc/motor-curado/contexto-curado.mjs')+readFileSync('render-poc/motor-curado/curadoria-local.mjs')).digest('hex');
 const file='docs/curadoria-local/avaliacao-50-real.json';
 let anterior=existsSync(file)?read(file):null;
 if(anterior&&anterior.hash!==hash){writeFileSync('.cache/curadoria-sylvinho/avaliacao-50-anterior-'+Date.now()+'.json',JSON.stringify(anterior,null,2));anterior=null;}
