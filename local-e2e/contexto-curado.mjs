@@ -26,7 +26,12 @@ function assunto(s){
 }
 const cursos=[[/\benfermagem\b/,'enfermagem'],[/\bdesenvolvimento de sistemas\b|\bds\b/,'desenvolvimento de sistemas'],[/\binformatica para internet\b/,'informatica-para-internet'],[/\bmecatronica\b/,'mecatronica'],[/\bmecanica\b/,'mecanica'],[/\badministracao\b/,'administracao'],[/\beletrotecnica\b/,'eletrotecnica'],[/\blogistica\b/,'logistica']];
 const curso=s=>cursos.find(([r])=>r.test(s))?.[1];
+const apenasCurso=s=>{
+ const padrao=cursos.find(([r])=>r.test(s))?.[0];
+ return !!padrao&&/^(faco|curso|faco o curso de|sou de|meu curso e|estudo|estudo no curso de)?$/.test(s.replace(padrao,'').trim());
+};
 const turno=s=>/noturno|\ba noite\b/.test(s)?'noite':/matutino|\bmanha\b/.test(s)?'manha':/vespertino|\btarde\b/.test(s)?'tarde':undefined;
+export const solicitaFonte=s=>/\b(de onde|qual o artigo|onde esta|tem link|qual (e )?a (fonte|referencia)|(?:mandar|enviar|passar) o link|onde (posso )?(conferir|consultar|verificar))\b/.test(n(s));
 const seguimento=s=>/^(e\b|onde (entrego|levo|faco|solicito)|precisa de responsavel|preciso de responsavel|qual (e )?o prazo|quais documentos|qual o artigo|de onde|onde esta|tem link|no meu curso|pode ser online)/.test(s);
 export function resolverConversaCurada(pergunta,historico=[],escopo={}){
  const atual=n(pergunta);let tema=null,anterior='',estado={};
@@ -37,25 +42,33 @@ export function resolverConversaCurada(pergunta,historico=[],escopo={}){
   const tr=turno(t),ano=t.match(/\b20\d{2}\b/)?.[0],idade=t.match(/\b(?:tenho|meu filho tem|minha filha tem|o candidato tem|a candidata tem) (\d{1,2}) anos\b/)?.[1];
   if(tr)estado.turno=tr;if(ano)estado.ano=Number(ano);if(idade)estado.idade=Number(idade);
   if(a)tema=a;
-  else if(!seguimento(t)&&!c&&!/^(oi|ola|obrigad[oa]|valeu|\d{1,2} anos)$/.test(t))tema=null;
+  else if(!seguimento(t)&&!solicitaFonte(t)&&!c&&!/^(oi|ola|obrigad[oa]|valeu|\d{1,2} anos)$/.test(t))tema=null;
   anterior=t;
  }
  const clarificador=historico.at(-1)?.remetente==='bot'&&/matrícula inicial ou renovar|matrícula inicial ou renovação/i.test(historico.at(-1).texto||'');
  const pediuCurso=historico.at(-1)?.remetente==='bot'&&/qual é o seu curso/i.test(historico.at(-1).texto||'');
- const direto=assunto(atual),c=curso(atual),follow=seguimento(atual)||clarificador&&/^(renovar|renovacao|rematricula|a inicial|inicial)$/.test(atual)||!!c&&pediuCurso;
+ const direto=assunto(atual),c=curso(atual),retomaCurso=pediuCurso&&apenasCurso(atual),follow=seguimento(atual)||solicitaFonte(atual)&&!direto||clarificador&&/^(renovar|renovacao|rematricula|a inicial|inicial)$/.test(atual)||retomaCurso;
  if(c){if(c!==estado.curso)delete estado.turno;estado.curso=c;}
  const tr=turno(atual),ano=atual.match(/\b20\d{2}\b/)?.[0],idade=atual.match(/\b(?:tenho|meu filho tem|minha filha tem|o candidato tem|a candidata tem) (\d{1,2}) anos\b/)?.[1];
  if(tr)estado.turno=tr;if(ano)estado.ano=Number(ano);if(idade)estado.idade=Number(idade);
  // Curso/ano anteriores só acompanham referências à conversa; pergunta nova é autônoma.
  if(!follow){estado={...(c?{curso:c}:{}),...(tr?{turno:tr}:{}),...(ano?{ano:Number(ano)}:{}),...(idade?{idade:Number(idade)}:{})};}
  estado={...estado,...escopo};
- const temaAtual=direto||tema;
+ const temaAtual=direto||(follow?tema:null);
  if(clarificador&&/^(renovar|renovacao|rematricula)$/.test(atual))return {pergunta:'Como renovo a matrícula?',escopo:estado,tema:'renovação da matrícula',usaHistorico:true};
  if(clarificador&&/^(a )?inicial$/.test(atual))return {pergunta:'Como fazer a matrícula inicial?',escopo:estado,tema:'matrícula inicial',usaHistorico:true};
- if(c&&pediuCurso&&tema)return {pergunta:'Como funciona '+tema+' no curso de '+c+'?',escopo:estado,tema,usaHistorico:true};
+ if(retomaCurso&&tema){
+  const original=[...historico].reverse().find(m=>m?.remetente==='user'&&assunto(n(m.texto))===tema)?.texto;
+  return {pergunta:original||'Como funciona '+tema+'?',escopo:estado,tema,usaHistorico:true};
+ }
  if(/meu curso|minha turma/.test(atual)&&!estado.curso)return {esclarecimento:'Qual é o seu curso?',escopo:estado};
  if(/^(e )?o horario$/.test(atual))return {esclarecimento:'Você quer saber o horário da Secretaria ou das aulas?',escopo:estado};
  if(follow&&!temaAtual)return {esclarecimento:'Você quer saber isso sobre matrícula, documentos ou outro assunto?',escopo:estado};
+ if(solicitaFonte(atual)&&!direto&&tema){
+  if(/perder|perdi/.test(anterior)&&/prazo/.test(anterior)&&tema==='renovação da matrícula')return {pergunta:'Perdi o prazo da renovação, o que faço?',escopo:estado,tema,usaHistorico:true};
+  const original=[...historico].reverse().find(m=>m?.remetente==='user'&&assunto(n(m.texto))===tema)?.texto;
+  return {pergunta:original||tema,escopo:estado,tema,usaHistorico:true};
+ }
  let intencao=/onde (entrego|levo|faco|solicito)|pode ser online/.test(atual)?'canal':/precis[ao] de responsavel/.test(atual)?'responsavel':/quais documentos/.test(atual)?'documentos':/qual (e )?o prazo/.test(atual)?'prazo':null;
  let consulta=pergunta;
  if(follow&&temaAtual&&!direto)consulta=pergunta+' (sobre '+temaAtual+')';

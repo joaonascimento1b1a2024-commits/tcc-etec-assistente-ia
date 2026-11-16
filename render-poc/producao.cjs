@@ -6,6 +6,7 @@ const CREDENTIAL_PATH = '/etc/secrets/sylvinho-firebase-admin.json';
 // Planned identity only: no account, key or remote permission is created here.
 const SERVICE_ACCOUNT_EMAIL = 'sylvinho-render-reader@tcc-ia-d8891.iam.gserviceaccount.com';
 const OFFICIAL_ORIGINS = Object.freeze([
+    'https://sylvinho.web.app', 'https://sylvinho.firebaseapp.com',
     'https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com',
 ]);
 

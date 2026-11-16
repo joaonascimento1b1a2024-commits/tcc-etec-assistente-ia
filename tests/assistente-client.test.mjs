@@ -145,11 +145,11 @@ test('metadados de espera inválidos e motivos desconhecidos não são aceitos',
 
 const require = createRequire(import.meta.url);
 const {OFFICIAL_ORIGINS} = require('../render-poc/producao.cjs');
-test('frontend e backend reconhecem os mesmos dois dominios oficiais', () => {
+test('frontend e backend reconhecem os mesmos dominios oficiais', () => {
     assert.deepEqual(origensPublicadasAssistente, OFFICIAL_ORIGINS);
     assert.ok(Object.isFrozen(origensPublicadasAssistente));
 });
-for (const origin of ['https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com']) {
+for (const origin of ['https://sylvinho.web.app', 'https://sylvinho.firebaseapp.com', 'https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com']) {
     test('origem publicada resolve endpoint e envia token uma vez: '+origin, async () => {
         let chamadas = 0;
         const config = resolverAssistenteConfig({origin, local: null});
