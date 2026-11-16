@@ -75,6 +75,22 @@ test('híbrido: sem evidência devolve null; curado responde com a orientação 
     assert.match(texto, /Secretaria confirma/);
 });
 
+test('híbrido: modelo sem fato aplicável (ids vazio) volta ao fluxo; curado orienta a Secretaria', async () => {
+    // Caso real de 16/11: "dois cursos" trazia 5 fatos de outros assuntos e o modelo respondeu ids: [].
+    const geracao = () => gerado({resposta: 'A Secretaria Acadêmica confirma isso.', ids: []});
+    const pergunta = 'Posso trancar a matrícula? Como funciona?';
+    const p1 = provedor({geracao});
+    assert.equal(await motor('hibrido', {transporte: p1.transporte}).responderVisitante(pergunta), null);
+    assert.equal(p1.chamadas.geracao, 1);
+    assert.equal(p1.chamadas.revisao, 0);
+    const p2 = provedor({geracao});
+    assert.match(await motor('curado', {transporte: p2.transporte}).responderConversa(pergunta, [], {uid: 'a'}), /Secretaria confirma/);
+    // ids com valor desconhecido continua sendo resposta inválida.
+    const p3 = provedor({geracao: () => gerado({resposta: 'x', ids: ['inexistente']})});
+    await assert.rejects(motor('hibrido', {transporte: p3.transporte}).responderVisitante(pergunta),
+        e => e instanceof ErroRespostaTemporaria && e.motivo === 'RESPOSTA_NAO_VALIDADA');
+});
+
 test('híbrido: busca vetorial indisponível sem resultado lexical também volta ao fluxo', async () => {
     const transporte = async url => url.includes('Embed') ? new Response('{}', {status: 503}) : assert.fail('NAO_GERAR');
     assert.equal(await motor('hibrido', {transporte}).responderVisitante('Como peço revisão de nota?'), null);

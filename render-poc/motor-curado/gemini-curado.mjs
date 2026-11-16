@@ -103,6 +103,9 @@ export function criarGeminiCurado({registros,contatos,lerChave,modelo=process.en
      catch(e){if(controller.signal.aborted||!/^HTTP_(429|5\d\d)$|^fetch failed$|^PROVEDOR_TIMEOUT$/.test(e.message))throw e;log('MODELO_INDISPONIVEL',{modelo:model,codigo:e.message});if(model===modeloReserva||!modeloReserva)throw e;}
     }
     const p=proposta;
+    // ids vazio = o modelo não achou fato que responda (os candidatos eram de outro assunto).
+    // É falta de evidência, não erro de formato: o híbrido devolve a vez ao fluxo documental.
+    if(p&&Object.keys(p).sort().join(',')==='ids,resposta'&&Array.isArray(p.ids)&&p.ids.length===0){log('SEM_FATO_APLICAVEL',{modelo:usedModel});return {texto:politica.fallback(),tipo:'sem_evidencia',modo:resultado.modo};}
     if(!p||Object.keys(p).sort().join(',')!=='ids,resposta'||typeof p.resposta!=='string'||!p.resposta.trim()||p.resposta.length>1800||!Array.isArray(p.ids)||!p.ids.length||p.ids.length>5||!p.ids.every(id=>selected.some(r=>r.id===id)))throw Error('FORMATO');
     const cited=selected.filter(r=>p.ids.includes(r.id)),allFacts=cited.map(r=>r.resposta).join(' ');
     const bloqueio=filtro(p.resposta,'documento');
