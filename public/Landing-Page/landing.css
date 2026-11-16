@@ -32,7 +32,7 @@
 .landing-page .about-copy h2 { margin-top:-16px; }
 .about-copy > p { max-width:530px; margin-top:16px; font-weight:300; font-size:18px; line-height:1.6; }
 .benefit-panel { display:grid; grid-template-columns:minmax(0,259fr) minmax(0,244fr); column-gap:48px; row-gap:32px; align-content:start; min-height:320px; padding:40px; background:#212121; border-radius:18px; }
-.benefit-panel h3 { color:#f00; font-size:22px; font-weight:600; line-height:1.5; }
+.benefit-panel h3 { color:#ff6565; font-size:22px; font-weight:600; line-height:1.5; overflow-wrap:normal; }
 .benefit-panel p { max-width:290px; font-size:16px; font-weight:300; line-height:1.6; }
 .landing-product { aspect-ratio:1436/1024; width:100%; margin-left:0!important; background:radial-gradient(ellipse at center,#160202 0%,#000 72%); }
 .landing-product img { display:block; width:100%; height:100%; object-fit:contain; margin-inline:auto; mask-image:linear-gradient(to right,transparent,#000 10%,#000 90%,transparent),linear-gradient(to bottom,transparent,#000 10%,#000 86%,transparent); mask-composite:intersect; }
@@ -137,7 +137,7 @@
  .landing-about { grid-template-columns:1fr; min-height:0; padding:40px 24px; gap:30px; }
  .landing-page .about-copy h2 { margin:0 0 16px; font-size:34px; }
  .about-copy > p { font-size:17px; }
- .benefit-panel { padding:28px; gap:26px; min-height:0; grid-template-columns:1fr 1fr; }
+ .benefit-panel { padding:28px; gap:26px; min-height:0; grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
  .benefit-panel h3 { font-size:19px; white-space:normal; }
  .benefit-panel p { font-size:15px; }
  .landing-product { width:100%; margin-left:0!important; aspect-ratio:1.4; }

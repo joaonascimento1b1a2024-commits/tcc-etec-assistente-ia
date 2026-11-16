@@ -3,9 +3,11 @@
 // Backend documental autenticado validado; publicacao depende de revisao separada.
 export const endpointRenderPreparado =
     'https://sylvinho-backend-poc.onrender.com/perguntarAssistente';
-// Os dois dominios publicados pertencem ao mesmo projeto Firebase.
+// Sites de Hosting novo e legado pertencem ao mesmo projeto Firebase.
 // Manter alinhado com OFFICIAL_ORIGINS do backend e com seu CORS.
 export const origensPublicadasAssistente = Object.freeze([
+    'https://sylvinho.web.app',
+    'https://sylvinho.firebaseapp.com',
     'https://tcc-ia-d8891.web.app',
     'https://tcc-ia-d8891.firebaseapp.com',
 ]);
