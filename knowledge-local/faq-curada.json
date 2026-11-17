@@ -2452,5 +2452,64 @@
     "procedimentoLocal": null,
     "prioridade": 1,
     "origem": "faq_curada"
+  },
+  {
+    "id": "cursos-noturnos",
+    "pergunta": "Tem curso à noite? Dá para estudar à noite e trabalhar de dia?",
+    "variacoes": [
+      "tem curso a noite",
+      "curso noturno",
+      "estudar a noite e trabalhar de dia",
+      "periodo noturno",
+      "quais cursos sao a noite",
+      "que horas comeca a aula a noite",
+      "horario das aulas a noite",
+      "horario das aulas do tecnico"
+    ],
+    "resposta": "Sim, há cursos à noite. O Ensino Médio com Habilitação Profissional em Mecatrônica tem turma noturna (M-Tec-N), com aulas das 18h40 às 22h40. Os cursos técnicos do período noturno têm aulas das 19h às 23h. O Técnico em Enfermagem é de manhã, das 7h10 às 12h30. Quais cursos abrem turma em cada turno depende da oferta do Vestibulinho do semestre, e os horários do ano atual a Secretaria confirma.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-16",
+      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Horários do Regimento interno 2021-2024 (revisão 26/02/2024); curso noturno atual conferido no site em 16/11/2026. Turnos de cada técnico no próximo Vestibulinho e horários de 2026/2027 pendentes de confirmação da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "Manhã MTec Integrado – Mecatrônica e Informática para Internet Técnico em Enfermagem 7h10 12h30\nNoite Mtec Integrado – Mecânica e Mecatrônica 18h40 22h40 Demais Cursos Técnicos 19h 23h",
+        "conferidoEm": "2026-11-16"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/",
+        "sha256": "176a55b56560f5d3be9c8a9b8d2a72011032d955b915628b45f3df26c6599df1",
+        "evidencia": "Ensino Médio com Habilitação Profissional em Mecatrônica M-Tec-N (Noturno)",
+        "conferidoEm": "2026-11-16"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
   }
 ]
