@@ -104,11 +104,62 @@ test('híbrido: informação pendente não cai no fluxo antigo (não inventa pre
     assert.equal(p.chamadas.geracao, 0);
 });
 
-test('limite de uso e resposta não validada viram erro recuperável, sem fluxo reserva', async () => {
+test('limite em todos os modelos: híbrido usa o fluxo; curado vira erro recuperável', async () => {
+    const eventos = [];
     const limite = provedor({geracao: () => new Response('{}', {status: 429})});
-    await assert.rejects(motor('hibrido', {transporte: limite.transporte})
+    assert.equal(await motor('hibrido', {transporte: limite.transporte, registrar: (e, d) => eventos.push({e, ...d})})
+        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}), null);
+    assert.ok(eventos.some(x => x.e === 'MOTOR_FLUXO_RESERVA' && x.motivo === 'HTTP_429'));
+    const sobrecarga = provedor({geracao: () => new Response('{}', {status: 503})});
+    assert.equal(await motor('hibrido', {transporte: sobrecarga.transporte}).responderVisitante('Posso trancar a matrícula?'), null);
+    const limiteCurado = provedor({geracao: () => new Response('{}', {status: 429})});
+    await assert.rejects(motor('curado', {transporte: limiteCurado.transporte})
         .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}),
     e => e instanceof ErroRespostaTemporaria && e.motivo === 'LIMITE_USO' && e.esperaSegundos === 30);
+});
+
+test('lista de modelos: pula os que estão no limite, na geração e na revisão', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const usados = [];
+    let revisoes = 0;
+    const transporte = async (url, init) => {
+        const corpo = JSON.parse(init.body);
+        if (url.includes('Embed')) return new Response(JSON.stringify({embeddings: corpo.requests.map(() => ({values: vetor()}))}), {status: 200});
+        const modelo = url.split('/models/')[1].split(':')[0];
+        const pedido = JSON.parse(corpo.contents[0].parts[0].text);
+        usados.push(modelo + ('resposta' in pedido ? ':revisao' : ':geracao'));
+        if (modelo === 'gemini-a' || modelo === 'gemini-b') return new Response('{}', {status: 429});
+        if ('resposta' in pedido) {
+            // A revisão do modelo que gerou também bate no limite; a próxima da lista revisa.
+            if (modelo === 'gemini-c' && revisoes++ === 0) return new Response('{}', {status: 429});
+            return gerado({sustentada: true});
+        }
+        return gerado({resposta: 'Resposta curada de teste.', ids: [pedido.fatos[0].id]});
+    };
+    const motorLista = criarGeminiCurado({...base, lerChave: () => 'chave-sintetica', transporte,
+        modelo: 'gemini-a', modeloReserva: ' gemini-b, gemini-c ,gemini-d'});
+    assert.deepEqual(motorLista.configuracao.modelos, ['gemini-a', 'gemini-b', 'gemini-c', 'gemini-d']);
+    const r = await motorLista.responder({pergunta: 'Posso trancar a matrícula? Como funciona?'});
+    assert.equal(r.tipo, 'gemini_curado');
+    assert.equal(r.modelo, 'gemini-c');
+    // a e b entram em espera após o 429 e não são chamados de novo na revisão.
+    assert.deepEqual(usados, ['gemini-a:geracao', 'gemini-b:geracao', 'gemini-c:geracao', 'gemini-c:revisao', 'gemini-d:revisao']);
+    assert.throws(() => criarGeminiCurado({...base, lerChave: () => 'x', modelo: 'gemini-a', modeloReserva: 'gemini-b,outro'}), /MODELO_INVALIDO/);
+});
+
+test('tempo excedido no provedor não cai no fluxo (somaria dois tempos de espera)', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const lento = provedor({geracao: () => {throw new Error('PROVEDOR_TIMEOUT');}});
+    const r = await criarGeminiCurado({...base, lerChave: () => 'x', transporte: lento.transporte, modelo: 'gemini-a', modeloReserva: ''})
+        .responder({pergunta: 'Posso trancar a matrícula? Como funciona?'});
+    assert.equal(r.codigo, 'PROVEDOR_TIMEOUT');
+    assert.match(r.texto, /demorou/);
+    const lentoAdaptador = provedor({geracao: () => {throw new Error('PROVEDOR_TIMEOUT');}});
+    await assert.rejects(motor('hibrido', {transporte: lentoAdaptador.transporte}).responderVisitante('Posso trancar a matrícula? Como funciona?'),
+        e => e instanceof ErroRespostaTemporaria && e.motivo === 'TEMPO_EXCEDIDO');
+});
+
+test('resposta não validada vira erro recuperável, sem fluxo reserva', async () => {
     const invalida = provedor({geracao: p => gerado({resposta: 'Custa R$ 999.', ids: [p.fatos[0].id]})});
     await assert.rejects(motor('hibrido', {transporte: invalida.transporte})
         .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}),

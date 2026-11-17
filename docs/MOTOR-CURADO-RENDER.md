@@ -29,9 +29,23 @@ Regras do modo híbrido:
 
 - Vai ao fluxo antigo: `sem_evidencia` e `BUSCA_INDISPONIVEL` (busca vetorial fora e nenhum resultado por palavras), além de falha ao carregar o motor.
 - **Não** vai ao fluxo antigo: respostas pendentes deliberadas (preço da camiseta, horário da Secretaria etc.), fora de escopo, saudações e esclarecimentos. Assim o fluxo antigo não tenta preencher o que a curadoria marcou como não confirmado.
-- Limite de uso, tempo excedido e resposta reprovada na validação viram erro recuperável com nova tentativa. Não caem no fluxo antigo, para não somar dois tempos de espera.
+- **Lista de modelos (16/11):** `SYLVINHO_GEMINI_FALLBACK_MODEL` aceita vários modelos separados por vírgula. Geração e revisão tentam a lista em ordem quando um modelo responde 429, 5xx, falha de rede ou passa de 8 s; o modelo que deu 429 fica em espera (30 s ou o `Retry-After`) e é pulado nas perguntas seguintes. No plano gratuito cada modelo tem cota própria, então a lista soma capacidade.
+- **Limite em todos os modelos:** no híbrido, se todos derem 429 ou falha do provedor (5xx/rede), o fluxo antigo responde. Essas recusas são rápidas (menos de 2 s), então cabe o tempo do fluxo. No modo `curado`, continua erro recuperável (`LIMITE_USO`).
+- Tempo excedido (`TIMEOUT` geral ou `PROVEDOR_TIMEOUT`) e resposta reprovada na validação viram erro recuperável com nova tentativa. Não caem no fluxo antigo, para não somar dois tempos de espera.
 - O motor tem limite de 20 s, abaixo dos 30 s do cliente e do servidor.
 - Visitante sem histórico: esclarecimentos ganham o aviso de reenviar a pergunta completa.
+
+Modelos conferidos em 16/11 com a chave local (uma chamada mínima cada, com o mesmo JSON e configuração do motor):
+
+| Modelo | Situação |
+| --- | --- |
+| `gemini-2.5-flash` | usado na avaliação; principal recomendado |
+| `gemini-3.1-flash-lite`, `gemini-3.5-flash`, `gemini-3.5-flash-lite`, `gemini-3.6-flash` | respondem no plano gratuito; rodada de 3 perguntas com respostas fiéis aos fatos. `3.6-flash` bateu no limite por minuto após 4 chamadas; `3.5-flash` teve uma revisão acima de 8 s. |
+| `gemini-3-flash-preview` | funciona; limite gratuito de 20 pedidos/dia |
+| `gemini-3.7-flash`, `gemini-3.8-flash` | recusam `thinkingLevel: minimal`; fora da lista |
+| `gemini-2.5-flash-lite` | indisponível para chaves novas |
+
+Ordem sugerida: `SYLVINHO_GEMINI_MODEL=gemini-2.5-flash` e `SYLVINHO_GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite,gemini-3.5-flash,gemini-3.5-flash-lite,gemini-3.6-flash,gemini-3-flash-preview`. A chave do Render pode ter cotas diferentes da local.
 
 Logs `SYLVINHO_MOTOR` registram tipo, modo de busca, código e tempo; nunca a pergunta, a resposta ou a chave.
 

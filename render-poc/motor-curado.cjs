@@ -12,10 +12,13 @@ const { ErroRespostaTemporaria } = require('../functions/lib/assistente/handler.
 const MOTORES = Object.freeze(['fluxo', 'curado', 'hibrido']);
 const RAIZ = resolve(__dirname, '..');
 const TIMEOUT_MS = 20000; // Termina antes do cliente (30 s) e do requestTimeout do servidor.
-// Só falta de evidência devolve a vez ao fluxo documental. Falhas de geração,
-// limite de uso e tempo excedido continuam erros recuperáveis com nova tentativa.
+// Falta de evidência devolve a vez ao fluxo documental. No híbrido, o fluxo também
+// atende quando todos os modelos Gemini da lista recusam por limite (429) ou falha do
+// provedor (5xx/rede): essas recusas são rápidas, então cabe o tempo do fluxo.
+// Tempo excedido e resposta reprovada na validação continuam erros recuperáveis.
 const SEM_EVIDENCIA = new Set(['sem_evidencia']);
 const SEM_EVIDENCIA_CODIGOS = new Set(['BUSCA_INDISPONIVEL']);
+const PROVEDOR_ESGOTADO = codigo => /^HTTP_(429|5\d\d)$/.test(codigo || '') || codigo === 'PROVEDOR_INDISPONIVEL';
 const AVISO_VISITANTE = ' Reenvie a pergunta completa com esse detalhe, porque este chat não guarda as mensagens anteriores.';
 
 function resolverMotor(env = process.env) {
@@ -36,7 +39,7 @@ function lerBase(raiz = RAIZ) {
 function motivoTemporario(resultado) {
     if (resultado.tipo === 'ocupado') return 'OCUPADO';
     if (resultado.codigo === 'HTTP_429') return 'LIMITE_USO';
-    if (resultado.codigo === 'TIMEOUT') return 'TEMPO_EXCEDIDO';
+    if (resultado.codigo === 'TIMEOUT' || resultado.codigo === 'PROVEDOR_TIMEOUT') return 'TEMPO_EXCEDIDO';
     if (['NAO_SUSTENTADA', 'LINGUAGEM', 'FORMATO', 'NUMERO_OU_DADO_NAO_SUSTENTADO'].includes(resultado.codigo))
         return 'RESPOSTA_NAO_VALIDADA';
     return 'INDISPONIVEL';
@@ -81,6 +84,10 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
             resultado.retentavel && SEM_EVIDENCIA_CODIGOS.has(resultado.codigo);
         if (modo === 'hibrido' && semEvidencia) {
             log('MOTOR_FLUXO_RESERVA', { publico });
+            return null;
+        }
+        if (modo === 'hibrido' && resultado.tipo === 'falha' && PROVEDOR_ESGOTADO(resultado.codigo)) {
+            log('MOTOR_FLUXO_RESERVA', { publico, motivo: resultado.codigo });
             return null;
         }
         if (resultado.retentavel) throw new ErroRespostaTemporaria(motivoTemporario(resultado), resultado.tentarEmSegundos);
