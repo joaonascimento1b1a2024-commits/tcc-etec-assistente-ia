@@ -59,13 +59,20 @@ export function criarEndpointVisitante(
     try {
       const pergunta = body.pergunta.trim();
       const escopo = classificarEscopo(pergunta);
-      if (escopo.resposta) {
+      // Fora de escopo e saudacao seguem locais. A lista de palavras-chave nao
+      // cobre todo assunto escolar: o motor curado (busca semantica) tenta as
+      // ambiguas; sem fato aprovado, mantem o pedido de esclarecimento.
+      if (escopo.resposta && escopo.categoria !== "ambigua") {
         res.status(200).json({resposta: escopo.resposta});
         return;
       }
       const deps = obterDependencias();
       let resposta = deps.responderVisitante ?
         await deps.responderVisitante(pergunta) : null;
+      if (resposta === null && escopo.resposta) {
+        res.status(200).json({resposta: escopo.resposta});
+        return;
+      }
       if (resposta === null) {
         const chunks = await deps.recuperarConhecimento(pergunta);
         // A rota atribui o acesso publico depois de validar o corpo estrito.

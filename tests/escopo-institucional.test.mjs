@@ -27,7 +27,13 @@ const origin='https://tcc-ia-d8891.web.app';
 const res=()=>({status(n){this.code=n;return this;},set(){return this;},vary(){},json(b){this.body=b;},send(){}});
 test('visitante recusa e socializa sem inicializar dependencias',async()=>{
  const handler=criarEndpointVisitante(()=>assert.fail('dependencias'),()=>origin);
- for(const q of [...fora,'Olá!','E o prazo?']){const r=res();await handler({method:'POST',body:{pergunta:q},get:k=>k==='Origin'?origin:undefined},r);assert.equal(r.code,200);assert.equal(r.body.resposta,classificarEscopo(q).resposta);}
+ for(const q of [...fora,'Olá!']){const r=res();await handler({method:'POST',body:{pergunta:q},get:k=>k==='Origin'?origin:undefined},r);assert.equal(r.code,200);assert.equal(r.body.resposta,classificarEscopo(q).resposta);}
+});
+// Ambigua consulta o motor curado quando existe; sem ele (modo fluxo), esclarece sem buscar documentos.
+test('visitante ambiguo sem motor curado esclarece sem acionar o fluxo documental',async()=>{
+ const handler=criarEndpointVisitante(()=>({recuperarConhecimento:()=>assert.fail('fluxo'),gerarResposta:()=>assert.fail('fluxo')}),()=>origin);
+ const r=res();await handler({method:'POST',body:{pergunta:'E o prazo?'},get:k=>k==='Origin'?origin:undefined},r);
+ assert.equal(r.code,200);assert.equal(r.body.resposta,classificarEscopo('E o prazo?').resposta);
 });
 const texto='A matrícula inicial exige o formulário experimental.';
 const docs=[{id:'c1',documentoId:FONTES_ORIGINAIS[0],titulo:'Matrícula inicial',secao:'B1 Inicial',conteudo:texto,ativo:true,tipoConteudo:'procedimento',paginaInicial:1,paginaFinal:1}];

@@ -263,6 +263,29 @@ test('rota visitante: usa o motor curado e só chama o fluxo antigo quando receb
     assert.equal(r.body.resposta, 'Resposta do fluxo documental');
 });
 
+test('rota visitante: pergunta sem palavra-chave tenta o motor; sem fato, mantém o esclarecimento sem fluxo', async () => {
+    const pergunta = 'Posso fazer o técnico junto com o ensino médio?';
+    let a = antigo();
+    let r = await visitante({...a, responderVisitante: async () => 'Sim, na forma concomitante.'}, pergunta);
+    assert.equal(r.body.resposta, 'Sim, na forma concomitante.');
+    a = antigo();
+    r = await visitante({...a, responderVisitante: async () => null}, pergunta);
+    assert.match(r.body.resposta, /Sobre qual procedimento/);
+    assert.equal(a.calls.antigo, 0);
+    // Modo fluxo (sem gancho): comportamento anterior.
+    a = antigo();
+    r = await visitante(a, pergunta);
+    assert.match(r.body.resposta, /Sobre qual procedimento/);
+    assert.equal(a.calls.antigo, 0);
+    // Fora de escopo e saudação continuam locais, sem consultar o motor.
+    let consultas = 0;
+    for (const p of ['Qual a capital da França?', 'Oi']) {
+        r = await visitante({...antigo(), responderVisitante: async () => {consultas++; return 'x';}}, p);
+        assert.notEqual(r.body.resposta, 'x');
+    }
+    assert.equal(consultas, 0);
+});
+
 test('rota visitante: erro recuperável vira 429/503 com Retry-After, como na rota da conta', async () => {
     let r = await visitante({...antigo(), responderVisitante: async () => {throw new ErroRespostaTemporaria('LIMITE_USO', 30);}});
     assert.equal(r.code, 429);
