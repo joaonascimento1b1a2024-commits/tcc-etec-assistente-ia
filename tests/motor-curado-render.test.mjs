@@ -118,6 +118,29 @@ test('limite em todos os modelos: híbrido usa o fluxo; curado vira erro recuper
     e => e instanceof ErroRespostaTemporaria && e.motivo === 'LIMITE_USO' && e.esperaSegundos === 30);
 });
 
+test('Regimento com moderação: uma menção sustentada pelo fato passa; excesso ou sem apoio é barrado', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const casos = [
+        {comRegimento: true, resposta: 'Pode fazer junto com o ensino médio. Sobre dois cursos técnicos, o Regimento não traz uma regra e a Secretaria confirma.', esperado: 'gemini_curado'},
+        {comRegimento: true, resposta: 'O Regimento permite a forma concomitante. O Regimento não traz regra para dois cursos.', esperado: 'LINGUAGEM'},
+        {comRegimento: false, resposta: 'Segundo o Regimento, o trancamento depende da Direção.', esperado: 'LINGUAGEM', pergunta: 'Posso trancar a matrícula? Como funciona?'},
+    ];
+    for (const caso of casos) {
+        const transporte = async (url, init) => {
+            const corpo = JSON.parse(init.body);
+            if (url.includes('Embed')) return new Response(JSON.stringify({embeddings: corpo.requests.map(() => ({values: vetor()}))}), {status: 200});
+            const pedido = JSON.parse(corpo.contents[0].parts[0].text);
+            if ('resposta' in pedido) return gerado({sustentada: true});
+            const fato = pedido.fatos.find(f => /\bregimento\b/i.test(f.texto) === caso.comRegimento);
+            assert.ok(fato, 'a busca precisa trazer um fato ' + (caso.comRegimento ? 'com' : 'sem') + ' Regimento');
+            return gerado({resposta: caso.resposta, ids: [fato.id]});
+        };
+        const m = criarGeminiCurado({...base, lerChave: () => 'chave-sintetica', transporte, modelo: 'gemini-a', modeloReserva: ''});
+        const r = await m.responder({pergunta: caso.pergunta || 'Posso fazer o curso técnico junto com o ensino médio, ou dois cursos técnicos ao mesmo tempo?'});
+        assert.equal(r.tipo === 'falha' ? r.codigo : r.tipo, caso.esperado, caso.resposta);
+    }
+});
+
 test('lista de modelos: pula os que estão no limite, na geração e na revisão', async () => {
     const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
     const usados = [];
