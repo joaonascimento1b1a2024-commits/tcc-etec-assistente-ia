@@ -626,7 +626,12 @@
       "to com depressao e faltando",
       "estou doente e faltando",
       "saude prejudica frequencia",
-      "compensacao de ausencia por saude"
+      "compensacao de ausencia por saude",
+      "como justifico falta por doenca",
+      "faltei por doenca",
+      "falta por doenca",
+      "fiquei doente e faltei",
+      "faltas por motivo de saude"
     ],
     "resposta": "Sinto muito que você esteja passando por isso. Procure a Orientação e Apoio Educacional para receber apoio. Quando a saúde compromete a frequência, a escola deve oferecer atividades compatíveis para compensação de ausência; a forma de solicitar e os prazos precisam ser confirmados.",
     "categoria": "avaliacao_frequencia",
@@ -3946,21 +3951,15 @@
       "prazo para reconsideracao",
       "prazo para recurso da nota final",
       "reclassificacao prazo",
-      "quando entregam o boletim final"
+      "quando entregam o boletim final",
+      "quando acabam as aulas este ano",
+      "quando terminam as aulas",
+      "ultimo dia de aula de 2026"
     ],
-    "resposta": "No calendário de 2026, o 2º semestre termina em 21/12/2026. Os resultados finais são entregues em 15 e 16/12 e divulgados em 23/12/2026. Os pedidos de reconsideração e de reclassificação do resultado final podem ser protocolados de 23/12/2026 a 04/01/2027. O recurso pode ser apresentado em até 10 dias depois do resultado do pedido de reconsideração.",
+    "resposta": "Pelo Calendário Escolar Geral de 2026, que vale para os cursos listados nele, como Administração, Eletrotécnica, Mecânica, Logística e os M-Tec de Administração, Informática para Internet e Mecatrônica, o 2º semestre termina em 21/12/2026. Os resultados finais são entregues em 15 e 16/12 e divulgados em 23/12/2026. Os pedidos de reconsideração e de reclassificação do resultado final podem ser protocolados de 23/12/2026 a 04/01/2027, e o recurso pode ser apresentado em até 10 dias depois do resultado da reconsideração. Para cursos que não aparecem nesse calendário, como Enfermagem, a Secretaria confirma as datas.",
     "categoria": "calendario",
     "aplicaSe": {
-      "cursos": [
-        "administracao",
-        "administracao-mtec",
-        "eletrotecnica",
-        "informatica",
-        "informatica-para-internet",
-        "logistica",
-        "mecanica",
-        "mecatronica"
-      ],
+      "cursos": [],
       "turnos": [],
       "idades": []
     },
@@ -3974,7 +3973,7 @@
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
       "data": "2026-11-19",
-      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele. Corrigida em 19/11/2026: deixa de exigir o curso e informa a quais cursos as datas se aplicam."
     },
     "fonte": [
       {
@@ -4008,10 +4007,42 @@
         "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
         "evidencia": "o prazo para o aluno e/ou responsável protocolar o pedido de reclassificação será de 23/12/2026 a 04/01/2027",
         "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Administração - Mtec",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Informática para Internet - Mtec",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Mecatrônica - Mtec - N",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Logística",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 1,
@@ -4029,19 +4060,10 @@
       "experiencia de trabalho conta",
       "certificacao de competencias"
     ],
-    "resposta": "Sim, a escola pode avaliar e reconhecer competências de componentes ou cursos concluídos com aproveitamento, em outra escola ou na própria ETEC, de estudos fora do ensino formal e da experiência de trabalho. No calendário de 2026, os pedidos de aproveitamento foram de 23 a 27/03 e, para cursos semestrais, de 10 a 14/08. A Secretaria orienta como fazer o pedido no próximo período.",
+    "resposta": "Sim, a escola pode avaliar e reconhecer competências de componentes ou cursos concluídos com aproveitamento, na própria ETEC ou em outra escola, de estudos fora do ensino formal e da experiência de trabalho. Pelo Calendário Escolar Geral de 2026, que vale para os cursos listados nele, como Administração, Eletrotécnica, Mecânica, Logística e os M-Tec de Administração, Informática para Internet e Mecatrônica, os pedidos de aproveitamento foram de 23 a 27/03 e, para cursos semestrais, de 10 a 14/08. A Secretaria orienta como fazer o pedido e as datas do próximo período.",
     "categoria": "avaliacao_frequencia",
     "aplicaSe": {
-      "cursos": [
-        "administracao",
-        "administracao-mtec",
-        "eletrotecnica",
-        "informatica",
-        "informatica-para-internet",
-        "logistica",
-        "mecanica",
-        "mecatronica"
-      ],
+      "cursos": [],
       "turnos": [],
       "idades": []
     },
@@ -4055,7 +4077,7 @@
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
       "data": "2026-11-19",
-      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele. Corrigida em 19/11/2026: deixa de exigir o curso e informa a quais cursos as datas se aplicam."
     },
     "fonte": [
       {
@@ -4084,10 +4106,18 @@
         "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
         "evidencia": "10 a 14 - Solicitação de Aproveitamentos (Semestral)",
         "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Administração - Mtec",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 2,
@@ -4104,19 +4134,10 @@
       "feriados de dezembro",
       "proximo feriado"
     ],
-    "resposta": "No calendário de 2026, ainda há o feriado de 20/11 (Dia Nacional da Consciência Negra), o recesso escolar de 24 a 31/12 e o feriado de Natal em 25/12. As aulas do 2º semestre terminam em 21/12/2026.",
+    "resposta": "O dia 20/11 é feriado nacional (Dia Nacional da Consciência Negra) e o dia 25/12 é Natal. Pelo Calendário Escolar Geral de 2026, que vale para os cursos listados nele, como Administração, Eletrotécnica, Mecânica, Logística e os M-Tec de Administração, Informática para Internet e Mecatrônica, há recesso escolar de 24 a 31/12, e as aulas do 2º semestre terminam em 21/12/2026. Para cursos que não aparecem nesse calendário, como Enfermagem, a Secretaria confirma as datas.",
     "categoria": "calendario",
     "aplicaSe": {
-      "cursos": [
-        "administracao",
-        "administracao-mtec",
-        "eletrotecnica",
-        "informatica",
-        "informatica-para-internet",
-        "logistica",
-        "mecanica",
-        "mecatronica"
-      ],
+      "cursos": [],
       "turnos": [],
       "idades": []
     },
@@ -4130,7 +4151,7 @@
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
       "data": "2026-11-19",
-      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele. Corrigida em 19/11/2026: deixa de exigir o curso e informa a quais cursos as datas se aplicam."
     },
     "fonte": [
       {
@@ -4156,10 +4177,18 @@
         "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
         "evidencia": "21 - Fim das Aulas 2º Semestre",
         "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "Administração - Mtec",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 2,
@@ -4167,14 +4196,14 @@
   },
   {
     "id": "enfermagem-sabado-estagio",
-    "pergunta": "Enfermagem à noite tem aula aos sábados?",
+    "pergunta": "Quando a Enfermagem é à noite, tem aula aos sábados?",
     "variacoes": [
       "enfermagem tem aula sabado",
       "estagio de enfermagem e de dia",
       "enfermagem noturno sabado",
       "aula pratica aos sabados"
     ],
-    "resposta": "Sim. Pelas regras do Vestibulinho, o Técnico em Enfermagem oferecido à noite tem aulas práticas obrigatórias aos sábados, e o estágio supervisionado de Enfermagem é feito obrigatoriamente durante o dia, em todos os módulos.",
+    "resposta": "Quando há turma noturna de Técnico em Enfermagem, as aulas práticas aos sábados são obrigatórias, e o estágio supervisionado é sempre feito durante o dia, em todos os módulos. No Vestibulinho do 1º semestre de 2027, Enfermagem não aparece entre os cursos oferecidos pela ETEC de Matão.",
     "categoria": "cursos",
     "aplicaSe": {
       "cursos": [],
@@ -4191,7 +4220,7 @@
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
       "data": "2026-11-19",
-      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Corrigida em 19/11/2026: o texto anterior levou a IA a citar Enfermagem como curso noturno oferecido em 2027."
     },
     "fonte": [
       {
@@ -4202,10 +4231,19 @@
         "evidencia": "o curso de Técnico em Enfermagem, quando oferecido no período noturno, também terá aulas práticas obrigatórias aos sábados; em todos os módulos de Enfermagem, o estágio curricular supervisionado será realizado obrigatoriamente no período diurno.",
         "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
         "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Cursos oferecidos",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 2,

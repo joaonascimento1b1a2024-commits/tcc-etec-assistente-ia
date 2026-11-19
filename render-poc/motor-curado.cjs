@@ -80,6 +80,12 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
         const resultado = await motor.responder({ pergunta, historico, ...chaves });
         log('MOTOR_RESPOSTA', { publico, tipo: resultado.tipo, modo: resultado.modo || null,
             codigo: resultado.codigo || null, ms: resultado.ms ?? null });
+        // Falha de geração/revisão com um fato aprovado inequívoco: mostra o texto aprovado,
+        // em vez de cair no fluxo antigo (que não conhece a base curada) ou pedir nova tentativa.
+        if (resultado.tipo === 'falha' && resultado.reserva && typeof resultado.reserva.texto === 'string' && resultado.reserva.texto.trim()) {
+            log('MOTOR_RESPOSTA_DIRETA', { publico, motivo: resultado.codigo || null });
+            return { ...resultado.reserva, tipo: 'curado_direto' };
+        }
         const semEvidencia = SEM_EVIDENCIA.has(resultado.tipo) ||
             resultado.retentavel && SEM_EVIDENCIA_CODIGOS.has(resultado.codigo);
         if (modo === 'hibrido' && semEvidencia) {

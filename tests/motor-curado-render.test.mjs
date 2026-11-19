@@ -85,10 +85,29 @@ test('híbrido: modelo sem fato aplicável (ids vazio) volta ao fluxo; curado or
     assert.equal(p1.chamadas.revisao, 0);
     const p2 = provedor({geracao});
     assert.match(await motor('curado', {transporte: p2.transporte}).responderConversa(pergunta, [], {uid: 'a'}), /Secretaria confirma/);
-    // ids com valor desconhecido continua sendo resposta inválida.
+    // ids com valor desconhecido continua sendo resposta inválida: nunca é exibida.
+    // Com fato aprovado inequívoco (trancamento), o servidor mostra o texto aprovado.
     const p3 = provedor({geracao: () => gerado({resposta: 'x', ids: ['inexistente']})});
-    await assert.rejects(motor('hibrido', {transporte: p3.transporte}).responderVisitante(pergunta),
-        e => e instanceof ErroRespostaTemporaria && e.motivo === 'RESPOSTA_NAO_VALIDADA');
+    assert.equal(await motor('hibrido', {transporte: p3.transporte}).responderVisitante(pergunta), fatoTrancamento);
+});
+
+const fatoTrancamento = base.registros.find(r => r.id === 'trancamento').resposta;
+
+test('reserva direta: só existe com um fato aprovado inequívoco', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const modelo = base.registros.find(r => r.id === 'trancamento');
+    const limite = async () => new Response('{}', {status: 429});
+    const gerar = registros => criarGeminiCurado({registros, contatos: base.contatos, lerChave: () => 'x', transporte: limite, modelo: 'gemini-a', modeloReserva: ''});
+    // Dois fatos empatados e nenhuma pergunta idêntica: sem reserva.
+    const empatados = [{...modelo, id: 'tranc-a', pergunta: 'Trancamento da matrícula A', variacoes: []}, {...modelo, id: 'tranc-b', pergunta: 'Trancamento da matrícula B', variacoes: []}];
+    const semReserva = await gerar(empatados).responder({pergunta: 'Como fazer o trancamento da matrícula?'});
+    assert.equal(semReserva.tipo, 'falha');
+    assert.equal(semReserva.reserva, undefined);
+    // Pergunta igual a uma pergunta aprovada: a falha leva o fato aprovado como reserva.
+    const comReserva = await gerar([modelo]).responder({pergunta: modelo.pergunta});
+    assert.equal(comReserva.tipo, 'falha');
+    assert.equal(comReserva.codigo, 'HTTP_429');
+    assert.deepEqual(comReserva.reserva, {texto: modelo.resposta, tipo: 'curado_direto', modo: 'bm25', ids: ['trancamento']});
 });
 
 test('híbrido: busca vetorial indisponível sem resultado lexical também volta ao fluxo', async () => {
@@ -104,17 +123,25 @@ test('híbrido: informação pendente não cai no fluxo antigo (não inventa pre
     assert.equal(p.chamadas.geracao, 0);
 });
 
-test('limite em todos os modelos: híbrido usa o fluxo; curado vira erro recuperável', async () => {
+test('limite em todos os modelos: com fato inequívoco mostra o texto aprovado; sem ele, híbrido usa o fluxo e curado vira erro recuperável', async () => {
     const eventos = [];
     const limite = provedor({geracao: () => new Response('{}', {status: 429})});
     assert.equal(await motor('hibrido', {transporte: limite.transporte, registrar: (e, d) => eventos.push({e, ...d})})
-        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}), null);
-    assert.ok(eventos.some(x => x.e === 'MOTOR_FLUXO_RESERVA' && x.motivo === 'HTTP_429'));
+        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}), fatoTrancamento);
+    assert.ok(eventos.some(x => x.e === 'MOTOR_RESPOSTA_DIRETA' && x.motivo === 'HTTP_429'));
     const sobrecarga = provedor({geracao: () => new Response('{}', {status: 503})});
-    assert.equal(await motor('hibrido', {transporte: sobrecarga.transporte}).responderVisitante('Posso trancar a matrícula?'), null);
+    assert.equal(await motor('hibrido', {transporte: sobrecarga.transporte}).responderVisitante('Posso trancar a matrícula?'), fatoTrancamento);
+    // Sem reserva (dois fatos empatados), volta o comportamento anterior.
+    const modelo = base.registros.find(r => r.id === 'trancamento');
+    const empatados = {...base, registros: [{...modelo, id: 'tranc-a', pergunta: 'Trancamento da matrícula A', variacoes: []}, {...modelo, id: 'tranc-b', pergunta: 'Trancamento da matrícula B', variacoes: []}], vetores: null};
+    const eventos2 = [];
+    const limite2 = provedor({geracao: () => new Response('{}', {status: 429})});
+    assert.equal(await motor('hibrido', {base: empatados, transporte: limite2.transporte, registrar: (e, d) => eventos2.push({e, ...d})})
+        .responderConversa('Como fazer o trancamento da matrícula?', [], {uid: 'a'}), null);
+    assert.ok(eventos2.some(x => x.e === 'MOTOR_FLUXO_RESERVA' && x.motivo === 'HTTP_429'));
     const limiteCurado = provedor({geracao: () => new Response('{}', {status: 429})});
-    await assert.rejects(motor('curado', {transporte: limiteCurado.transporte})
-        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}),
+    await assert.rejects(motor('curado', {base: empatados, transporte: limiteCurado.transporte})
+        .responderConversa('Como fazer o trancamento da matrícula?', [], {uid: 'a'}),
     e => e instanceof ErroRespostaTemporaria && e.motivo === 'LIMITE_USO' && e.esperaSegundos === 30);
 });
 
@@ -181,16 +208,18 @@ test('tempo excedido no provedor não cai no fluxo (somaria dois tempos de esper
         .responder({pergunta: 'Posso trancar a matrícula? Como funciona?'});
     assert.equal(r.codigo, 'PROVEDOR_TIMEOUT');
     assert.match(r.texto, /demorou/);
+    // Com fato inequívoco, o servidor mostra o texto aprovado em vez de pedir nova tentativa (sem somar o fluxo).
     const lentoAdaptador = provedor({geracao: () => {throw new Error('PROVEDOR_TIMEOUT');}});
-    await assert.rejects(motor('hibrido', {transporte: lentoAdaptador.transporte}).responderVisitante('Posso trancar a matrícula? Como funciona?'),
-        e => e instanceof ErroRespostaTemporaria && e.motivo === 'TEMPO_EXCEDIDO');
+    assert.equal(await motor('hibrido', {transporte: lentoAdaptador.transporte}).responderVisitante('Posso trancar a matrícula? Como funciona?'), fatoTrancamento);
+    assert.equal(lentoAdaptador.chamadas.revisao, 0);
 });
 
-test('resposta não validada vira erro recuperável, sem fluxo reserva', async () => {
+test('resposta não validada nunca é exibida: vira o fato aprovado inequívoco, sem fluxo reserva', async () => {
     const invalida = provedor({geracao: p => gerado({resposta: 'Custa R$ 999.', ids: [p.fatos[0].id]})});
-    await assert.rejects(motor('hibrido', {transporte: invalida.transporte})
-        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}),
-    e => e instanceof ErroRespostaTemporaria && e.motivo === 'RESPOSTA_NAO_VALIDADA');
+    const texto = await motor('hibrido', {transporte: invalida.transporte})
+        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'});
+    assert.equal(texto, fatoTrancamento);
+    assert.doesNotMatch(texto, /999/);
 });
 
 test('cache por conta: repete sem nova chamada para a mesma conta, nunca entre contas', async () => {

@@ -75,6 +75,8 @@ export function criarGeminiCurado({registros,contatos,lerChave,modelo=process.en
   if(anterior){log('CACHE_VALIDADO',{ms:Date.now()-started});return {...anterior,modo:'cache_validado',cacheHit:true,ms:Date.now()-started};}
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
   const abortar=()=>controller.abort();let liberar;
+  // Fato aprovado inequívoco: se a geração/revisão falhar, mostra o texto aprovado em vez de cair no fluxo antigo.
+  let reservaDireta=null;
   signalEntrada?.addEventListener('abort',abortar,{once:true});if(signalEntrada?.aborted)controller.abort();
   try{
    const entradaFila=Date.now();
@@ -93,6 +95,10 @@ export function criarGeminiCurado({registros,contatos,lerChave,modelo=process.en
     if(resultado.esclarecimento)return {texto:resultado.esclarecimento,tipo:'esclarecimento',modo:resultado.modo};
     const selected=resultado.selecionados.map(x=>x.registro).filter(x=>!filtro(x.resposta,'documento'));
     if(!selected.length){if(resultado.diagnostico?.embedding.estado==='falha')throw Error('BUSCA_INDISPONIVEL');return {texto:politica.fallback(),tipo:'sem_evidencia',modo:resultado.modo};}
+    // Inequívoco = pergunta igual a uma pergunta/variação aprovada, ou confiança alta com folga sobre o segundo.
+    const ordem=resultado.selecionados.filter(x=>!filtro(x.registro.resposta,'documento'));
+    const [primeiro,segundo]=ordem;
+    if(!plano.pedirFonte&&primeiro&&(primeiro.exact||primeiro.confianca>=.6&&(!segundo||primeiro.confianca-segundo.confianca>=.05)))reservaDireta={texto:primeiro.registro.resposta,tipo:'curado_direto',modo:resultado.modo,ids:[primeiro.registro.id]};
     if(plano.pedirFonte){
      const citado=selected[0];
      const refs=citado.fonte.filter(f=>/^https:\/\//.test(f.url||'')).map(f=>(f.referencia||'Página oficial da escola')+(f.paginas?.length?' (p. '+f.paginas.join(', ')+')':'')+' — '+f.url);
@@ -137,8 +143,10 @@ export function criarGeminiCurado({registros,contatos,lerChave,modelo=process.en
   }catch(e){
    const codigo=controller.signal.aborted?(signalEntrada?.aborted?'CANCELADO':'TIMEOUT'):/^HTTP_\d+$/.test(e.message)?e.message:['NAO_SUSTENTADA','LINGUAGEM','FORMATO','NUMERO_OU_DADO_NAO_SUSTENTADO','CHAVE_AUSENTE','BUSCA_INDISPONIVEL','PROVEDOR_TIMEOUT'].includes(e.message)?e.message:'PROVEDOR_INDISPONIVEL';
    log('FALHA',{codigo,ms:Date.now()-started});
+   // A falha continua falha; a reserva só é anexada para o servidor decidir (ver motor-curado.cjs).
+   const reserva=reservaDireta&&!signalEntrada?.aborted&&!['CHAVE_AUSENTE','BUSCA_INDISPONIVEL','CANCELADO'].includes(codigo)?reservaDireta:undefined;
    const texto=codigo==='HTTP_429'?'A IA atingiu um limite de uso. Aguarde antes de tentar novamente.':codigo==='TIMEOUT'||codigo==='PROVEDOR_TIMEOUT'?'A resposta demorou mais que o esperado. Você pode tentar novamente.':'Não consegui concluir uma resposta segura agora. Você pode tentar novamente.';
-   return {texto,tipo:'falha',codigo,retentavel:true,tentarEmSegundos:codigo==='HTTP_429'?30:2,ms:Date.now()-started};
+   return {texto,tipo:'falha',codigo,retentavel:true,tentarEmSegundos:codigo==='HTTP_429'?30:2,ms:Date.now()-started,...(reserva?{reserva}:{})};
   }
   finally{clearTimeout(timer);signalEntrada?.removeEventListener('abort',abortar);liberar?.();}
  }
