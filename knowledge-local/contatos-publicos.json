@@ -134,5 +134,21 @@
     },
     "apoioFolder": [],
     "observacao": null
+  },
+  {
+    "id": "telefone-fixo",
+    "valor": "(16) 3382-6878",
+    "digitos": "1633826878",
+    "status": "aprovado",
+    "fonte": {
+      "tipo": "site_oficial",
+      "url": "https://etecmatao.cps.sp.gov.br/contato/",
+      "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+      "evidencia": "ixo: Telefone/WhatsApp Secretaria Acadêmica: (16) 99637-1226 (WhatsApp) Orientação E Apoio Educacional: (16)99716-1071 (WhatsApp) Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.",
+      "conferidoEm": "2026-11-12T13:13:31.867Z",
+      "coletaDeclaradaNosMateriais": "2026-11-11"
+    },
+    "apoioFolder": [],
+    "observacao": "Telefone fixo publicado na página de contato da escola. O portal do Vestibulinho mostra (16) 3383-9200 para a unidade; prevalece a página da escola."
   }
 ]

@@ -120,6 +120,10 @@ test('limite em todos os modelos: híbrido usa o fluxo; curado vira erro recuper
 
 test('Regimento com moderação: uma menção sustentada pelo fato passa; excesso ou sem apoio é barrado', async () => {
     const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    // Fato sintético que cita o Regimento: a base real pode deixar de citá-lo sem invalidar a regra.
+    const registros = base.registros.map(r => r.id === 'tecnico-concomitante'
+        ? {...r, resposta: r.resposta + ' Sobre outro ponto, o Regimento não traz uma regra.'} : r);
+    const baseRegimento = {...base, registros, vetores: {...base.vetores, hash: hashIndice(registros)}};
     const casos = [
         {comRegimento: true, resposta: 'Pode fazer junto com o ensino médio. Sobre dois cursos técnicos, o Regimento não traz uma regra e a Secretaria confirma.', esperado: 'gemini_curado'},
         {comRegimento: true, resposta: 'O Regimento permite a forma concomitante. O Regimento não traz regra para dois cursos.', esperado: 'LINGUAGEM'},
@@ -135,7 +139,7 @@ test('Regimento com moderação: uma menção sustentada pelo fato passa; excess
             assert.ok(fato, 'a busca precisa trazer um fato ' + (caso.comRegimento ? 'com' : 'sem') + ' Regimento');
             return gerado({resposta: caso.resposta, ids: [fato.id]});
         };
-        const m = criarGeminiCurado({...base, lerChave: () => 'chave-sintetica', transporte, modelo: 'gemini-a', modeloReserva: ''});
+        const m = criarGeminiCurado({...baseRegimento, lerChave: () => 'chave-sintetica', transporte, modelo: 'gemini-a', modeloReserva: ''});
         const r = await m.responder({pergunta: caso.pergunta || 'Posso fazer o curso técnico junto com o ensino médio, ou dois cursos técnicos ao mesmo tempo?'});
         assert.equal(r.tipo === 'falha' ? r.codigo : r.tipo, caso.esperado, caso.resposta);
     }
@@ -264,7 +268,8 @@ test('rota visitante: usa o motor curado e só chama o fluxo antigo quando receb
 });
 
 test('rota visitante: pergunta sem palavra-chave tenta o motor; sem fato, mantém o esclarecimento sem fluxo', async () => {
-    const pergunta = 'Posso fazer o técnico junto com o ensino médio?';
+    // Frase sem termo escolar reconhecido pela classificação local (continua "ambígua").
+    const pergunta = 'Dá para fazer as duas coisas juntas?';
     let a = antigo();
     let r = await visitante({...a, responderVisitante: async () => 'Sim, na forma concomitante.'}, pergunta);
     assert.equal(r.body.resposta, 'Sim, na forma concomitante.');

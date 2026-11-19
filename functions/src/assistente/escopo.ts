@@ -29,7 +29,7 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
     .replace(/\s+/gu, " ").trim() : "";
   // Objetivos externos prevalecem sobre mencoes institucionais incidentais.
   // eslint-disable-next-line max-len
-  const externo = /(?:ignore|desconsidere|esqueca|substitua).{0,100}(?:instruc|regras|papel|sistema)|(?:aja|responda|atue).{0,40}(?:chatgpt|sem restric)|(?:valor|digitos|numero).{0,15}\bpi\b|\bpi\s*\?|\d\s*[+*/=]\s*\d|(?:quanto e|calcule|resolva).{0,50}\d|(?:crie|escreva|gere|implemente|ensine|explique|faca|produza).{0,70}(?:python|codigo|jogo|programa|algoritmo|poema|piada|receita|equacao|matematica)|(?:quem|qual).{0,40}(?:ganhou|venceu).{0,40}(?:copa|mundial)|(?:conte|explique|ensine).{0,50}(?:historia geral|revolucao francesa|segunda guerra)|(?:traduza|traduce|translate)|(?:capital|presidente) d[oa]/u;
+  const externo = /(?:ignore|desconsidere|esqueca|substitua).{0,100}(?:instruc|regras|papel|sistema)|(?:aja|responda|atue).{0,40}(?:chatgpt|sem restric)|(?:valor|digitos|numero).{0,15}\bpi\b|\bpi\s*\?|\d\s*[+*/=]\s*\d|(?:quanto e|calcule|resolva).{0,50}\d|(?:crie|escreva|gere|implemente|ensine|explique|faca|produza).{0,70}(?:python|codigo|jogo|programa|algoritmo|poema|piada|receita|equacao|matematica)|(?:quem|qual).{0,40}(?:ganhou|venceu).{0,40}(?:copa|mundial)|(?:conte|explique|ensine).{0,50}(?:historia geral|revolucao francesa|segunda guerra)|(?:traduza|traduce|translate)|(?:capital|presidente) d[oa]|\b(?:faz|faca|resolve|resolva)\b.{0,20}\b(?:meu|minha)\s+(?:trabalho|tarefa|licao|dever|exercicio|redacao|atividade)/u;
   if (externo.test(n)) {
     return {categoria: "fora_escopo", resposta: FORA_ESCOPO};
   }
@@ -45,7 +45,7 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
   }
   // Dominio positivo de servicos, nao permissao por nome da escola isolado.
   // eslint-disable-next-line max-len
-  const servico = /\b(?:rg|cpf|presenca minima|assiduidade minima|e-mail|email|telefone|matricula|rematricula|inscric(?:ao|oes)|vestibulinho|secretaria|frequencia|faltas|calendario|horarios?|cursos?|documentos?|declarac(?:ao|oes)|diploma|certificado|historico escolar|transferencia|trancamento|estagio|regimento|normas|biblioteca|bolsa|merenda|atendimento|uniforme|transporte escolar|reuniao|conselho de classe|recuperacao|segunda chamada|notas|boletim|aproveitamento)\b/u;
+  const servico = /\b(?:rg|cpf|presenca minima|assiduidade minima|e-mail|email|telefone|matricula|rematricula|inscric(?:ao|oes)|vestibulinho|secretaria|frequencia|faltas|calendario|horarios?|cursos?|documentos?|declarac(?:ao|oes)|diploma|certificado|historico escolar|transferencia|trancamento|estagio|regimento|normas|biblioteca|bolsa|merenda|atendimento|uniforme|transporte escolar|reuniao|conselho de classe|recuperacao|segunda chamada|notas|boletim|aproveitamento|mencao|mencoes|conceitos?|falta|faltei|atestado|doenca|aulas?|atrasad[oa]s?|professor(?:a|es)?|diretor(?:a)?|direcao|coordenador(?:a)?|coordenacao|orientador(?:a)?|orientacao|laboratorios?|refeitorio|quadra|gremio|apm|tcc|provas?|gabarito|feriados?|recesso|ferias|tecnico|m-?tec|ensino medio|modulos?|semestres?|turnos?|turmas?|taxa|pix|boleto|isencao|pontuacao acrescida|treineiro|pcd|fatec|reprovar|reprovei|reprovado|aprovado)\b/u;
   // eslint-disable-next-line max-len
   const institucional = /(?:onde fica|endereco|telefone|contato|email|historia|quem (?:e|foi)|sobre).{0,60}(?:etec|escola|sylvio|sylvinho)|(?:etec|escola).{0,60}(?:endereco|telefone|contato|email|funciona|fundada)/u;
   if (servico.test(n) || institucional.test(n) ||

@@ -1827,7 +1827,12 @@
       "inicio das aulas 2026",
       "primeiro dia de aula 2026",
       "aula comecou dia quatro",
-      "aulas fevereiro 2026"
+      "aulas fevereiro 2026",
+      "quando comecam as aulas",
+      "quando comecam as aulas em 2026",
+      "quando comeca o ano letivo",
+      "quando voltam as aulas",
+      "quando comecaram as aulas"
     ],
     "resposta": "No calendário geral de 2026, as aulas do primeiro semestre começaram em 09/02. O dia 04/02 marcou o início das atividades escolares, não das aulas.",
     "categoria": "calendario",
@@ -1988,9 +1993,12 @@
       "tem tecnico enfermagem",
       "enfermagem existe",
       "duracao enfermagem",
-      "curso tecnico de enfermagem"
+      "curso tecnico de enfermagem",
+      "tem vaga para enfermagem",
+      "vestibulinho enfermagem",
+      "enfermagem 2027"
     ],
-    "resposta": "Sim, Enfermagem aparece no catálogo da escola como curso técnico de 4 semestres. A oferta de vagas e os requisitos para a próxima turma precisam ser confirmados no processo seletivo.",
+    "resposta": "Sim, a escola tem o curso Técnico em Enfermagem, com 4 módulos e estágio supervisionado. No Vestibulinho do 1º semestre de 2027, porém, Enfermagem não aparece entre os cursos oferecidos pela ETEC de Matão. Quando há oferta, o curso exige 18 anos completos, e a turma noturna tem aulas práticas aos sábados.",
     "categoria": "cursos",
     "aplicaSe": {
       "cursos": [
@@ -2008,8 +2016,8 @@
     "quemConfirmou": {
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
-      "data": "2026-11-12",
-      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria."
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Atualizada em 19/11/2026: oferta do 1º semestre de 2027 conferida na página da unidade no portal do Vestibulinho."
     },
     "fonte": [
       {
@@ -2019,10 +2027,55 @@
         "evidencia": "emas Técnico em Eletrotécnica Técnico em Mecânica Técnico em Enfermagem Especialização Profissional Especialização Profissional Técnica em Urgência e Emergência – APH (Atendimento Pré-Hospitalar) Centro de Memórias Apresentação Equipe Galeria de fotos Relatório Documental Eventos e Links I\nm Enfermagem ● Técnico Modular ● Ambiente e Saúde 1902 hrs 4 semestres O TÉCNICO EM ENFERMAGEM é o profissional que atua na promoção, prevenção, recuperação e reabilitação dos processos saúde-doença. Colabora com o atendimento das necessidades de saúde do paciente/cliente, família e comuni",
         "conferidoEm": "2026-11-12T13:13:32.209Z",
         "coletaDeclaradaNosMateriais": "2026-11-11"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "O curso de TÉCNICO EM ENFERMAGEM acha-se estruturado em quatro módulos sequenciais",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "das quais 654 horas serão de estágio supervisionado",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "Os primeiro e segundo módulos corresponderão à Qualificação Profissional de AUXILIAR DE ENFERMAGEM",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Cursos oferecidos",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. Para os cursos de Técnico em Enfermagem, Técnico em Serviços de Restaurante e Bar e Técnico em Viticultura e Enologia, o candidato deverá ter 18 anos completos até 31/01/2027.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 4,
@@ -2399,9 +2452,12 @@
       "estudar em dois cursos na etec",
       "fazer duas matriculas",
       "tecnico concomitante",
-      "cursar dois tecnicos ao mesmo tempo"
+      "cursar dois tecnicos ao mesmo tempo",
+      "posso fazer etec e fatec",
+      "dois tecnicos no mesmo turno",
+      "duas turmas de ensino medio"
     ],
-    "resposta": "Sim, o curso técnico pode ser feito ao mesmo tempo que o ensino médio, na forma concomitante. Para entrar no primeiro módulo do técnico, é preciso ser classificado no processo seletivo e já ter concluído o ensino médio ou estar matriculado na 2ª ou 3ª série. Sobre fazer dois cursos técnicos ao mesmo tempo, o Regimento não traz uma regra; a Secretaria confirma.",
+    "resposta": "Sim, o curso técnico pode ser feito ao mesmo tempo que o ensino médio, na forma concomitante. Para entrar no primeiro módulo do técnico, é preciso ser classificado no processo seletivo e já ter concluído o ensino médio ou estar matriculado na 2ª ou 3ª série. Também é possível estar matriculado em dois cursos técnicos, ou na ETEC e na Fatec, desde que os horários não coincidam; se as vagas forem no mesmo turno, é preciso escolher uma. Em duas turmas de Ensino Médio não é permitido.",
     "categoria": "matricula",
     "aplicaSe": {
       "cursos": [],
@@ -2417,8 +2473,8 @@
     "quemConfirmou": {
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
-      "data": "2026-11-16",
-      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Dois técnicos simultâneos: sem regra no Regimento, pendente de confirmação da Secretaria."
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Dois técnicos simultâneos: sem regra no Regimento, pendente de confirmação da Secretaria. Atualizada em 19/11/2026 com as Dúvidas Frequentes do Vestibulinho (dois cursos técnicos)."
     },
     "fonte": [
       {
@@ -2444,10 +2500,37 @@
         "evidencia": "Artigo 66 - São condições para matrícula no ensino técnico concomitante subsequente: I- no primeiro módulo: a) ter sido classificado no processo seletivo, de acordo com o número de vagas, assegurado o direito dos alunos retidos e com trancamento de matrícula, nos termos desse Regimento; e b) ter concluído o Ensino Médio ou estar matriculado na segunda ou terceira séries.",
         "conferidoEm": "2026-11-16",
         "semCertificacaoDeAlteracoesPosteriores": true
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim, desde que não exista coincidência de horários entre os cursos. Se as vagas forem no mesmo turno, o candidato deverá optar por uma delas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. A matrícula simultânea é permitida desde que os turnos dos cursos não coincidam.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. Se for convocado para mais de uma turma de Ensino Médio, o candidato deverá escolher apenas uma matrícula",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",
-    "versao": 1,
+    "versao": 2,
     "substitui": [],
     "procedimentoLocal": null,
     "prioridade": 1,
@@ -2466,7 +2549,7 @@
       "horario das aulas a noite",
       "horario das aulas do tecnico"
     ],
-    "resposta": "Sim, há cursos à noite. O Ensino Médio com Habilitação Profissional em Mecatrônica tem turma noturna (M-Tec-N), com aulas das 18h40 às 22h40. Os cursos técnicos do período noturno têm aulas das 19h às 23h. O Técnico em Enfermagem é de manhã, das 7h10 às 12h30. Quais cursos abrem turma em cada turno depende da oferta do Vestibulinho do semestre, e os horários do ano atual a Secretaria confirma.",
+    "resposta": "Sim, há cursos à noite. No Vestibulinho do 1º semestre de 2027, a ETEC oferece à noite os técnicos em Administração, Eletrotécnica, Mecânica e Programação de Jogos Digitais e a Especialização em Saúde do Trabalhador. Os cursos técnicos do período noturno têm aulas das 19h às 23h, e o M-Tec noturno, quando há turma, das 18h40 às 22h40. Os horários do ano atual a Secretaria confirma.",
     "categoria": "cursos",
     "aplicaSe": {
       "cursos": [],
@@ -2475,15 +2558,15 @@
     },
     "vigencia": {
       "inicio": null,
-      "fim": "2027-12-31",
+      "fim": "2027-02-28",
       "ano": null,
-      "revisarEm": "2027-02-01"
+      "revisarEm": "2027-01-15"
     },
     "quemConfirmou": {
       "tipo": "conferencia_fonte_primaria",
       "responsavel": "curadoria local assistida",
-      "data": "2026-11-16",
-      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Horários do Regimento interno 2021-2024 (revisão 26/02/2024); curso noturno atual conferido no site em 16/11/2026. Turnos de cada técnico no próximo Vestibulinho e horários de 2026/2027 pendentes de confirmação da Secretaria."
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência; não é confirmação telefônica da Secretaria. Horários do Regimento interno 2021-2024 (revisão 26/02/2024); curso noturno atual conferido no site em 16/11/2026. Turnos de cada técnico no próximo Vestibulinho e horários de 2026/2027 pendentes de confirmação da Secretaria. Atualizada em 19/11/2026 com a oferta noturna do 1º semestre de 2027."
     },
     "fonte": [
       {
@@ -2503,6 +2586,1971 @@
         "sha256": "176a55b56560f5d3be9c8a9b8d2a72011032d955b915628b45f3df26c6599df1",
         "evidencia": "Ensino Médio com Habilitação Profissional em Mecatrônica M-Tec-N (Noturno)",
         "conferidoEm": "2026-11-16"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Programação de Jogos Digitais",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Especialização em Saúde do Trabalhador",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 2,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-como-funciona",
+    "pergunta": "Como funciona o Vestibulinho e como faço a inscrição?",
+    "variacoes": [
+      "como funciona o vestibulinho",
+      "como faco o processo seletivo",
+      "como me inscrevo no vestibulinho",
+      "como fazer a inscricao para a prova",
+      "qual o site do vestibulinho",
+      "onde faco a inscricao",
+      "como entrar na etec",
+      "como passar na etec",
+      "inscricao vestibulinho",
+      "processo seletivo etec"
+    ],
+    "resposta": "O Vestibulinho é o processo seletivo para entrar na ETEC. A inscrição é feita somente pela internet, no site vestibulinho.etec.sp.gov.br, com o CPF do próprio candidato. Quem não tem acesso à internet pode usar um computador em uma Etec. A taxa é de R$ 50,00 por inscrição, e é possível fazer até 5 inscrições para cursos diferentes. Depois vem uma prova de 50 questões objetivas, a classificação por nota e a convocação para matrícula até o limite de vagas. Para o 1º semestre de 2027, as inscrições já encerraram em 10/11/2026.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Regras do processo do 1º semestre de 2027."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "As inscrições para o Vestibulinho Etec do 1º semestre de 2027 serão realizadas de 02/09/2026 até as 20h do dia 10/11/2026(prorrogadas), exclusivamente pelo site vestibulinho.etec.sp.gov.br.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A inscrição será realizada somente pela internet. O candidato que não possuir acesso à internet poderá comparecer a uma Etec para utilizar um terminal de computador, nas datas e horários definidos pela própria unidade.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. A inscrição exige o CPF do próprio candidato.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. O candidato poderá realizar até 5 inscrições distintas para concorrer a cursos diferentes. Cada nova inscrição deverá ser preenchida separadamente e terá sua própria taxa.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A prova terá 50 questões objetivas, cada uma com 5 alternativas, sendo apenas uma correta.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A classificação apenas posiciona o candidato na lista. A convocação para matrícula ocorrerá em ordem decrescente de nota e até o limite das vagas disponíveis.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-taxa-pagamento",
+    "pergunta": "Quanto custa a inscrição do Vestibulinho e como pago?",
+    "variacoes": [
+      "valor da taxa do vestibulinho",
+      "quanto custa o vestibulinho",
+      "posso pagar com pix",
+      "como pagar a inscricao",
+      "boleto do vestibulinho",
+      "devolucao da taxa",
+      "reembolso da inscricao"
+    ],
+    "resposta": "A taxa do Vestibulinho do 1º semestre de 2027 é de R$ 50,00 por inscrição. O pagamento pode ser feito por boleto bancário, em agência ou internet banking, ou com cartão de crédito pelo site do Vestibulinho. PIX, transferência e depósito não são aceitos. A inscrição só vale depois da confirmação do pagamento, e a taxa não é devolvida em caso de desistência.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A taxa de inscrição do Vestibulinho Etec do 1º semestre de 2027 será de R$ 50,00 por inscrição.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O pagamento poderá ser feito por boleto bancário, em agência ou por internet banking, ou com cartão de crédito pela ferramenta Getnet disponibilizada no site do Vestibulinho.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. PIX não será aceito como forma de comprovação do pagamento da taxa. Também não serão aceitos transferência eletrônica, TED, depósito comum",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A inscrição somente será efetivada depois que o pagamento for realizado dentro do prazo e houver confirmação da quitação pela rede bancária.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A taxa não será devolvida por desistência, pagamento em duplicidade ou pagamento a maior.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-reducao-taxa",
+    "pergunta": "Tem isenção ou desconto na taxa do Vestibulinho?",
+    "variacoes": [
+      "isencao da taxa do vestibulinho",
+      "desconto na inscricao",
+      "reducao da taxa",
+      "vestibulinho de graca",
+      "nao tenho dinheiro para a inscricao",
+      "meia taxa vestibulinho"
+    ],
+    "resposta": "Existe redução de 50% da taxa para quem é estudante e, ao mesmo tempo, recebe menos de 2 salários mínimos por mês ou está desempregado. Para o Vestibulinho do 1º semestre de 2027, o pedido era feito de 17/08 a 01/09/2026, pelo site do Vestibulinho, com envio dos comprovantes, e esse prazo já encerrou. O benefício vale só para aquele processo seletivo.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Tem direito à redução de 50% do valor da taxa o candidato que atender, ao mesmo tempo, a dois requisitos: ser estudante regularmente matriculado no Ensino Fundamental, Ensino Médio, curso pré-vestibular, graduação ou pós-graduação; e receber remuneração mensal inferior a 2 salários mínimos ou estar desempregado.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A solicitação poderá ser realizada de 17 de agosto até as 23h59 do dia 1º de setembro de 2026, pelo site do Vestibulinho Etec, na seção \"redução\".",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. O benefício concedido por esta Portaria é válido somente para o Vestibulinho Etec - 1º semestre de 2027.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-dia-da-prova",
+    "pergunta": "O que preciso saber para o dia da prova do Vestibulinho?",
+    "variacoes": [
+      "o que levar na prova do vestibulinho",
+      "horario do portao do vestibulinho",
+      "que horas abre o portao",
+      "posso usar celular na prova",
+      "documento para a prova",
+      "rg digital na prova",
+      "quanto tempo dura a prova",
+      "cheguei atrasado na prova",
+      "quantas questoes tem a prova"
+    ],
+    "resposta": "A prova do 1º semestre de 2027 é em 06/12/2026, às 13h30, com duração de 4 horas. Os portões abrem às 12h30 e fecham às 13h30 em ponto; quem chegar depois não entra e é desclassificado. Leve caneta preta ou azul, lápis nº 2, borracha, régua e um documento de identidade original. RG ou CNH digital valem se mostrados pelo aplicativo oficial, mas impressão do documento digital não vale. Celular deve ficar desligado e smartwatch é proibido. É preciso ficar na sala pelo menos até as 15h30. O local de prova sai a partir de 02/12/2026 no site do Vestibulinho.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2026-12-07",
+      "ano": null,
+      "revisarEm": "2026-12-07"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O exame será realizado no dia 06/12/2026, às 13h30, com duração total de 4 horas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Os portões serão abertos às 12h30 e fechados impreterivelmente às 13h30. Após o fechamento, nenhum candidato poderá entrar.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O candidato deverá levar caneta esferográfica de tinta preta ou azul, lápis preto nº 2, borracha, régua e um documento de identidade original aceito pela Portaria.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. O documento digital será aceito quando apresentado diretamente pelo aplicativo oficial do órgão emissor.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. Documentos digitais impressos não serão aceitos.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. O celular deverá permanecer totalmente desligado durante todo o exame, inclusive sem possibilidade de emissão de alarmes.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. Smartwatch e outros equipamentos eletrônicos vestíveis são proibidos durante o exame.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O candidato deverá permanecer na sala pelo menos até as 15h30.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O local de prova estará disponível a partir de 02/12/2026.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-resultados-2027",
+    "pergunta": "Quando sai o resultado do Vestibulinho e quando é a matrícula?",
+    "variacoes": [
+      "quando sai o gabarito",
+      "resultado do vestibulinho",
+      "classificacao do vestibulinho",
+      "quando e a matricula dos aprovados",
+      "primeira chamada",
+      "segunda chamada",
+      "fui aprovado no vestibulinho e agora",
+      "lista de convocacao"
+    ],
+    "resposta": "Para o 1º semestre de 2027, o gabarito sai em 09/12/2026, a partir das 15h, e a classificação geral em 11/01/2027, a partir das 15h, no site do Vestibulinho. Não há revisão nem vista de prova. A 1ª lista de convocação dos cursos presenciais sai em 13/01/2027, com matrícula em 14 e 15/01/2027; a 2ª lista sai em 20/01/2027, com matrícula em 21 e 22/01/2027. Estar classificado não garante vaga. A lista é divulgada pela Etec, e o e-mail ou SMS serve só como aviso.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O gabarito oficial será divulgado em 09/12/2026, a partir das 15h, no site vestibulinho.etec.sp.gov.br.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A classificação geral será divulgada em 11/01/2027, a partir das 15h, no site do Vestibulinho.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A Portaria estabelece que não haverá revisão nem vista de provas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A 1ª convocação será em 13/01/2027 e a matrícula deverá ser realizada nos dias 14 e 15/01/2027.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A lista será divulgada pela Etec. O candidato também poderá receber e-mail e/ou SMS como alerta, mas essas mensagens são complementares.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário de matrícula do Vestibulinho 1º semestre de 2027",
+        "url": "https://assets.fatvestibulares.com.br/vestibulinhoetec/documentos/1SEM-27/Calendario-Matricula.pdf?v=2027011",
+        "sha256": "35ce9f6be5a87e2277e1a6537b4318cf7062ce52d17e30fa62a4b66f212fae38",
+        "evidencia": "g) Dia 20/01/2027, após as 14h - Convocação para matrícula da 2ª Lista de Convocação, por e-mail e SMS; h) Dias 21 e 22/01/2027 - Matrícula da 2ª Lista de Convocação",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-matricula-regras",
+    "pergunta": "Como é a matrícula de quem passou no Vestibulinho?",
+    "variacoes": [
+      "matricula remota",
+      "posso fazer a matricula por email",
+      "outra pessoa pode fazer minha matricula",
+      "procuracao para matricula",
+      "perdi o prazo da matricula",
+      "matricula condicional vestibulinho",
+      "posso estudar na etec e na fatec"
+    ],
+    "resposta": "Nos cursos presenciais, o classificado maior de 16 anos pode pedir a matrícula de forma remota, enviando os documentos por e-mail, ou ir pessoalmente à Etec. Outra pessoa pode fazer a matrícula com procuração simples. Não existe matrícula condicional: sem os documentos no prazo, a matrícula é indeferida e a vaga vai para o próximo da lista. Quem perde o prazo da chamada perde a vaga naquela chamada, mas o cronograma prevê uma data de recurso. Depois da matrícula virtual, é preciso levar os documentos originais e a foto 3x4 à Secretaria Acadêmica.",
+    "categoria": "matricula",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. Para os cursos presenciais, o candidato classificado maior de 16 anos poderá solicitar a matrícula de forma remota, enviando a documentação por e-mail, ou comparecer presencialmente à Etec.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. Quando o candidato não puder comparecer, a matrícula poderá ser realizada por representante mediante procuração simples.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. O candidato deverá apresentar a documentação exigida dentro do prazo. Não será permitida matrícula condicionada à entrega posterior de documentos.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "A matrícula será indeferida, e a vaga será imediatamente disponibilizada ao próximo candidato da lista de classificação.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O candidato perderá o direito à vaga naquela chamada, e a unidade convocará o próximo classificado.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O cronograma de matrícula prevê datas específicas de recurso para correção, complementação ou envio da documentação, inclusive para candidatos que perderam o prazo inicial da respectiva chamada.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. O candidato deverá apresentar posteriormente os documentos originais e a foto 3x4 na Secretaria Acadêmica da Etec para conferência e validação.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-pontuacao-acrescida",
+    "pergunta": "O que é a pontuação acrescida do Vestibulinho?",
+    "variacoes": [
+      "pontuacao acrescida",
+      "bonus escola publica",
+      "cota no vestibulinho",
+      "afrodescendente vestibulinho",
+      "acrescimo na nota",
+      "estudei em escola publica ganho ponto",
+      "senai conta como escola publica"
+    ],
+    "resposta": "No Vestibulinho, candidatos ao Ensino Médio e ao 1º módulo do técnico podem ter acréscimo na nota final: 3% para quem se declara afrodescendente e 10% para quem cursou todo o 6º ao 9º ano em escola pública, somando 13% quando atende aos dois. Escola particular com bolsa e escolas do Sistema S, como Senai e Sesi, não contam como escola pública. A escolaridade pública é comprovada na matrícula, e quem não comprovar é desclassificado. A Especialização Técnica não tem esse acréscimo.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O benefício é destinado aos candidatos ao Ensino Médio e ao 1º módulo do Ensino Técnico que se declararem afrodescendentes e/ou comprovarem ter cursado integralmente da 5ª à 8ª série ou do 6º ao 9º ano do Ensino Fundamental em escola pública.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O candidato que se declarar afrodescendente terá acréscimo de 3% na nota final.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "terá acréscimo de 10% na nota final.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "receberá acréscimo total de 13% na nota final.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A gratuidade do ensino não transforma uma escola particular em escola pública.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. Instituições vinculadas ao Sistema S, assim como fundações, cooperativas e similares, são consideradas particulares para esse fim, mesmo quando gratuitas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "O candidato será desclassificado e perderá o direito à vaga.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. A nota dos candidatos à Especialização Técnica não recebe Pontuação Acrescida.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-pcd",
+    "pergunta": "Tem vaga reservada ou atendimento especial no Vestibulinho para pessoa com deficiência?",
+    "variacoes": [
+      "vaga pcd",
+      "pessoa com deficiencia vestibulinho",
+      "atendimento diferenciado na prova",
+      "tempo extra na prova",
+      "autismo vestibulinho",
+      "tdah vestibulinho",
+      "dislexia prova",
+      "laudo para o vestibulinho"
+    ],
+    "resposta": "Sim. O Vestibulinho tem reserva de vagas para pessoas com deficiência, e quem opta por ela concorre ao mesmo tempo às vagas reservadas e às de ampla concorrência. Também existe atendimento diferenciado na prova, como para uso de medidor de glicemia ou amamentação. O laudo deve ter no máximo 2 anos, exceto para TEA. TDAH e dislexia não dão direito à reserva de vaga, mas podem garantir atendimento diferenciado. Para o 1º semestre de 2027, os pedidos e recursos já encerraram.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. O Vestibulinho prevê reserva de vagas para pessoas com deficiência.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. O candidato que optar pela reserva de vagas concorrerá simultaneamente às vagas reservadas e às vagas de ampla concorrência.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. O uso de medidor de glicemia está entre as situações que poderão ser analisadas para concessão de atendimento diferenciado",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. A amamentação está entre as situações previstas para análise de atendimento diferenciado",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. Em regra, o laudo deverá ter sido emitido há no máximo 2 anos da data do exame.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. Para candidatos com Transtorno do Espectro Autista - TEA, não será exigido que o laudo tenha sido emitido nos últimos dois anos.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não automaticamente. Para TDAH, Dislexia e outros Transtornos de Aprendizagem, a documentação será analisada exclusivamente para concessão de atendimento diferenciado no exame",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/calendario/",
+        "sha256": "c48617eb22fceadd4a472af4723decaa39214ef918642c054ffa7d982900de93",
+        "evidencia": "Divulgação do resultado do recurso das solicitações da reabertura",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-treineiro",
+    "pergunta": "Posso fazer o Vestibulinho só para treinar?",
+    "variacoes": [
+      "treineiro",
+      "fazer o vestibulinho para treinar",
+      "ainda estou no oitavo ano posso fazer",
+      "vestibulinho como experiencia"
+    ],
+    "resposta": "Sim, como treineiro. É treineiro quem ainda não concluiu o Ensino Fundamental e não tem previsão de concluir em 2026. O treineiro não concorre às vagas, não é convocado para matrícula e tem a classificação divulgada em uma lista separada.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Será considerado treineiro o candidato que queira participar apenas para adquirir experiência, ainda não tenha concluído o Ensino Fundamental ou equivalente e não tenha previsão de concluí-lo em 2026.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Não. O treineiro não concorre às vagas regulares e não será convocado para matrícula.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. A classificação será divulgada em lista específica de treineiros, separada dos candidatos que concorrem às vagas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "cursos-oferta-2027",
+    "pergunta": "Quais cursos a ETEC de Matão oferece no próximo Vestibulinho?",
+    "variacoes": [
+      "quais cursos a etec oferece",
+      "quais cursos tem na etec",
+      "cursos disponiveis",
+      "cursos do vestibulinho em matao",
+      "quantas vagas tem",
+      "tem curso de jogos",
+      "tem curso ead",
+      "cursos online da etec",
+      "lista de cursos"
+    ],
+    "resposta": "No Vestibulinho do 1º semestre de 2027, a ETEC Sylvio de Mattos Carvalho oferece: Ensino Médio com Técnico em Informática para Internet (M-Tec), de manhã (80 vagas) e à tarde (40 vagas); Ensino Médio com Técnico em Mecatrônica (M-Tec), de manhã e à tarde (40 vagas cada); à noite, os técnicos em Administração, Eletrotécnica, Mecânica e Programação de Jogos Digitais e a Especialização em Saúde do Trabalhador (30 vagas cada); e, on-line, Guia de Turismo, Transações Imobiliárias e a Especialização em Gestão de Projetos. A oferta muda a cada semestre.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Vagas e turnos da página da unidade no portal do Vestibulinho (1º semestre de 2027). Turmas em andamento de outros cursos continuam."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Cursos oferecidos",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Ensino Médio com Habilitação Profissional de Técnico em Informática para Internet - M-Tec",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Programação de Jogos Digitais",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Especialização em Saúde do Trabalhador",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Guia de Turismo - EAD",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Transações Imobiliárias - EAD",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Especialização em Gestão de Projetos - EAD",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "idade-minima-tecnico",
+    "pergunta": "Tem idade mínima para fazer curso técnico?",
+    "variacoes": [
+      "idade minima para o tecnico",
+      "qual a idade para fazer enfermagem",
+      "menor de idade pode fazer tecnico",
+      "quantos anos precisa ter",
+      "idade para entrar na etec"
+    ],
+    "resposta": "Para a maioria dos cursos técnicos, o requisito é ter concluído o Ensino Médio ou estar matriculado a partir da 2ª série. Alguns cursos exigem 18 anos completos: no Vestibulinho do 1º semestre de 2027, o Técnico em Enfermagem pede 18 anos até 31/01/2027. Quem tem menos de 16 anos precisa informar um representante legal na inscrição, e a matrícula é feita pelo responsável.",
+    "categoria": "matricula",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Poderá ingressar quem já concluiu o Ensino Médio ou esteja regularmente matriculado a partir da 2ª série do Ensino Médio.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Sim. Para os cursos de Técnico em Enfermagem, Técnico em Serviços de Restaurante e Bar e Técnico em Viticultura e Enologia, o candidato deverá ter 18 anos completos até 31/01/2027.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "Quando o candidato for menor de 16 anos, será obrigatório informar na inscrição o nome e o CPF do representante legal",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "horarios-turnos",
+    "pergunta": "Que horas começam e terminam as aulas do técnico e do M-Tec?",
+    "variacoes": [
+      "que horas comeca a aula do tecnico",
+      "horario das aulas",
+      "que horas comeca a aula do mtec",
+      "horario do periodo da manha",
+      "horario da tarde",
+      "que horas termina a aula",
+      "horario de entrada",
+      "horario de saida",
+      "horario do ensino medio"
+    ],
+    "resposta": "As aulas dos cursos técnicos do período noturno vão das 19h às 23h. O Técnico em Enfermagem de manhã vai das 7h10 às 12h30. No M-Tec, o Ensino Médio com técnico, Mecatrônica e Informática para Internet vão das 7h10 às 12h30 de manhã e das 13h às 18h20 à tarde, e o M-Tec noturno de Mecânica e Mecatrônica vai das 18h40 às 22h40. As turmas de M-Tec Administração em parceria com escolas estaduais têm horários próprios. A Secretaria confirma o horário atual da sua turma.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Tabela do Regimento interno 2021-2024 (revisão 26/02/2024)."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "MTec Integrado – Mecatrônica e Informática para Internet 7h10 12h30 Técnico em Enfermagem",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "Mtec Integrado – Mecatrônica e 13h 18h20 Informática para Internet",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "Mtec Integrado – Mecânica e Mecatrônica 18h40 22h40 Demais Cursos Técnicos 19h 23h",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "dispensa-aula-vaga",
+    "pergunta": "A escola pode liberar os alunos mais cedo?",
+    "variacoes": [
+      "liberaram mais cedo",
+      "falta de professor",
+      "aula vaga",
+      "acabou a energia",
+      "sem agua na escola",
+      "dispensa antes do horario"
+    ],
+    "resposta": "Sim. Em casos extraordinários, como falta de professor, falta de água ou de energia elétrica, os alunos podem ser dispensados antes do horário, sem aviso prévio. Para menores de 18 anos, cabe aos pais orientar que voltem direto para casa, porque a escola não se responsabiliza pelos alunos fora de suas dependências.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "Os alunos poderão ser dispensados das aulas antes do horário previsto de término, sem aviso prévio, em casos extraordinários (falta de professores, falta de abastecimento de água ou de fornecimento de energia elétrica, etc.).",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "pois a Escola não se responsabiliza pelos alunos fora de suas dependências.",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "biblioteca",
+    "pergunta": "Como funciona a biblioteca da ETEC?",
+    "variacoes": [
+      "horario da biblioteca",
+      "emprestimo de livros",
+      "quantos livros posso pegar",
+      "prazo para devolver livro",
+      "atrasei a devolucao do livro",
+      "biblioteca da etec",
+      "posso usar o computador da biblioteca"
+    ],
+    "resposta": "A biblioteca funciona das 8h às 23h, de segunda a sexta. Alunos matriculados já ficam inscritos e podem pegar até 4 livros, revistas ou mídias por 7 dias, apresentando o cartão de identificação. Atrasar a devolução gera 2 dias úteis de suspensão do empréstimo por item e por dia de atraso. Não é permitido entrar com alimentos, bebidas ou mochila no acervo, e o celular deve ficar no silencioso. O uso dos computadores depende de autorização e é de 30 minutos, renováveis.",
+    "categoria": "secretaria",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Tabela de empréstimo: 04 itens por 07 dias para discentes."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento das Bibliotecas do CPS (Portaria CEETEPS-GDS nº 499/2013), publicado pela escola",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/07/regulamento-bibliotecas.pdf",
+        "sha256": "f56d0a3eb775da99e637c363bb3e6d22824e16c9470e57a6039bebd697753cac",
+        "evidencia": "O horário de funcionamento da Biblioteca da Etec Sylvio de Mattos Carvalho é das 8h às 23h, de segunda à sexta-feira.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento das Bibliotecas do CPS (Portaria CEETEPS-GDS nº 499/2013), publicado pela escola",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/07/regulamento-bibliotecas.pdf",
+        "sha256": "f56d0a3eb775da99e637c363bb3e6d22824e16c9470e57a6039bebd697753cac",
+        "evidencia": "Servidores, professores e alunos regularmente admitidos ou matriculados na Unidade estão inscritos automaticamente na biblioteca.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento das Bibliotecas do CPS (Portaria CEETEPS-GDS nº 499/2013), publicado pela escola",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/07/regulamento-bibliotecas.pdf",
+        "sha256": "f56d0a3eb775da99e637c363bb3e6d22824e16c9470e57a6039bebd697753cac",
+        "evidencia": "empréstimo domiciliar: aplica-se dois (2) dias úteis de suspensão ao serviço de empréstimo por item e por dia em atraso.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento das Bibliotecas do CPS (Portaria CEETEPS-GDS nº 499/2013), publicado pela escola",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/07/regulamento-bibliotecas.pdf",
+        "sha256": "f56d0a3eb775da99e637c363bb3e6d22824e16c9470e57a6039bebd697753cac",
+        "evidencia": "O tempo concedido para o uso dos computadores é de 30 minutos, renováveis segundo critério adotado pela biblioteca da Unidade de Ensino.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento das Bibliotecas do CPS (Portaria CEETEPS-GDS nº 499/2013), publicado pela escola",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/07/regulamento-bibliotecas.pdf",
+        "sha256": "f56d0a3eb775da99e637c363bb3e6d22824e16c9470e57a6039bebd697753cac",
+        "evidencia": "entrar com alimentos e bebidas",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "laboratorios-regras",
+    "pergunta": "Quais são as regras dos laboratórios?",
+    "variacoes": [
+      "regras do laboratorio",
+      "roupa para o laboratorio",
+      "pode entrar de bermuda no laboratorio",
+      "posso usar celular no laboratorio",
+      "oculos de seguranca",
+      "laboratorio de mecanica roupa",
+      "lente de contato no laboratorio"
+    ],
+    "resposta": "O aluno só entra no laboratório com o professor responsável. É proibido entrar com comida ou bebida e usar celular, notebook ou tablet. Nos laboratórios da área industrial, é obrigatório usar calça comprida, a camiseta do uniforme e calçado fechado, sem adornos como boné, colar ou relógio, e com o cabelo comprido preso; óculos de segurança e protetor auricular são usados conforme o laboratório, e lente de contato não é permitida. Quem não estiver trajado adequadamente não entra e fica com falta. Danos causados por intenção ou imprudência devem ser ressarcidos pelo aluno.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento do Uso dos Laboratórios (aprovado pelo Conselho de Escola em 08/04/2019)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regulamento-dos-Laboratorios-Aprovado-pelo-CE-08-04-2019-Folder.pdf",
+        "sha256": "0e7d9b09253ec1967a449a14e4f277611bc611963fee6f191be9b2d3f082f83e",
+        "evidencia": "O acesso de alunos aos laboratórios somente será permitido com a presença do professor responsável;",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento do Uso dos Laboratórios (aprovado pelo Conselho de Escola em 08/04/2019)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regulamento-dos-Laboratorios-Aprovado-pelo-CE-08-04-2019-Folder.pdf",
+        "sha256": "0e7d9b09253ec1967a449a14e4f277611bc611963fee6f191be9b2d3f082f83e",
+        "evidencia": "É proibido o uso de aparelhos telefônicos e eletroeletrônicos portáteis",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento do Uso dos Laboratórios (aprovado pelo Conselho de Escola em 08/04/2019)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regulamento-dos-Laboratorios-Aprovado-pelo-CE-08-04-2019-Folder.pdf",
+        "sha256": "0e7d9b09253ec1967a449a14e4f277611bc611963fee6f191be9b2d3f082f83e",
+        "evidencia": "o acesso ao laboratório somente será permitido aos alunos devidamente vestidos com calça comprida, camiseta uniforme, calçado fechado (tênis ou sapato), sem nenhum adorno (boné, colar, pulseira, anel, relógio de pulso, etc.), e com os cabelos compridos presos.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento do Uso dos Laboratórios (aprovado pelo Conselho de Escola em 08/04/2019)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regulamento-dos-Laboratorios-Aprovado-pelo-CE-08-04-2019-Folder.pdf",
+        "sha256": "0e7d9b09253ec1967a449a14e4f277611bc611963fee6f191be9b2d3f082f83e",
+        "evidencia": "O aluno que não estiver devidamente trajado será impedido de entrar no laboratório e ficará com falta. Não é permitido o uso de lentes de contato.",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regulamento do Uso dos Laboratórios (aprovado pelo Conselho de Escola em 08/04/2019)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regulamento-dos-Laboratorios-Aprovado-pelo-CE-08-04-2019-Folder.pdf",
+        "sha256": "0e7d9b09253ec1967a449a14e4f277611bc611963fee6f191be9b2d3f082f83e",
+        "evidencia": "o aluno responsável deverá arcar com seu ressarcimento.",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "prazos-fim-2026",
+    "pergunta": "Quando acabam as aulas e qual o prazo para contestar o resultado final em 2026?",
+    "variacoes": [
+      "quando acabam as aulas",
+      "ultimo dia de aula",
+      "fim do semestre",
+      "prazo para reconsideracao",
+      "prazo para recurso da nota final",
+      "reclassificacao prazo",
+      "quando entregam o boletim final"
+    ],
+    "resposta": "No calendário de 2026, o 2º semestre termina em 21/12/2026. Os resultados finais são entregues em 15 e 16/12 e divulgados em 23/12/2026. Os pedidos de reconsideração e de reclassificação do resultado final podem ser protocolados de 23/12/2026 a 04/01/2027. O recurso pode ser apresentado em até 10 dias depois do resultado do pedido de reconsideração.",
+    "categoria": "calendario",
+    "aplicaSe": {
+      "cursos": [
+        "administracao",
+        "administracao-mtec",
+        "eletrotecnica",
+        "informatica",
+        "informatica-para-internet",
+        "logistica",
+        "mecanica",
+        "mecatronica"
+      ],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-01-10",
+      "ano": null,
+      "revisarEm": "2027-01-05"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "21 - Fim das Aulas 2º Semestre",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "15 a 16 - Entrega dos Resultados Finais 4º Bimestre (Anual)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "o prazo para o aluno e/ou responsável protocolar o pedido de reconsideração será de 23/12/2026 a 04/01/2027. Prazo de solicitação de Recurso: 10 dias após o resultado do pedido de reconsideração",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "o prazo para o aluno e/ou responsável protocolar o pedido de reclassificação será de 23/12/2026 a 04/01/2027",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 1,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "aproveitamento-estudos",
+    "pergunta": "Posso aproveitar matérias ou experiência que já tenho?",
+    "variacoes": [
+      "aproveitar materias",
+      "aproveitamento de estudos",
+      "eliminar materia",
+      "ja fiz essa materia em outro curso",
+      "dispensa de disciplina",
+      "experiencia de trabalho conta",
+      "certificacao de competencias"
+    ],
+    "resposta": "Sim, a escola pode avaliar e reconhecer competências de componentes ou cursos concluídos com aproveitamento, em outra escola ou na própria ETEC, de estudos fora do ensino formal e da experiência de trabalho. No calendário de 2026, os pedidos de aproveitamento foram de 23 a 27/03 e, para cursos semestrais, de 10 a 14/08. A Secretaria orienta como fazer o pedido no próximo período.",
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": {
+      "cursos": [
+        "administracao",
+        "administracao-mtec",
+        "eletrotecnica",
+        "informatica",
+        "informatica-para-internet",
+        "logistica",
+        "mecanica",
+        "mecatronica"
+      ],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "dbc3b9e4782bb9553124de982d897ad79523e003b9ea7e943a18563fe2f11075",
+        "paginas": [
+          1
+        ],
+        "evidencia": "as Unidades ETEC poderão avaliar, reconhecer e certificar competências adquiridas pelo interessado: I – em componentes curriculares ou cursos, concluídos com aproveitamento e devidamente comprovados, na própria escola ou em outras escolas; II – em estudos realizados fora do sistema formal de ensino; III - no trabalho ou na experiência extraescolar;",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "23 a 27 - Solicitação de Aproveitamentos (Anual)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "10 a 14 - Solicitação de Aproveitamentos (Semestral)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "feriados-fim-2026",
+    "pergunta": "Quais feriados e dias sem aula ainda tem em 2026?",
+    "variacoes": [
+      "tem aula no feriado",
+      "feriado de novembro",
+      "tem aula dia 20 de novembro",
+      "consciencia negra tem aula",
+      "feriados de dezembro",
+      "proximo feriado"
+    ],
+    "resposta": "No calendário de 2026, ainda há o feriado de 20/11 (Dia Nacional da Consciência Negra), o recesso escolar de 24 a 31/12 e o feriado de Natal em 25/12. As aulas do 2º semestre terminam em 21/12/2026.",
+    "categoria": "calendario",
+    "aplicaSe": {
+      "cursos": [
+        "administracao",
+        "administracao-mtec",
+        "eletrotecnica",
+        "informatica",
+        "informatica-para-internet",
+        "logistica",
+        "mecanica",
+        "mecatronica"
+      ],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2026-12-31",
+      "ano": null,
+      "revisarEm": "2026-12-31"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Datas do Calendário Escolar Geral 2026; valem para os cursos listados nele."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "20 - Feriado Nacional (Dia Nacional da Consciência Negra)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "24 a 31 - Recesso Escolar 25 - Feriado Nacional (Natal)",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário Escolar 2026 — alterado em 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "eb391dfc6c620482a13d7531fa7c56d5e9223f285a8e3325cdb9a98a4faf29c7",
+        "evidencia": "21 - Fim das Aulas 2º Semestre",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "enfermagem-sabado-estagio",
+    "pergunta": "Enfermagem à noite tem aula aos sábados?",
+    "variacoes": [
+      "enfermagem tem aula sabado",
+      "estagio de enfermagem e de dia",
+      "enfermagem noturno sabado",
+      "aula pratica aos sabados"
+    ],
+    "resposta": "Sim. Pelas regras do Vestibulinho, o Técnico em Enfermagem oferecido à noite tem aulas práticas obrigatórias aos sábados, e o estágio supervisionado de Enfermagem é feito obrigatoriamente durante o dia, em todos os módulos.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "o curso de Técnico em Enfermagem, quando oferecido no período noturno, também terá aulas práticas obrigatórias aos sábados; em todos os módulos de Enfermagem, o estágio curricular supervisionado será realizado obrigatoriamente no período diurno.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "direcao-escola",
+    "pergunta": "Quem é o diretor da ETEC?",
+    "variacoes": [
+      "nome do diretor",
+      "quem e a diretora",
+      "diretoria da escola",
+      "quem manda na escola",
+      "diretor academico",
+      "diretora administrativa"
+    ],
+    "resposta": "A diretora da ETEC Sylvio de Mattos Carvalho é a Profa. Ana Claudia Câmara Pereira (e-mail da Diretoria: e103dir@cps.sp.gov.br). O Diretor de Serviços Acadêmicos, responsável pela Secretaria Acadêmica, é Chrystian Fernando Ferreira (e103acad@cps.sp.gov.br), e a Diretora de Serviços é Ariane Cristina de Araújo Parada.",
+    "categoria": "secretaria",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Página Servidores Administrativos, atualizada em 22/01/2026."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/servidores-administrativos/",
+        "sha256": "d2a13e616383d98489998a6cb4eba6161d130550554a347debd176bf92507272",
+        "evidencia": "Ana Claudia Camara Pereira Diretor de Escola Técnica Diretoria e103dir@cps.sp.gov.br",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/servidores-administrativos/",
+        "sha256": "d2a13e616383d98489998a6cb4eba6161d130550554a347debd176bf92507272",
+        "evidencia": "Chrystian Fernando Ferreira Diretor de Serviços Acadêmicos Secretaria Acadêmica e103acad@cps.sp.gov.br",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/servidores-administrativos/",
+        "sha256": "d2a13e616383d98489998a6cb4eba6161d130550554a347debd176bf92507272",
+        "evidencia": "Ariane Cristina de Araújo Parada Diretora de Serviços",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "coordenacao-pedagogica",
+    "pergunta": "Quem são o coordenador pedagógico e o orientador educacional?",
+    "variacoes": [
+      "coordenador pedagogico",
+      "orientador educacional",
+      "orientacao educacional quem e",
+      "com quem falo sobre problema pedagogico",
+      "coordenacao da escola"
+    ],
+    "resposta": "O Coordenador Pedagógico é o Prof. Dr. Carlos Alberto Diniz, e o Orientador Educacional é o Prof. Fernando Prada. A Orientação e Apoio Educacional também atende pelo WhatsApp (16) 99716-1071.",
+    "categoria": "secretaria",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. Página Núcleo Pedagógico, atualizada em 27/01/2026."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/nucleo-pedagogico/",
+        "sha256": "7a1db274c05fde6066630e9f1b2022968edab662f30d453d9d1df2ff3e0e08e7",
+        "evidencia": "Coordenador Pedagógico Prof. Dr. Carlos Alberto Diniz E-mail Institucional: carlos.diniz@etec.sp.gov.br",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/nucleo-pedagogico/",
+        "sha256": "7a1db274c05fde6066630e9f1b2022968edab662f30d453d9d1df2ff3e0e08e7",
+        "evidencia": "Orientador Educacional Prof. Fernando Prada",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "10e182c83b4be97310b8230f46dfd6df2c83b78f1c13d8d19994068b83fac845",
+        "evidencia": "Orientação E Apoio Educacional: (16)99716-1071",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "telefone-escola",
+    "pergunta": "Qual é o telefone da escola?",
+    "variacoes": [
+      "telefone da etec",
+      "telefone fixo",
+      "numero da escola",
+      "ligar para a escola",
+      "contato da etec"
+    ],
+    "resposta": "O telefone fixo da escola é (16) 3382-6878. A Secretaria Acadêmica atende pelo WhatsApp (16) 99637-1226 e a Orientação e Apoio Educacional pelo WhatsApp (16) 99716-1071.",
+    "categoria": "contato",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. O portal do Vestibulinho mostra outro telefone para a unidade, (16) 3383-9200; prevalece o da página de contato da escola."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "10e182c83b4be97310b8230f46dfd6df2c83b78f1c13d8d19994068b83fac845",
+        "evidencia": "Telefone Fixo: (16) 3382-6878",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "10e182c83b4be97310b8230f46dfd6df2c83b78f1c13d8d19994068b83fac845",
+        "evidencia": "Secretaria Acadêmica: (16) 99637-1226",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "infraestrutura",
+    "pergunta": "Como é a estrutura da escola? Tem refeitório, quadra e laboratórios?",
+    "variacoes": [
+      "tem refeitorio",
+      "tem quadra",
+      "tem biblioteca",
+      "quantos laboratorios",
+      "estrutura da escola",
+      "tem estacionamento",
+      "tem auditorio",
+      "tem laboratorio de informatica"
+    ],
+    "resposta": "A escola tem 13 salas de aula com multimídia, 9 laboratórios de informática, oficina mecânica e laboratórios de CNC, robótica e CLP, hidráulica e pneumática, metrologia, eletrônica, elétrica, enfermagem e ciências da natureza, além de sala maker, auditório, biblioteca, quadra poliesportiva coberta, estacionamento e refeitório. Esses dados são da página de infraestrutura da escola, com números de 2024.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. A página não informa se há merenda."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/infraestrutura/",
+        "sha256": "d09ff895ad76c9bf194c968fe423ebc8a2352a6e7b4dc6c45279a0da189d5cde",
+        "evidencia": "Sua estrutura física é composta por 13 salas de aula, equipadas com multimídia (som, computador e TV), 9 laboratórios de informática, 1 oficina mecânica, 1 laboratório de CNC, 1 laboratório de robótica e CLP, 1 laboratório de hidráulica e pneumática",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/infraestrutura/",
+        "sha256": "d09ff895ad76c9bf194c968fe423ebc8a2352a6e7b4dc6c45279a0da189d5cde",
+        "evidencia": "1 laboratório de enfermagem, 1 laboratório de ciências da natureza, 1 sala maker, 1 sala multiuso, 1 auditório, 1 biblioteca, 1 quadra poliesportiva coberta, 1 estacionamento, 1 refeitório",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "cursos-estrutura",
+    "pergunta": "Quanto tempo dura cada curso e quais certificados ele dá?",
+    "variacoes": [
+      "quanto tempo dura o curso",
+      "quantos modulos tem",
+      "quantos semestres",
+      "duracao do tecnico",
+      "certificado intermediario",
+      "qualificacao profissional",
+      "duracao do mtec"
+    ],
+    "resposta": "Os técnicos noturnos são em módulos semestrais. Administração, Desenvolvimento de Sistemas e Eletrotécnica têm 3 módulos, com certificados de qualificação ao longo do curso. Técnico em Enfermagem tem 4 módulos, com 654 horas de estágio, e quem conclui os dois primeiros recebe a qualificação de Auxiliar de Enfermagem. Os M-Tec, de Ensino Médio com técnico, têm 3 séries anuais. O diploma técnico exige ter concluído também o Ensino Médio.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-12-31",
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-19",
+      "nota": "Conferência da evidência na varredura de 19/11/2026; não é confirmação telefônica da Secretaria. A página do Técnico em Mecânica diz \"três módulos\" e cita um módulo IV; por isso Mecânica ficou fora desta resposta."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-administracao/",
+        "sha256": "6363a264fa31ba162bc4656214880d417dd51ffab44893f72f20c0c1c3328816",
+        "evidencia": "O curso de Técnico em Administração é composto por 3 (três) módulos.",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-desenvolvimento-de-sistemas/",
+        "sha256": "97bf9852a2a94bbf01cec44c7e01a39009b0e12b50222ca871a9989f35d9f5d9",
+        "evidencia": "O curso de TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS é composto por 03 (três) módulos.",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-eletrotecnica/",
+        "sha256": "f298718f0198847a01a4310a8ab886fd277173fef59411a2e6b6f14822014278",
+        "evidencia": "O curso de TÉCNICO EM ELETROTÉCNICA é composto por 03 (TRÊS) módulos.",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "O curso de TÉCNICO EM ENFERMAGEM acha-se estruturado em quatro módulos sequenciais",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "das quais 654 horas serão de estágio supervisionado",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/tecnico-em-enfermagem/",
+        "sha256": "b5fd82493709802bc64ecd57c307564fb45c6ef995cfcf744fb919224f628db1",
+        "evidencia": "Os primeiro e segundo módulos corresponderão à Qualificação Profissional de AUXILIAR DE ENFERMAGEM",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/cursos-etec/mecatronica/",
+        "sha256": "da7c09bdae574898e517bb365d040e4ee3bc85d80259890073150def405bad7a",
+        "evidencia": "é composto por três séries anuais articuladas",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
       }
     ],
     "status": "aprovado",

@@ -34,7 +34,7 @@ export function elegivel(r,{hoje=new Date().toISOString().slice(0,10),ano,curso,
  return true;
 }
 export function criarFiltroContatos(contatos){
- const permitidos=new Map([['whatsapp-secretaria','16996371226'],['whatsapp-orientacao','16997161071'],['whatsapp-geral','16991892181'],['email-diretoria','e103dir@cps.sp.gov.br'],['email-administrativa','e103adm@cps.sp.gov.br'],['email-academica','e103acad@cps.sp.gov.br'],['email-apm','e103apm@cps.sp.gov.br']]);
+ const permitidos=new Map([['whatsapp-secretaria','16996371226'],['whatsapp-orientacao','16997161071'],['whatsapp-geral','16991892181'],['telefone-fixo','1633826878'],['email-diretoria','e103dir@cps.sp.gov.br'],['email-administrativa','e103adm@cps.sp.gov.br'],['email-academica','e103acad@cps.sp.gov.br'],['email-apm','e103apm@cps.sp.gov.br']]);
  const ok=contatos.filter(c=>permitidos.get(c.id)===(c.digitos||c.valor)&&c.status==='aprovado'&&c.fonte?.tipo==='site_oficial'&&c.fonte?.url?.startsWith('https://etecmatao.cps.sp.gov.br/')&&/^[a-f0-9]{64}$/.test(c.fonte.sha256||'')&&c.fonte.evidencia);
  return (texto,uso='livre')=>{
   // Nunca libera outras categorias (credencial, instrução, CPF/RA etc.).
@@ -67,7 +67,8 @@ export function criarBuscaCurada({registros,vetores=null,embeddingConsulta=null,
   const ano=pergunta.match(/\b20\d{2}\b/)?.[0]||escopo.ano;
   const qn=normalizar(pergunta);
   const curso=escopo.curso||['enfermagem','logistica','mecatronica','mecanica','eletrotecnica','administracao','desenvolvimento de sistemas'].find(c=>qn.includes(c));
-  const soCalendario=/\brecesso\b|\b(inicio|comec).*\baulas?\b|\baulas?\b.*\b20\d{2}\b/.test(qn);
+  // "Que horas começa a aula" é horário de turno, não data de calendário.
+  const soCalendario=/\brecesso\b|\b(inicio|comec).*\baulas?\b|\baulas?\b.*\b20\d{2}\b/.test(qn)&&!/\b(que horas|horario|horas)\b/.test(qn);
   // Todos os canais recebem somente candidatos já filtrados.
   // Candidatos específicos podem justificar esclarecimento, mas só os que
   // atendem ao escopo declarado podem participar do contexto de geração.
@@ -155,7 +156,7 @@ export function criarPoliticaCurada({contatos}){
   if(contexto.intencao==='canal'||contexto.intencao==='documentos'&&contexto.tema!=='matrícula inicial'||contexto.intencao==='responsavel'&&contexto.tema==='renovação da matrícula')return {direta:fallback(),tipo:'pendente',pergunta:p};
   if(contexto.intencao==='prazo'&&contexto.tema==='renovação da matrícula')return {pergunta:p,categoria:'calendario',tipo:'buscar'};
   // Impede usar respostas vizinhas como resposta para informação operacional ausente.
-  if(/camiseta|uniforme/.test(n)&&/quanto|preco|custa|valor/.test(n)||/merenda|simula etec|biblioteca|jogos digitais|horario.*secretaria|declaracao de matricula|cancel.*matricula|banca|renov.*nsa/.test(n))return {direta:fallback(),tipo:'pendente',pergunta:p};
+  if(/camiseta|uniforme/.test(n)&&/quanto|preco|custa|valor/.test(n)||/merenda|simula etec|horario.*secretaria|declaracao de matricula|cancel.*matricula|banca|renov.*nsa/.test(n))return {direta:fallback(),tipo:'pendente',pergunta:p};
   if(pedirFonte)return {pergunta:p,pedirFonte:true,tipo:'buscar'};
   if(/perder|perdi|atras/.test(n)&&/prazo/.test(n)&&/renov/.test(n))return {pergunta:'Perdi o prazo da renovação, o que faço?',tipo:'buscar'};
   if(/de onde|qual o artigo|onde esta|tem link/.test(n))return {pergunta:/perda do prazo de renovacao/.test(n)?'Perdi o prazo da renovação, o que faço?':p.replace(/.*\(sobre /,'').replace(/\)$/,''),pedirFonte:true,tipo:'buscar'};
