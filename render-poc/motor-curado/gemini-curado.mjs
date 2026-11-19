@@ -98,7 +98,11 @@ export function criarGeminiCurado({registros,contatos,lerChave,modelo=process.en
     // Inequívoco = pergunta igual a uma pergunta/variação aprovada, ou confiança alta com folga sobre o segundo.
     const ordem=resultado.selecionados.filter(x=>!filtro(x.registro.resposta,'documento'));
     const [primeiro,segundo]=ordem;
-    if(!plano.pedirFonte&&primeiro&&(primeiro.exact||primeiro.confianca>=.6&&(!segundo||primeiro.confianca-segundo.confianca>=.05)))reservaDireta={texto:primeiro.registro.resposta,tipo:'curado_direto',modo:resultado.modo,ids:[primeiro.registro.id]};
+    // Empate de confiança: desempata se o primeiro também lidera a busca semântica (folga ≥ 0,05) e a lexical.
+    const lideraSemantica=primeiro&&segundo&&primeiro.sem-Math.max(...ordem.slice(1).map(x=>x.sem))>=.05&&primeiro.bm25>=Math.max(...ordem.slice(1).map(x=>x.bm25));
+    const inequivoco=!plano.pedirFonte&&primeiro&&(primeiro.exact||primeiro.confianca>=.6&&(!segundo||primeiro.confianca-segundo.confianca>=.05||lideraSemantica));
+    if(inequivoco)reservaDireta={texto:primeiro.registro.resposta,tipo:'curado_direto',modo:resultado.modo,ids:[primeiro.registro.id]};
+    log('RESERVA_DIRETA',{criada:Boolean(inequivoco),id:primeiro?.registro.id||null,exato:Boolean(primeiro?.exact),confianca:primeiro?+primeiro.confianca.toFixed(3):null,segunda:segundo?+segundo.confianca.toFixed(3):null});
     if(plano.pedirFonte){
      const citado=selected[0];
      const refs=citado.fonte.filter(f=>/^https:\/\//.test(f.url||'')).map(f=>(f.referencia||'Página oficial da escola')+(f.paginas?.length?' (p. '+f.paginas.join(', ')+')':'')+' — '+f.url);
