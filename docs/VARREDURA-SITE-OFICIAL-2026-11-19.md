@@ -110,6 +110,22 @@ Rodada com as 57 perguntas no chat de visitante de produção.
 
 **Conferência local:** as 6 perguntas com problema passaram a responder certo. Em 4 delas, a resposta direta entrou depois de HTTP 429 ou tempo excedido no Gemini.
 
+**Em produção (`297988c` e `497ed27`):** o Gemini gratuito estava sobrecarregado. Quase todos os modelos da lista responderam 429 ou 503, ou estouraram o tempo. Ajustes nessa fase:
+
+- **Desempate (`497ed27`):** com empate de confiança, a reserva vale quando o primeiro fato também lidera a busca semântica, com folga de 0,05, e a lexical. Esse é o caso de "Qual o telefone da escola?", que empatava com os quatro contatos.
+- **Diagnóstico:** o log `RESERVA_DIRETA` registra se a reserva foi criada (id, exato e confianças, sem o texto da pergunta).
+- **Falso negativo do teste:** testes com `curl` no Git Bash do Windows estragam os acentos ("matérias", "doença"). A pergunta chegava diferente e não casava com a base. Enviadas pelo Node, em UTF-8, as perguntas usam o fato aprovado normalmente. Para testar perguntas com acento, use o script em Node.
+
+Conferidas em produção, com respostas corretas:
+
+- cursos noturnos, sem Enfermagem;
+- resultado do Vestibulinho;
+- telefone;
+- fim das aulas;
+- aproveitamento de estudos;
+- inscrição;
+- falta por doença.
+
 ## Divergências encontradas (para o grupo decidir)
 
 1. **Horário da Secretaria:** o Regimento interno (revisão de 26/02/2024) diz "de segunda à sexta-feira, das 9h às 14h e das 18h30 às 21h". A base mantém o horário da Secretaria como pendente, por decisão anterior. Se o grupo confirmar com a Secretaria, vira uma entrada.
