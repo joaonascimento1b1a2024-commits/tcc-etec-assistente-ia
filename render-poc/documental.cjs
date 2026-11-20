@@ -87,7 +87,7 @@ function criarDependenciasDocumentais(config, { carregar, lerArquivo = readFileS
         const motor = resolverMotor(lerAmbiente());
         console.info('SYLVINHO_MOTOR', JSON.stringify(motor));
         if (motor.efetivo === 'fluxo') return deps;
-        const curado = criarMotorCurado({ modo: motor.efetivo, lerAmbiente,
+        const curado = criarMotorCurado({ modo: motor.efetivo, lerAmbiente, mostrarFontes: true,
             registrar: (codigo, dados) => console.info('SYLVINHO_MOTOR', codigo, JSON.stringify(dados)) });
         return { ...deps, responderConversa: curado.responderConversa, responderVisitante: curado.responderVisitante };
     } catch { throw new Error('DOCUMENTAL_INITIALIZATION_FAILED'); }

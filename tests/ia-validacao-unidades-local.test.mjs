@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {numerosSustentados,criarGeminiCurado} from '../local-e2e/gemini-curado.mjs';
+import {numerosSustentados,criarGeminiCurado} from '../render-poc/motor-curado/gemini-curado.mjs';
 for(const [resposta,fatos] of [
  ['O prazo é 16 dias.','A idade mínima é 16 anos.'],
  ['A frequência mínima é 16%.','A idade mínima é 16 anos.'],

@@ -1,3 +1,6 @@
+
+// Começa a acordar o servidor do assistente assim que a tela abre.
+import('./assistente-config.js').then(({ acordarAssistente }) => acordarAssistente?.()).catch(() => {});
 // ============================================================
 // 1. Elementos da interface
 // ============================================================

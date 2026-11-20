@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {resolverConversaCurada} from '../local-e2e/contexto-curado.mjs';
-import {criarPoliticaCurada} from '../local-e2e/curadoria-local.mjs';
-import {criarGeminiCurado} from '../local-e2e/gemini-curado.mjs';
+import {resolverConversaCurada} from '../render-poc/motor-curado/contexto-curado.mjs';
+import {criarPoliticaCurada} from '../render-poc/motor-curado/curadoria-local.mjs';
+import {criarGeminiCurado} from '../render-poc/motor-curado/gemini-curado.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8'));
 const contatos=JSON.parse(readFileSync('knowledge-local/contatos-publicos.json','utf8'));
 const u=texto=>({remetente:'user',texto}),b=texto=>({remetente:'bot',texto});

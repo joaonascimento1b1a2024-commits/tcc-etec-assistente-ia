@@ -1,18 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {resolverConversaCurada} from '../local-e2e/contexto-curado.mjs';
-import {criarPoliticaCurada} from '../local-e2e/curadoria-local.mjs';
-import {criarCacheRespostas} from '../local-e2e/cache-respostas-curadas.mjs';
-import {criarGeminiCurado} from '../local-e2e/gemini-curado.mjs';
+import {resolverConversaCurada} from '../render-poc/motor-curado/contexto-curado.mjs';
+import {criarPoliticaCurada} from '../render-poc/motor-curado/curadoria-local.mjs';
+import {criarCacheRespostas} from '../render-poc/motor-curado/cache-respostas-curadas.mjs';
+import {criarGeminiCurado} from '../render-poc/motor-curado/gemini-curado.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8')),contatos=JSON.parse(readFileSync('knowledge-local/contatos-publicos.json','utf8'));
 const u=texto=>({remetente:'user',texto}),b=texto=>({remetente:'bot',texto});
 test('acompanhamentos preservam tema e não inventam canal ou lista de renovação',()=>{
  const politica=criarPoliticaCurada({contatos}),hist=[u('Como renovo a matrícula?')];
  assert.match(resolverConversaCurada('onde entrego?',hist).pergunta,/renovação/);
- assert.equal(politica.planejar('onde entrego?',hist).tipo,'pendente');
+ // Canal e responsável na renovação: o passo a passo da rematrícula no NSA tem fonte.
+ assert.deepEqual(politica.planejar('onde entrego?',hist),{pergunta:'Como faço a rematrícula?',tipo:'buscar'});
  assert.equal(politica.planejar('quais documentos?',hist).tipo,'pendente');
- assert.equal(politica.planejar('precisa de responsável?',hist).tipo,'pendente');
+ assert.deepEqual(politica.planejar('precisa de responsável?',hist),{pergunta:'Como faço a rematrícula?',tipo:'buscar'});
  assert.equal(politica.planejar('qual o prazo?',hist).categoria,'calendario');
  assert.equal(politica.planejar('Como faço a matrícula?').tipo,'esclarecimento');
  assert.equal(politica.planejar('qual o artigo?',[u('quanto custa a camiseta?'),b(politica.fallback())]).tipo,'pendente');
@@ -67,7 +68,7 @@ test('cache reutiliza apenas saída revisada, separa contas e invalida mudança 
   calls++;const props=JSON.parse(init.body).generationConfig.responseJsonSchema.properties;
   return http(props.resposta?{resposta:'É preciso ter 75% de presença no total das aulas.',ids:['frequencia']}:{sustentada:true});
  }});
- const pergunta='Preciso de quantos % de presença?',escopo={hoje:'2026-11-12'};
+ const pergunta='De presença, preciso de quantos %?',escopo={hoje:'2026-11-12'};
  const a=await motor.responder({pergunta,escopo,cacheNamespace:'conta-a'});assert.equal(a.tipo,'gemini_curado');assert.equal(calls,2);
  const hit=await motor.responder({pergunta,escopo,historico:[u(pergunta),b(a.texto)],cacheNamespace:'conta-a'});assert.equal(hit.cacheHit,true);assert.equal(calls,2);
  await motor.responder({pergunta,escopo,cacheNamespace:'conta-b'});assert.equal(calls,4);
@@ -77,7 +78,7 @@ test('cache reutiliza apenas saída revisada, separa contas e invalida mudança 
 });
 test('cache não dispensa validação de entrada nem é usado sem namespace autenticado',async()=>{
  let calls=0;const motor=criarGeminiCurado({registros,contatos,lerChave:()=> 'sintetica',transporte:async(_url,init)=>{calls++;return http(JSON.parse(init.body).generationConfig.responseJsonSchema.properties.resposta?{resposta:'Você precisa de 75% de presença.',ids:['frequencia']}:{sustentada:true});}});
- const opts={pergunta:'Preciso de quantos % de presença?',escopo:{hoje:'2026-11-12'}};
+ const opts={pergunta:'De presença, preciso de quantos %?',escopo:{hoje:'2026-11-12'}};
  await motor.responder(opts);await motor.responder(opts);assert.equal(calls,4);
  const r=await motor.responder({...opts,pergunta:'Meu CPF: 123.456.789-01',cacheNamespace:'a'});assert.equal(r.tipo,'entrada_bloqueada');assert.equal(calls,4);
 });

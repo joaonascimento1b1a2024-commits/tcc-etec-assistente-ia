@@ -1,206 +1,86 @@
-# 🤖 Projeto Sylvinho
+# Projeto Sylvinho
 
-## Sobre o Projeto
+Assistente virtual com inteligência artificial para a **Secretaria Acadêmica da ETEC Sylvio de Mattos Carvalho** (Matão/SP). É o Trabalho de Conclusão de Curso de cinco alunos do Ensino Médio com Técnico em Informática para Internet.
 
-O **Projeto Sylvinho** é uma plataforma web desenvolvida como Trabalho de Conclusão de Curso (TCC), com o objetivo de utilizar **Inteligência Artificial** para auxiliar no atendimento da secretaria acadêmica da ETEC Sylvio de Mattos Carvalho.
+- **Site:** https://sylvinho.web.app (Firebase Hosting)
+- **Servidor da IA:** https://sylvinho-backend-poc.onrender.com (Render)
+- **Banco e contas:** Firebase (Authentication e Cloud Firestore), projeto `tcc-ia-d8891`
 
-O sistema funcionará como um assistente virtual capaz de responder dúvidas relacionadas aos procedimentos e informações da instituição, utilizando como fonte uma **base de conhecimento composta por documentos e regras oficiais da escola**.
+O Sylvinho responde dúvidas sobre matrícula, rematrícula, Vestibulinho, cursos, frequência, avaliação, documentos, regras e serviços da escola. As respostas vêm de **fatos aprovados**, conferidos em fontes oficiais. A IA (Google Gemini) ajuda a escrever a resposta, mas não inventa dados. Quando falta confirmação, o Sylvinho indica a Secretaria.
 
-Além do atendimento por IA, a plataforma contará com recursos de autenticação, histórico de conversas, comunicados institucionais e gerenciamento de perfil.
+## Documentação
 
-## 🎯 Objetivo
+| Documento | Para quê |
+| --- | --- |
+| Este README | Visão geral, estrutura de pastas, testes e publicação. |
+| [docs/RELATORIO-TECNICO-IA.md](docs/RELATORIO-TECNICO-IA.md) | Como a IA funciona (modo híbrido), segurança, avaliação e os trechos de código para o relatório técnico e os slides. |
+| [docs/OPERACAO-E-MANUTENCAO.md](docs/OPERACAO-E-MANUTENCAO.md) | Variáveis de ambiente, publicação, administradores, avisos por e-mail, curadoria da base, avaliação e checklist da banca. |
 
-Desenvolver uma plataforma de atendimento automatizado que facilite o acesso dos alunos, responsáveis, professores e demais usuários às informações da secretaria, reduzindo a necessidade de atendimento presencial para dúvidas recorrentes e disponibilizando informações de forma rápida e organizada.
+## Funcionalidades
 
-A IA será desenvolvida para trabalhar especificamente com informações da instituição, evitando que o sistema funcione apenas como um chatbot genérico.
+- **Chat sem login (visitante):** responde na hora e não guarda histórico.
+- **Chat com login:** histórico de conversas por conta, salvo no Firestore. Entende perguntas de acompanhamento, como "e o prazo?".
+- **Cadastro e login:** por e-mail e senha ou com Google, com recuperação de senha.
+- **Mural de avisos:** os administradores publicam, e cada aviso novo gera um e-mail para as contas.
+- **Configurações:** perfil, tema claro ou escuro e, para administradores, publicação de avisos e promoção de outros administradores.
+- **Página Sobre e landing page.**
 
-## 🧠 Inteligência Artificial
-
-O sistema utilizará a técnica de **RAG (Retrieval-Augmented Generation)**.
-
-O funcionamento básico será:
+## Como a IA responde (modo híbrido)
 
 ```text
-Usuário
-   ↓
 Pergunta
-   ↓
-Sistema
-   ↓
-Busca na base de conhecimento
-   ↓
-Recuperação das informações relevantes
-   ↓
-Modelo de Inteligência Artificial
-   ↓
-Resposta contextualizada
-   ↓
-Usuário
+  │
+  ├─ Classificador local (functions/src/assistente/escopo.ts)
+  │     saudação, "quem é você?", fora do escopo ou tentativa de manipular o bot -> resposta fixa
+  │
+  ├─ Motor curado (render-poc/motor-curado/)  ← base de fatos aprovados (knowledge-local/)
+  │     1. bloqueia dados pessoais (CPF, RA, nomes) antes de qualquer chamada externa
+  │     2. busca os fatos mais próximos: palavras (BM25) + significado (embeddings)
+  │     3. pergunta igual a uma pergunta aprovada -> texto aprovado na hora (sem Gemini)
+  │     4. senão: o Gemini escreve com os fatos -> validação por código -> revisão pelo Gemini
+  │     5. Gemini fora do ar -> mostra o texto aprovado do fato mais seguro (reserva)
+  │
+  └─ Sem fato aprovado -> fluxo documental (RAG sobre o Regimento e os documentos no Firestore)
 ```
 
-A base de conhecimento conterá informações oficiais da instituição, como regras, procedimentos, comunicados, calendário acadêmico e orientações da secretaria.
+Detalhes em [docs/RELATORIO-TECNICO-IA.md](docs/RELATORIO-TECNICO-IA.md).
 
-## 🗄️ Banco de Dados
+## Estrutura de pastas
 
-O projeto utilizará o **Firebase**, principalmente o **Cloud Firestore**, como banco de dados NoSQL.
+| Pasta / arquivo | O que tem |
+| --- | --- |
+| `public/` | O site (HTML, CSS e JavaScript), publicado no Firebase Hosting. `Logado/` tem as telas com login (Home/chat, Conversas, Avisos, Serviços e Configurações); `Chat/` é o chat de visitante. |
+| `render-poc/` | Servidor Node.js publicado no **Render**. O nome vem da prova de conceito inicial e foi mantido porque é a pasta configurada no Render. |
+| `render-poc/motor-curado/` | **Motor de IA da base curada:** busca, geração, validação, revisão, fila e cache. |
+| `render-poc/motor-curado.cjs` | Liga o motor ao servidor e decide o modo híbrido. |
+| `functions/src/` | TypeScript compartilhado: rota do chat (`assistente/handler.ts`), visitante, classificador de escopo, fluxo documental (RAG) e Cloud Functions dos avisos por e-mail (`index.ts`, `avisos/`). O Render compila essa pasta no deploy. |
+| `knowledge-local/` | Base curada: `faq-curada.json` (75 fatos aprovados, com fonte e evidência), `contatos-publicos.json` (contatos oficiais permitidos) e `embeddings-curados.json` (índice vetorial). |
+| `scripts/` | Ferramentas: reindexar a base, avaliar o híbrido, procurar segredos no código e as verificações usadas pelos testes. |
+| `tests/` | Testes automatizados (Node test runner). `com-dados-privados/` exige a amostra oficial fora do git; `emulador/` exige os emuladores do Firebase. |
+| `local-e2e/` | Infraestrutura dos testes ponta a ponta com emuladores. |
+| `demo-academica/` | Fixtures fictícias do modo demonstração, usado só em testes e desligado em produção. |
+| `firestore.rules` | Regras de segurança do banco: perfis, conversas privadas, avisos e administradores. |
+| `firebase.json` | Configuração do Hosting, Functions, Firestore e emuladores. |
 
-O Firestore será utilizado não apenas pela Inteligência Artificial, mas também pelo próprio sistema web.
+## Testes
 
-Entre os dados armazenados estarão:
-
-* Usuários;
-* Histórico de conversas;
-* Mensagens;
-* Comunicados;
-* Informações da secretaria;
-* Base de conhecimento da IA;
-* Preferências dos usuários.
-
-A estrutura será organizada por **coleções, documentos e campos**, aproveitando o modelo NoSQL do Firestore.
-
-## 🔐 Autenticação
-
-O sistema utilizará o **Firebase Authentication** para gerenciamento de usuários.
-
-Serão previstos recursos como:
-
-* Cadastro de usuários;
-* Login;
-* Recuperação de senha;
-* Login com Google;
-* Controle de sessão;
-* Diferenciação de permissões entre usuários.
-
-## 💬 Funcionalidades
-
-### Chat com Inteligência Artificial
-
-Permite que o usuário envie perguntas sobre procedimentos e informações acadêmicas e receba respostas contextualizadas pela base oficial da instituição.
-
-### Cadastro e Login
-
-Permite a criação de contas e autenticação dos usuários para acesso às funcionalidades personalizadas.
-
-### Histórico de Conversas
-
-Usuários autenticados poderão consultar suas conversas anteriores com o assistente.
-
-### Mural de Avisos
-
-Exibição de comunicados oficiais, eventos, prazos e outras informações importantes disponibilizadas pela secretaria.
-
-Novos avisos publicados geram e-mails individuais para todas as contas de alunos e
-administradores em `users`, usando Cloud Functions e a extensão Trigger Email do
-Firebase. A ativação com Gmail está descrita em [docs/avisos-email.md](docs/avisos-email.md).
-
-### Perfil e Configurações
-
-Permite consultar e alterar informações do perfil e configurar o tema da interface.
-
-### Área Administrativa
-
-Funcionários autorizados poderão gerenciar informações da base de conhecimento e comunicados institucionais.
-
-## 🛠️ Tecnologias
-
-As principais tecnologias e serviços previstos para o desenvolvimento são:
-
-* **JavaScript** — linguagem principal utilizada no desenvolvimento da aplicação;
-* **Node.js** — ambiente utilizado no backend;
-* **Firebase** — infraestrutura principal do projeto;
-* **Cloud Firestore** — banco de dados NoSQL;
-* **Firebase Authentication** — autenticação e gerenciamento de usuários;
-* **Firebase Cloud Functions** — processamento das operações do backend;
-* **Firebase Storage** — armazenamento de arquivos;
-* **Gemini / LLM** — processamento das perguntas e geração das respostas;
-* **RAG** — técnica utilizada para relacionar as respostas da IA à base de conhecimento oficial;
-* **HTML5 / CSS3** — estrutura e estilização da interface;
-* **Git e GitHub** — controle de versão e desenvolvimento colaborativo.
-
-## 🏗️ Arquitetura Simplificada
-
-```text
-                 ┌─────────────────┐
-                 │     Usuário     │
-                 └────────┬────────┘
-                          ↓
-                 ┌─────────────────┐
-                 │   Interface Web │
-                 └────────┬────────┘
-                          ↓
-                 ┌─────────────────┐
-                 │  Backend /      │
-                 │ Cloud Functions │
-                 └───────┬─────────┘
-                         ↓
-              ┌──────────┴──────────┐
-              ↓                     ↓
-      ┌───────────────┐      ┌───────────────┐
-      │ Cloud         │      │ Inteligência  │
-      │ Firestore     │      │ Artificial    │
-      └───────┬───────┘      └───────┬───────┘
-              │                      │
-              └──────────┬───────────┘
-                         ↓
-                  Resposta ao usuário
+```sh
+npm test                 # suíte principal (~1.340 testes, sem rede nem credenciais)
+npm run test:servidor    # testes do servidor Render
+npm run test:regras      # regras do Firestore nos emuladores (Firebase CLI + Java)
+npm run segredos         # procura chaves ou senhas esquecidas no código
 ```
 
-## 📂 Estrutura planejada do banco
+Os testes simulam o Gemini e o Firebase: não gastam cota nem acessam dados reais.
 
-O Firestore será organizado em coleções semelhantes a:
+## Publicação
 
-```text
-Firestore
-│
-├── usuarios
-├── conversas
-├── avisos
-├── baseConhecimento
-├── faq
-└── configuracoes
-```
+1. **Backend (Render):** push na branch `main` e, no painel do Render, Manual Deploy → Deploy latest commit. O build compila `functions/`. Para conferir: `GET /health` mostra o motor e a revisão (commit) publicada.
+2. **Site (Firebase Hosting):** `firebase deploy --only hosting --project tcc-ia-d8891`.
+3. **Regras e Functions:** `firebase deploy --only firestore:rules,functions --project tcc-ia-d8891`.
 
-Essa estrutura poderá ser ajustada durante o desenvolvimento conforme as necessidades do sistema.
+Antes de publicar, rode `npm test` e `npm run segredos`. Se a base curada mudou, rode `npm run indexar` (ver o documento de manutenção).
 
-## 👥 Público-alvo
+## Equipe
 
-O sistema será destinado principalmente à comunidade escolar, incluindo:
-
-* Alunos;
-* Responsáveis;
-* Professores;
-* Funcionários;
-* Visitantes interessados em informações da instituição.
-
-## 🚀 Desenvolvimento
-
-O projeto será desenvolvido de forma colaborativa, utilizando **GitHub para controle de versão** e **Firebase como infraestrutura compartilhada**.
-
-O desenvolvimento será dividido em etapas:
-
-1. Modelagem da estrutura do sistema;
-2. Configuração do Firebase;
-3. Desenvolvimento do banco de dados;
-4. Implementação da autenticação;
-5. Desenvolvimento da interface;
-6. Implementação do sistema de conversação;
-7. Criação da base de conhecimento;
-8. Integração da Inteligência Artificial;
-9. Implementação do RAG;
-10. Desenvolvimento da área administrativa;
-11. Testes e correções;
-12. Publicação da aplicação.
-
-## 📌 Status
-
-**Em desenvolvimento 🚧**
-
-O Projeto Sylvinho está em fase de planejamento e desenvolvimento, com a arquitetura, funcionalidades e estrutura do banco sendo definidas antes da implementação completa do sistema.
-
----
-
-### Projeto de TCC
-
-**Projeto Sylvinho — Assistente Virtual para a Secretaria Acadêmica**
-
-Desenvolvido como Trabalho de Conclusão de Curso do Técnico em Informática para Internet.
+Os nomes e contatos da equipe estão na página **Sobre** do site.

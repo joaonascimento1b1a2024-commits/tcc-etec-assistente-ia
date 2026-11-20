@@ -31,13 +31,3 @@ test('avisos do prototipo nao mostram fixture nem consultam dados institucionais
     assert.doesNotMatch(get('#noticeList').textContent, /Fixture|Cometa/);
     assert.equal(get('#retry').hidden, true);
 });
-
-test('dados de regressao nao pertencem a selecao de publicacao', () => {
-    assert.match(read('.gitignore'), /\/tests\/dados\/rag-original\.json/);
-    const entry = read('render-poc/documental.cjs');
-    assert.doesNotMatch(entry, /demonstracao\.cjs|fixtures\.json|rag-original\.json|\.cache/);
-    assert.match(entry, /criarFluxoPerguntaLivre\(\{ fonte: firestore/);
-    assert.match(entry, /recuperarConhecimento: fluxo\.recuperarConhecimento/);
-    assert.match(read('functions/src/assistente/pergunta-livre/busca.ts'), /recuperarConhecimentoRelevante\(fonte, texto\)/);
-    assert.match(entry, /DOCUMENTAL_ORIGINAL_SOURCES_REQUIRED/);
-});

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {elegivel,criarBuscaCurada} from '../local-e2e/curadoria-local.mjs';
+import {elegivel,criarBuscaCurada} from '../render-poc/motor-curado/curadoria-local.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8'));
 const freq=registros.find(r=>r.id==='frequencia');
 const escopo={hoje:'2026-11-16'};

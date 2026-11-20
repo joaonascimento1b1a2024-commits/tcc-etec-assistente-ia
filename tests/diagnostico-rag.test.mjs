@@ -84,7 +84,7 @@ test('base vazia e consulta sem fonte permitida sao diferenciadas', async () => 
   for (const docs of [[], [criarChunk(texto, {documentoId: 'fonte-fora-da-lista'})],
     [criarChunk('O procedimento experimental de transporte utiliza papel laranja.')]]) {
     const f = preparar({docs});
-    assert.match(await f.responder(), /Não consegui confirmar/);
+    assert.match(await f.responder(), /Não encontrei informação suficiente/);
     assert.deepEqual(f.diagnosticos[0], {etapa: 'BUSCA_CONCLUIDA', lidos: docs.length, selecionados: 0});
     assert.deepEqual(recebida(f), {etapa: 'PROPOSTA_RECEBIDA', contextos: 0, evidencias: 0, uso: 'SEM_EVIDENCIAS'});
     assert.deepEqual(f.chamadas[1].contextos, []);

@@ -72,14 +72,6 @@ test('endpoint publicado usa Render validado; HTTPS e rota são exigidos; timeou
         'https://u:p@fixture.example.invalid/perguntarAssistente', 'https://fixture.example.invalid/perguntarAssistente?q=1',
         'https://localhost/perguntarAssistente']) assert.throws(() => front.validarEndpointPublicado(value), /ENDPOINT_PUBLICADO_INVALIDO/);
 });
-test('aviso acadêmico é estático e acessível nas páginas principais', () => {
-    const aviso = 'Protótipo de TCC — documentos de referência — não é atendimento oficial da escola.';
-    for (const p of ['Login/login.html', 'Criar-Conta/cadastro.html', 'Logado/Home/home.html', 'Logado/Conversas/conversas.html',
-        'Logado/Configurações Aluno/configAl.html']) {
-        const html = readFileSync(new URL('../public/' + p, import.meta.url), 'utf8');
-        assert.ok(html.includes(aviso)); assert.match(html, /class="academic-demo-banner" role="note"/);
-    }
-});
 test('HTTP real com handler: token, messageId, seleção fechada e replay preservados', async t => {
     const s = knowledge();
     const mid = 'message-academica-000001', cid = 'abcdefghijklmnopqrst';

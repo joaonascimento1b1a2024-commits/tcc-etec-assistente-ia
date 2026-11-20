@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {criarBuscaCurada,criarPoliticaCurada,elegivel,hashIndice} from '../local-e2e/curadoria-local.mjs';
-import {criarGeminiCurado} from '../local-e2e/gemini-curado.mjs';
-import {resolverConversaCurada} from '../local-e2e/contexto-curado.mjs';
+import {criarBuscaCurada,criarPoliticaCurada,elegivel,hashIndice} from '../render-poc/motor-curado/curadoria-local.mjs';
+import {criarGeminiCurado} from '../render-poc/motor-curado/gemini-curado.mjs';
+import {resolverConversaCurada} from '../render-poc/motor-curado/contexto-curado.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8'));
 const contatos=JSON.parse(readFileSync('knowledge-local/contatos-publicos.json','utf8'));
 const escopo={hoje:'2026-11-16'};
@@ -65,7 +65,7 @@ test('responder ao esclarecimento preserva a pergunta original e o ano',async()=
 });
 test('regra geral sem curso continua respondível, sem esclarecimento desnecessário',async()=>{
  const {motor,calls}=motorMock('A frequência mínima é 75% do total de aulas.','frequencia');
- const result=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo});
+ const result=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo});
  assert.equal(result.tipo,'gemini_curado');assert.equal(calls(),2);
 });
 test('registro pendente ou vencido não provoca pergunta de curso nem entra na resposta',async()=>{
@@ -88,5 +88,7 @@ test('não inventa oferta de Logística, nem preço ou prazo operacional pendent
  const result=await motor.responder({pergunta:'Tem curso de Logística?',escopo});
  assert.equal(result.tipo,'sem_evidencia');assert.equal(calls(),0);
  const politica=criarPoliticaCurada({contatos});
- for(const pergunta of ['Quanto custa a camiseta?','Como renovo pelo NSA?','Qual o horário da secretaria?'])assert.equal(politica.planejar(pergunta).tipo,'pendente');
+ assert.equal(politica.planejar('Quanto custa a camiseta?').tipo,'pendente');
+ // Rematrícula pelo NSA e horário da Secretaria ganharam fonte (avisos da Secretaria no NSA).
+ for(const pergunta of ['Como renovo pelo NSA?','Qual o horário da secretaria?'])assert.equal(politica.planejar(pergunta).tipo,'buscar');
 });

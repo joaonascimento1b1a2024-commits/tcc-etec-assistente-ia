@@ -45,7 +45,7 @@ function scenario({permitido=true,failFirst=false}={}){
   return {ok:true,json:async()=>({resposta:'NAO_RENDERIZAR_CORPO_HTTP'})};
  };
  const context=vm.createContext({document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>element(Symbol())},
- window:{location:{search:'',assign(){},replace(){}},history:{replaceState(){}}},URLSearchParams,AbortController,console,crypto:{randomUUID},
+ window:{location:{search:'',assign(){},replace(){}},history:{replaceState(){}}},URLSearchParams,AbortController,console,crypto:{randomUUID},setTimeout,clearTimeout,
  store,user,pending,mockImport:async p=>p.endsWith('assistente-config.js')?{resolverAssistenteConfig:()=>({endpoint:'https://teste.invalid/perguntarAssistente',timeoutMs:30000})}:p.endsWith('envio-pendente.js')?pending:p.endsWith('assistente-client.js')?{
   perguntarAssistente:o=>client.perguntarAssistente({...o,fetchImpl}),consultarDemonstracao:o=>client.consultarDemonstracao({...o,fetchImpl})}:assert.fail('IMPORT_INESPERADO')});
  const source=readFileSync(new URL('../public/Logado/Home/home.js',import.meta.url),'utf8').replace('loadAuthenticatedProfile();','').replaceAll('import(','mockImport(');

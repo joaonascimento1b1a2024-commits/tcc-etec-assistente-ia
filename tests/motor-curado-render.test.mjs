@@ -51,7 +51,7 @@ test('SYLVINHO_MOTOR: padrão fluxo, valor inválido bloqueia e falta de chave v
 test('base versionada: vetores correspondem exatamente aos registros curados', () => {
     assert.ok(base.registros.length >= 44);
     assert.ok(base.vetores, 'knowledge-local/embeddings-curados.json ausente');
-    // Se falhar, a FAQ mudou sem reindexar: rode scripts/indexar-embeddings-curados.mjs e copie o índice.
+    // Se falhar, a FAQ mudou sem reindexar: rode npm run indexar (scripts/indexar-embeddings-curados.mjs).
     assert.equal(base.vetores.hash, hashIndice(base.registros));
     assert.deepEqual(Object.keys(base.vetores.valores).sort(), base.registros.map(r => r.id).sort());
 });
@@ -103,11 +103,49 @@ test('reserva direta: só existe com um fato aprovado inequívoco', async () => 
     const semReserva = await gerar(empatados).responder({pergunta: 'Como fazer o trancamento da matrícula?'});
     assert.equal(semReserva.tipo, 'falha');
     assert.equal(semReserva.reserva, undefined);
-    // Pergunta igual a uma pergunta aprovada: a falha leva o fato aprovado como reserva.
-    const comReserva = await gerar([modelo]).responder({pergunta: modelo.pergunta});
+    // Um único fato com confiança alta (pergunta parecida, não idêntica): a falha leva o fato aprovado como reserva.
+    const comReserva = await gerar([modelo]).responder({pergunta: 'O trancamento, como funciona?'});
     assert.equal(comReserva.tipo, 'falha');
     assert.equal(comReserva.codigo, 'HTTP_429');
     assert.deepEqual(comReserva.reserva, {texto: modelo.resposta, tipo: 'curado_direto', modo: 'bm25', ids: ['trancamento']});
+});
+
+test('pergunta idêntica a uma aprovada responde com o texto aprovado, sem chamar o Gemini', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const modelo = base.registros.find(r => r.id === 'trancamento');
+    let chamadas = 0;
+    const transporte = async () => { chamadas++; return new Response('{}', {status: 500}); };
+    const gerar = () => criarGeminiCurado({registros: base.registros, contatos: base.contatos, vetores: base.vetores,
+        embeddingConsulta: async () => { chamadas++; throw Error('NAO_CHAMAR'); }, lerChave: () => 'x', transporte, modelo: 'gemini-a', modeloReserva: ''});
+    const r = await gerar().responder({pergunta: modelo.pergunta});
+    assert.equal(r.tipo, 'curado_direto');
+    assert.equal(r.texto, modelo.resposta);
+    assert.deepEqual(r.ids, ['trancamento']);
+    assert.equal(chamadas, 0, 'nem geração, nem revisão, nem embedding');
+    // Com escopo (idade), o Gemini adapta a resposta: a pergunta exata não pula a geração.
+    const comEscopo = await gerar().responder({pergunta: modelo.pergunta, escopo: {idade: 16}});
+    assert.notEqual(comEscopo.tipo, 'curado_direto');
+    assert.ok(chamadas > 0);
+});
+
+test('modelo sobrecarregado (5xx) fica em pausa curta e a pergunta seguinte vai direto ao próximo', async () => {
+    const {criarGeminiCurado} = await import('../render-poc/motor-curado/gemini-curado.mjs');
+    const modelo = base.registros.find(r => r.id === 'trancamento');
+    const usados = [];
+    const transporte = async url => {
+        const nome = String(url).match(/models\/([^:]+):/)[1];
+        usados.push(nome);
+        if (nome === 'gemini-a') return new Response('{}', {status: 503});
+        return new Response('{}', {status: 429});
+    };
+    const motorPausa = criarGeminiCurado({registros: [modelo], contatos: base.contatos, lerChave: () => 'x', transporte, modelo: 'gemini-a', modeloReserva: 'gemini-b'});
+    await motorPausa.responder({pergunta: 'O trancamento, como funciona?'});
+    assert.deepEqual(usados, ['gemini-a', 'gemini-b']);
+    usados.length = 0;
+    const segunda = await motorPausa.responder({pergunta: 'O trancamento, como funciona?'});
+    assert.deepEqual(usados, [], 'os dois modelos estão em pausa: falha rápida, sem esperar o provedor');
+    assert.equal(segunda.tipo, 'falha');
+    assert.ok(segunda.reserva, 'a reserva continua disponível');
 });
 
 test('híbrido: busca vetorial indisponível sem resultado lexical também volta ao fluxo', async () => {
@@ -127,10 +165,10 @@ test('limite em todos os modelos: com fato inequívoco mostra o texto aprovado; 
     const eventos = [];
     const limite = provedor({geracao: () => new Response('{}', {status: 429})});
     assert.equal(await motor('hibrido', {transporte: limite.transporte, registrar: (e, d) => eventos.push({e, ...d})})
-        .responderConversa('Posso trancar a matrícula?', [], {uid: 'a'}), fatoTrancamento);
+        .responderConversa('A matrícula, posso trancar?', [], {uid: 'a'}), fatoTrancamento);
     assert.ok(eventos.some(x => x.e === 'MOTOR_RESPOSTA_DIRETA' && x.motivo === 'HTTP_429'));
     const sobrecarga = provedor({geracao: () => new Response('{}', {status: 503})});
-    assert.equal(await motor('hibrido', {transporte: sobrecarga.transporte}).responderVisitante('Posso trancar a matrícula?'), fatoTrancamento);
+    assert.equal(await motor('hibrido', {transporte: sobrecarga.transporte}).responderVisitante('A matrícula, posso trancar?'), fatoTrancamento);
     // Sem reserva (dois fatos empatados), volta o comportamento anterior.
     const modelo = base.registros.find(r => r.id === 'trancamento');
     const empatados = {...base, registros: [{...modelo, id: 'tranc-a', pergunta: 'Trancamento da matrícula A', variacoes: []}, {...modelo, id: 'tranc-b', pergunta: 'Trancamento da matrícula B', variacoes: []}], vetores: null};
@@ -238,7 +276,7 @@ test('visitantes simultâneos não se bloqueiam na fila', async () => {
     const m = motor('hibrido', {transporte: p.transporte});
     const respostas = await Promise.all([
         m.responderVisitante('Posso trancar a matrícula? Como funciona?'),
-        m.responderVisitante('Quais documentos preciso para me matricular?'),
+        m.responderVisitante('De presença, preciso de quantos %?'),
     ]);
     assert.deepEqual(respostas, ['Resposta curada de teste.', 'Resposta curada de teste.']);
 });
@@ -396,9 +434,50 @@ test('produção híbrida: HTTP visitante -> motor curado -> Gemini simulado; he
         headers: {'Content-Type': 'application/json', Origin: 'https://sylvinho.web.app'},
         body: JSON.stringify({pergunta: 'Posso trancar a matrícula? Como funciona?'})});
     assert.equal(r.status, 200);
-    assert.equal((await r.json()).resposta, 'Resposta curada de teste.');
+    // Produção liga mostrarFontes: a resposta aprovada vem seguida do bloco de fontes oficiais.
+    const [textoResposta, blocoFontes] = (await r.json()).resposta.split('\n\n[[FONTES]]');
+    assert.equal(textoResposta, 'Resposta curada de teste.');
+    assert.ok(JSON.parse(blocoFontes).every(fonte => /^https:\/\//.test(fonte.url)));
     assert.equal(p.chamadas.geracao, 1);
     assert.equal(p.chamadas.revisao, 1);
     assert.ok(logs.some(l => l.includes('MOTOR_RESPOSTA')));
     assert.doesNotMatch(logs.join('\n'), /trancar|chave-sintetica|Resposta curada/);
+});
+
+test('chat logado: saudação e perguntas sobre o assistente respondem sem busca nem Gemini', async () => {
+    const {IDENTIDADE_ESCOPO} = await import('../functions/lib/assistente/escopo.js');
+    const p = provedor();
+    const m = motor('hibrido', {transporte: p.transporte});
+    assert.equal(await m.responderConversa('Quem é você?', [], {uid: 'a'}), IDENTIDADE_ESCOPO);
+    assert.equal(p.chamadas.geracao, 0);
+    assert.equal(p.chamadas.revisao, 0);
+});
+
+test('chat logado: pergunta completa responde direto mesmo com histórico; acompanhamento continua no Gemini', async () => {
+    const p = provedor();
+    const m = motor('hibrido', {transporte: p.transporte});
+    const historico = [{remetente: 'user', texto: 'Como funciona o Vestibulinho?'}, {remetente: 'bot', texto: 'O Vestibulinho é o processo seletivo.'}];
+    const documentos = base.registros.find(r => r.id === 'matricula-documentos');
+    assert.equal(await m.responderConversa('Quais documentos preciso para me matricular?', historico, {uid: 'a'}), documentos.resposta);
+    assert.equal(p.chamadas.geracao, 0);
+    // "Tenho 16 anos" no histórico muda o escopo do acompanhamento: o Gemini adapta a resposta.
+    const comIdade = [{remetente: 'user', texto: 'Tenho 16 anos e quero fazer matrícula'}, {remetente: 'bot', texto: 'Certo.'}];
+    await m.responderConversa('precisa de responsável?', comIdade, {uid: 'b'});
+    assert.ok(p.chamadas.geracao > 0);
+});
+
+test('fontes: com mostrarFontes, resposta da base curada leva as fontes oficiais; sem a opção, o texto não muda', async () => {
+    const {MARCADOR_FONTES} = require('../render-poc/motor-curado.cjs');
+    const modelo = base.registros.find(r => r.id === 'frequencia');
+    const comFontes = await motor('hibrido', {...provedor(), mostrarFontes: true}).responderVisitante(modelo.pergunta);
+    const [texto, bloco] = comFontes.split(MARCADOR_FONTES);
+    assert.equal(texto, modelo.resposta);
+    const fontes = JSON.parse(bloco);
+    assert.ok(fontes.length >= 1 && fontes.length <= 4);
+    assert.ok(fontes.every(f => f.titulo && /^https:\/\//.test(f.url)));
+    assert.ok(fontes.some(f => /75%/.test(f.trecho || '')));
+    assert.equal(await motor('hibrido', provedor()).responderVisitante(modelo.pergunta), modelo.resposta);
+    // Respostas que não vêm da base curada (social, esclarecimento) não levam fontes.
+    const social = await motor('hibrido', {...provedor(), mostrarFontes: true}).responderVisitante('Quem é você?');
+    assert.ok(!social.includes(MARCADOR_FONTES));
 });

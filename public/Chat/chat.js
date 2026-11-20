@@ -1,5 +1,9 @@
 import { observarSessao } from './sessao.js';
 import { configuracaoVisitante, perguntarVisitante } from './cliente.js';
+import { acordarAssistente } from '../Logado/Home/assistente-config.js';
+
+// Começa a acordar o servidor do assistente assim que a tela abre.
+acordarAssistente();
 
 const messages = document.querySelector('#messages');
 const welcome = document.querySelector('#welcome');

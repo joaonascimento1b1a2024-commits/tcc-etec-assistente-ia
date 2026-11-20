@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const source=readFileSync(new URL('../public/Logado/Home/resposta-documental-view.js',import.meta.url),'utf8');
 const context=vm.createContext({});vm.runInContext(source,context);
@@ -38,7 +38,26 @@ test('intervalos e paginas parciais nao viram paginas exatas inventadas',()=>{fo
 test('metadados ausentes nao sao preenchidos',()=>{const text=response().replace(reference,'Título disponível; trecho: chunk-teste');assert.equal(analisar(text).citacoes[0].fonte,'Título disponível');});
 test('modelo nao normativo e identificado sem reinterpretacao',()=>{const text=response().replace('Trecho documental:','Modelo/exemplo, nao normativo:');assert.equal(analisar(text).citacoes[0].tipo,'Modelo/exemplo, nao normativo');});
 test('HTML malicioso permanece texto e nao cria elementos executaveis',()=>{const attack='<img src=x onerror=alert(1)><script>alert(1)</script>';const c=container();renderizar(c,response().replace(quote,attack));assert.equal(walk(c).some(e=>['script','img','a'].includes(e.tagName)),false);assert.ok(c.textContent.includes(attack));assert.doesNotMatch(source,/innerHTML|insertAdjacentHTML|eval\(/);});
-test('formato real gerado a partir da amostra oficial local e reconhecido',()=>{const require=createRequire(import.meta.url);const {gerarRespostaDocumental}=require('../functions/lib/assistente/resposta-documental.js');const {selecionarDocumentosOriginais}=require('../functions/lib/rag/recuperacao.js');const docs=JSON.parse(readFileSync(new URL('./dados/rag-original.json',import.meta.url))).documentos;for(const question of ['Qual a frequência mínima para aprovação?','Como solicitar uma declaração escolar?']){const result=gerarRespostaDocumental(question,selecionarDocumentosOriginais(docs,question));assert.equal(result.status,'trechos_encontrados');const parsed=analisar(result.resposta);assert.ok(parsed);assert.equal(parsed.citacoes.length,result.citacoes.length);parsed.citacoes.forEach((c,i)=>assert.equal(c.texto,result.citacoes[i].texto));}});
+test('formato real gerado a partir da amostra oficial local e reconhecido',{skip:!existsSync(new URL('./dados/rag-original.json',import.meta.url))&&'amostra privada ausente (tests/dados/rag-original.json)'},()=>{const require=createRequire(import.meta.url);const {gerarRespostaDocumental}=require('../functions/lib/assistente/resposta-documental.js');const {selecionarDocumentosOriginais}=require('../functions/lib/rag/recuperacao.js');const docs=JSON.parse(readFileSync(new URL('./dados/rag-original.json',import.meta.url))).documentos;for(const question of ['Qual a frequência mínima para aprovação?','Como solicitar uma declaração escolar?']){const result=gerarRespostaDocumental(question,selecionarDocumentosOriginais(docs,question));assert.equal(result.status,'trechos_encontrados');const parsed=analisar(result.resposta);assert.ok(parsed);assert.equal(parsed.citacoes.length,result.citacoes.length);parsed.citacoes.forEach((c,i)=>assert.equal(c.texto,result.citacoes[i].texto));}});
 test('Home so formata bot; ordem de scripts garante modulo disponivel',()=>{const home=readFileSync(new URL('../public/Logado/Home/home.js',import.meta.url),'utf8');const html=readFileSync(new URL('../public/Logado/Home/home.html',import.meta.url),'utf8');assert.match(home,/sender === 'bot' && globalThis.apresentacaoDocumental/);assert.ok(html.indexOf('src="resposta-documental-view.js"')<html.indexOf('src="home.js"'));});
 
 test('hierarquia extensa fica nos detalhes e nao sobrecarrega fonte principal',()=>{const hierarchy='SEÇÃO DOCUMENTAL > '.repeat(10)+'Artigo 83';const original=response().replace('secao: artigo 83','secao: '+hierarchy);assert.equal(analisar(original).citacoes[0].fonte,'Regimento Comum — página 26');const c=container();renderizar(c,original);assert.equal(c.children.at(-1).children.at(-1).textContent,original);});
+// Respostas da base curada (modo híbrido): fontes oficiais no fim do texto, depois do marcador [[FONTES]].
+const fontesCuradas=[{titulo:'Regimento Comum, art. 83',url:'https://exemplo.invalid/regimento.pdf',trecho:'Será exigida a frequência mínima de 75%.'},{titulo:'Site oficial da ETEC',url:'https://exemplo.invalid/contato/'}];
+test('base curada: mostra só a resposta e um "Fonte" recolhido com link e trecho',()=>{
+ const c=container();const resposta='É preciso ter pelo menos 75% de presença.';
+ assert.equal(renderizar(c,resposta+'\n\n[[FONTES]]'+JSON.stringify(fontesCuradas)),true);
+ assert.equal(c.children[0].className,'documental-resposta-ia');assert.equal(c.children[0].textContent,resposta);
+ const detalhes=c.children[1];assert.equal(detalhes.tagName,'details');assert.match(detalhes.className,/fontes-curadas/);
+ assert.equal(detalhes.children[0].tagName,'summary');assert.equal(detalhes.children[0].textContent,'Fonte');
+ const links=walk(detalhes).filter(e=>e.tagName==='a');assert.deepEqual(links.map(a=>a.href),fontesCuradas.map(f=>f.url));
+ assert.ok(links.every(a=>a.rel==='noopener noreferrer'&&a.target==='_blank'));
+ assert.equal(walk(detalhes).filter(e=>e.tagName==='blockquote').length,1);
+ assert.doesNotMatch(c.textContent,/\[\[FONTES\]\]|"url"/);
+ assert.equal(c.sylvinhoOriginalText,resposta+'\n\nFonte: Regimento Comum, art. 83 — https://exemplo.invalid/regimento.pdf\nSite oficial da ETEC — https://exemplo.invalid/contato/');
+});
+test('base curada: bloco de fontes inválido ou link não https vira texto puro',()=>{
+ for(const bloco of ['nao-json',JSON.stringify([]),JSON.stringify([{titulo:'X',url:'javascript:alert(1)'}]),JSON.stringify([{titulo:'',url:'https://a.invalid'}])]){
+  const original='Resposta.\n\n[[FONTES]]'+bloco;const c=container();assert.equal(renderizar(c,original),false);assert.equal(c.textContent,original);
+ }
+});

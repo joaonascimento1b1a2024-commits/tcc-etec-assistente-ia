@@ -60,3 +60,12 @@ test('autenticado preserva IDs, replay, contexto e mudanca de assunto',async()=>
  assert.equal((await run('Valor de pi?')).body.resposta,FORA_ESCOPO);assert.equal(calls,1);
  assert.equal((await run('Valor de pi?')).body.resposta,FORA_ESCOPO);assert.equal(state.mensagens.length,3);
 });
+// Perguntas sobre o próprio assistente: resposta fixa, sem busca nem modelo.
+import {IDENTIDADE_ESCOPO, CRIADORES_ESCOPO, FONTES_ESCOPO} from '../functions/lib/assistente/escopo.js';
+for (const [q, esperado] of [
+    ['Quem é você?', IDENTIDADE_ESCOPO], ['O que você faz?', IDENTIDADE_ESCOPO], ['Qual é o seu nome?', IDENTIDADE_ESCOPO],
+    ['Quem criou o Sylvinho?', CRIADORES_ESCOPO], ['Quem te fez?', CRIADORES_ESCOPO], ['Que alunos desenvolveram esse site?', CRIADORES_ESCOPO],
+    ['Você é uma inteligência artificial?', FONTES_ESCOPO], ['De onde vêm as suas respostas?', FONTES_ESCOPO], ['Você é um robô?', FONTES_ESCOPO],
+]) test('sobre o assistente: '+q, () => assert.deepEqual(classificarEscopo(q), {categoria: 'social', resposta: esperado}));
+// Pergunta escolar com "quem fez" não vira resposta sobre os criadores.
+for (const q of ['Quem fez o regimento da escola?', 'Quem é o diretor da escola?']) test('não é sobre o assistente: '+q, () => assert.notEqual(classificarEscopo(q).categoria, 'social'));

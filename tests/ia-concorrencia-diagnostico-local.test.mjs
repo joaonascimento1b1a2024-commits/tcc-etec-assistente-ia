@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {criarGeminiCurado} from '../local-e2e/gemini-curado.mjs';
-import {criarBuscaCurada,hashIndice} from '../local-e2e/curadoria-local.mjs';
-import {criarEmbeddings} from '../local-e2e/embeddings-curados.mjs';
-import {criarControleConcorrencia,aguardarComSinal} from '../local-e2e/concorrencia-curada.mjs';
+import {criarGeminiCurado} from '../render-poc/motor-curado/gemini-curado.mjs';
+import {criarBuscaCurada,hashIndice} from '../render-poc/motor-curado/curadoria-local.mjs';
+import {criarEmbeddings} from '../render-poc/motor-curado/embeddings-curados.mjs';
+import {criarControleConcorrencia,aguardarComSinal} from '../render-poc/motor-curado/concorrencia-curada.mjs';
 const registros=JSON.parse(readFileSync('knowledge-local/faq-curada.json','utf8'));
 const contatos=JSON.parse(readFileSync('knowledge-local/contatos-publicos.json','utf8'));
 const escopo={hoje:'2026-11-16'};
-const pergunta='Preciso de quantos % de presença?';
+const pergunta='De presença, preciso de quantos %?';
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const deferred=()=>{let resolve;const promise=new Promise(r=>{resolve=r;});return {promise,resolve};};
 const resposta=init=>{

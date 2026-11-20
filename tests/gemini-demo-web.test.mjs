@@ -120,8 +120,8 @@ test('pergunta persistida divergente nao gera e nao grava',async()=>{
  const f=fixture(),e=endpoint(f,{perguntaSalva:'TEXTO_PRIVADO_DIVERGENTE'});assert.equal((await e.enviar()).status,409);assert.equal(f.requests.length,0);assert.equal(e.contadores().gravacoes,0);
 });
 test('requisicao documental normal nao e convertida em exemplo sintetico',async()=>{
- const f=fixture(),e=endpoint(f,{perguntaSalva:'Pergunta original'});
- const r=await e.enviar({pergunta:'Pergunta original'},'https://teste.invalid',true);assert.equal(r.status,200);
+ const f=fixture(),e=endpoint(f,{perguntaSalva:'Quantas faltas posso ter?'});
+ const r=await e.enviar({pergunta:'Quantas faltas posso ter?'},'https://teste.invalid',true);assert.equal(r.status,200);
  assert.equal(r.body.resposta,'DOCUMENTAL_ORIGINAL_PRESERVADO');assert.equal(e.contadores().rag,1);
  assert.equal(f.requests.length,0);
 });

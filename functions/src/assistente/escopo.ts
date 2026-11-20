@@ -14,6 +14,24 @@ export const SOCIAL_ESCOPO =
   "Sylvio de Mattos Carvalho. Como posso ajudar você com informações " +
   "da escola?";
 
+/** Respostas fixas sobre o próprio assistente (texto da página Sobre). */
+export const IDENTIDADE_ESCOPO =
+  "Sou o Sylvinho, o assistente virtual da ETEC Sylvio de Mattos " +
+  "Carvalho. Fui criado por um grupo de cinco alunos como Trabalho de " +
+  "Conclusão de Curso, para facilitar o acesso às informações da " +
+  "Secretaria Acadêmica. Posso ajudar com matrícula, Vestibulinho, cursos, " +
+  "frequência, documentos e regras da escola.";
+export const CRIADORES_ESCOPO =
+  "O Sylvinho foi desenvolvido por um grupo de cinco alunos da ETEC " +
+  "Sylvio de Mattos Carvalho, como Trabalho de Conclusão de Curso. Os " +
+  "nomes da equipe estão na página Sobre do site.";
+export const FONTES_ESCOPO =
+  "Sou um assistente com inteligência artificial. Minhas respostas " +
+  "vêm de informações oficiais da escola e do Vestibulinho, conferidas com " +
+  "as fontes antes de entrar na minha base. A IA ajuda a escrever a " +
+  "resposta, mas não inventa dados; quando falta confirmação, indico a " +
+  "Secretaria Acadêmica.";
+
 export interface DecisaoEscopo {
   categoria: "institucional" | "social" | "fora_escopo" | "ambigua";
   resposta?: string;
@@ -32,6 +50,22 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
   const externo = /(?:ignore|desconsidere|esqueca|substitua).{0,100}(?:instruc|regras|papel|sistema)|(?:aja|responda|atue).{0,40}(?:chatgpt|sem restric)|(?:valor|digitos|numero).{0,15}\bpi\b|\bpi\s*\?|\d\s*[+*/=]\s*\d|(?:quanto e|calcule|resolva).{0,50}\d|(?:crie|escreva|gere|implemente|ensine|explique|faca|produza).{0,70}(?:python|codigo|jogo|programa|algoritmo|poema|piada|receita|equacao|matematica)|(?:quem|qual).{0,40}(?:ganhou|venceu).{0,40}(?:copa|mundial)|(?:conte|explique|ensine).{0,50}(?:historia geral|revolucao francesa|segunda guerra)|(?:traduza|traduce|translate)|(?:capital|presidente) d[oa]|\b(?:faz|faca|resolve|resolva)\b.{0,20}\b(?:meu|minha)\s+(?:trabalho|tarefa|licao|dever|exercicio|redacao|atividade)/u;
   if (externo.test(n)) {
     return {categoria: "fora_escopo", resposta: FORA_ESCOPO};
+  }
+  // Perguntas sobre o próprio assistente: resposta fixa, sem busca nem modelo.
+  // eslint-disable-next-line max-len
+  const sobreFontes = /\b(?:(?:voce|vc) (?:e|eh) (?:uma? )?(?:ia|inteligencia artificial|robo|bot|humano|pessoa|chatgpt|gemini)|de onde (?:vem|voce tira|vc tira) (?:as )?(?:suas )?(?:respostas|informacoes)|(?:voce|vc) (?:usa|e feito com) (?:ia|inteligencia artificial)|como (?:voce|vc) funciona)\b/u;
+  // eslint-disable-next-line max-len
+  const sobreCriadores = /\bquem te (?:criou|fez|desenvolveu|programou)\b|(?:quem|que alunos|qual (?:equipe|grupo))\b.{0,15}\b(?:criou|criaram|fez|fizeram|desenvolveu|desenvolveram|programou|programaram)\b.{0,15}\b(?:sylvinho|voce|vc|site|chat|assistente|projeto|ia|robo|bot)\b/u;
+  // eslint-disable-next-line max-len
+  const sobreAssistente = /\b(?:quem (?:e|eh) (?:voce|vc|o sylvinho)|o que (?:e o sylvinho|(?:voce|vc) (?:e|faz|sabe fazer|pode fazer))|qual (?:e )?(?:o )?seu nome|como (?:voce|vc) se chama|no que (?:voce|vc) pode (?:me )?ajudar|para que (?:voce|vc) serve)\b/u;
+  if (sobreFontes.test(n)) {
+    return {categoria: "social", resposta: FONTES_ESCOPO};
+  }
+  if (sobreCriadores.test(n)) {
+    return {categoria: "social", resposta: CRIADORES_ESCOPO};
+  }
+  if (sobreAssistente.test(n)) {
+    return {categoria: "social", resposta: IDENTIDADE_ESCOPO};
   }
   // Mensagem inteira social: "oi, valor de pi" nunca vira saudacao.
   // eslint-disable-next-line max-len

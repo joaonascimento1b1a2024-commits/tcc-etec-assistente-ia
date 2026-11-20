@@ -55,3 +55,17 @@ export function validarEndpointPublicado(endpoint) {
         throw new Error('ENDPOINT_PUBLICADO_INVALIDO');
     return url.href;
 }
+
+// O Render gratuito desliga o servidor depois de alguns minutos sem uso, e a primeira
+// pergunta espera ele acordar. Ao abrir a tela do chat, um GET simples em /health
+// começa a acordar o servidor enquanto a pessoa digita. Sem dados, token ou pergunta.
+let servidorAcordado = false;
+export function acordarAssistente({ fetchImpl = globalThis.fetch } = {}) {
+    if (servidorAcordado || typeof fetchImpl !== 'function') return;
+    let endpoint;
+    try { endpoint = resolverAssistenteConfig().endpoint; } catch { return; }
+    if (!endpoint) return;
+    servidorAcordado = true;
+    const health = new URL('/health', endpoint).href;
+    fetchImpl(health, { method: 'GET', mode: 'no-cors', credentials: 'omit', cache: 'no-store' }).catch(() => {});
+}

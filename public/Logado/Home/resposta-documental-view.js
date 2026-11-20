@@ -79,9 +79,22 @@
         }
         return candidatos.length === 1 ? candidatos[0] : null;
     }
+    // Respostas da base curada (modo híbrido) chegam com as fontes oficiais no fim do texto,
+    // depois deste marcador, em JSON: [{titulo, url, trecho?}] (render-poc/motor-curado.cjs).
+    const MARCADOR_FONTES = '\n\n[[FONTES]]';
+    function separarFontes(original) {
+        if (typeof original !== 'string') return null;
+        const posicao = original.lastIndexOf(MARCADOR_FONTES);
+        if (posicao < 1) return null;
+        let fontes;
+        try { fontes = JSON.parse(original.slice(posicao + MARCADOR_FONTES.length)); } catch { return null; }
+        // Só aceita o formato esperado; qualquer outra coisa é mostrada como texto puro.
+        const valida = f => f && typeof f === 'object' && typeof f.titulo === 'string' && f.titulo.trim() &&
+            typeof f.url === 'string' && /^https:\/\/[^\s"<>]+$/u.test(f.url) && (f.trecho === undefined || typeof f.trecho === 'string');
+        if (!Array.isArray(fontes) || !fontes.length || fontes.length > 4 || !fontes.every(valida)) return null;
+        return {resposta: original.slice(0, posicao), fontes};
+    }
     function renderizar(container, original) {
-        const dados = analisar(original);
-        if (!dados) { container.textContent = original; return false; }
         const doc = container.ownerDocument;
         const criar = (tag, classe, texto) => {
             const element = doc.createElement(tag);
@@ -89,6 +102,33 @@
             if (texto !== undefined) element.textContent = texto;
             return element;
         };
+        // Resposta da base curada: texto da resposta e, embaixo, "Fonte ▾" recolhido com nome, link e trecho.
+        const curada = separarFontes(original);
+        if (curada) {
+            container.classList.add('documental');
+            container.append(criar('div', 'documental-resposta-ia', curada.resposta));
+            const detalhes = criar('details', 'documental-detalhes fontes-curadas');
+            detalhes.append(criar('summary', '', 'Fonte'));
+            for (const fonte of curada.fontes) {
+                const bloco = criar('figure', 'documental-citacao');
+                const legenda = criar('figcaption', 'documental-natureza');
+                const link = criar('a', '', fonte.titulo);
+                link.href = fonte.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                legenda.append(link);
+                bloco.append(legenda);
+                if (fonte.trecho) bloco.append(criar('blockquote', '', fonte.trecho));
+                detalhes.append(bloco);
+            }
+            container.append(detalhes);
+            // O botão de copiar leva a resposta e as fontes em texto limpo (sem o bloco técnico).
+            container.sylvinhoOriginalText = curada.resposta + '\n\nFonte: ' +
+                curada.fontes.map(f => f.titulo + ' — ' + f.url).join('\n');
+            return true;
+        }
+        const dados = analisar(original);
+        if (!dados) { container.textContent = original; return false; }
         const citacao = (item) => {
             const bloco = criar('figure', 'documental-citacao');
             bloco.append(criar('p', 'documental-natureza', item.tipo));
@@ -125,5 +165,5 @@
         container.append(completas);
         return true;
     }
-    globalThis.apresentacaoDocumental = Object.freeze({analisar, renderizar});
+    globalThis.apresentacaoDocumental = Object.freeze({analisar, renderizar, separarFontes});
 })();

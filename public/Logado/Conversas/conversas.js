@@ -55,7 +55,8 @@ function render(items) {
         title.textContent = item.titulo;
         const preview = document.createElement('p');
         preview.className = 'conversation-preview';
-        preview.textContent = (item.mensagens?.at(-1)?.texto || '').slice(0, 160);
+        // Sem o bloco de fontes da base curada (marcador [[FONTES]]): a prévia mostra só a resposta.
+        preview.textContent = (item.mensagens?.at(-1)?.texto || '').split('\n\n[[FONTES]]')[0].slice(0, 160);
         const date = document.createElement('span');
         date.className = 'conversation-date';
         const updated = item.atualizadoEm?.toDate();

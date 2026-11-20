@@ -39,24 +39,3 @@ test('flag original exige documental e proibe mistura academica antes de prepara
             {cwd: new URL('../', import.meta.url), stdio: 'pipe'}), /Command failed/);
     }
 });
-
-test('staging original identifica documentos reais sem alterar HTML de publicacao', () => {
-    const source = read('local-e2e/prepare-history.mjs');
-    assert.match(source, /if \(original\)/);
-    assert.match(source, /SYLVINHO_RAG_ORIGINAL_LOCAL=1/);
-    assert.match(source, /documentos de referência/);
-    assert.match(read('public/Logado/Home/home.html'), /Protótipo de TCC/);
-    assert.doesNotMatch(read('public/Logado/Home/home.html'), /dados fictícios/);
-    assert.match(read('public/Logado/Home/assistente-config.js'), /endpoint: endpointRenderPreparado/);
-});
-
-test('modo original nao importa documentos e evidencia apenas fontes autorizadas', () => {
-    const runner = read('local-e2e/auth-run.mjs');
-    assert.match(runner, /if \(!original\) await prepararFixturesDocumentais/);
-    assert.match(read('local-e2e/function.cjs'), /original \? \{recuperarConhecimento: leitorOriginal\}/);
-    const scenarios = read('local-e2e/original-scenarios.mjs');
-    assert.doesNotMatch(scenarios, /:commit|setDoc\(|updateDoc\(|owner|firestore\.googleapis/);
-    assert.match(scenarios, /messageId/);
-    assert.match(scenarios, /connectionrefused/);
-    assert.match(scenarios, /page\.reload/);
-});

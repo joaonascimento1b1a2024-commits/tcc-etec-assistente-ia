@@ -556,6 +556,26 @@ nav {
 .documental-detalhes summary:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; border-radius: 3px; }
 .documental-detalhes[open] > summary { margin-bottom: 0.8rem; }
 .documental-texto-original { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8125rem; }
+/* "Fonte ▾" das respostas da base curada: discreto, fechado por padrão; a seta gira ao abrir. */
+.fontes-curadas { margin-top: 0.6rem; padding-top: 0.4rem; }
+.fontes-curadas > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    min-height: 44px;
+    padding: 0.25rem 0.5rem 0.25rem 0;
+    color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+.fontes-curadas > summary::-webkit-details-marker { display: none; }
+.fontes-curadas > summary::after { content: '▾'; font-size: 0.9rem; transition: transform 0.2s ease; }
+.fontes-curadas[open] > summary::after { transform: rotate(180deg); }
+.fontes-curadas[open] > summary { margin-bottom: 0.5rem; }
+.fontes-curadas .documental-natureza a { color: inherit; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+.fontes-curadas blockquote { font-size: 0.875rem; font-weight: 400; }
+@media (prefers-reduced-motion: reduce) { .fontes-curadas > summary::after { transition: none; } }
 @media (max-width: 720px) {
     .message-row { gap: 6px; }
     .bot-avatar { flex-basis: 28px; height: 28px; font-size: 18px; }

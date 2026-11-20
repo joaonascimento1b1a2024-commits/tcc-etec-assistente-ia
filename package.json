@@ -1,20 +1,20 @@
 {
     "name": "tcc-etec-assistente-ia",
     "version": "1.0.0",
-    "description": "O **Projeto Sylvinho** é uma plataforma web desenvolvida como Trabalho de Conclusão de Curso (TCC), com o objetivo de utilizar **Inteligência Artificial** para auxiliar no atendimento da secretaria acadêmica da ETEC Sylvio de Mattos Carvalho.",
-    "main": "index.js",
+    "private": true,
+    "description": "Projeto Sylvinho: assistente virtual com IA para a Secretaria Acadêmica da ETEC Sylvio de Mattos Carvalho (TCC).",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "node --test tests/*.test.mjs tests/*.test.cjs tests/*.test.js",
+        "test:servidor": "npm --prefix render-poc test",
+        "test:regras": "firebase emulators:exec --config firebase.admin.test.json --only auth,firestore --project demo-etec-rbac \"node tests/emulador/admin-rules.test.mjs\"",
+        "build": "npm --prefix functions run build",
+        "indexar": "node scripts/indexar-embeddings-curados.mjs",
+        "avaliar": "node scripts/avaliar-hibrido.mjs",
+        "segredos": "node scripts/verificar-segredos.mjs"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/joaonascimento1b1a2024-commits/tcc-etec-assistente-ia.git"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/joaonascimento1b1a2024-commits/tcc-etec-assistente-ia/issues"
-    },
-    "homepage": "https://github.com/joaonascimento1b1a2024-commits/tcc-etec-assistente-ia#readme"
+    "license": "ISC"
 }

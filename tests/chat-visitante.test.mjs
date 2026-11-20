@@ -147,6 +147,7 @@ async function page({ answer = async () => 'Resposta', endpoint = 'https://examp
         URL, AbortController,
         observarSessao: async (callback, failure) => { onUser = callback; onError = failure; return () => {}; },
         configuracaoVisitante: () => ({ endpoint }),
+        acordarAssistente: () => {},
         perguntarVisitante: async options => { requests.push(options); return answer(options); },
     });
     vm.runInContext(pageSource, context);

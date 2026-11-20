@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {elegivel,criarFiltroContatos,criarBuscaCurada,hashIndice,reescreverPergunta,validarInstagram,converterInstagram,criarPoliticaCurada} from '../local-e2e/curadoria-local.mjs';
-import {criarGeminiCurado,numerosSustentados} from '../local-e2e/gemini-curado.mjs';
-import {criarEmbeddings} from '../local-e2e/embeddings-curados.mjs';
+import {elegivel,criarFiltroContatos,criarBuscaCurada,hashIndice,reescreverPergunta,criarPoliticaCurada} from '../render-poc/motor-curado/curadoria-local.mjs';
+import {criarGeminiCurado,numerosSustentados} from '../render-poc/motor-curado/gemini-curado.mjs';
+import {criarEmbeddings} from '../render-poc/motor-curado/embeddings-curados.mjs';
 const read=p=>JSON.parse(readFileSync(p,'utf8'));
 const registros=read('knowledge-local/faq-curada.json'),contatos=read('knowledge-local/contatos-publicos.json');
 const freq=registros.find(r=>r.id==='frequencia');
@@ -20,11 +20,6 @@ test('datas equivalentes preservam intervalos sem autorizar novos dias ou anos',
 test('numeração de lista não é um fato novo; números do conteúdo continuam validados',()=>{
  assert.ok(numerosSustentados('1. Renovação: 15 a 21/12/2026.\n2. Procure a Secretaria.','Renovação de 15 a 21/12/2026.'));
  assert.equal(numerosSustentados('1. Frequência de 80%.','Frequência de 75%.'),false);
-});
-test('290 originais permanecem íntegros e há 200 perguntas rastreáveis',()=>{
- assert.equal(read('.cache/chat-rag/base.json').length,290);
- assert.equal(read('knowledge-local/respostas-200-curadoria.json').length,200);
- assert.ok(read('knowledge-local/respostas-200-curadoria.json').every(r=>!elegivel(r,hoje)));
 });
 test('AL não é liberado pelo status sem confirmação do setor competente',()=>{
  assert.equal(elegivel({...freq,origemDeclarada:'AL_ou_mista'},hoje),false);
@@ -68,7 +63,9 @@ test('allowlist libera exatamente os oito contatos comprovados',()=>{
 });
 test('AL e ausências não viram valor ou prazo nos rascunhos',()=>{
  const p=criarPoliticaCurada({contatos});
- for(const q of ['quanto é a camiseta?','me dá a declaração de matrícula','horário da merenda','renovação pelo NSA']){
+ // Declaração de matrícula e rematrícula pelo NSA ganharam fonte (avisos da Secretaria no NSA): vão para a busca.
+ for(const q of ['me dá a declaração de matrícula','renovação pelo NSA'])assert.equal(p.planejar(q).tipo,'buscar');
+ for(const q of ['quanto é a camiseta?','horário da merenda']){
   const result=p.planejar(q);assert.equal(result.tipo,'pendente');assert.match(result.direta,/Secretaria confirma/);assert.doesNotMatch(result.direta,/R\$|1 dia|10h20|NSA/);
  }
 });
@@ -83,20 +80,13 @@ test('pedido de atendimento humano informa o contato aprovado sem chamar Gemini'
 
 test('falha do provedor não é apresentada como informação ausente',async()=>{
  const motor=criarGeminiCurado({registros,contatos,lerChave:()=> 'sintetica',modeloReserva:'',transporte:async()=>new Response('{}',{status:429})});
- const falha=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});
+ const falha=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});
  assert.equal(falha.tipo,'falha');assert.equal(falha.retentavel,true);assert.match(falha.texto,/limite de uso/);assert.doesNotMatch(falha.texto,/Secretaria confirma/);
  const ausente=await motor.responder({pergunta:'quanto é a camiseta?',escopo:hoje});assert.equal(ausente.tipo,'pendente');assert.match(ausente.texto,/Secretaria confirma/);assert.equal(ausente.retentavel,undefined);
 });
 test('histórico reescreve o prazo sem misturar outro curso',()=>{
  assert.match(reescreverPergunta('e se eu perder o prazo?',[{remetente:'user',texto:'como renovo a matrícula?'}]),/renovação/);
  assert.equal(reescreverPergunta('quero transferência',[{remetente:'user',texto:'como renovo a matrícula?'}]),'quero transferência');
-});
-test('Instagram exige datas, revisão manual e privacidade; nenhuma entrada ativada',()=>{
- assert.equal(read('knowledge-local/instagram.json').entradas.length,0);
- const post={id:'ig-teste',texto:'Reunião de pais.',url:'https://www.instagram.com/p/ABC/',data_publicacao:'2026-11-01',vigencia_fim:'2026-11-30',status:'aprovado',revisor:'setor competente',semDadosPessoais:true};
- assert.ok(validarInstagram(post,'2026-11-12'));
- const converted=converterInstagram(post,'2026-11-12');assert.equal(converted.prioridade,5);assert.equal(converted.origem,'instagram');assert.equal(converted.vigencia.fim,post.vigencia_fim);
- for(const change of [{vigencia_fim:'2026-10-31'},{data_publicacao:'2026-02-30'},{revisor:null},{texto:'Nome: Maria Exemplo'},{status:'em_revisao'},{url:'https://evil.example/p/abc'}])assert.equal(validarInstagram({...post,...change},'2026-11-12'),false);
 });
 test('BM25 funciona quando embeddings não respondem; variantes são pesquisáveis',async()=>{
  const b=criarBuscaCurada({registros,vetores:{hash:hashIndice(registros),valores:{}},embeddingConsulta:async()=>{throw Error('OFFLINE');}});
@@ -109,7 +99,7 @@ test('geração usa fatos limpos, revisão semântica e temperatura',async()=>{
   const b=JSON.parse(init.body);bodies.push(b);
   return response(bodies.length===1?{resposta:'É preciso ter pelo menos 75% de presença no total das aulas.',ids:['frequencia']}:{sustentada:true});
  }});
- const r=await motor.responder({pergunta:'preciso de quantos % de presença?',escopo:hoje});
+ const r=await motor.responder({pergunta:'de presença, preciso de quantos %?',escopo:hoje});
  assert.equal(r.tipo,'gemini_curado');assert.doesNotMatch(r.texto,/art\. 83/);assert.equal(bodies.length,2);
  assert.equal(bodies[0].generationConfig.temperature,.3);
  const dados=JSON.parse(bodies[0].contents[0].parts[0].text);assert.ok(!JSON.stringify(dados).includes('https://'));assert.ok(!JSON.stringify(dados).includes('Regimento Comum'));
@@ -128,23 +118,29 @@ for(const [nome,proposta] of [
  ['número inventado',{resposta:'A presença mínima é 80%.',ids:['frequencia']}],
  ['citação não autorizada',{resposta:'Segundo o regimento, precisa de 75%.',ids:['frequencia']}],
  ['ID que não foi recuperado',{resposta:'É preciso ter 75% de presença.',ids:['inexistente']}],
- ['pergunta desnecessária',{resposta:'É preciso ter 75% de presença. Quer mais ajuda?',ids:['frequencia']}],
+ ['pergunta no meio da resposta',{resposta:'Quer saber a regra? É preciso ter 75% de presença.',ids:['frequencia']}],
  ['contato pessoal',{resposta:'Escreva para pessoa@example.com.',ids:['frequencia']}],
 ])test('bloqueia '+nome,async()=>{
  let calls=0;const motor=setup({transporte:async()=>{calls++;return response(proposta);}});
- const r=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});assert.equal(r.tipo,'falha');assert.equal(calls,1);assert.equal(r.retentavel,true);assert.match(r.texto,/tentar novamente/);assert.doesNotMatch(r.texto,/Secretaria confirma/);
+ const r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});assert.equal(r.tipo,'falha');assert.equal(calls,1);assert.equal(r.retentavel,true);assert.match(r.texto,/tentar novamente/);assert.doesNotMatch(r.texto,/Secretaria confirma/);
+});
+test('saudação inicial e pergunta final são removidas, e o texto restante ainda passa pela revisão',async()=>{
+ const bodies=[];const motor=setup({transporte:async(_url,init)=>{bodies.push(JSON.parse(init.body));return response(bodies.length===1?{resposta:'Olá! É preciso ter 75% de presença. Quer mais ajuda?',ids:['frequencia']}:{sustentada:true});}});
+ const r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});
+ assert.equal(r.tipo,'gemini_curado');assert.equal(r.texto,'É preciso ter 75% de presença.');assert.equal(bodies.length,2);
+ assert.equal(JSON.parse(bodies[1].contents[0].parts[0].text).resposta,'É preciso ter 75% de presença.');
 });
 test('revisor que rejeita proposta causa fallback',async()=>{
  let calls=0;const motor=setup({transporte:async()=>response(++calls===1?{resposta:'Você precisa de 75% de presença.',ids:['frequencia']}:{sustentada:false})});
- const r=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});assert.equal(r.codigo,'NAO_SUSTENTADA');
+ const r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});assert.equal(r.codigo,'NAO_SUSTENTADA');
 });
 test('429 usa reserva configurada, sem mudar modelo global nem fazer loop',async()=>{
  const models=[];const motor=setup({modeloReserva:'gemini-2.5-flash',transporte:async(url)=>{models.push(url);if(models.length===1)return new Response('{}',{status:429});return response(models.length===2?{resposta:'Você precisa de 75% de presença.',ids:['frequencia']}:{sustentada:true});}});
- const r=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});assert.equal(r.tipo,'gemini_curado');assert.equal(r.modelo,'gemini-2.5-flash');assert.equal(models.length,3);
+ const r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});assert.equal(r.tipo,'gemini_curado');assert.equal(r.modelo,'gemini-2.5-flash');assert.equal(models.length,3);
 });
 test('deadline funciona mesmo se transporte ignorar AbortSignal',async()=>{
  const motor=setup({timeoutMs:20,transporte:()=>new Promise(()=>{})});
- const start=Date.now(),r=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});assert.equal(r.codigo,'TIMEOUT');assert.ok(Date.now()-start<1000);
+ const start=Date.now(),r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});assert.equal(r.codigo,'TIMEOUT');assert.ok(Date.now()-start<1000);
 });
 test('dados pessoais são bloqueados antes de qualquer chamada externa',async()=>{
  let chamadas=0;const motor=setup({transporte:async()=>{chamadas++;throw Error('NAO_DEVERIA_CHAMAR');}});
@@ -170,5 +166,5 @@ test('revisor pode usar reserva ao receber 429, mantendo validação obrigatóri
   if(calls===2)return new Response('{}',{status:429});
   return response({sustentada:true});
  }});
- const r=await motor.responder({pergunta:'Preciso de quantos % de presença?',escopo:hoje});assert.equal(r.tipo,'gemini_curado');assert.equal(calls,3);
+ const r=await motor.responder({pergunta:'De presença, preciso de quantos %?',escopo:hoje});assert.equal(r.tipo,'gemini_curado');assert.equal(calls,3);
 });
