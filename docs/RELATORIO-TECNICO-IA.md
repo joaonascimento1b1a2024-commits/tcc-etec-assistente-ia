@@ -165,10 +165,11 @@ O plano gratuito limita pedidos e às vezes fica sobrecarregado (HTTP 429 e 503)
 | --- | --- |
 | Produção, 40 perguntas (19/11/2026, antes da varredura) | 31 adequadas |
 | Produção, mesmas 40 perguntas, depois da varredura dos sites oficiais | 37 adequadas (92,5%) |
-| 76 perguntas típicas de banca com o **Gemini fora do ar** | Antes das melhorias: 23 com texto aprovado. Depois das variações, da resposta exata e das entradas do NSA: 47 ou mais. *(A atualizar com a rodada final: `npm run avaliar sem-gemini`.)* |
-| Tempo da pergunta exata | Cerca de 40 ms, contra 10 a 20 s quando dependia do Gemini sobrecarregado. |
+| 76 perguntas típicas de banca com o **Gemini simulado fora do ar** (local) | Antes das melhorias: 23 com o texto aprovado. Depois das variações, da resposta exata e das entradas do NSA: 47 ou mais. |
+| **Rodada final em produção, 76 perguntas típicas de banca (20/11/2026, versão `c23752c`)** | **76 de 76 respondidas sem erro.** 55 com "Fonte ▾" (base curada), 18 com resposta local (saudação, identidade, esclarecimento, atendimento humano, fora do escopo, bloqueio de dados pessoais e as pendências conhecidas de cancelamento e merenda, que a Secretaria confirma) e 3 sem fonte oficial (curso gratuito, entrar atrasado e bolsa), encaminhadas à Secretaria pelo fluxo documental. |
+| Tempo de resposta na rodada final | Mediana de **0,2 s**, e 90% das respostas em até 0,5 s. As 3 do fluxo documental levaram de 5 a 10 s. |
 
-A suíte automatizada tem cerca de 1.340 testes. Eles cobrem a busca, a validação de números, o bloqueio de dados pessoais, a fila, o cache, a reserva, o classificador, as regras de acesso e as telas.
+A suíte automatizada tem 1.346 testes (1.343 passando e 3 pulados, que dependem da amostra privada de documentos). Eles cobrem a busca, a validação de números, o bloqueio de dados pessoais, a fila, o cache, a reserva, o classificador, as regras de acesso e as telas.
 
 ## 7. Limitações
 
