@@ -481,3 +481,9 @@ test('fontes: com mostrarFontes, resposta da base curada leva as fontes oficiais
     const social = await motor('hibrido', {...provedor(), mostrarFontes: true}).responderVisitante('Quem é você?');
     assert.ok(!social.includes(MARCADOR_FONTES));
 });
+
+test('base versionada: nenhuma resposta aprovada é barrada pelo filtro de dados (senão o fato some da busca sem aviso)', async () => {
+    const {criarFiltroContatos} = await import('../render-poc/motor-curado/curadoria-local.mjs');
+    const filtro = criarFiltroContatos(base.contatos);
+    assert.deepEqual(base.registros.filter(r => filtro(r.resposta, 'documento')).map(r => r.id), []);
+});
