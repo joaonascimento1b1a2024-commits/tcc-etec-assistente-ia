@@ -1,0 +1,155 @@
+/* Acessibilidade compartilhada: alto contraste e tamanho da fonte em todas as páginas.
+ *
+ * Os atributos na tag <html> são colocados por acessibilidade.js:
+ *   data-contraste="alto"  → cores fortes no tema escuro e no claro (contraste acima de 7:1);
+ *   data-fonte="115…200" → fonte base maior; como o site usa rem, todo texto acompanha.
+ *
+ * Este arquivo é o último CSS da página e usa !important de propósito: ele precisa
+ * vencer as cores escritas em cada página, nos dois temas (claro e escuro).
+ */
+
+/* ============================================================
+ * 1. Tamanho da fonte
+ * ============================================================ */
+/* 1rem passa de 16px para 18,4 / 20,8 / 24 / 28 / 32px. */
+:root[data-fonte='115'] { font-size: 115% !important; }
+:root[data-fonte='130'] { font-size: 130% !important; }
+:root[data-fonte='150'] { font-size: 150% !important; }
+:root[data-fonte='175'] { font-size: 175% !important; }
+:root[data-fonte='200'] { font-size: 200% !important; }
+
+/* O menu lateral acompanha a fonte para os nomes não serem cortados. */
+:root[data-fonte='115'] { --sidebar-width: 220px; }
+:root[data-fonte='130'] { --sidebar-width: 244px; }
+:root[data-fonte='150'] { --sidebar-width: 272px; }
+:root[data-fonte='175'] { --sidebar-width: 304px; }
+:root[data-fonte='200'] { --sidebar-width: 336px; }
+/* Menu recolhido continua estreito: mostra só os ícones. */
+:root[data-fonte][data-sidebar-collapsed='true'] { --sidebar-width: 76px; }
+
+/* ============================================================
+ * 2. Alto contraste
+ * ============================================================
+ * Funciona nos dois temas, cada um com sua paleta (contraste de texto acima de 7:1, nível AAA):
+ *   tema escuro → fundo preto, texto branco, destaques em amarelo;
+ *   tema claro  → fundo branco, texto preto, destaques em vermelho-escuro (cor da ETEC).
+ * As regras abaixo usam só as variáveis --ac-*, então valem para as duas paletas. */
+:root[data-contraste='alto'] {
+    color-scheme: dark;
+    --ac-fundo: #000;
+    --ac-texto: #fff;
+    --ac-link: #ff0;          /* links e foco do teclado */
+    --ac-realce: #ff0;        /* fundo da página atual, do mouse em cima e do interruptor ligado */
+    --ac-realce-texto: #000;  /* texto sobre o realce */
+    --ac-placeholder: #ccc;
+}
+:root[data-contraste='alto'][data-theme='light'] {
+    color-scheme: light;
+    --ac-fundo: #fff;
+    --ac-texto: #000;
+    --ac-link: #a00000;
+    --ac-realce: #000;
+    --ac-realce-texto: #fff;
+    --ac-placeholder: #555;
+}
+
+/* Variáveis de cor de todas as páginas apontam para a paleta de alto contraste. */
+:root[data-contraste='alto'] {
+    --background: var(--ac-fundo);
+    --sidebar: var(--ac-fundo);
+    --panel: var(--ac-fundo);
+    --black: var(--ac-fundo);
+    --overlay: var(--ac-fundo);
+    --text: var(--ac-texto);
+    --white: var(--ac-texto);
+    --muted: var(--ac-texto);
+    --feedback: var(--ac-texto);
+    --border: var(--ac-texto);
+    --line: var(--ac-texto);
+    --accent: var(--ac-link);
+    --red: var(--ac-link);
+    --action: var(--ac-link);
+    --shell-text: var(--ac-texto);
+    --shell-muted: var(--ac-texto);
+    --shell-panel: var(--ac-fundo);
+    --shell-line: var(--ac-texto);
+    --shell-hover: var(--ac-fundo);
+    --shell-active: var(--ac-link);
+    --shell-active-bg: var(--ac-fundo);
+}
+
+/* Base: fundo e texto da paleta, sem sombras, transparências nem imagens de fundo decorativas.
+ * Ficam de fora: ícones (svg), que já usam a cor do texto; imagens (img);
+ * e o widget do VLibras ([vw]), que tem visual próprio do governo federal. */
+:root[data-contraste='alto'] body,
+:root[data-contraste='alto'] body *:not(svg, svg *, img, [vw], [vw] *),
+:root[data-contraste='alto'] body *:not([vw] *)::before,
+:root[data-contraste='alto'] body *:not([vw] *)::after {
+    background-color: var(--ac-fundo) !important;
+    background-image: none !important;
+    color: var(--ac-texto) !important;
+    border-color: var(--ac-texto) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+/* Links na cor de destaque e sublinhados: reconhecíveis sem depender só da cor. */
+:root[data-contraste='alto'] body a:not([vw] *),
+:root[data-contraste='alto'] body a:not([vw] *) * {
+    color: var(--ac-link) !important;
+}
+:root[data-contraste='alto'] :is(main, .legal-page, footer) a {
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+}
+
+/* Botões e campos ganham borda para não sumirem no fundo. */
+:root[data-contraste='alto'] :where(button, input, select, textarea, summary, .new-chat, .google-button, .login-button, .btn-acessar, .hero-button-primary, .hero-button-secondary, .whatsapp-button):not([vw] *) {
+    border: 2px solid var(--ac-texto) !important;
+}
+:root[data-contraste='alto'] :is(input, textarea)::placeholder {
+    color: var(--ac-placeholder) !important;
+    opacity: 1;
+}
+
+/* Passar o mouse e a página atual: cores invertidas (não só muda a cor do texto).
+ * Os ícones (svg) entram também, para acompanharem o texto.
+ * Links que são imagem (como o logo) ficam de fora, para o logo não sumir. */
+:root[data-contraste='alto'] :is(button, a:not(:has(img)), summary):hover:not(:disabled, [aria-disabled='true'], [vw] *),
+:root[data-contraste='alto'] :is(button, a:not(:has(img)), summary):hover:not(:disabled, [aria-disabled='true'], [vw] *) *:not(img),
+:root[data-contraste='alto'] body nav a:is(.active, [aria-current='page']):not([vw] *),
+:root[data-contraste='alto'] body nav a:is(.active, [aria-current='page']):not([vw] *) *:not(img) {
+    background-color: var(--ac-realce) !important;
+    color: var(--ac-realce-texto) !important;
+}
+
+/* Botão desativado: continua legível (sem transparência) e com borda tracejada. */
+:root[data-contraste='alto'] body :is(:disabled, [aria-disabled='true']) {
+    opacity: 1 !important;
+    border-style: dashed !important;
+}
+
+/* Interruptor (como o do próprio alto contraste): desligado = bolinha da cor do texto;
+ * ligado = trilho na cor de realce. Seletores longos para vencer as regras gerais acima. */
+:root[data-contraste='alto'] button.switch .switch-track .switch-thumb {
+    background-color: var(--ac-texto) !important;
+}
+:root[data-contraste='alto'] button.switch[aria-checked='true'] .switch-track {
+    background-color: var(--ac-realce) !important;
+}
+:root[data-contraste='alto'] button.switch[aria-checked='true'] .switch-track .switch-thumb,
+:root[data-contraste='alto'] button.switch:hover .switch-track .switch-thumb {
+    background-color: var(--ac-realce-texto) !important;
+}
+
+/* Foco do teclado bem visível em qualquer elemento. */
+:root[data-contraste='alto'] :focus-visible {
+    outline: 3px solid var(--ac-link) !important;
+    outline-offset: 3px !important;
+}
+
+/* Logos no tema escuro: sempre a versão branca, sem filtros.
+ * No tema claro continuam as regras de theme.css (logo preto). */
+:root[data-contraste='alto']:not([data-theme='light']) img {
+    filter: none !important;
+}

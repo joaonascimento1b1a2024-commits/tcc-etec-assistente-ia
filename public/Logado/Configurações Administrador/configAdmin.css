@@ -10,7 +10,7 @@
 }
 .admin-actions .action {
     color: var(--accent);
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 /* Diálogos limitados à tela, com rolagem em celulares e contraste nos dois temas. */
 dialog {
@@ -35,7 +35,7 @@ dialog::backdrop {
     margin: 0;
 }
 .admin-form label {
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 .admin-form input,
 .admin-form textarea,

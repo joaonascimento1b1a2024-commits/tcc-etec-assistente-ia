@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="../layout.css" />
     <link rel="stylesheet" href="../shell.css" />
 <script defer src="../../Arquivos-Universais/ui.js"></script>
+<link rel="stylesheet" href="../../Arquivos-Universais/acessibilidade.css" />
+<script src="../../Arquivos-Universais/acessibilidade.js"></script>
 </head>
     <body>
         <!-- Permite pular o menu quando a navegação é feita pelo teclado. -->
@@ -78,6 +80,8 @@
                         <p id="whatsapp-help" class="helper">
                             Você será direcionado para o WhatsApp para iniciar sua conversa.
                         </p>
+                        <!-- Preenchido por servicos.js quando não há número configurado. -->
+                        <p id="whatsapp-status" class="helper" role="status"></p>
                         <noscript
                             ><p class="helper">
                                 Ative o JavaScript para abrir o atendimento pelo WhatsApp.

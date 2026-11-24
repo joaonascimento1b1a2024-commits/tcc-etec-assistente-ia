@@ -110,7 +110,7 @@ nav {
 /* Padroniza o espaço e a fonte dos ícones do menu. */
 .nav-link span {
     width: 12px;
-    font-size: 18px;
+    font-size: 1.125rem;
     text-align: center;
     font-family: Poppins, Arial, sans-serif;
 }
@@ -221,7 +221,7 @@ nav {
 /* Estiliza a saudação principal. */
 .welcome h1 {
     margin: 0;
-    font-size: 21px;
+    font-size: 1.3125rem;
 }
 
 /* Estiliza a pergunta abaixo da saudação. */
@@ -281,7 +281,7 @@ nav {
 /* Destaca em vermelho o ícone de cada cartão. */
 .card-icon {
     color: var(--red);
-    font-size: 24px;
+    font-size: 1.5rem;
 }
 
 /* Empilha as sugestões de perguntas da tela inicial. */
@@ -348,13 +348,13 @@ nav {
     border-left: 1px solid #777;
     background: transparent;
     color: #796d6d;
-    font-size: 23px;
+    font-size: 1.4375rem;
 }
 
 /* Destaca a seta de envio em vermelho. */
 .send {
     color: var(--red);
-    font-size: 25px;
+    font-size: 1.5625rem;
     line-height: 1;
 }
 
@@ -415,7 +415,7 @@ nav {
     place-items: center;
     border-radius: 50%;
     background: #020202;
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 .bot-avatar img {
@@ -578,7 +578,7 @@ nav {
 @media (prefers-reduced-motion: reduce) { .fontes-curadas > summary::after { transition: none; } }
 @media (max-width: 720px) {
     .message-row { gap: 6px; }
-    .bot-avatar { flex-basis: 28px; height: 28px; font-size: 18px; }
+    .bot-avatar { flex-basis: 28px; height: 28px; font-size: 1.125rem; }
     .message-row.bot .bubble { max-width: calc(100% - 34px); }
     .bubble { padding: 12px 10px; max-width: 92%; }
     .documental-citacao blockquote { padding-left: 0.625rem; }

@@ -81,7 +81,8 @@ button { white-space: normal; }
 .chat-status.is-processing::before { content:''; display:inline-block; width:12px; height:12px; margin-right:8px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; vertical-align:middle; animation:processando .8s linear infinite; }
 @keyframes processando { to { transform:rotate(360deg); } }
 .list-tools { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:20px 0; }
-.list-tools label { display:grid; gap:6px; flex:1; font-size:.875rem; }
+/* min-width:0 e coluna minmax(0,1fr): o campo encolhe junto com a tela, mesmo com fonte ampliada. */
+.list-tools label { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; flex:1; min-width:0; font-size:.875rem; }
 .list-tools :is(input,select) { min-height:44px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--text); font:inherit; }
 .filter-summary { color:var(--muted); font-size:.875rem; }
 .legal-page { max-width:800px; margin:auto; padding:32px 24px 64px; }

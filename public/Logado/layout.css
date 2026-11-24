@@ -80,12 +80,14 @@
     flex: 0 0 24px;
     width: 24px;
     font-family: var(--font-ui, Poppins, Arial, sans-serif);
-    font-size: 18px;
+    font-size: 1.125rem;
     text-align: center;
 }
 
+/* Até 3 colunas de no mínimo 8,5rem: no tamanho normal ficam as 3; com a fonte
+ * ampliada (Configurações > Acessibilidade) os cartões passam para 2 ou 1 coluna. */
 .feature-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
 }
 
 .feature-card,
@@ -183,7 +185,7 @@ dialog {
     .sidebar nav span {
         flex: 0 0 24px;
         width: 24px;
-        font-size: 21px;
+        font-size: 1.3125rem;
         text-align: center;
     }
 
@@ -228,7 +230,7 @@ dialog {
     .feature-card strong,
     .home-suggestions button,
     .chat-suggestions button {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 
     .feature-card small {
@@ -242,7 +244,7 @@ dialog {
     }
 
     .message-form input {
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .message-form button {
@@ -254,7 +256,7 @@ dialog {
     }
 
     .history-heading h1 {
-        font-size: 26px;
+        font-size: 1.625rem;
     }
 
     .notice-area {
@@ -275,7 +277,7 @@ dialog {
     }
 
     dialog :is(input, textarea, select) {
-        font-size: 16px;
+        font-size: 1rem;
     }
 }
 

@@ -14,6 +14,7 @@
         }
     }
 
+    // Logo preto no tema claro e branco no escuro (também com o alto contraste ligado).
     function updateLogos() {
         const variant = document.documentElement.dataset.theme === 'light' ? 'pb' : 'br';
         document.querySelectorAll(`img[src*="${logoName}"]`).forEach((logo) => {
@@ -47,7 +48,7 @@
         apply(read(themeKey));
     }
 
-    window.etecTheme = { apply, save, useAccount };
+    window.etecTheme = { apply, save, useAccount, updateLogos };
     restore();
     document.addEventListener('DOMContentLoaded', updateLogos, { once: true });
     window.addEventListener('pageshow', restore);

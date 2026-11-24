@@ -57,7 +57,7 @@
     border-radius: 10px;
     background: linear-gradient(110deg, #c60000, #db1313);
     color: #fff;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.5;
     text-decoration: none;
@@ -93,7 +93,7 @@
     border-radius: 9px;
     color: var(--shell-text);
     background: transparent;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.5;
     white-space: nowrap;
@@ -127,7 +127,7 @@
     color: var(--shell-muted);
     background: transparent;
     font: inherit;
-    font-size: 12px;
+    font-size: 0.75rem;
     cursor: pointer;
 }
 .sidebar-collapse svg { width: 18px; height: 18px; flex-shrink: 0; }
@@ -152,11 +152,11 @@
 .assistant-brand { gap: 10px; min-width: 0; }
 .assistant-avatar { height: 28px; width: 28px; flex-shrink: 0; background: transparent; border: 0; }
 .assistant-avatar #logo { width: 28px; height: 28px; }
-.assistant-identity { min-width: 0; color: var(--shell-text); font-size: 14px; font-weight: 500; }
+.assistant-identity { min-width: 0; color: var(--shell-text); font-size: 0.875rem; font-weight: 500; }
 .shell-ready .app-content .topbar { box-shadow: none; }
 .topbar .profile { gap: 8px; max-width: 45%; min-height: 44px; padding: 4px; border: 0; border-radius: 4px; color: var(--shell-text); }
 .topbar .profile:hover { background: var(--shell-hover); }
-.profile #profileName { font-size: 14px; }
+.profile #profileName { font-size: 0.875rem; }
 .topbar .profile .profile-fallback { display: grid; place-items: center; height: 28px; width: 28px; flex: 0 0 28px; color: var(--shell-muted); }
 .profile-fallback svg { width: 22px; height: 22px; }
 .topbar .profile img { width: 30px; height: 30px; border: 0; }
@@ -165,13 +165,13 @@
 body:has(.app-content #messageForm) { height: min(100dvh, var(--chat-viewport-height, 100dvh)); min-height: 0; }
 .app-content .welcome h1 { font-size: clamp(1.625rem, 3vw, 2rem); }
 .app-content .feature-card { min-height: 108px; padding: 16px 14px; gap: 16px; }
-.app-content .feature-card strong { font-size: 14px; }
-.app-content .feature-card small { font-size: 14px; line-height: 1.5; }
+.app-content .feature-card strong { font-size: 0.875rem; }
+.app-content .feature-card small { font-size: 0.875rem; line-height: 1.5; }
 .app-content .card-icon svg { width: 26px; height: 26px; }
 .app-content .message-form { min-height: 48px; }
 .app-content .message-form textarea { min-height: 46px; padding: 10px 12px; }
-.app-content .bubble { font-size: 16px; }
-.app-content :is(.home-suggestions,.chat-suggestions) button { font-size: 14px; }
+.app-content .bubble { font-size: 1rem; }
+.app-content :is(.home-suggestions,.chat-suggestions) button { font-size: 0.875rem; }
 @media (min-width: 721px) {
     :root[data-sidebar-collapsed='true'] { --sidebar-width: 76px; }
     .shell-ready :is(.app-content,.content,.services-content) { margin-left: var(--sidebar-width); }
@@ -214,13 +214,13 @@ body:has(.app-content #messageForm) { height: min(100dvh, var(--chat-viewport-he
     .shell-ready .sidebar nav { position: static; display: grid; max-height: none; padding: 0; grid-template-columns: 1fr; border: 0; box-shadow: none; background: transparent; }
     .shell-ready .sidebar nav a:last-child { grid-column: auto; }
     .shell-ready .sidebar .school-logo { margin-bottom: 24px; }
-    .shell-ready .sidebar .new-chat { width: 100%; font-size: 14px; margin-bottom: 24px; }
+    .shell-ready .sidebar .new-chat { width: 100%; font-size: 0.875rem; margin-bottom: 24px; }
     .shell-ready :is(.app-content,.content,.services-content) { margin-left: 0; padding-inline: 12px; }
     .shell-ready.sidebar-drawer-open { overflow: hidden; }
     .mobile-menu-toggle { display: grid; place-items: center; flex: 0 0 44px; width: 44px; min-height: 44px; padding: 10px; border: 1px solid var(--shell-line); border-radius: 9px; color: var(--shell-text); background: var(--shell-panel); cursor: pointer; }
     .mobile-menu-toggle svg { width: 20px; height: 20px; }
     .shell-mobile-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; color: var(--shell-text); }
-    .shell-mobile-title { font-size: 15px; font-weight: 600; }
+    .shell-mobile-title { font-size: 0.9375rem; font-weight: 600; }
     .app-content:has(#messageForm) { --chat-inline-space: 12px; }
     .topbar { min-height: 48px; margin-bottom: 6px; gap: 8px; }
     .topbar .assistant-brand { flex: 1; gap: 8px; }
@@ -229,11 +229,11 @@ body:has(.app-content #messageForm) { height: min(100dvh, var(--chat-viewport-he
     .topbar .profile { flex-shrink: 0; max-width: 45%; }
     .app-content .feature-cards { gap: 8px; margin-block: 16px; }
     .app-content .feature-card { min-height: 72px; padding: 10px 12px; }
-    .app-content .bubble { font-size: 16px; }
-    .app-content .message-form :is(textarea,input) { font-size: 16px; }
+    .app-content .bubble { font-size: 1rem; }
+    .app-content .message-form :is(textarea,input) { font-size: 1rem; }
     .app-content .chat-suggestions { max-height: min(18dvh, 100px); }
-    .app-content .chat-suggestions button { font-size: 12px; min-height: 44px; }
-    .app-content .chat-status { font-size: 12px; margin-block: 6px; }
+    .app-content .chat-suggestions button { font-size: 0.75rem; min-height: 44px; }
+    .app-content .chat-status { font-size: 0.75rem; margin-block: 6px; }
     dialog { max-width: calc(100vw - 24px); max-height: 85dvh; }
 }
 @media (max-width: 480px) {

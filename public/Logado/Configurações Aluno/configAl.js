@@ -353,7 +353,44 @@ async function start() {
     }
 }
 
+// ============================================================
+// 5. Acessibilidade (alto contraste e tamanho da fonte)
+// ============================================================
+// A lógica fica em Arquivos-Universais/acessibilidade.js, carregado em todas as páginas.
+// Aqui só ligamos os botões e mantemos o que eles mostram igual ao estado real.
+function ligarAcessibilidade() {
+    const a11y = window.etecAcessibilidade;
+    const contraste = document.getElementById('contrast');
+    if (!a11y || !contraste) return;
+    const textoContraste = contraste.querySelector('.switch-text');
+    const diminuir = document.getElementById('font-decrease');
+    const aumentar = document.getElementById('font-increase');
+    const padrao = document.getElementById('font-reset');
+    const valor = document.getElementById('font-value');
+
+    // Chamado sempre que a preferência muda (aqui ou em outra aba).
+    a11y.aoMudar((estado) => {
+        contraste.setAttribute('aria-checked', String(estado.contrasteAlto));
+        textoContraste.textContent = estado.contrasteAlto ? 'Ligado' : 'Desligado';
+        valor.textContent = `${estado.fonte}%`;
+        // Nos limites, o botão fica marcado como indisponível. Usamos aria-disabled
+        // (e não disabled) para o foco do teclado não sumir ao chegar no limite;
+        // o clique extra não faz nada, porque acessibilidade.js não passa dos limites.
+        diminuir.setAttribute('aria-disabled', String(!estado.podeDiminuir));
+        aumentar.setAttribute('aria-disabled', String(!estado.podeAumentar));
+        padrao.setAttribute('aria-disabled', String(estado.fonte === 100));
+    });
+
+    contraste.addEventListener('click', () => {
+        a11y.definirContraste(contraste.getAttribute('aria-checked') !== 'true');
+    });
+    diminuir.addEventListener('click', a11y.diminuirFonte);
+    aumentar.addEventListener('click', a11y.aumentarFonte);
+    padrao.addEventListener('click', a11y.restaurarFonte);
+}
+
 // Eventos registrados uma única vez; alterações nas preferências são salvas automaticamente.
+ligarAcessibilidade();
 ui.theme.addEventListener('change', () => savePreference('tema', ui.theme.value));
 ui['reset-password'].addEventListener('click', resetPassword);
 ui.logout.addEventListener('click', logout);

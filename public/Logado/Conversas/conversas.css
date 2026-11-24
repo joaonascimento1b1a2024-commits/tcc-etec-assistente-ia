@@ -8,13 +8,14 @@
 }
 .history-heading {
     display: flex;
+    flex-wrap: wrap; /* com fonte ampliada, o botão desce para a linha de baixo */
     justify-content: space-between;
     align-items: center;
     gap: 20px;
 }
 .history-heading h1 {
     margin: 0;
-    font-size: clamp(26px, 4vw, 36px);
+    font-size: clamp(1.625rem, 4vw, 2.25rem);
 }
 .history-heading p,
 .history-note,

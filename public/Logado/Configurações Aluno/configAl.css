@@ -132,7 +132,7 @@ nav button {
 nav span {
     width: 16px;
     text-align: center;
-    font-size: 21px;
+    font-size: 1.3125rem;
 }
 nav [aria-current='page'] {
     color: var(--accent);
@@ -153,14 +153,14 @@ nav a:hover {
 }
 h1 {
     margin: 0;
-    font-size: clamp(26px, 3vw, 32px);
+    font-size: clamp(1.625rem, 3vw, 2rem);
     line-height: 1.3;
     font-weight: 500;
 }
 header p {
     margin: 0;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 0.9375rem;
 }
 .settings {
     max-width: 640px;
@@ -171,7 +171,7 @@ section {
 }
 h2 {
     margin: 0 0 10px;
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 500;
 }
 
@@ -227,7 +227,7 @@ select {
     background: transparent;
     color: var(--muted);
     padding: 6px;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 option {
     background: var(--background);
@@ -277,6 +277,87 @@ option {
     margin-bottom: 18px;
 }
 
+/* Acessibilidade: interruptor de alto contraste e botões de tamanho da fonte. */
+.preference-label {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+.switch,
+.font-button {
+    min-height: 44px; /* área de toque mínima recomendada */
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+}
+.switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 6px 12px;
+}
+.switch-track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+}
+.switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+}
+/* Ligado: a bolinha vai para a direita e o trilho fica na cor de destaque.
+ * O texto "Ligado/Desligado" garante que o estado não dependa só da cor. */
+.switch[aria-checked='true'] .switch-track {
+    border-color: var(--accent);
+    background: var(--accent);
+}
+.switch[aria-checked='true'] .switch-thumb {
+    left: 22px;
+    background: #fff;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .switch-thumb {
+        transition: left 150ms ease;
+    }
+}
+.font-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.font-button {
+    min-width: 48px;
+    padding: 6px 10px;
+    font-weight: 600;
+}
+.font-button[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.font-button:hover:not([aria-disabled='true']),
+.switch:hover {
+    border-color: var(--accent);
+}
+.font-reset {
+    font-weight: 400;
+    font-size: 0.875rem;
+}
+#font-value {
+    min-width: 4ch;
+    text-align: center;
+    font-weight: 600;
+}
+
 /* No celular, coloca o menu no fluxo e mantém todos os rótulos visíveis. */
 @media (max-width: 700px) {
     .sidebar {
@@ -315,7 +396,7 @@ option {
     }
     dd {
         padding: 13px 12px;
-        font-size: 14px;
+        font-size: 0.875rem;
     }
     dt {
         padding: 13px 16px;
@@ -335,7 +416,7 @@ option {
     }
     .preference-row {
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 8px;
     }
     select {
         max-width: 100%;

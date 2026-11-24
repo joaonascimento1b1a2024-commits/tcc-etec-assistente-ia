@@ -69,6 +69,9 @@
       if(link.classList.contains('active'))link.setAttribute('aria-current','page');
       else link.removeAttribute('aria-current');
     });
+    // Páginas que marcam o link atual só com aria-current="page" no HTML ganham a classe
+    // active; sem isso, a sincronização abaixo apagaria a marcação de página atual.
+    nav.querySelectorAll('a[aria-current="page"]').forEach(link=>link.classList.add('active'));
     new MutationObserver(syncCurrentPage).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
     syncCurrentPage();
     sidebar.id=sidebar.id||'appSidebar';

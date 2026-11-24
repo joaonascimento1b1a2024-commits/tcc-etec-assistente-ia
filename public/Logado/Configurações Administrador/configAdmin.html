@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="../layout.css" />
     <link rel="stylesheet" href="../shell.css" />
 <script defer src="../../Arquivos-Universais/ui.js"></script>
+<link rel="stylesheet" href="../../Arquivos-Universais/acessibilidade.css" />
+<script src="../../Arquivos-Universais/acessibilidade.js"></script>
 </head>
     <body data-role="admin">
         <a class="skip-link" href="#conteudo">Ir para as configurações</a>
@@ -54,6 +56,46 @@
                 </p>
                 <button id="retry" class="retry" type="button" hidden>Tentar novamente</button>
                 <noscript>Ative o JavaScript para gerenciar sua conta.</noscript>
+
+                <!-- Acessibilidade: vale para o site inteiro neste navegador (acessibilidade.js).
+                     Fica fora de #account-settings: não depende da conta e funciona mesmo sem conexão. -->
+                <section aria-labelledby="accessibility-title">
+                    <h2 id="accessibility-title">Acessibilidade</h2>
+                    <div class="panel preferences">
+                        <!-- role="switch" + aria-checked: o leitor de tela anuncia "ligado/desligado". -->
+                        <div class="preference-row">
+                            <span class="preference-label">
+                                <span id="contrast-label">Alto contraste</span>
+                                <small id="contrast-help">Cores mais fortes em todas as páginas, no tema escuro e no claro.</small>
+                            </span>
+                            <button
+                                id="contrast"
+                                class="switch"
+                                type="button"
+                                role="switch"
+                                aria-checked="false"
+                                aria-labelledby="contrast-label"
+                                aria-describedby="contrast-help">
+                                <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                                <span class="switch-text" aria-hidden="true">Desligado</span>
+                            </button>
+                        </div>
+                        <!-- Seis tamanhos: 100%, 115%, 130%, 150%, 175% e 200% (o dobro) da fonte original. -->
+                        <div class="preference-row">
+                            <span class="preference-label">
+                                <span id="font-label">Tamanho da fonte</span>
+                                <small>Aumenta o texto de todas as páginas.</small>
+                            </span>
+                            <div class="font-controls" role="group" aria-labelledby="font-label">
+                                <button id="font-decrease" class="font-button" type="button" aria-label="A− Diminuir fonte">A−</button>
+                                <output id="font-value" aria-live="polite" aria-atomic="true">100%</output>
+                                <button id="font-increase" class="font-button" type="button" aria-label="A+ Aumentar fonte">A+</button>
+                                <button id="font-reset" class="font-button font-reset" type="button">Padrão</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="help">Ficam salvas neste navegador e já valem antes do login.</p>
+                </section>
 
                 <div id="account-settings" hidden>
                     <!-- Dados somente para leitura, obtidos do provedor Google ou da conta Firebase. -->
@@ -127,6 +169,7 @@
                             aria-live="polite"
                             hidden></p>
                     </section>
+
 
                     <!-- Encerra a sessão Firebase antes de retornar à página de login. -->
                     <button id="logout" class="panel action logout" type="button" disabled>

@@ -3,7 +3,7 @@
 .landing-page { background:#000; color:#fff; font-family:Poppins,Arial,sans-serif; }
 .landing-page :is(h1,h2,h3,p,figure) { margin:0; }
 .landing-page :is(h1,h2,h3) { text-wrap:balance; }
-.landing-page h1,.landing-page h2 { font-size:40px; line-height:1.35; font-weight:700; }
+.landing-page h1,.landing-page h2 { font-size:2.5rem; line-height:1.35; font-weight:700; }
 .landing-page :is(h1,h2,h3) span { color:#f00; }
 .landing-content,.landing-footer { width:100%; max-width:none; margin-inline:0; }
 .landing-page .landing-header { position:absolute; top:0; left:0; transform:none; z-index:1; width:100%; max-width:none; padding:0 40px 0 0; min-height:116px; align-items:flex-start; }
@@ -12,17 +12,18 @@
 .landing-etec img { display:block; width:188px; height:100px; object-fit:contain; }
 .landing-government { position:relative; display:block; overflow:hidden; width:276px; height:113px; margin-top:3px; }
 .landing-government img { position:absolute; left:-6.21%; top:5.69%; width:112.41%; height:99.62%; max-width:none; }
-.landing-page .nav-menu { padding-top:14px; gap:48px; }
-.landing-page .nav-link { display:inline-flex; align-items:center; min-height:52px; font-size:20px; font-weight:500; }
+/* flex-wrap: com fonte ampliada, os links descem para uma segunda linha em vez de sair da tela. */
+.landing-page .nav-menu { padding-top:14px; gap:48px; flex-wrap:wrap; justify-content:flex-end; row-gap:0; min-width:0; }
+.landing-page .nav-link { display:inline-flex; align-items:center; min-height:52px; font-size:1.25rem; font-weight:500; }
 .landing-page .nav-link.active { color:#ff3333; }
-.landing-page .btn-acessar { min-height:52px; padding:14px 24px; border-radius:8px; font-size:16px; font-weight:500; }
+.landing-page .btn-acessar { min-height:52px; padding:14px 24px; border-radius:8px; font-size:1rem; font-weight:500; }
 .landing-hero { position:relative; isolation:isolate; min-height:660px; }
 .landing-hero::before { content:''; position:absolute; inset:0; z-index:-1; background:url('arquivos/figma/hero.webp') center/cover no-repeat; opacity:.3; mask-image:linear-gradient(to bottom,#000 75%,transparent); }
 .hero-copy { padding:180px 40px 64px 67px; }
-.landing-page .hero-copy h1 { font-size:40px; line-height:1.35; font-weight:600; text-wrap:initial; }
-.hero-copy > p { max-width:500px; margin-top:16px; font-size:18px; line-height:1.6; font-weight:300; }
+.landing-page .hero-copy h1 { font-size:2.5rem; line-height:1.35; font-weight:600; text-wrap:initial; }
+.hero-copy > p { max-width:500px; margin-top:16px; font-size:1.125rem; line-height:1.6; font-weight:300; }
 .landing-page .hero-actions { gap:13px; max-width:none; margin-top:36px; }
-.landing-page .hero-button { min-height:52px; padding:12px 24px; border-radius:8px; font-size:16px; font-weight:500; line-height:1.5; text-align:center; }
+.landing-page .hero-button { min-height:52px; padding:12px 24px; border-radius:8px; font-size:1rem; font-weight:500; line-height:1.5; text-align:center; }
 .landing-page .hero-button-primary { min-width:205px; background:#c60000; }
 .landing-page .hero-button-primary:hover { background:#a50000; box-shadow:0 4px 18px #c6000040; }
 .landing-page .hero-button-secondary { min-width:170px; }
@@ -30,10 +31,10 @@
 .landing-about { display:grid; grid-template-columns:minmax(0,586fr) minmax(0,754fr); min-height:420px; padding:48px 33px 48px 67px; gap:32px; }
 .landing-about > *, .benefit-panel article { min-width:0; }
 .landing-page .about-copy h2 { margin-top:-16px; }
-.about-copy > p { max-width:530px; margin-top:16px; font-weight:300; font-size:18px; line-height:1.6; }
+.about-copy > p { max-width:530px; margin-top:16px; font-weight:300; font-size:1.125rem; line-height:1.6; }
 .benefit-panel { display:grid; grid-template-columns:minmax(0,259fr) minmax(0,244fr); column-gap:48px; row-gap:32px; align-content:start; min-height:320px; padding:40px; background:#212121; border-radius:18px; }
-.benefit-panel h3 { color:#ff6565; font-size:22px; font-weight:600; line-height:1.5; overflow-wrap:normal; }
-.benefit-panel p { max-width:290px; font-size:16px; font-weight:300; line-height:1.6; }
+.benefit-panel h3 { color:#ff6565; font-size:1.375rem; font-weight:600; line-height:1.5; overflow-wrap:normal; }
+.benefit-panel p { max-width:290px; font-size:1rem; font-weight:300; line-height:1.6; }
 .landing-product { aspect-ratio:1436/1024; width:100%; margin-left:0!important; background:radial-gradient(ellipse at center,#160202 0%,#000 72%); }
 .landing-product img { display:block; width:100%; height:100%; object-fit:contain; margin-inline:auto; mask-image:linear-gradient(to right,transparent,#000 10%,#000 90%,transparent),linear-gradient(to bottom,transparent,#000 10%,#000 86%,transparent); mask-composite:intersect; }
 .landing-how { position:relative; isolation:isolate; min-height:480px; padding:36px 65px 48px; }
@@ -46,11 +47,12 @@
 .step-circle { position:relative; display:grid; place-items:center; width:120px; height:120px; flex-shrink:0; margin-bottom:26px; }
 .step-circle img { position:absolute; max-width:none; left:-25px; top:-18px; }
 .landing-steps li:nth-child(n+2) .step-circle img { left:-35px; top:-28px; }
-.step-circle b { position:relative; z-index:1; font-size:48px; font-weight:700; line-height:1.5; text-shadow:0 4px 4px #000; }
-.landing-steps h3 { font-size:26px; line-height:1.5; font-weight:700; margin-bottom:5px; }
-.landing-steps p { max-width:330px; font-size:18px; line-height:1.6; }
+.step-circle b { position:relative; z-index:1; font-size:3rem; font-weight:700; line-height:1.5; text-shadow:0 4px 4px #000; }
+.landing-steps h3 { font-size:1.625rem; line-height:1.5; font-weight:700; margin-bottom:5px; }
+.landing-steps p { max-width:330px; font-size:1.125rem; line-height:1.6; }
 .landing-resources { padding:27px 20px 52px; }
-.resource-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:32px; min-height:194px; margin:43px 24px 65px; }
+/* Até 5 colunas de no mínimo 9,5rem: no tamanho normal ficam as 5; com fonte ampliada, menos colunas. */
+.resource-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,9.5rem),1fr)); gap:32px; min-height:194px; margin:43px 24px 65px; }
 .resource-grid article { display:flex; flex-direction:column; align-items:center; text-align:center; }
 .service-icon { display:block; width:60px; height:60px; background:#f00; mask:var(--service-image) center/contain no-repeat; margin-bottom:15px; }
 .icon-folder { --service-image:url('arquivos/figma/material-folder.svg'); }
@@ -58,21 +60,21 @@
 .icon-bookmark { --service-image:url('arquivos/figma/material-bookmark.svg'); }
 .icon-chat { --service-image:url('arquivos/figma/material-chat.svg'); }
 .icon-alarm { --service-image:url('arquivos/figma/material-alarm.svg'); }
-.resource-grid h3 { font-size:20px; line-height:1.5; font-weight:700; margin-bottom:12px; }
-.resource-grid p { max-width:228px; font-size:16px; line-height:1.5; font-weight:300; }
+.resource-grid h3 { font-size:1.25rem; line-height:1.5; font-weight:700; margin-bottom:12px; }
+.resource-grid p { max-width:228px; font-size:1rem; line-height:1.5; font-weight:300; }
 .landing-cta { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; min-height:250px; padding:7px 114px 30px 132px; border:1px solid #aaa; border-radius:18px; background:#000; }
 .landing-cta::before { content:''; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:url('arquivos/figma/cta.webp') center/cover no-repeat; opacity:.4; }
-.landing-page .landing-cta h2 { font-size:36px; line-height:1.35; }
-.landing-cta p { font-size:20px; line-height:1.35; }
+.landing-page .landing-cta h2 { font-size:2.25rem; line-height:1.35; }
+.landing-cta p { font-size:1.25rem; line-height:1.35; }
 .cta-actions { display:flex; gap:17px; }
 .landing-page .cta-actions .hero-button { width:250px; }
 .landing-footer { min-height:264px; }
 .footer-divider { display:block; margin:0 auto; max-width:calc(100% - 160px); }
 .footer-columns { display:grid; grid-template-columns:276fr 304fr 287fr 355fr; gap:57px; padding:47px 32px 26px 15px; }
-.landing-page .landing-footer h2 { font-size:16px; font-weight:500; line-height:1.5; margin-bottom:24px; }
-.footer-about p { font-size:14px; line-height:1.5; font-weight:300; }
+.landing-page .landing-footer h2 { font-size:1rem; font-weight:500; line-height:1.5; margin-bottom:24px; }
+.footer-about p { font-size:0.875rem; line-height:1.5; font-weight:300; }
 .footer-team ul { list-style:none; padding:0; margin:0; }
-.footer-team li,.footer-school p,.footer-school a { font-size:14px; line-height:1.75; color:#aaa; }
+.footer-team li,.footer-school p,.footer-school a { font-size:0.875rem; line-height:1.75; color:#aaa; }
 .footer-team h2 { margin-bottom:5px!important; }
 .footer-school { padding-top:25px; }
 .footer-school p { margin-bottom:15px; }
@@ -92,8 +94,8 @@
  .landing-page .nav-menu { gap:24px; }
  .landing-about { padding-inline:40px; gap:24px; }
  .benefit-panel { padding:36px; gap:36px; }
- .benefit-panel h3 { font-size:21px; white-space:normal; }
- .landing-page .about-copy h2 { font-size:38px; }
+ .benefit-panel h3 { font-size:1.3125rem; white-space:normal; }
+ .landing-page .about-copy h2 { font-size:2.375rem; }
  .landing-cta { padding-inline:45px; gap:30px; }
  .landing-page .cta-actions .hero-button { width:auto; min-width:160px; }
  .footer-columns { gap:25px; }
@@ -107,15 +109,15 @@
  .landing-etec img { width:120px; height:76px; }
  .landing-government { width:176px; height:76px; }
  .landing-page .nav-menu { gap:18px; padding-top:0; }
- .landing-page .nav-link { font-size:16px; }
+ .landing-page .nav-link { font-size:1rem; }
  .landing-how { padding-inline:40px; }
- .landing-page .landing-how h2 { font-size:36px; }
+ .landing-page .landing-how h2 { font-size:2.25rem; }
  .landing-steps { gap:24px; }
- .landing-steps h3 { font-size:24px; }
- .landing-steps p { font-size:16px; }
+ .landing-steps h3 { font-size:1.5rem; }
+ .landing-steps p { font-size:1rem; }
  .resource-grid { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:35px; }
  .landing-cta { grid-template-columns:1fr; gap:28px; padding:28px; }
- .landing-page .landing-cta h2 { font-size:36px; }
+ .landing-page .landing-cta h2 { font-size:2.25rem; }
  .footer-columns { grid-template-columns:1fr 1fr; padding:30px 24px; }
  .footer-marks .landing-government { width:230px; height:94px; }
  .social-marks { padding-left:0; }
@@ -123,39 +125,40 @@
 @media(max-width:720px) {
  .landing-page .landing-header { position:relative; left:auto; transform:none; padding:12px 20px 18px; justify-content:center; gap:12px; min-height:0; }
  .landing-page .nav-menu { justify-content:center; width:100%; gap:20px; flex-wrap:wrap; }
- .landing-page .nav-link { min-height:44px; font-size:14px; }
- .landing-page .btn-acessar { min-height:44px; padding:10px 18px; font-size:14px; }
+ .landing-page .nav-link { min-height:44px; font-size:0.875rem; }
+ .landing-page .btn-acessar { min-height:44px; padding:10px 18px; font-size:0.875rem; }
  .landing-etec { margin:0; width:110px; height:70px; }
  .landing-etec img { width:110px; height:70px; }
  .landing-government { margin:0; width:180px; height:70px; }
  .landing-hero { min-height:610px; }
  .hero-copy { padding:65px 24px 56px; }
- .landing-page .hero-copy h1 { font-size:clamp(27px,6.7vw,42px); line-height:1.5; }
- .hero-copy > p { max-width:440px; font-size:17px; margin-top:12px; }
+ .landing-page .hero-copy h1 { font-size:clamp(1.6875rem,6.7vw,2.625rem); line-height:1.5; }
+ .hero-copy > p { max-width:440px; font-size:1.0625rem; margin-top:12px; }
  .landing-page .hero-actions { margin-top:28px; gap:12px; }
  .landing-page .hero-button { width:auto; flex:1 1 auto; min-width:0; }
  .landing-about { grid-template-columns:1fr; min-height:0; padding:40px 24px; gap:30px; }
- .landing-page .about-copy h2 { margin:0 0 16px; font-size:34px; }
- .about-copy > p { font-size:17px; }
+ .landing-page .about-copy h2 { margin:0 0 16px; font-size:2.125rem; }
+ .about-copy > p { font-size:1.0625rem; }
  .benefit-panel { padding:28px; gap:26px; min-height:0; grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
- .benefit-panel h3 { font-size:19px; white-space:normal; }
- .benefit-panel p { font-size:15px; }
+ .benefit-panel h3 { font-size:1.1875rem; white-space:normal; }
+ .benefit-panel p { font-size:0.9375rem; }
  .landing-product { width:100%; margin-left:0!important; aspect-ratio:1.4; }
  .landing-how { padding:32px 24px 45px; min-height:0; }
- .landing-page .landing-how h2 { font-size:30px; }
+ .landing-page .landing-how h2 { font-size:1.875rem; }
  .landing-steps { grid-template-columns:1fr; gap:36px; margin-top:36px; }
  .landing-steps li,.landing-steps li:nth-child(2),.landing-steps li:nth-child(3) { align-items:center; text-align:center; }
  .step-circle { margin-bottom:16px; }
  .landing-steps p { max-width:320px; }
  .landing-resources { padding:32px 24px; }
- .landing-page .landing-resources > h2 { font-size:30px; }
- .resource-grid { grid-template-columns:1fr 1fr; margin:32px 0 40px; gap:32px 20px; }
- .resource-grid h3 { font-size:17px; }
- .resource-grid p { font-size:15px; }
+ .landing-page .landing-resources > h2 { font-size:1.875rem; }
+ /* Colunas medidas em rem: com a fonte ampliada (Configurações > Acessibilidade) viram uma só. */
+ .resource-grid { grid-template-columns:repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); margin:32px 0 40px; gap:32px 20px; }
+ .resource-grid h3 { font-size:1.0625rem; }
+ .resource-grid p { font-size:0.9375rem; }
  .resource-grid article:last-child { grid-column:1/-1; max-width:260px; justify-self:center; }
  .landing-cta { padding:26px 20px; }
- .landing-page .landing-cta h2 { font-size:29px; }
- .landing-cta p { font-size:16px; }
+ .landing-page .landing-cta h2 { font-size:1.8125rem; }
+ .landing-cta p { font-size:1rem; }
  .cta-actions { flex-wrap:wrap; gap:12px; }
  .landing-page .cta-actions .hero-button { flex:1 1 100%; width:100%; }
  .footer-divider { max-width:calc(100% - 48px); }
@@ -168,5 +171,5 @@
  .hero-copy { padding-inline:20px; }
  .landing-page .hero-actions { flex-direction:column; }
  .benefit-panel { grid-template-columns:1fr; }
- .landing-page .landing-resources > h2 { font-size:27px; }
+ .landing-page .landing-resources > h2 { font-size:1.6875rem; }
 }
