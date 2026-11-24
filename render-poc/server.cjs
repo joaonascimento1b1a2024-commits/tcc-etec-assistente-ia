@@ -10,6 +10,7 @@ const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
 const { criarDiagnosticoConhecimento } = require('./conhecimento.cjs');
 const { criarDiagnosticoRag } = require('./rag.cjs');
 const { resolverMotor } = require('./motor-curado.cjs');
+const whatsappModulo = require('./whatsapp.cjs');
 
 function respostaExpress(res) {
     const adapter = {
@@ -49,7 +50,8 @@ async function lerCorpo(req) {
     });
 }
 
-function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
+function criarServidor({ config = lerConfiguracao(), obterDependencias,
+    whatsapp = whatsappModulo.lerConfiguracaoWhatsApp(), transporteWhatsApp } = {}) {
     const validated = validarConfiguracao(config);
     const factory = criarFabricaDependencias(validated, { obterDependencias });
     // Identifica motor e revisão no health do modo documental, sem segredos.
@@ -73,6 +75,12 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
             ...(deps.responderVisitante ? { responderVisitante: deps.responderVisitante } : {}),
         };
     }, () => validated.origins);
+    // WhatsApp: desligado sem as variáveis WHATSAPP_*; usa o mesmo fluxo do visitante.
+    const modosComChat = ['emulator', 'documental', 'documental-emulator'];
+    const webhookWhatsApp = whatsapp && modosComChat.includes(validated.mode)
+        ? whatsappModulo.criarWebhookWhatsApp({ config: whatsapp, responder: whatsappModulo.responderComoVisitante(visitante),
+            ...(transporteWhatsApp ? { transporte: transporteWhatsApp } : {}) })
+        : null;
     const server = http.createServer(async (req, res) => {
         const output = respostaExpress(res);
         try {
@@ -86,6 +94,10 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
             if (path === '/health') {
                 if (req.method !== 'GET') output.set('Allow', 'GET').status(405).json({ error: 'Metodo nao permitido.' });
                 else output.status(200).json({ status: 'ok', service: 'sylvinho-backend', ...saudeMotor });
+                return;
+            }
+            if (path === whatsappModulo.ROTA && webhookWhatsApp) {
+                await webhookWhatsApp(req, res);
                 return;
             }
             const diagnosticRoute = path === '/diagnostico/auth' && validated.mode === 'auth-diagnostic';
@@ -107,6 +119,7 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias } = {}) {
     });
     server.requestTimeout = 30000;
     server.headersTimeout = 10000;
+    if (webhookWhatsApp) server.aguardarWhatsApp = webhookWhatsApp.aguardarPendentes;
     return server;
 }
 

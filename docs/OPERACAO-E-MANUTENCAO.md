@@ -29,6 +29,7 @@ Os valores ficam só no painel do Render (Environment). Nunca vão para o códig
 | `ASSISTENTE_CORS_ORIGINS` | Domínios oficiais do site, separados por vírgula, sem curinga. |
 | `GCLOUD_PROJECT`, `FIRESTORE_DATABASE_ID`, `GOOGLE_APPLICATION_CREDENTIALS`, `SYLVINHO_SERVICE_ACCOUNT_EMAIL` | Acesso ao Firestore pela conta de serviço. A credencial é um *secret file* do Render. |
 | `SYLVINHO_IA_*`, `OPENROUTER_*`, `OPENAI_*` | Configuração do fluxo documental e dos provedores alternativos. A produção usa o Gemini; o código dos outros provedores foi mantido e é testado. |
+| `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | Opcionais. Ligam o Sylvinho no WhatsApp; sem elas a rota `/whatsapp/webhook` não existe. Passo a passo em [WHATSAPP.md](WHATSAPP.md). |
 
 ## 3. Administradores
 

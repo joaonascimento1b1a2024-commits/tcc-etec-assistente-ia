@@ -15,6 +15,8 @@ O Sylvinho responde dúvidas sobre matrícula, rematrícula, Vestibulinho, curso
 | Este README | Visão geral, estrutura de pastas, testes e publicação. |
 | [docs/RELATORIO-TECNICO-IA.md](docs/RELATORIO-TECNICO-IA.md) | Como a IA funciona (modo híbrido), segurança, avaliação e os trechos de código para o relatório técnico e os slides. |
 | [docs/OPERACAO-E-MANUTENCAO.md](docs/OPERACAO-E-MANUTENCAO.md) | Variáveis de ambiente, publicação, administradores, avisos por e-mail, curadoria da base, avaliação e checklist da banca. |
+| [docs/ACESSIBILIDADE.md](docs/ACESSIBILIDADE.md) | Alto contraste e tamanho da fonte: como funciona, arquivos que mudaram, testes e como manter. |
+| [docs/WHATSAPP.md](docs/WHATSAPP.md) | Sylvinho no WhatsApp (API oficial da Meta): como funciona, passo a passo da configuração e problemas comuns. |
 
 ## Funcionalidades
 
@@ -23,6 +25,8 @@ O Sylvinho responde dúvidas sobre matrícula, rematrícula, Vestibulinho, curso
 - **Cadastro e login:** por e-mail e senha ou com Google, com recuperação de senha.
 - **Mural de avisos:** os administradores publicam, e cada aviso novo gera um e-mail para as contas.
 - **Configurações:** perfil, tema claro ou escuro e, para administradores, publicação de avisos e promoção de outros administradores.
+- **Acessibilidade:** alto contraste (no tema escuro e no claro) e fonte até 200%, em todas as páginas e antes do login. Detalhes em [docs/ACESSIBILIDADE.md](docs/ACESSIBILIDADE.md).
+- **WhatsApp (demonstração):** o Sylvinho responde no WhatsApp com as mesmas respostas do chat de visitante, pela API oficial da Meta. Detalhes em [docs/WHATSAPP.md](docs/WHATSAPP.md).
 - **Página Sobre e landing page.**
 
 ## Como a IA responde (modo híbrido)
