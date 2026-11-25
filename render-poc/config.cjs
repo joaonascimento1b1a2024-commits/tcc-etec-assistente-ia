@@ -1,13 +1,18 @@
 'use strict';
 
+// CONFIGURAÇÃO do servidor: lê SYLVINHO_POC_MODE e as demais variáveis e devolve um objeto validado e
+// congelado. Modos: health (padrão, só /health), emulator e diagnósticos (locais, com emuladores),
+// production-locked (trava) e documental (produção).
 const { origensPermitidas } = require('../functions/lib/assistente/http.js');
 const { lerPlanoProducao, validarPlanoProducao, validarOrigensProducao, lerModoDemonstracao } = require('./producao.cjs');
 const { lerConfiguracaoDocumental, validarConfiguracaoDocumental } = require('./documental.cjs');
 const DEMO_PROJECT = 'demo-sylvinho-render-poc';
+// Aceita só endereços locais (127.0.0.1 ou localhost) com porta válida: usado para os emuladores.
 const localHost = (value) => typeof value === 'string' &&
     /^(127\.0\.0\.1|localhost):[1-9][0-9]{0,4}$/.test(value) &&
     Number(value.split(':')[1]) <= 65535;
 
+// Valida o objeto completo; campos extras são descartados e o resultado é congelado.
 function validarConfiguracao(config) {
     if (!config || !['health', 'emulator', 'auth-diagnostic', 'firestore-diagnostic', 'rag-diagnostic',
         'production-locked', 'documental', 'documental-emulator'].includes(config.mode))
@@ -17,6 +22,7 @@ function validarConfiguracao(config) {
     if (typeof config.origins !== 'string') throw new Error('INVALID_CORS_CONFIGURATION');
     origensPermitidas(config.origins);
     if (!Number.isInteger(config.port) || config.port < 1 || config.port > 65535) throw new Error('PORT_INVALID');
+    // Só os modos de produção escutam em 0.0.0.0 (rede do Render); os locais ficam presos em 127.0.0.1.
     const host = ['health', 'production-locked', 'documental'].includes(config.mode) ? '0.0.0.0' : '127.0.0.1';
     if (config.host !== host) throw new Error('HOST_INVALID');
     const production = config.mode === 'production-locked' ? validarPlanoProducao(config.production) : undefined;
@@ -27,6 +33,7 @@ function validarConfiguracao(config) {
         ...(production ? { production } : {}) });
 }
 
+// Lê o ambiente. Modos locais exigem projeto demo e emuladores; dentro do Render eles são proibidos.
 function lerConfiguracao(env = process.env) {
     const mode = env.SYLVINHO_POC_MODE || 'health';
     const demonstracao = lerModoDemonstracao(env);

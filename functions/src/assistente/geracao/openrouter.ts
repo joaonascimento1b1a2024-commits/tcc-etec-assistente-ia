@@ -9,8 +9,13 @@ import {
   SCHEMA_SEGURANCA,
 } from "./instrucoes";
 
+// CLIENTE OPENROUTER (provedor do fluxo documental conversacional). Fala direto
+// com a API de Chat Completions, sem SDK. Toda chamada pede JSON num formato
+// fixo (json_schema) e retenção zero de dados (zdr) no provedor.
 export type TransporteOpenRouter =
   (url: string, init: RequestInit) => Promise<Response>;
+// Códigos de erro fechados: os logs mostram só isto, nunca a mensagem do
+// provedor.
 export type CodigoOpenRouter = "OPENROUTER_MODELO_INVALIDO" |
   "OPENROUTER_CHAVE_AUSENTE" | "OPENROUTER_AUTENTICACAO" |
   "OPENROUTER_SEM_CREDITOS" | "OPENROUTER_LIMITE" |
@@ -56,6 +61,7 @@ export function criarClienteOpenRouter(
     sistema: string, dados: unknown, schema: object, original: AbortSignal,
   ): Promise<unknown> => {
     // Limite defensivo por chamada; o gateway impoe um prazo TOTAL menor.
+    // Cancela se o gateway desistir (original) ou após 30 s.
     const signal = AbortSignal.any([original, AbortSignal.timeout(30000)]);
     const falha = (codigo: CodigoOpenRouter): never => {
       throw new ErroOpenRouter(codigo);
@@ -63,6 +69,7 @@ export function criarClienteOpenRouter(
     const executar = async (): Promise<unknown> => {
       signal.throwIfAborted();
       if (!modeloOpenRouterValido(modelo)) falha("OPENROUTER_MODELO_INVALIDO");
+      // A chave é lida só agora e nunca é registrada.
       const chave = lerChave();
       if (!chave || /\s/u.test(chave)) falha("OPENROUTER_CHAVE_AUSENTE");
       const r = await transporte(
@@ -77,11 +84,15 @@ export function criarClienteOpenRouter(
             response_format: {type: "json_schema", json_schema: {
               name: "sylvinho", strict: true, schema,
             }},
+            // Exige provedores com retenção zero e sem coleta de dados; sem
+            // trocar para outro modelo automaticamente.
             provider: {zdr: true, data_collection: "deny",
               require_parameters: true, allow_fallbacks: false},
           }),
         });
       signal.throwIfAborted();
+      // Traduz o status HTTP num código legível (sem créditos, limite,
+      // tempo...).
       const erroHTTP = (status: unknown): never => {
         switch (status) {
         case 401: return falha("OPENROUTER_AUTENTICACAO");
@@ -99,6 +110,8 @@ export function criarClienteOpenRouter(
         erroHTTP(r.status);
       }
       if (!r.body) return falha("OPENROUTER_FORMATO_INVALIDO");
+      // Lê a resposta em pedaços e para se passar de 64 KB: protege a memória
+      // do servidor.
       const reader = r.body.getReader();
       const cancelar = (): void => {
         void reader.cancel().catch(() => undefined);
@@ -140,6 +153,8 @@ export function criarClienteOpenRouter(
         return falha("OPENROUTER_FORMATO_INVALIDO");
       }
       // OpenRouter pode devolver erro dentro de um HTTP 200.
+      // Confere o envelope: uma única escolha, terminada normalmente, sem
+      // recusa e sem chamadas de ferramenta.
       if (body.error) erroHTTP(body.error.code);
       if (!Array.isArray(body.choices) || body.choices.length !== 1) {
         return falha("OPENROUTER_FORMATO_INVALIDO");
@@ -161,6 +176,8 @@ export function criarClienteOpenRouter(
     let cancelar: () => void = () => undefined;
     try {
       // Garante conclusao local mesmo com um transporte que ignore o signal.
+      // Corrida entre a chamada e o cancelamento: a função termina mesmo se o
+      // transporte ignorar o sinal.
       const cancelamento = new Promise<never>((_, reject) => {
         cancelar = () => reject(new Error("ABORTADO"));
         signal.addEventListener("abort", cancelar, {once: true});
@@ -178,11 +195,16 @@ export function criarClienteOpenRouter(
       signal.removeEventListener("abort", cancelar);
     }
   };
+  // Respostas sim/não (moderação e revisão) só valem se o JSON tiver exatamente
+  // um campo igual a true.
   const afirmativo = (r: unknown, campo: string): boolean =>
     !!r && typeof r === "object" && !Array.isArray(r) &&
     Object.keys(r).length === 1 &&
     (r as Record<string, unknown>)[campo] === true;
   return {
+    // As etapas do fluxo: conversar (proposta), revisar ou verificar a
+    // proposta, moderar textos e o modo antigo de afirmações
+    // (propor/verificar).
     conversar: (pedido, signal) => resposta(INSTRUCAO_CONVERSA,
       pedido, SCHEMA_CONVERSA, signal),
     revisarConversa: (pedido, proposta, signal) => resposta(

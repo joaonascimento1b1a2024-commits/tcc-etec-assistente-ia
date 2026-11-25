@@ -1,11 +1,16 @@
 /* Apresentação somente: não modifica a resposta original nem a persistência. */
 (() => {
     'use strict';
+    // EXIBIÇÃO DAS RESPOSTAS do Sylvinho: separa o texto da resposta do bloco de fontes oficiais ([[FONTES]]
+    // do motor curado ou a lista de citações do fluxo documental) e desenha tudo com segurança (textContent,
+    // nunca HTML vindo do servidor). As fontes aparecem recolhidas em "Fonte ▾".
+    // Introduções fixas do fluxo documental, reconhecidas para formatar a resposta.
     const introducoes = new Set([
         'Trechos documentais relacionados a pergunta (citacoes, nao uma interpretacao ou garantia de regra vigente):',
         'Modelos/exemplos documentais encontrados (nao comprovam regras, prazos ou procedimentos):',
         'Nao ha informacao suficiente na base consultada para o Sylvinho responder com seguranca. Procure a secretaria academica para obter a informacao oficial.\nModelos/exemplos relacionados nao comprovam uma regra ou procedimento:',
     ]);
+    // Transforma a referência técnica de uma fonte num título legível.
     function fonteLegivel(original) {
         const partes = original.split('; ');
         const titulo = partes.shift();
@@ -35,6 +40,7 @@
         if (!vistos.size) return null;
         return visiveis.join(' — ');
     }
+    // Interpreta a resposta do fluxo documental (introdução + citações numeradas).
     function analisarDocumental(original) {
         if (typeof original !== 'string' || original.length > 2400) return null;
         const texto = original;
@@ -56,6 +62,7 @@
         if (!citacoes.length || citacoes.length > 3 || reconstruido !== resto) return null;
         return {introducao, citacoes};
     }
+    // Decide o formato da resposta: texto simples, fluxo documental ou motor curado com fontes.
     function analisar(original) {
         const documental = analisarDocumental(original);
         if (documental) return documental;
@@ -82,6 +89,7 @@
     // Respostas da base curada (modo híbrido) chegam com as fontes oficiais no fim do texto,
     // depois deste marcador, em JSON: [{titulo, url, trecho?}] (render-poc/motor-curado.cjs).
     const MARCADOR_FONTES = '\n\n[[FONTES]]';
+    // Separa o texto do bloco JSON depois do marcador [[FONTES]]; JSON inválido é ignorado.
     function separarFontes(original) {
         if (typeof original !== 'string') return null;
         const posicao = original.lastIndexOf(MARCADOR_FONTES);
@@ -94,6 +102,8 @@
         if (!Array.isArray(fontes) || !fontes.length || fontes.length > 4 || !fontes.every(valida)) return null;
         return {resposta: original.slice(0, posicao), fontes};
     }
+    // Monta os elementos na tela: parágrafos, listas e o botão "Fonte ▾" com nome, link e trecho de cada
+    // fonte.
     function renderizar(container, original) {
         const doc = container.ownerDocument;
         const criar = (tag, classe, texto) => {

@@ -21,7 +21,9 @@ const { randomUUID } = require('node:crypto');
 const { ErroRespostaTemporaria } = require('../functions/lib/assistente/handler.js');
 const { classificarEscopo } = require('../functions/lib/assistente/escopo.js');
 
+// Modos aceitos em SYLVINHO_MOTOR (ver o cabeçalho).
 const MOTORES = Object.freeze(['fluxo', 'curado', 'hibrido']);
+// Raiz do repositório: é dela que se lê a pasta knowledge-local/ (base curada e índice).
 const RAIZ = resolve(__dirname, '..');
 const TIMEOUT_MS = 20000; // Termina antes do cliente (30 s) e do requestTimeout do servidor.
 // Falta de evidência devolve a vez ao fluxo documental. No híbrido, o fluxo também
@@ -31,8 +33,12 @@ const TIMEOUT_MS = 20000; // Termina antes do cliente (30 s) e do requestTimeout
 const SEM_EVIDENCIA = new Set(['sem_evidencia']);
 const SEM_EVIDENCIA_CODIGOS = new Set(['BUSCA_INDISPONIVEL']);
 const PROVEDOR_ESGOTADO = codigo => /^HTTP_(429|5\d\d)$/.test(codigo || '') || codigo === 'PROVEDOR_INDISPONIVEL';
+// Complemento do chat de visitante: ele não envia histórico, então a pessoa precisa repetir a pergunta inteira.
 const AVISO_VISITANTE = ' Reenvie a pergunta completa com esse detalhe, porque este chat não guarda as mensagens anteriores.';
 
+// Decide o motor efetivo a partir do ambiente.
+// Sem GEMINI_API_KEY, 'curado' e 'hibrido' não funcionam: cai para 'fluxo' e informa o motivo
+// (o /health mostra isso, sem nunca revelar a chave).
 function resolverMotor(env = process.env) {
     const solicitado = env.SYLVINHO_MOTOR === undefined || env.SYLVINHO_MOTOR === '' ? 'fluxo' : env.SYLVINHO_MOTOR;
     if (!MOTORES.includes(solicitado)) throw new Error('SYLVINHO_MOTOR_INVALIDO');
@@ -41,6 +47,8 @@ function resolverMotor(env = process.env) {
     return Object.freeze({ solicitado, efetivo: solicitado, motivo: null });
 }
 
+// Lê os três arquivos da base curada. O índice de embeddings é opcional: sem ele, a busca
+// continua só por palavras (BM25), e o servidor não deixa de funcionar.
 function lerBase(raiz = RAIZ) {
     const ler = nome => JSON.parse(readFileSync(resolve(raiz, 'knowledge-local', nome), 'utf8'));
     let vetores = null;
@@ -48,6 +56,8 @@ function lerBase(raiz = RAIZ) {
     return { registros: ler('faq-curada.json'), contatos: ler('contatos-publicos.json'), vetores };
 }
 
+// Traduz a falha do motor no código que o site mostra ao usuário ("muitas perguntas agora",
+// "tempo esgotado"...). O código vai junto com o HTTP 429/503 e um tempo de espera sugerido.
 function motivoTemporario(resultado) {
     if (resultado.tipo === 'ocupado') return 'OCUPADO';
     if (resultado.codigo === 'HTTP_429') return 'LIMITE_USO';
@@ -106,8 +116,12 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
         const fontes = fontesDosFatos(resultado.ids, registrosPorId);
         return fontes.length ? { ...resultado, texto: resultado.texto + MARCADOR_FONTES + JSON.stringify(fontes) } : resultado;
     };
+    // Diagnóstico seguro: um erro ao registrar nunca derruba a resposta.
     const log = (codigo, dados) => { try { registrar(codigo, dados); } catch { /* diagnóstico não interfere */ } };
+    // A chave é lida na hora de cada chamada, nunca guardada em variável global.
     const lerChave = () => lerAmbiente().GEMINI_API_KEY;
+    // Carregamento preguiçoso (lazy): os módulos .mjs do motor só são importados na primeira
+    // pergunta, e a mesma Promise é reaproveitada. Se a carga falhar, ela é apagada para tentar de novo.
     let carregando;
     const obterMotor = () => carregando ||= Promise.all([
         import(pathToFileURL(resolve(__dirname, 'motor-curado/gemini-curado.mjs')).href),
@@ -124,11 +138,13 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
     async function responder(pergunta, historico, chaves, publico) {
         // Saudação e perguntas sobre o próprio assistente: resposta fixa do classificador,
         // sem busca nem Gemini (o chat logado chega aqui antes do classificador).
+        // Passo 1: resposta local, sem custo.
         const local = classificarEscopo(pergunta);
         if (local.categoria === 'social' && local.resposta) {
             log('MOTOR_RESPOSTA', { publico, tipo: 'social', modo: null, codigo: null, ms: 0 });
             return { texto: local.resposta, tipo: 'social' };
         }
+        // Passo 2: carrega o motor. Falhou? No híbrido, o fluxo documental assume (null).
         let motor;
         try { motor = await obterMotor(); }
         catch {
@@ -136,6 +152,7 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
             if (modo === 'hibrido') return null;
             throw new ErroRespostaTemporaria('INDISPONIVEL', 5);
         }
+        // Passo 3: busca na base curada + geração/revisão pelo Gemini (gemini-curado.mjs).
         const resultado = await motor.responder({ pergunta, historico, ...chaves });
         log('MOTOR_RESPOSTA', { publico, tipo: resultado.tipo, modo: resultado.modo || null,
             codigo: resultado.codigo || null, ms: resultado.ms ?? null });
@@ -145,18 +162,22 @@ function criarMotorCurado({ modo, lerAmbiente = () => process.env, registrar = (
             log('MOTOR_RESPOSTA_DIRETA', { publico, motivo: resultado.codigo || null });
             return comFontes({ ...resultado.reserva, tipo: 'curado_direto' });
         }
+        // Passo 4: nenhum fato aprovado sustenta a resposta -> devolve a vez ao fluxo documental.
         const semEvidencia = SEM_EVIDENCIA.has(resultado.tipo) ||
             resultado.retentavel && SEM_EVIDENCIA_CODIGOS.has(resultado.codigo);
         if (modo === 'hibrido' && semEvidencia) {
             log('MOTOR_FLUXO_RESERVA', { publico });
             return null;
         }
+        // Passo 5: todos os modelos Gemini sem cota ou fora do ar -> o fluxo documental tenta.
         if (modo === 'hibrido' && resultado.tipo === 'falha' && PROVEDOR_ESGOTADO(resultado.codigo)) {
             log('MOTOR_FLUXO_RESERVA', { publico, motivo: resultado.codigo });
             return null;
         }
+        // Passo 6: erro recuperável (tempo, resposta reprovada): o site mostra "tente de novo".
         if (resultado.retentavel) throw new ErroRespostaTemporaria(motivoTemporario(resultado), resultado.tentarEmSegundos);
         if (typeof resultado.texto !== 'string' || !resultado.texto.trim()) throw new Error('INVALID_GENERATOR_RESPONSE');
+        // Passo 7: resposta aprovada, com o bloco de fontes oficiais no fim.
         return comFontes(resultado);
     }
 

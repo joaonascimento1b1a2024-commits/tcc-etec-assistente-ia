@@ -5,6 +5,10 @@ import type {RespostaConversa} from "./conversa";
 import {normalizarTexto} from "../../rag/recuperacao";
 import type {ProcedimentoInstitucional} from "../intencao";
 
+// CONTRATO DE GERAÇÃO: os formatos trocados com a IA e a validação local da
+// proposta.
+// Evidência = trecho literal de documento oficial, com ID curto (E1, E2, E3) e
+// o contexto de onde veio.
 export interface EvidenciaGeracao {
   readonly id: string;
   readonly texto: string;
@@ -24,6 +28,8 @@ export interface AfirmacaoGerada {
 }
 export interface PropostaGerada {afirmacoes: AfirmacaoGerada[]}
 /** Contrato independente do transporte/provedor, sempre injetavel em testes. */
+// Interface comum aos provedores (OpenAI, Gemini, OpenRouter): o gateway não
+// depende de nenhum deles em particular.
 export interface ProvedorGeracao {
   conversar?(pedido: PedidoGeracao, signal: AbortSignal): Promise<unknown>;
   revisarConversa?(pedido: PedidoGeracao, resposta: RespostaConversa,
@@ -36,6 +42,8 @@ export interface ProvedorGeracao {
     signal: AbortSignal): Promise<boolean>;
 }
 
+// JSON Schema da proposta: até 3 afirmações, cada uma com 1 a 3 referências (ID
+// + citação).
 export const SCHEMA_PROPOSTA = {
   type: "object", additionalProperties: false, required: ["afirmacoes"],
   properties: {afirmacoes: {type: "array", maxItems: 3, items: {
@@ -52,6 +60,7 @@ export const SCHEMA_PROPOSTA = {
     },
   }}},
 };
+// Revisão simples: só {sustentada: true/false}.
 export const SCHEMA_REVISAO = {
   type: "object", additionalProperties: false, required: ["sustentada"],
   properties: {sustentada: {type: "boolean"}},
@@ -65,6 +74,7 @@ export type AvaliacaoGeracao = {
   proposta: PropostaGerada; motivo?: never;
 } | {proposta: null; motivo: MotivoProposta};
 
+// Confere que o objeto tem exatamente os campos esperados, nem mais nem menos.
 /**
  * Campos exatos de uma copia sem acessores/prototipos arbitrarios.
  * @param {unknown} valor Copia estrita.
@@ -96,9 +106,13 @@ export function avaliarGeracao(
     if (!campos(p, ["afirmacoes"]) || !Array.isArray(p.afirmacoes) ||
       p.afirmacoes.length > 3) return falhar("PROPOSTA_SCHEMA_INVALIDO");
     if (!p.afirmacoes.length) return falhar("PROPOSTA_VAZIA");
+    // Números da afirmação precisam bater com os da citação: a IA não pode
+    // trocar 75% por 70%.
     const numeros = (s: string): string[] => [...new Set(
       s.match(/\d+(?:[.,:/-]\d+)*(?:\s*%)?/gu) || [],
     )].sort();
+    // Palavras que mudam o sentido (não, exceto, somente, obrigatório, até...):
+    // no modo literal, a afirmação precisa ter os mesmos marcadores da fonte.
     const marcadores = new RegExp(
       "\\b(nao|nunca|jamais|sem|salvo|exceto|somente|apenas|se|caso|quando|" +
       "desde|proibid[oa]s?|permitid[oa]s?|obrigatori[oa]s?|opcional|" +
@@ -121,6 +135,7 @@ export function avaliarGeracao(
           ids.has(r.id)) return falhar("PROPOSTA_REFERENCIA_INVALIDA");
         const e = evidencias.find((item) => item.id === r.id);
         if (!e) return falhar("PROPOSTA_REFERENCIA_INVALIDA");
+        // A citação precisa ser idêntica ao texto da evidência.
         if (r.citacao !== e.texto) return falhar("PROPOSTA_CITACAO_DIVERGENTE");
         ids.add(r.id);
         citacoes.push(e.texto);
@@ -149,6 +164,7 @@ export function avaliarGeracao(
   }
 }
 
+// Atalho compatível com os fluxos antigos: devolve só a proposta ou null.
 /**
  * Mantem o contrato de validacao utilizado pelos fluxos existentes.
  * @param {unknown} entrada JSON gerado.

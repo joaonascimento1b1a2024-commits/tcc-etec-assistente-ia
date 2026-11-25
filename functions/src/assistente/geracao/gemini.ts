@@ -5,8 +5,12 @@ import {
 import {SCHEMA_PROPOSTA, SCHEMA_REVISAO} from "./contrato";
 import type {ProvedorGeracao} from "./contrato";
 
+// CLIENTE GEMINI do fluxo documental (API REST generateContent, sem SDK). O
+// motor curado usa outro cliente, em render-poc/motor-curado/gemini-curado.mjs.
 export type TransporteGemini =
   (url: string, init: RequestInit) => Promise<Response>;
+// Filtros de segurança do Google ligados no nível mais rígido (bloqueia a
+// partir de risco baixo).
 const CATEGORIAS = ["HATE_SPEECH", "SEXUALLY_EXPLICIT",
   "DANGEROUS_CONTENT", "HARASSMENT"];
 
@@ -44,12 +48,15 @@ export function criarClienteGemini(
               category: "HARM_CATEGORY_" + c,
               threshold: "BLOCK_LOW_AND_ABOVE",
             })),
+            // Uma única resposta, em JSON, obrigatoriamente no formato do
+            // schema.
             generationConfig: {
               candidateCount: 1, maxOutputTokens: 2048,
               responseMimeType: "application/json", responseJsonSchema: schema,
             },
           }),
         });
+      // Lê o corpo em pedaços com limite de 64 KB.
       if (!r.ok || !r.body) throw Error("HTTP");
       const reader = r.body.getReader();
       const partes: Uint8Array[] = [];
@@ -70,6 +77,8 @@ export function criarClienteGemini(
       }
       signal.throwIfAborted();
       const body = JSON.parse(Buffer.concat(partes).toString("utf8"));
+      // Rejeita pedido bloqueado, resposta cortada ou marcada pelos filtros de
+      // segurança.
       if (body.promptFeedback?.blockReason ||
         !Array.isArray(body.candidates) || body.candidates.length !== 1) {
         throw Error("RECUSA");
@@ -82,6 +91,8 @@ export function criarClienteGemini(
             (s: {blocked?: unknown}) => s?.blocked === true)))) {
         throw Error("INCOMPLETA");
       }
+      // Junta só os pedaços de texto da resposta; "pensamentos" internos do
+      // modelo são descartados.
       const textos: string[] = [];
       for (const p of c.content.parts) {
         if (!p || typeof p !== "object" || Array.isArray(p) ||
@@ -106,10 +117,13 @@ export function criarClienteGemini(
       if (texto.length > 6000) throw Error("TAMANHO");
       return JSON.parse(texto);
     } catch {
+      // Qualquer falha vira um erro genérico, sem detalhes do provedor.
       throw new Error("GEMINI_INDISPONIVEL");
     }
   };
   return {
+    // Moderação: o próprio Gemini classifica o texto; só segue com {segura:
+    // true}.
     async moderar(texto, signal) {
       const r = await resposta(
         INSTRUCAO_SEGURANCA,

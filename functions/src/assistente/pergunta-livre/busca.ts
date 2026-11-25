@@ -5,6 +5,8 @@ import {emitirDiagnostico} from "../diagnostico";
 import type {RegistrarDiagnostico} from "../diagnostico";
 import {interpretarPerguntaLivre} from "./interpretacao";
 
+// BUSCA DOCUMENTAL da pergunta livre: interpreta a pergunta e chama a
+// recuperação de trechos no Firestore (rag/recuperacao.ts).
 /**
  * Reutiliza colecao, filtros, fontes e ranking sem reescrita por IA.
  * @param {FonteConhecimento} fonte Fonte somente-leitura, injetavel em testes.

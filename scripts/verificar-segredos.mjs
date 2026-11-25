@@ -1,3 +1,6 @@
+// VERIFICADOR DE SEGREDOS (npm run segredos): procura no repositório chaves privadas, credenciais de conta de
+// serviço, tokens e chaves de API escritas em arquivos. Roda antes de publicar; o resultado mostra só o tipo
+// e o arquivo, nunca o valor.
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve, relative, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,8 +19,10 @@ export function detectarSegredos(texto) {
     return [...tipos];
 }
 
+// Pastas ignoradas (dependências, compilados e caches locais) e extensões verificadas.
 const ignorar = new Set(['.git', '.agents', '.codex', '.cache', '.firebase', 'node_modules', 'lib', 'coverage']);
 const extensoes = new Set(['.json', '.js', '.mjs', '.cjs', '.ts', '.html', '.md', '.txt', '.log', '.yml', '.yaml', '.pem', '.key']);
+// Percorre as pastas recursivamente, sem seguir atalhos (links simbólicos).
 export function verificarSegredos(root) {
     const encontrados = [];
     function visitar(dir) {

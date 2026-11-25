@@ -1,5 +1,7 @@
 import {createRequire} from "node:module";
 
+// GERADOR GEMINI ANTIGO (primeira versão do projeto, via SDK). Mantido por
+// compatibilidade e testes; a produção usa o motor curado e o fluxo documental.
 export const MODELO_GEMINI = "gemini-2.5-flash";
 
 interface ClienteGemini {

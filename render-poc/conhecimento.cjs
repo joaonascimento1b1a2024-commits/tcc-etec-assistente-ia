@@ -1,5 +1,7 @@
 'use strict';
 
+// Diagnóstico do Firestore (modo local firestore-diagnostic): conta quantos documentos ativos existem na
+// coleção conhecimento e mede o tempo da consulta.
 const { performance } = require('node:perf_hooks');
 const { lerConfiguracao } = require('./config.cjs');
 const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
@@ -11,6 +13,7 @@ function criarLeituraConhecimento(obterFirestore, lerAmbiente = () => process.en
             throw new Error('LOCAL_EMULATORS_REQUIRED');
         const inicio = performance.now();
         const snapshot = await obterFirestore().collection('conhecimento')
+            // count() conta no servidor do Firestore, sem baixar os documentos.
             .where('ativo', '==', true).count().get();
         const quantidade = snapshot.data().count;
         if (!Number.isSafeInteger(quantidade) || quantidade < 0) throw new Error('INVALID_AGGREGATE');

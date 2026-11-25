@@ -1,5 +1,7 @@
 'use strict';
 
+// Diagnóstico da busca documental (RAG), modo local rag-diagnostic: roda a mesma busca do chat e devolve só
+// números (quantos trechos e o tamanho do contexto), nunca o texto.
 const { performance } = require('node:perf_hooks');
 const { lerConfiguracao } = require('./config.cjs');
 const { criarDiagnosticoAutenticado } = require('./autenticacao.cjs');
@@ -16,6 +18,7 @@ function criarRecuperacaoRag(obterFirestore, lerAmbiente = () => process.env) {
     };
 }
 
+// A pergunta precisa ser texto não vazio e dentro do limite do chat.
 function perguntaValida(req) {
     return req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         typeof req.body.pergunta === 'string' && req.body.pergunta.trim().length > 0 &&

@@ -1,5 +1,7 @@
 import {extrairTermosConsultaOriginal} from "../../rag/recuperacao";
 
+// INTERPRETAÇÃO da pergunta livre: valida o texto (até 1.000 caracteres) e o
+// devolve limpo e congelado.
 export interface PerguntaInterpretada {
   readonly texto: string;
   readonly termos: readonly string[];

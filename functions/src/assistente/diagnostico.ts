@@ -2,6 +2,9 @@ import type {MotivoDiagnosticoRevisao} from "./geracao/revisao";
 import type {MotivoTextoBloqueado} from "./fundamentacao/contrato";
 
 /** Somente contagens e codigos: nunca identidade, conteudo ou erro bruto. */
+// DIAGNÓSTICO: formato dos registros de cada etapa do fluxo documental
+// (contexto filtrado, proposta recebida, revisão). Só contagens, etapas e
+// motivos, nunca pergunta, resposta ou dado pessoal.
 export type DiagnosticoAssistente = {
   etapa: "BUSCA_CONCLUIDA"; lidos: number; selecionados: number;
 } | {etapa: "BUSCA_FALHOU"} | {
@@ -22,6 +25,7 @@ export type DiagnosticoAssistente = {
 export type RegistrarDiagnostico =
   (diagnostico: Readonly<DiagnosticoAssistente>) => void;
 
+// Emite o registro de forma segura: um erro no log nunca interrompe a resposta.
 /**
  * Telemetria opcional nunca muda o resultado do atendimento.
  * @param {RegistrarDiagnostico|undefined} registrar Destino local do operador.

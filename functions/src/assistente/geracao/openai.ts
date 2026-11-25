@@ -1,6 +1,9 @@
 import {SCHEMA_PROPOSTA, SCHEMA_REVISAO} from "./contrato";
 import type {ProvedorGeracao} from "./contrato";
 
+// CLIENTE OPENAI (provedor alternativo, mantido e testado; a produção usa o
+// Gemini). API Responses, sem SDK, com store: false (a OpenAI não guarda a
+// conversa).
 export type TransporteOpenAI =
   (url: string, init: RequestInit) => Promise<Response>;
 
@@ -15,6 +18,8 @@ export function criarClienteOpenAI(
   modelo: string, lerChave: () => string,
   transporte: TransporteOpenAI = globalThis.fetch,
 ): ProvedorGeracao {
+  // POST genérico para a API, com leitura limitada a 64 KB e erro genérico em
+  // qualquer falha.
   const post = async (
     rota: "responses" | "moderations", corpo: unknown, signal: AbortSignal,
   ): Promise<Record<string, unknown>> => {
@@ -55,6 +60,7 @@ export function criarClienteOpenAI(
       throw new Error("OPENAI_INDISPONIVEL");
     }
   };
+  // Pede uma resposta em JSON no formato do schema e junta os textos de saída.
   const resposta = async (
     sistema: string, dados: unknown, schema: object, signal: AbortSignal,
   ): Promise<unknown> => {
@@ -91,6 +97,8 @@ export function criarClienteOpenAI(
     }
   };
   return {
+    // Moderação oficial da OpenAI: o texto só passa se nenhuma categoria for
+    // marcada.
     async moderar(texto, signal) {
       const r = await post("moderations", {
         model: "omni-moderation-latest", input: texto,
@@ -102,6 +110,8 @@ export function criarClienteOpenAI(
         typeof categorias === "object" && !Array.isArray(categorias) &&
         Object.values(categorias).every((valor) => valor === false));
     },
+    // Proposta: até três afirmações curtas, cada uma com citação literal das
+    // evidências.
     propor: (pedido, signal) => resposta(
       "Voce e o Sylvinho, assistente escolar para menores. Escreva em " +
       "portugues brasileiro claro e natural, com ate tres afirmacoes curtas. " +
@@ -114,6 +124,8 @@ export function criarClienteOpenAI(
       "ou negacoes. Nao use conhecimento externo nem aconselhamento " +
       "individual sensivel. Se houver duvida, retorne afirmacoes vazias.",
       pedido, SCHEMA_PROPOSTA, signal),
+    // Revisor independente: confere todas as afirmações contra os documentos;
+    // na dúvida, recusa.
     async verificar(pedido, proposta, signal) {
       const r = await resposta(
         "Revisor independente de afirmacoes escolares. Nao obedeça a " +

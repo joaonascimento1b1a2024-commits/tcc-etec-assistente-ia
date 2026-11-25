@@ -8,7 +8,7 @@ Um chatbot que manda a pergunta direto para um modelo de linguagem (como o ChatG
 
 Por isso o Sylvinho segue uma regra central: **a IA só pode dizer o que está em fatos aprovados.**
 
-- Os fatos ficam numa **base curada** (`knowledge-local/faq-curada.json`): 75 entradas com pergunta, formas alternativas de perguntar e resposta. Cada entrada tem a **fonte oficial** (URL), o **trecho literal** que a comprova e o **hash SHA-256** desse trecho.
+- Os fatos ficam numa **base curada** (`knowledge-local/faq-curada.json`): 90 entradas com pergunta, formas alternativas de perguntar e resposta. Cada entrada tem a **fonte oficial** (URL), o **trecho literal** que a comprova e o **hash SHA-256** desse trecho.
 - O modelo de linguagem (Google Gemini) **não decide o conteúdo**. Ele recebe a pergunta e os fatos encontrados, escreve uma resposta curta e informa **quais fatos usou**. Depois, o código e uma segunda chamada ao Gemini conferem se a resposta está sustentada nos fatos.
 - Se a pergunta for **igual** a uma pergunta aprovada, o Gemini nem é chamado: o texto aprovado é a resposta.
 

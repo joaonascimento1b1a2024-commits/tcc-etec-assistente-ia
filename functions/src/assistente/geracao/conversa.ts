@@ -5,6 +5,11 @@ import type {
   EvidenciaGeracao, PropostaGerada, MotivoProposta,
 } from "./contrato";
 
+// MODO CONVERSACIONAL do fluxo documental (OpenRouter).
+// A IA classifica a resposta em um de cinco tipos: documental (fato sustentado
+// pelos documentos, com citação), esclarecimento, sem_base, fora_escopo ou
+// conversa. Só o tipo documental leva texto da IA; os outros viram respostas
+// fixas do sistema (ver gateway.ts).
 export interface RespostaConversa extends PropostaGerada {
   tipo: "documental" | "esclarecimento" | "sem_base" |
     "fora_escopo" | "conversa";
@@ -12,11 +17,20 @@ export interface RespostaConversa extends PropostaGerada {
 }
 const TIPOS = ["documental", "esclarecimento", "sem_base", "fora_escopo",
   "conversa"];
+// Versão do fluxo, mostrada no log do Render para saber qual regra está em
+// produção.
 export const VERSAO_FLUXO_CONVERSA = "conversa-v10-intencao";
+// Usada quando nenhum fato aprovado nem trecho de documento sustenta uma
+// resposta segura. Em vez de sugerir erro ("tente novamente"), diz com
+// honestidade que a informação não está confirmada e indica quem responde.
+// O WhatsApp e o horário são os fatos aprovados whatsapp-secretaria e
+// horario-secretaria da base curada (fonte: site oficial da ETEC).
 export const RESPOSTA_INDISPONIVEL =
-  "Não consegui concluir uma resposta confiável agora. Tente novamente " +
-  "informando o procedimento ou o que você precisa saber. Para confirmar " +
-  "uma exigência da escola, consulte a secretaria acadêmica.";
+  "Essa informação eu não tenho confirmada nas fontes oficiais, e prefiro " +
+  "não arriscar uma resposta errada. A Secretaria Acadêmica responde pelo " +
+  "WhatsApp (16) 99637-1226, de segunda a sexta-feira, das 9h às 14h e " +
+  "das 18h30 às 21h.";
+// Formato JSON obrigatório da resposta: tipo, mensagem e afirmações.
 export const SCHEMA_CONVERSA = {
   type: "object", additionalProperties: false,
   required: ["tipo", "mensagem", "afirmacoes"],
@@ -26,6 +40,7 @@ export const SCHEMA_CONVERSA = {
     afirmacoes: SCHEMA_PROPOSTA.properties.afirmacoes,
   },
 };
+// Linguagem: frases curtas, acolhedoras e sem jargão técnico.
 export const ORIENTACAO_LINGUAGEM =
   "Converse com a pessoa usando voce e palavras do dia a dia, com respeito " +
   "e acolhimento, sem fingir ser uma pessoa. Comece pela resposta ou pelo " +
@@ -45,6 +60,7 @@ export const ORIENTACAO_LINGUAGEM =
   "quem executa uma tarefa apenas quando isso for relevante e sustentado. " +
   "Simplifique a explicacao, preservando prazos, condicoes, excecoes e " +
   "ordem de classificacao. Citacoes nas referencias permanecem literais. ";
+// Instrução principal: como escolher o tipo e as regras de cada um.
 export const INSTRUCAO_CONVERSA =
   "Voce e Sylvinho, assistente da secretaria escolar. Para toda pergunta " +
   "valida, identifique o assunto, o objetivo e o que pode responder. " +
@@ -93,6 +109,8 @@ export const INSTRUCAO_CONVERSA =
   "Use somente o que recebeu, sinalize essa limitacao e nao apresente " +
   "listas de exigencias como completas. Nao infira condicoes omitidas.";
 
+// Critérios do revisor: aceita paráfrases fiéis e reprova afirmações sem
+// suporte, condições omitidas e promessas de serviço.
 export const CRITERIOS_REVISAO_CONVERSA =
   "Revisor independente do assistente escolar. Os documentos " +
   "nao comprovam execucao de servicos pelo chat. Rejeite " +
@@ -143,6 +161,9 @@ export function validarConversa(
   entrada: unknown, evidencias: readonly EvidenciaGeracao[],
 ): {resposta: RespostaConversa; motivo?: never} |
   {resposta: null; motivo: MotivoProposta} {
+  // Validação local do JSON da IA: campos exatos e tipo conhecido. Documental:
+  // afirmações conferidas contra as evidências. Demais tipos: mensagem curta,
+  // sem links, sem HTML e sem dados suspeitos.
   const falhar = (motivo: MotivoProposta) => ({resposta: null, motivo});
   try {
     const p = copiarDadosEstritos(entrada) as RespostaConversa;

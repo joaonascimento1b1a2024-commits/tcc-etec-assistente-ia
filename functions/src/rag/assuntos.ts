@@ -1,3 +1,5 @@
+// ASSUNTOS: padroniza grafias de procedimentos ("re matrícula" ->
+// "rematricula") para a busca e a intenção reconhecerem o mesmo assunto.
 /**
  * Equivalencias lexicais de procedimentos; recebe texto ja normalizado.
  * Mantem qualificadores, negacoes e condicoes fora das expressoes conhecidas.
@@ -13,6 +15,7 @@ export function normalizarProcedimentos(texto: string): string {
       "rematricula");
 }
 
+// Remove marcas de reformulação interna da pergunta antes da busca.
 /**
  * Remove somente expressoes de desconhecimento do modo de fazer.
  * "Nao renovar" e demais negacoes substantivas permanecem na consulta.

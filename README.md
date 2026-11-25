@@ -58,7 +58,7 @@ Detalhes em [docs/RELATORIO-TECNICO-IA.md](docs/RELATORIO-TECNICO-IA.md).
 | `render-poc/motor-curado/` | **Motor de IA da base curada:** busca, geração, validação, revisão, fila e cache. |
 | `render-poc/motor-curado.cjs` | Liga o motor ao servidor e decide o modo híbrido. |
 | `functions/src/` | TypeScript compartilhado: rota do chat (`assistente/handler.ts`), visitante, classificador de escopo, fluxo documental (RAG) e Cloud Functions dos avisos por e-mail (`index.ts`, `avisos/`). O Render compila essa pasta no deploy. |
-| `knowledge-local/` | Base curada: `faq-curada.json` (75 fatos aprovados, com fonte e evidência), `contatos-publicos.json` (contatos oficiais permitidos) e `embeddings-curados.json` (índice vetorial). |
+| `knowledge-local/` | Base curada: `faq-curada.json` (90 fatos aprovados, com fonte e evidência), `contatos-publicos.json` (contatos oficiais permitidos) e `embeddings-curados.json` (índice vetorial). |
 | `scripts/` | Ferramentas: reindexar a base, avaliar o híbrido, procurar segredos no código e as verificações usadas pelos testes. |
 | `tests/` | Testes automatizados (Node test runner). `com-dados-privados/` exige a amostra oficial fora do git; `emulador/` exige os emuladores do Firebase. |
 | `local-e2e/` | Infraestrutura dos testes ponta a ponta com emuladores. |

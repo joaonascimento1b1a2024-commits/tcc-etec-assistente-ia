@@ -2,6 +2,9 @@ import type {Request, Response} from "express";
 import {perguntarAssistenteHandler} from "./handler.js";
 import type {DependenciasAssistente} from "./handler.js";
 
+// CORS E ROTAS HTTP: só os domínios listados em ASSISTENTE_CORS_ORIGINS podem
+// chamar o servidor pelo navegador. Cada origem precisa ser exata (sem curinga,
+// sem caminho) e HTTPS, exceto localhost para testes.
 /**
  * Valida origens exatas; HTTPS ou HTTP somente em loopback.
  * @param {string} configuracao Lista separada por virgulas.
@@ -21,6 +24,7 @@ export function origensPermitidas(configuracao: string): string[] {
     });
 }
 
+// Rota do chat com login: CORS + handler.ts.
 /**
  * Adapta CORS/OPTIONS antes de construir dependencias do handler.
  * @param {Function} obterDependencias Fabrica lazy dos adapters reais.
@@ -37,6 +41,8 @@ export function criarEndpointAssistente(
   );
 }
 
+// Envoltório CORS reutilizado por todas as rotas: recusa origem desconhecida
+// (403), responde o preflight OPTIONS e só então chama a rota.
 /**
  * Compartilha CORS sem inicializar dependencias no preflight.
  * @param {Function} handler Callback da rota.

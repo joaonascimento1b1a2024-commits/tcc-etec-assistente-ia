@@ -7,6 +7,10 @@ import {criarClienteGemini} from "./gemini";
 import {usuarioIAAutorizado} from "./gateway";
 import type {AmbienteIA, EventoIA} from "./gateway";
 
+// DEMONSTRAÇÃO SINTÉTICA do Gemini (opcional, desligada em produção): um
+// catálogo fechado de duas perguntas sobre um fato inventado e declarado como
+// fictício, para mostrar a geração sem usar dados reais da escola. Exige um
+// arquivo de aprovação assinado por hash, válido por no máximo 24 h.
 const TEXTO =
   "O certificado experimental utiliza papel violeta de laboratório.";
 const AVISO = "Demonstração sintética; não é informação escolar oficial.";
@@ -18,6 +22,8 @@ const PERGUNTAS: Readonly<Record<string, string>> = Object.freeze({
 const PALAVRAS = new Set(("o a de do da para e é utilizado utiliza " +
   "certificado experimental papel violeta laboratório").split(" "));
 const sha = (s: string): string => createHash("sha256").update(s).digest("hex");
+// O hash do catálogo amarra a aprovação a este conteúdo exato: mudar uma
+// pergunta invalida a aprovação.
 export const CATALOGO_DEMO_SHA256 = sha(JSON.stringify({
   perguntas: PERGUNTAS, evidencia: TEXTO,
 }));
@@ -62,6 +68,8 @@ export function criarDemonstracaoGemini(
       // Sem logs de dados/erros.
     }
   };
+  // Autorização: todas as travas ligadas, conta autorizada e arquivo de
+  // aprovação com o hash esperado, campos exatos e dentro do prazo.
   const autorizar = (uid: string): AmbienteIA | undefined => {
     try {
       const env = ambiente();
@@ -108,6 +116,7 @@ export function criarDemonstracaoGemini(
       return undefined;
     }
   };
+  // Só aceita IDs do catálogo; nunca texto livre.
   const resolver = (id: unknown): string | undefined =>
     typeof id === "string" &&
     Object.prototype.hasOwnProperty.call(PERGUNTAS, id) ?
@@ -127,6 +136,8 @@ export function criarDemonstracaoGemini(
       const pergunta = resolver(id);
       const env = autorizar(uid);
       if (!pergunta || !env) throw Error("DEMO_NAO_AUTORIZADA");
+      // Reserva: o texto fixo do catálogo, com o aviso de demonstração e a
+      // fonte.
       const fallback = (): string => {
         evento("FALLBACK");
         return AVISO + "\n\n" + TEXTO + "\n\n" + FONTE;
@@ -161,6 +172,8 @@ export function criarDemonstracaoGemini(
             controller.signal), pedido.evidencias);
           controller.signal.throwIfAborted();
           // Vocabulario fixo antes dos reenvios. Regex de PII nao e garantia.
+          // A resposta da IA só pode usar as palavras do vocabulário fixo;
+          // qualquer palavra fora dele cai na reserva.
           if (!p || p.afirmacoes.some((a) =>
             !/^[\p{L}\s.,;!?-]+$/u.test(a.texto) ||
             !a.texto.toLowerCase().match(/\p{L}+/gu)?.every((w) =>

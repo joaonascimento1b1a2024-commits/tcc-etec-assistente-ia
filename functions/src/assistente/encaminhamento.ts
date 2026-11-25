@@ -7,6 +7,9 @@ import {identificarProcedimento} from "./intencao";
  * @return {string} Encaminhamento constante; nao e resposta gerada por IA.
  */
 export function orientarSemEvidencia(pergunta: string): string {
+  // ENCAMINHAMENTO SEM EVIDÊNCIA: quando nenhum documento sustenta a resposta,
+  // monta uma orientação honesta e específica (procedimento reconhecido, prazo
+  // ou contato), sempre indicando a Secretaria.
   const n = normalizarTexto(pergunta);
   const procedimento = identificarProcedimento(pergunta);
   if (procedimento) {
@@ -17,12 +20,14 @@ export function orientarSemEvidencia(pergunta: string): string {
       "disponíveis. Recomendo consultar a Secretaria Acadêmica para " +
       "confirmar as informações sobre esse procedimento.";
   }
+  // Pergunta de data ou prazo sem documento: não arrisca uma data.
   if (/\b(prazo|quanto tempo|data|quando)\b/u.test(n)) {
     return "Não encontrei um prazo ou uma data confirmados nos documentos " +
       "consultados. Confirme com a Secretaria Acadêmica: " +
       "\"Qual é o prazo para o procedimento que preciso solicitar?\" " +
       "Informe qual é o procedimento, sem enviar dados pessoais aqui.";
   }
+  // Pergunta de contato sem documento: não inventa telefone nem e-mail.
   if (/\b(telefone|email|e mail|horario|horarios)\b/u.test(n)) {
     return "Não encontrei esse contato ou horário confirmado nos documentos " +
       "consultados. Verifique os canais oficiais divulgados pela escola " +

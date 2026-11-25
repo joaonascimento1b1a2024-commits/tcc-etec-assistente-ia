@@ -1,3 +1,6 @@
+// BENCHMARK DA BUSCA DOCUMENTAL (RAG): compara a seleção de trechos atual com a versão antiga (antes da etapa
+// 2) num conjunto fixo de perguntas e documentos de teste. Mostra quantos trechos relevantes cada versão
+// encontra.
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
@@ -7,12 +10,14 @@ import * as atual from '../functions/lib/rag/recuperacao.js';
 import {gerarRespostaDocumental} from '../functions/lib/assistente/resposta-documental.js';
 const require = createRequire(new URL('../functions/package.json', import.meta.url));
 const ts = require('typescript');
+// Carrega a versão antiga direto do TypeScript (transpila em memória), para comparar as duas no mesmo teste.
 const fonteAntes = readFileSync(new URL('../tests/fixtures/rag-antes-etapa2.ts', import.meta.url), 'utf8');
 const exportsAntes = {};
 vm.runInNewContext(ts.transpileModule(fonteAntes, {compilerOptions: {
   module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2017,
 }}).outputText, {exports: exportsAntes});
 
+// Para cada pergunta: quais trechos o seletor devolveu e quantos estavam entre os esperados.
 export function avaliar(seletor) {
   const linhas = perguntas.map(({pergunta, esperados}) => {
     const docs = seletor(corpus, pergunta);

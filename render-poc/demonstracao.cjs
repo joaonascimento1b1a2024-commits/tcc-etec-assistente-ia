@@ -1,8 +1,11 @@
 'use strict';
 
+// DEMONSTRAÇÃO ACADÊMICA (só no emulador local): o chat responde a partir de documentos fixos e revisados
+// (demo-academica/fixtures.json), para apresentar o fluxo sem depender da base real.
 const { lerModoDemonstracao } = require('./producao.cjs');
 const manifesto = require('../demo-academica/fixtures.json');
 const { selecionarDocumentosRelevantes } = require('../functions/lib/rag/recuperacao.js');
+// Documentos congelados (Object.freeze): nada em tempo de execução consegue alterá-los.
 const fixtures = Object.freeze(manifesto.documentos.map(item =>
     Object.freeze({ id: item.id, dados: Object.freeze({ ...item.dados }) })));
 
@@ -19,6 +22,7 @@ function criarLeitorDemonstracao(firestore) {
                 return null;
             return { id: fixture.id, ...fixture.dados };
         }));
+        // Mesma seleção de trechos relevantes do fluxo de produção.
         return selecionarDocumentosRelevantes(documentos.filter(Boolean), pergunta);
     };
 }

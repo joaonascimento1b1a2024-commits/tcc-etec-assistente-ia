@@ -5130,5 +5130,1009 @@
         "conferidoEm": "2026-11-19"
       }
     ]
+  },
+  {
+    "id": "ensino-gratuito",
+    "pergunta": "O curso da ETEC é gratuito?",
+    "variacoes": [
+      "o curso e gratuito",
+      "a etec e gratuita",
+      "a etec e paga",
+      "a escola e paga",
+      "tem mensalidade",
+      "quanto custa estudar na etec",
+      "quanto custa o curso",
+      "precisa pagar para estudar",
+      "a escola e publica",
+      "a etec e publica",
+      "e de graca",
+      "o curso e pago",
+      "a escola e paga ou de graca",
+      "paga mensalidade",
+      "quanto custa a etec",
+      "e gratis"
+    ],
+    "resposta": "Sim. A ETEC é uma Escola Técnica Estadual do Centro Paula Souza, do Governo do Estado de São Paulo, e a Constituição garante a gratuidade do ensino público em escolas oficiais: não há mensalidade. O que tem taxa é só a inscrição no Vestibulinho.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria. Gratuidade pela Constituição (art. 206, IV) aplicada a escola estadual; o portal do Vestibulinho não traz frase própria sobre gratuidade."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_legislacao",
+        "referencia": "Constituição Federal, art. 206, inciso IV",
+        "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+        "sha256": "2ddd09ec2566f9ae2b31c8cd2997ed91de7a942c288e711c8a4e0dd138f14985",
+        "evidencia": "IV - gratuidade do ensino público em estabelecimentos oficiais;",
+        "formaConferencia": "leitura pelo navegador (Chrome) do texto oficial no portal do Planalto em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 4",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "52c5f0c71a3aee481d0b41a11d26d14f0a4175fb1c64b233722556fadf33d2f1",
+        "paginas": [
+          4
+        ],
+        "evidencia": "Seja muito bem-vindo(a) ao Vestibulinho das Escolas Técnicas Estaduais (Etecs) do Centro Paula Souza (CPS)",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 9",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "ac391bc3bad12763eb0e413ad7e2839abd16b1f791e659cd52245bb27f1334a9",
+        "paginas": [
+          9
+        ],
+        "evidencia": "A taxa de inscrição é de R$ 50,00 por inscrição.",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "bolsas",
+    "pergunta": "A ETEC tem bolsa de estudos?",
+    "variacoes": [
+      "tem bolsa de estudos",
+      "tem bolsa",
+      "bolsa de estudo",
+      "tem bolsa de intercambio",
+      "intercambio na etec",
+      "tem bolsa de pesquisa",
+      "projeto de pesquisa com bolsa",
+      "a etec da bolsa",
+      "como consigo uma bolsa",
+      "bolsa de iniciacao cientifica",
+      "a etec tem bolsa de estudos"
+    ],
+    "resposta": "Não existe bolsa para pagar o curso, porque o ensino na ETEC é gratuito. O Centro Paula Souza informa que as Etecs oferecem bolsas de intercâmbio e que os projetos de pesquisa oferecem bolsas, com orientação de professores pesquisadores. Para saber se há seleção aberta, fale com a escola.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 4",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "0fff588a23d9d180e7560d82c1a3765740afcc4182523019886ede4d73654dbf",
+        "paginas": [
+          4
+        ],
+        "evidencia": "Nas Etecs você encontra também bolsas de intercâmbio e oportunidades para incubar, testar e prototipar suas ideias. Os projetos de pesquisa oferecem bolsas e orientação de professores pesquisadores",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_legislacao",
+        "referencia": "Constituição Federal, art. 206, inciso IV",
+        "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+        "sha256": "2ddd09ec2566f9ae2b31c8cd2997ed91de7a942c288e711c8a4e0dd138f14985",
+        "evidencia": "IV - gratuidade do ensino público em estabelecimentos oficiais;",
+        "formaConferencia": "leitura pelo navegador (Chrome) do texto oficial no portal do Planalto em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "entrada-atrasada",
+    "pergunta": "Posso entrar atrasado na aula?",
+    "variacoes": [
+      "posso entrar atrasado",
+      "cheguei atrasado",
+      "tolerancia de atraso",
+      "qual a tolerancia de atraso",
+      "atraso na aula",
+      "posso chegar atrasado",
+      "entrar depois do horario",
+      "o que acontece se eu chegar atrasado",
+      "tem tolerancia para atraso",
+      "cheguei atrasado posso entrar"
+    ],
+    "resposta": "Chegar no horário é um dever do aluno: o Regimento Comum pede que ele compareça às aulas com pontualidade e assiduidade, e o Regimento Interno da escola define os horários de entrada e saída de cada turma. Os regimentos publicados não trazem tolerância de atraso nem regra para entrar depois do horário; nesse caso, a Coordenação ou a Secretaria orienta.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 114, II",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "227312b16a0f4f426a9349a84e1cff9abd0f95fb9acd967f8bf1bed3d9a307d5",
+        "paginas": [
+          34
+        ],
+        "evidencia": "II- comparecer pontual e assiduamente às aulas e atividades escolares programadas, sejam presenciais ou de forma remota, empenhando-se no êxito de sua execução;",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_folder",
+        "referencia": "Regimento interno — revisão de 26/02/2024, capítulo V",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Etec-2021-2024-Versao-26-02-2024.pdf",
+        "sha256": "13df2f9ea3d2360ba2ca967f257c2f60d23bd9ff96ffe08d3bc15d95f1e639c5",
+        "paginas": [
+          1
+        ],
+        "evidencia": "CAPÍTULO V Do Horário de Entrada e Saída",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "pais-acompanhamento",
+    "pergunta": "Como os pais acompanham as notas e a frequência do aluno?",
+    "variacoes": [
+      "como os pais acompanham as notas",
+      "os pais podem ver as notas",
+      "meu pai pode ver minha frequencia",
+      "os pais sao avisados das faltas",
+      "tem reuniao de pais",
+      "reuniao de pais e mestres",
+      "como acompanho meu filho na etec",
+      "como acompanhar as notas do meu filho",
+      "responsavel pode ver as notas",
+      "sou mae de aluno como acompanho",
+      "como os responsaveis acompanham o aluno"
+    ],
+    "resposta": "Os pais ou responsáveis têm o direito de ser informados sobre a frequência e o rendimento do aluno e o dever de acompanhá-los durante o ano. A escola faz reuniões de pais: no Calendário Escolar de 2026 há Reunião de Pais e Mestres dos M-Tec. O NSA também tem entrada como Responsável. Para acompanhar de perto, fale com a Orientação e Apoio Educacional pelo WhatsApp (16) 99716-1071.",
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 119, II",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "2ef85af4ea3aa1e92bf3d0afa8230e12d3802e7aee84b395a99b1ec6e455b41c",
+        "paginas": [
+          37
+        ],
+        "evidencia": "II- serem informados sobre a frequência e rendimento dos alunos, incluindo as propostas de recuperação quando o aluno apresentar rendimento insatisfatório;",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 120, I",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "5a7ab22616607275b4c998b3a7da15c428d5212c00f33404669b782fbe52851b",
+        "paginas": [
+          37
+        ],
+        "evidencia": "I - acompanharem, durante o período letivo, a execução das atividades presenciais ou remotas, a frequência e rendimento do aluno pelo qual são responsáveis;",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário escolar geral 2026 — alteração 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "a050c3de92fe1ba510e59d77f673c6e925d5436d962f4ba824c7263335407d1a",
+        "paginas": [
+          1
+        ],
+        "evidencia": "Outras Reuniões (Reunião de Pais e Mestres (M- TECs))",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_sistema",
+        "referencia": "Mural de notícias do NSA — Secretaria Acadêmica (29/06/2026)",
+        "url": "https://nsaetec.com.br/alunos/alunos_menu.aspx",
+        "sha256": "356c5c2f1eb87a1033fa58f49177f46026743a63a4e693451a0d629bf91cc506",
+        "hashDoExcerto": true,
+        "evidencia": "Acesse o site e faça login, utilizando a opção Aluno ou Responsável. ➤ Código da Etec: 103 No menu lateral esquerdo, clique em “Rematrícula”; Confira seus dados pessoais (endereço e telefone) e atualize, se necessário; Ao final da página, clique em SALVAR REMATRÍCULA.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026, no mural de notícias da área do aluno do NSA (exige login), aviso da Secretaria Acadêmica de 29/06/2026; sha256 do excerto",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "site_oficial",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+        "evidencia": "26 (WhatsApp) Orientação E Apoio Educacional: (16)99716-1071 (WhatsApp) Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a",
+        "conferidoEm": "2026-11-12T13:13:31.867Z",
+        "coletaDeclaradaNosMateriais": "2026-11-11"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "email-secretaria",
+    "pergunta": "Qual é o e-mail da Secretaria Acadêmica?",
+    "variacoes": [
+      "qual o email da secretaria",
+      "email da secretaria",
+      "e-mail da secretaria",
+      "qual o e-mail da secretaria",
+      "como mando email para a secretaria",
+      "email secretaria academica",
+      "contato por email da secretaria",
+      "qual e o email da secretaria academica"
+    ],
+    "resposta": "A página de contato da escola não traz um e-mail próprio da Secretaria Acadêmica: ela atende pelo WhatsApp (16) 99637-1226. Por e-mail, o contato da Diretoria Acadêmica é e103acad@cps.sp.gov.br.",
+    "categoria": "contato",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "site_oficial",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+        "evidencia": "ixo: Telefone/WhatsApp Secretaria Acadêmica: (16) 99637-1226 (WhatsApp) Orientação E Apoio Educacional: (16)99716-1071 (WhatsApp) Telefone Fixo: (16) 3382-6878 E-Mails Diretoria: e103dir@cps.sp.gov.br Diretoria Administrativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.",
+        "conferidoEm": "2026-11-12T13:13:31.867Z",
+        "coletaDeclaradaNosMateriais": "2026-11-11"
+      },
+      {
+        "tipo": "site_oficial",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "58c2f82ff69782cc4b80672f76f85bbb40f17c03ebdc576bb616c65c481f7c7c",
+        "evidencia": "ativa: e103adm@cps.sp.gov.br Diretoria Acadêmica: e103acad@cps.sp.gov.br Pesquisar por: Notícias Recentes Colação de Grau da 56a. Turma de Formandos da Etec Sylvio de Mattos Carvalho Colação de Grau da 51ª e 52ª Turmas de Formandos da Etec Coleta de Lixo Eletrônico Campanha de Vacinação Pr",
+        "conferidoEm": "2026-11-12T13:13:31.867Z",
+        "coletaDeclaradaNosMateriais": "2026-11-11"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "site-escola",
+    "pergunta": "Qual é o site da escola?",
+    "variacoes": [
+      "qual o site da escola",
+      "site da etec",
+      "site oficial da etec",
+      "pagina da escola na internet",
+      "a escola tem site",
+      "endereco do site da escola",
+      "qual o site da etec"
+    ],
+    "resposta": "O site oficial da ETEC Sylvio de Mattos Carvalho é etecmatao.cps.sp.gov.br, com cursos, contatos e documentos como o Regimento e o Calendário Escolar. As inscrições do Vestibulinho são feitas no site vestibulinho.etec.sp.gov.br.",
+    "categoria": "contato",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "url": "https://etecmatao.cps.sp.gov.br/contato/",
+        "sha256": "10e182c83b4be97310b8230f46dfd6df2c83b78f1c13d8d19994068b83fac845",
+        "evidencia": "Telefone Fixo: (16) 3382-6878",
+        "formaConferencia": "texto obtido pela API pública do site da escola (wp-json) em 19/11/2026; a página HTML estava fora do ar (erro crítico do WordPress) no momento da conferência; sha256 do texto conferido",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Lista de documentos do site da Etec (API pública do WordPress)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "5721f66af598e61c8fc27b5c9e631e79d485b4786a0caa669adefd4ab3225747",
+        "hashDoExcerto": true,
+        "evidencia": "Calendário Escolar 2026 – Geral – Etec 103 – Alterado em 20-03-2026",
+        "formaConferencia": "título do documento na lista de mídias do site etecmatao.cps.sp.gov.br (wp-json), coletada na varredura de 19/11/2026; sha256 do excerto",
+        "conferidoEm": "2026-11-19"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "01e35d682e7992ccab341368c68b9d587066bb9e64eb20fcfc4c114b6bea645b",
+        "evidencia": "As inscrições para o Vestibulinho Etec do 1º semestre de 2027 serão realizadas de 02/09/2026 até as 20h do dia 10/11/2026(prorrogadas), exclusivamente pelo site vestibulinho.etec.sp.gov.br.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "atestado-faltas",
+    "pergunta": "Atestado médico abona falta?",
+    "variacoes": [
+      "atestado medico abona falta",
+      "atestado abona falta",
+      "como justificar falta",
+      "justificar falta",
+      "faltei com atestado",
+      "abono de falta",
+      "falta justificada",
+      "tenho atestado medico",
+      "abonar falta",
+      "atestado tira a falta"
+    ],
+    "resposta": "O Regimento Comum não prevê abono de faltas. Quando problemas de saúde atrapalham a frequência, a escola deve oferecer compensação de ausência, como trabalhos de pesquisa e avaliações especiais, compatíveis com a condição do aluno. Apresente o atestado e combine a compensação com a escola; a forma e o prazo a Secretaria confirma.",
+    "categoria": "avaliacao_frequencia",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria. O Regimento Comum não usa o termo abono de faltas; a regra publicada é a compensação de ausência do art. 83."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 83, parágrafo único",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "ea2c6c353415f66b77a5866f1182c740d2799e394dbf4b2626b7f8f5c66f6317",
+        "paginas": [
+          26
+        ],
+        "evidencia": "Aos alunos cujas condições de saúde comprometam o cumprimento das obrigações escolares, a escola deverá utilizar-se de procedimentos pedagógicos para compensação de ausência, tais como: trabalhos de pesquisa, avaliações especiais (escritas ou orais), procedimentos estes compatíveis com a condição e disponibilidade de tempo desses estudantes.",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "ams",
+    "pergunta": "O que é AMS?",
+    "variacoes": [
+      "o que e ams",
+      "ams etec",
+      "curso ams",
+      "posso entrar na fatec sem vestibular",
+      "entrar na fatec sem vestibular",
+      "etec e fatec junto",
+      "articulacao da formacao profissional tecnica e superior",
+      "medio tecnico e superior em cinco anos",
+      "da para ir para a fatec sem vestibular"
+    ],
+    "resposta": "A AMS (Articulação da Formação Profissional Técnica e Superior) permite concluir o Ensino Médio, o Técnico e o Superior em cinco anos: depois da etapa na Etec, o aluno pode ingressar sem vestibular em uma Fatec, num curso superior ligado à sua formação técnica, e concluir a graduação em mais dois anos. Para saber se a ETEC de Matão oferece AMS, confira a lista de cursos de cada Vestibulinho.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 4",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "8b10d03243af7dfce0a1d6f40812805f187f4c087e0c3748665e811bcd85c6ab",
+        "paginas": [
+          4
+        ],
+        "evidencia": "Já a Articulação da Formação Profissional Técnica e Superior (AMS) permite ao estudante concluir os ensinos Médio, Técnico e Superior em um período de cinco anos com a possibilidade de ingressar, sem a necessidade de realizar Vestibular, em uma Faculdade de Tecnologia do Estado (Fatec), em um curso superior relacionado à sua formação técnica e concluir a graduação em mais dois anos.",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "mtec",
+    "pergunta": "O que é M-Tec e qual a diferença para o curso técnico?",
+    "variacoes": [
+      "o que e mtec",
+      "o que e m-tec",
+      "o que e m tec",
+      "diferenca entre mtec e tecnico",
+      "diferenca entre m-tec e tecnico",
+      "ensino medio com tecnico",
+      "o que e ensino medio integrado",
+      "mtec ou tecnico",
+      "posso fazer o tecnico sem terminar o ensino medio",
+      "qual a diferenca entre m-tec e tecnico"
+    ],
+    "resposta": "O M-Tec é o Ensino Médio com Técnico: o aluno cursa o Ensino Médio junto com a formação técnica, em período integral ou único, e para entrar precisa ter concluído o Ensino Fundamental. O curso técnico em módulos é para quem concluiu o Ensino Médio ou está matriculado a partir da 2ª série dele.",
+    "categoria": "cursos",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 4",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "46a06c68875d9631a73e8a72e3612c7d8310ae7b59e2a2a5812bfeefd8833e34",
+        "paginas": [
+          4
+        ],
+        "evidencia": "Nas Etecs, os estudantes podem cursar o Ensino Médio junto com a formação técnica, unindo os conhecimentos da educação básica ao desenvolvimento de competências profissionais. Essa formação pode ser realizada em período integral ou único.",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 5",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "97c10f0b72889deef22dcf0ed67f1c1f1b925c601bb87751f59ef98e951e846f",
+        "paginas": [
+          5
+        ],
+        "evidencia": "Para ingresso na 1ª série do Ensino Médio, o candidato deverá ter concluído o Ensino Fundamental",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_manual",
+        "referencia": "Manual do Candidato — Vestibulinho 1º semestre 2027, p. 5",
+        "url": "https://vestibulinho.etec.sp.gov.br/documentos/",
+        "sha256": "92cc5cb97a69dc66b508bc737802c1be577ce5a583754b324d9d52766eb391fe",
+        "paginas": [
+          5
+        ],
+        "evidencia": "Quem concluiu o Ensino Médio pode participar. • Quem ainda cursa o Ensino Médio deve estar matriculado a partir da 2ª série.",
+        "formaConferencia": "Manual do Candidato do Vestibulinho 1SEM2027 (PDF oficial, cópia local da varredura de 19/11/2026), publicado na página Documentos do portal do Vestibulinho; conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec",
+        "url": "https://vestibulinho.etec.sp.gov.br/unidades-cursos/escola.asp?c=175",
+        "sha256": "0e0727a4b8643c8ac5acefdf42d1bcdd1fdf306be52d9772a46d8c70cef3324c",
+        "evidencia": "Cursos oferecidos",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026; sha256 do HTML servido (na página da unidade ele muda a cada carga por causa da proteção de e-mail da Cloudflare); o fetch direto recebe HTTP 403 (Cloudflare)",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "gremio",
+    "pergunta": "A escola tem grêmio estudantil?",
+    "variacoes": [
+      "tem gremio",
+      "tem gremio estudantil",
+      "como participo do gremio",
+      "eleicao do gremio",
+      "gremio da etec",
+      "como entro no gremio"
+    ],
+    "resposta": "Sim. O Regimento Comum prevê que a Orientação e Apoio Educacional incentive os alunos a participar do Grêmio Estudantil, e o Calendário Escolar de 2026 da escola previu inscrição de chapas, campanha e eleição do Grêmio no 1º semestre. Para participar, procure a Orientação e Apoio Educacional.",
+    "categoria": "regras_gerais",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_regimento",
+        "referencia": "Regimento Comum, art. 37 (Orientação e Apoio Educacional)",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2024/08/Regimento-Comum-ETECs-Deliberacao-CEETEPS-87_2022-12-28.pdf",
+        "sha256": "b268aea34220e124811f15dd5d91a0dbe9b5f258c9265f137e656f347c86658f",
+        "paginas": [
+          14
+        ],
+        "evidencia": "incentivando os alunos a participarem dos órgãos colegiados: Conselhos de Escola, de Classe, Associação de Pais e Mestres, Grêmio Estudantil e Cooperativas, dentre outros;",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_calendario",
+        "referencia": "Calendário escolar geral 2026 — alteração 20/03/2026",
+        "url": "https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/126/2026/04/Calendario-Escolar-2026-Geral-Etec-103-Alterado-em-20-03-2026.pdf",
+        "sha256": "9b51085055131de29f3559096cf9c454ac7d689101dd058abea8d222d83c33c8",
+        "paginas": [
+          1
+        ],
+        "evidencia": "09 - Início das Inscrições das Chapas para o Grêmio Estudantil",
+        "formaConferencia": "texto do PDF oficial (cópia local baixada na varredura de 19/11/2026), conferido em 25/11/2026; sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "nsa-senha",
+    "pergunta": "Esqueci a senha do NSA, o que faço?",
+    "variacoes": [
+      "esqueci a senha do nsa",
+      "como recupero a senha do nsa",
+      "recuperar senha nsa",
+      "nao tenho senha do nsa",
+      "nao sei meu rm",
+      "perdi a senha do nsa",
+      "nova senha nsa",
+      "como recuperar a senha do nsa"
+    ],
+    "resposta": "Na tela de login do NSA (nsaetec.com.br), use a opção “Solicitar nova senha”; ela também vale para quem não tem o RM. Alunos menores de 16 anos usam o login do responsável.",
+    "categoria": "secretaria",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": null,
+      "ano": null,
+      "revisarEm": "2027-02-01"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; não é confirmação telefônica da Secretaria."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_sistema",
+        "referencia": "Mural de notícias do NSA — Secretaria Acadêmica (29/06/2026)",
+        "url": "https://nsaetec.com.br/alunos/alunos_menu.aspx",
+        "sha256": "bcc979b836738a7f2c5f38780b6ea96e3bce237659ab7a9eb6759ca7519a21aa",
+        "hashDoExcerto": true,
+        "evidencia": "A rematrícula só será concluída após clicar em SALVAR; Alunos menores de 16 anos devem utilizar o login do responsável; Caso não tenha o RM ou a senha, selecione a opção “Solicitar nova senha” na tela de login.",
+        "formaConferencia": "leitura pelo navegador (Chrome) em 19/11/2026, no mural de notícias da área do aluno do NSA (exige login), aviso da Secretaria Acadêmica de 29/06/2026; sha256 do excerto",
+        "conferidoEm": "2026-11-19"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-varias-inscricoes",
+    "pergunta": "Posso fazer mais de uma inscrição no Vestibulinho?",
+    "variacoes": [
+      "posso fazer duas inscricoes",
+      "posso fazer mais de uma inscricao",
+      "quantas inscricoes posso fazer",
+      "posso me inscrever em dois cursos",
+      "posso concorrer a mais de um curso",
+      "mais de uma inscricao no vestibulinho"
+    ],
+    "resposta": "Sim. No Vestibulinho do 1º semestre de 2027, dá para fazer até 5 inscrições diferentes, para concorrer a cursos diferentes. Cada inscrição é preenchida separadamente e paga a própria taxa de R$ 50,00.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; vale para o Vestibulinho do 1º semestre de 2027."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "802f289b9bf19a372ab8752cb9bd8fd09a5d3ebc6ce04464f9415219f0f1ca7b",
+        "evidencia": "Sim. O candidato poderá realizar até 5 inscrições distintas para concorrer a cursos diferentes. Cada nova inscrição deverá ser preenchida separadamente e terá sua própria taxa.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "04208a1e16943447357e2aa4a2733da2cc9636b52d105a3ee0b58792da69f0d4",
+        "evidencia": "Sim. Cada inscrição exige o pagamento de uma taxa individual de R$ 50,00.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-alterar-inscricao",
+    "pergunta": "Posso alterar o curso ou o período depois de fazer a inscrição?",
+    "variacoes": [
+      "posso trocar de curso depois da inscricao",
+      "posso mudar o curso da inscricao",
+      "posso trocar o periodo da inscricao",
+      "alterar inscricao do vestibulinho",
+      "errei o curso na inscricao",
+      "mudar a etec da inscricao",
+      "posso alterar a inscricao depois de pagar"
+    ],
+    "resposta": "Não. Depois que as inscrições terminam ou que a taxa é paga, a ficha de inscrição não pode mais ser alterada, principalmente nos campos de Etec, curso e período.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; vale para o Vestibulinho do 1º semestre de 2027."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "382d76c251953548729cac6cd20d0412e5efd4d7bd16bcde04d8df2e6c412d5b",
+        "evidencia": "Não. Depois do encerramento do período de inscrições e/ou do pagamento da taxa, não serão permitidas alterações ou inclusões na ficha de inscrição, especialmente nos campos de Etec/Extensão, curso, período",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-eletronicos-prova",
+    "pergunta": "Posso usar celular ou calculadora na prova do Vestibulinho?",
+    "variacoes": [
+      "posso usar celular na prova",
+      "posso usar calculadora na prova",
+      "pode usar celular no vestibulinho",
+      "pode smartwatch na prova",
+      "pode levar celular na prova",
+      "calculadora no vestibulinho",
+      "pode usar relogio inteligente na prova"
+    ],
+    "resposta": "Não. O celular deve ficar totalmente desligado durante todo o exame, sem nem tocar alarme, e smartwatch e outros eletrônicos vestíveis são proibidos. Usar ou tentar usar equipamento eletrônico, livros ou anotações durante a prova desclassifica o candidato.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; vale para o Vestibulinho do 1º semestre de 2027."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "247932f5a8b602fd8fda8cc04906f9f86162b6de0ea2c32cd8ec0805f48ebe79",
+        "evidencia": "Não. O celular deverá permanecer totalmente desligado durante todo o exame, inclusive sem possibilidade de emissão de alarmes.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "315fc85bc1bb74dcd6cda1d30fd0e73cbdf626a8e99d43dc0d4b1f107bfee042",
+        "evidencia": "Não. Smartwatch e outros equipamentos eletrônicos vestíveis são proibidos durante o exame.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "8afcd1c6542124eb67f0323adcec54071b25cec7e46fd7115fbb36cc76821067",
+        "evidencia": "Sim. O uso ou tentativa de uso de equipamentos eletrônicos, meios de comunicação, livros, notas ou apontamentos durante o exame é motivo de desclassificação.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
+  },
+  {
+    "id": "vestibulinho-classificacao-vaga",
+    "pergunta": "Qual é a nota de corte do Vestibulinho?",
+    "variacoes": [
+      "qual a nota de corte do vestibulinho",
+      "nota de corte",
+      "nota minima para passar no vestibulinho",
+      "estar classificado garante vaga",
+      "como funciona a classificacao do vestibulinho",
+      "qual nota preciso para passar no vestibulinho",
+      "fui classificado ja tenho vaga"
+    ],
+    "resposta": "A classificação só posiciona o candidato na lista: a convocação para a matrícula segue a ordem decrescente de nota, até o limite das vagas de cada curso. Por isso, estar classificado não garante vaga. Também não há revisão nem vista da prova.",
+    "categoria": "vestibulinho",
+    "aplicaSe": {
+      "cursos": [],
+      "turnos": [],
+      "idades": []
+    },
+    "vigencia": {
+      "inicio": null,
+      "fim": "2027-02-28",
+      "ano": null,
+      "revisarEm": "2027-01-15"
+    },
+    "quemConfirmou": {
+      "tipo": "conferencia_fonte_primaria",
+      "responsavel": "curadoria local assistida",
+      "data": "2026-11-25",
+      "nota": "Conferência da evidência literal na fonte oficial em 25/11/2026; vale para o Vestibulinho do 1º semestre de 2027."
+    },
+    "fonte": [
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "d62eb379f6d1f3e2fd8f5923931fd62f1067e1b52a96b2a41d9570a34b601f67",
+        "evidencia": "Não. A classificação apenas posiciona o candidato na lista. A convocação para matrícula ocorrerá em ordem decrescente de nota e até o limite das vagas disponíveis.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      },
+      {
+        "tipo": "oficial_site",
+        "referencia": "Portal do Vestibulinho Etec — Dúvidas Frequentes",
+        "url": "https://vestibulinho.etec.sp.gov.br/duvidas-frequentes/",
+        "sha256": "285b206583daebe089b2e0166aa5e0bd87d490144e96de5e4d935730e48b041f",
+        "evidencia": "Não. A Portaria estabelece que não haverá revisão nem vista de provas.",
+        "formaConferencia": "leitura pelo navegador (Chrome) da página oficial Dúvidas Frequentes em 25/11/2026 (o fetch direto recebe HTTP 403 da Cloudflare); sha256 do excerto",
+        "hashDoExcerto": true,
+        "conferidoEm": "2026-11-25"
+      }
+    ],
+    "status": "aprovado",
+    "versao": 1,
+    "substitui": [],
+    "procedimentoLocal": null,
+    "prioridade": 2,
+    "origem": "faq_curada"
   }
 ]

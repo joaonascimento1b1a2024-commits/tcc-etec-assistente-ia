@@ -1,5 +1,10 @@
 import {limparReformulacao, normalizarProcedimentos} from "./assuntos";
 
+// RECUPERAÇÃO DE TRECHOS (o R do RAG, Retrieval-Augmented Generation). Lê os
+// trechos ativos da coleção conhecimento do Firestore (os documentos oficiais
+// divididos em partes), valida cada um e escolhe os mais relevantes para a
+// pergunta, por termos e assuntos. Os trechos escolhidos são o contexto do
+// fluxo documental.
 export interface DocumentoPreparado {
   id: string;
   documentoId: string;
@@ -31,9 +36,11 @@ export interface FonteConhecimento {
   };
 }
 
+// No máximo 5 trechos e 8.000 caracteres de contexto por pergunta.
 export const MAX_DOCUMENTOS_CONTEXTO = 5;
 export const MAX_CARACTERES_CONTEXTO = 8000;
 
+// Palavras comuns que não ajudam a achar o assunto (stopwords).
 export const PALAVRAS_COMUNS = new Set([
   "a", "ao", "aos", "as", "com", "como", "da", "das", "de", "do", "dos",
   "e", "em", "eu", "essa", "esse", "esta", "este", "na", "nas", "no", "nos",
@@ -41,6 +48,8 @@ export const PALAVRAS_COMUNS = new Set([
   "seu", "sobre", "um", "uma", "voce", "minha", "meu", "quero", "preciso",
 ]);
 
+// Minúsculas, sem acentos e sem pontuação: a mesma forma para pergunta e
+// documentos.
 /**
  * Normalizacao original do V1.
  * @param {unknown} texto Entrada textual.
@@ -60,6 +69,7 @@ export function normalizarTexto(texto: unknown): string {
     .trim();
 }
 
+// Palavras relevantes da pergunta (sem as comuns).
 /**
  * Tokenizacao original, sem stemming ou sinonimos.
  * @param {unknown} texto Entrada textual.
@@ -107,6 +117,8 @@ function paginaValida(valor: unknown): number | null {
     valor as number : null;
 }
 
+// Converte um documento do Firestore num trecho validado; campos inválidos
+// descartam o trecho.
 /**
  * Prepara dados brutos ou snapshot com as regras do V1.
  * @param {unknown} doc Documento de origem.
@@ -154,6 +166,8 @@ export function prepararDocumento(
   return documento;
 }
 
+// Pontua um trecho pelos termos da pergunta encontrados no título, na seção e
+// no conteúdo.
 /**
  * Score original por campo, com pesos8/5/3/1.
  * @param {Object} documento Campos pontuaveis.
@@ -206,6 +220,7 @@ function formatarPaginas(documento: Partial<DocumentoPreparado>): string {
   return "Páginas: não informadas";
 }
 
+// Texto do trecho com título, seção e páginas, no formato enviado à IA.
 /**
  * Contexto integral, sem alterar rotulos ou quebras do V1.
  * @param {Object} documento Campos de contexto.
@@ -312,6 +327,8 @@ function selecionarPorTermos(
 }
 
 /** Fontes originais autorizadas; nunca recebidas do cliente. */
+// IDs dos documentos oficiais aceitos como fonte; um trecho de outro documento
+// é recusado.
 export const FONTES_ORIGINAIS = Object.freeze([
   "doc-10d342eed4d6a46a5c6638a29179d80b",
   "doc-3319912252fbc4089c42a062f73d1b58",
@@ -327,6 +344,7 @@ const TERMOS_PEDIDO = new Set([
   "informacoes", "saber", "gostaria", "favor", "levar", "levo", "trazer",
   "trago", "apresentar", "apresento", "entregar", "entrego",
 ]);
+// Flexões e sinônimos que levam ao mesmo assunto ("matriculei" -> matrícula).
 const FLEXOES: Record<string, string> = {
   matriculas: "matricula", rematriculas: "rematricula",
   declaracoes: "declaracao", frequencias: "frequencia",
@@ -380,6 +398,7 @@ export function extrairTermosOriginais(texto: unknown): string[] {
   return [...new Set(termos)];
 }
 
+// Pedido de declaração tem tratamento próprio (modelo de documento x regra).
 /**
  * Pedido de orientacao, distinto de uma pergunta apenas informativa.
  * @param {unknown} pergunta Texto original, sem reescrita por modelo.
@@ -440,6 +459,8 @@ function eModelo(documento: DocumentoPreparado): boolean {
     /\bdoc \d/u.test(normalizarTexto(documento.titulo));
 }
 
+// Seleção principal: exige os termos essenciais do assunto, separa matrícula de
+// rematrícula e ordena pela relevância.
 /**
  * Selecao original: procedencia e cobertura do assunto antes do score V1.
  * Nao altera o seletor lexical legado usado pelos testes isolados de demo.
@@ -536,6 +557,8 @@ export function selecionarDocumentosOriginais(
   }, true);
 }
 
+// Ponto de entrada: lê do Firestore os trechos com ativo == true e seleciona os
+// relevantes.
 /**
  * Consulta somente conhecimento ativo e aplica selecao original restrita.
  * @param {FonteConhecimento} firestore Fonte somente-leitura.

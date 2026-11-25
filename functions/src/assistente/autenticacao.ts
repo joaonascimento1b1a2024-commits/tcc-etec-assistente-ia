@@ -1,5 +1,7 @@
 import type {Request} from "express";
 
+// AUTENTICAÇÃO: lê o cabeçalho Authorization: Bearer <token> e confere o token
+// no Firebase Auth. O resultado é o uid usado em todas as leituras e gravações.
 export interface VerificadorIdToken {
   verifyIdToken(token: string): Promise<{uid: string}>;
 }
@@ -21,6 +23,7 @@ export async function verificarAutenticacao(
   if (!header) {
     throw new ErroAutenticacao("Autenticação obrigatória.");
   }
+  // O cabeçalho precisa ter exatamente duas partes: "Bearer" e o token.
   const parts = header.trim().split(/\s+/);
   const [scheme, token] = parts;
   if (parts.length !== 2 || scheme !== "Bearer" || !token) {

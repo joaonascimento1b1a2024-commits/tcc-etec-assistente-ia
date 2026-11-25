@@ -1,7 +1,10 @@
+// CLIENTE DO CHAT COM LOGIN: envia a pergunta ao servidor com o token de login da conta (Authorization: Bearer) e
+// os identificadores da conversa e da mensagem.
 function falha(code) {
     return Object.assign(new Error(code), { code });
 }
 
+// Só aceita o endereço HTTPS do servidor configurado (ou localhost nos testes).
 function validarEndpoint(endpoint) {
     try {
         const url = new URL(endpoint);
@@ -16,6 +19,8 @@ function validarEndpoint(endpoint) {
 }
 
 // Nao conhece Firestore e nao persiste mensagens. Todo erro encerra sem retry.
+// Valida a sessão e os IDs, monta o corpo (pergunta, demonstração ou catálogo) e controla o tempo limite. Se
+// a pessoa sair da conta no meio do pedido, ele é cancelado.
 async function solicitarAssistente({
     user, pergunta, perguntaId, conversationId, messageId, endpoint, timeoutMs = 30000,
     tipo,
@@ -111,6 +116,7 @@ async function solicitarAssistente({
 }
 
 // O tipo de operacao e fixado aqui, nunca inferido do texto digitado.
+// Funções públicas: pergunta normal e consulta do catálogo de demonstração.
 export async function perguntarAssistente(opcoes) {
     return solicitarAssistente({ ...opcoes, tipo: 'pergunta' });
 }

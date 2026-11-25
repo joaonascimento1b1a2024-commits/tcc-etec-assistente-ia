@@ -26,6 +26,8 @@ export function criarEndpointVisitante(
   lerOrigens: () => string,
   agora: () => number = Date.now,
 ): (req: Request, res: Response) => Promise<void> {
+  // Limite do chat de visitante, por instância do servidor: até 30 perguntas
+  // por minuto e 4 ao mesmo tempo. Acima disso, 429 com Retry-After.
   let inicio = agora();
   let chamadas = 0;
   let ativas = 0;
@@ -58,6 +60,7 @@ export function criarEndpointVisitante(
     ativas++;
     try {
       const pergunta = body.pergunta.trim();
+      // Ordem: classificador local -> motor curado -> fluxo documental.
       const escopo = classificarEscopo(pergunta);
       // Fora de escopo e saudacao seguem locais. A lista de palavras-chave nao
       // cobre todo assunto escolar: o motor curado (busca semantica) tenta as

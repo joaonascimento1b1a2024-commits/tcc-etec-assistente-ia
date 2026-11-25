@@ -9,6 +9,10 @@ import {
 } from "../rag/recuperacao";
 
 /** Entrada ja selecionada pelo V1; classificacao extra e opcional. */
+// RESPOSTA DOCUMENTAL LOCAL (sem IA): monta a resposta copiando frases literais
+// dos trechos oficiais encontrados, com a fonte de cada uma (documento, trecho,
+// seção e páginas). É a baseline do fluxo documental: sempre existe, mesmo sem
+// IA, e não inventa nada.
 export interface TrechoDocumental extends Partial<DocumentoPreparado> {
   tipoConteudo?: string;
 }
@@ -36,6 +40,7 @@ export interface RespostaDocumental {
   citacoes: CitacaoDocumental[];
 }
 
+// Limites: até 3 citações, 480 caracteres por citação e 2.400 na resposta.
 export const MAX_CITACOES_DOCUMENTAIS = 3;
 export const MAX_CARACTERES_CITACAO = 480;
 export const MAX_CARACTERES_RESPOSTA = 2400;
@@ -55,6 +60,7 @@ const intl = Intl as unknown as {
     segment(texto: string): Iterable<{segment: string; index: number}>;
   };
 };
+// Divide o texto em frases respeitando o português (abreviações, pontuação).
 const segmentador = new intl.Segmenter("pt-BR", {granularity: "sentence"});
 const INSTRUCAO_SISTEMA = new RegExp(
   "\\b(ignore|ignorar|desconsidere|substitua)\\b.{0,100}" +
@@ -63,6 +69,7 @@ const EXFILTRACAO = new RegExp(
   "\\b(revele|exiba|imprima|envie)\\b.{0,100}" +
   "\\b(token|senha|chave|segredo|credenciais)\\b", "u");
 
+// Aceita só texto dentro do limite e sem instruções escondidas.
 /**
  * Rejeita texto invalido, sem coercoes.
  * @param {unknown} valor Campo da entrada.
@@ -95,6 +102,8 @@ function instrucaoSuspeita(texto: string): boolean {
       .test(texto);
 }
 
+// Classifica o trecho: documento normativo, modelo de formulário ou exemplo.
+// Modelos e exemplos não viram regra da escola.
 /**
  * Classifica apenas marcadores explicitos, nunca a existencia de uma regra.
  * @param {TrechoDocumental} trecho Metadados recebidos.
@@ -114,6 +123,7 @@ function natureza(
   return "documental";
 }
 
+// Monta a referência da fonte; páginas só entram se forem coerentes.
 /**
  * Copia somente metadados fornecidos; paginas sao do chunk, nao da frase.
  * @param {TrechoDocumental} trecho Chunk de origem.
@@ -143,6 +153,8 @@ function fonteDoTrecho(
   return fonte;
 }
 
+// Perguntas específicas exigem evidência específica: pergunta de telefone
+// precisa de telefone na frase, de prazo precisa de data etc.
 /**
  * Dados locais ou temporais exigem evidencia literal do valor/condicao.
  * @param {string} pergunta Pergunta normalizada.
@@ -166,6 +178,8 @@ function evidenciaEspecifica(pergunta: string, frase: string): boolean {
   return true;
 }
 
+// Se duas citações se contradizem (por exemplo, uma permite e outra proíbe), a
+// resposta é recusada.
 /**
  * Detecta divergencias literais de numeros, negacao e modalidades opostas.
  * Nao resolve vigencia nem contradicoes semanticas arbitrarias.
@@ -221,6 +235,8 @@ function rotuloFonte(fonte: FonteDocumental): string {
   return partes.join("; ");
 }
 
+// Seleciona as frases úteis de cada trecho, sem cortar uma condição da frase
+// seguinte.
 /**
  * Segmenta sem tratar a quebra visual de linha do PDF como fim da frase.
  * Os indices sao preservados: cada citacao e uma substring literal do chunk.
@@ -282,6 +298,9 @@ function unidadesOriginais(
   return saida;
 }
 
+// Função principal: valida a pergunta, escolhe as frases que respondem e monta
+// o texto com as fontes. Sem evidência suficiente, devolve a mensagem de falta
+// de informação.
 /**
  * Gerador puro: cita evidencias literais, sem SDKs ou I/O.
  * Correspondencia literal e uma barreira conservadora, nao prova semantica.

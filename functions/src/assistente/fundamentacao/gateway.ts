@@ -7,6 +7,9 @@ import {LIMITES_FASE_A, textoSuspeito, copiarDadosEstritos} from "./contrato";
 import type {Evidencia} from "./contrato";
 import {validarProposta} from "./validador";
 
+// PREPARAÇÃO DAS EVIDÊNCIAS e um gerador OFFLINE (sem rede), usado em testes e
+// diagnósticos. prepararEvidencias é chamado pelo gateway de geração antes de
+// qualquer IA.
 export interface PedidoSimulado {
   readonly sistema: string;
   /** Instrucao fixa, nunca a pergunta original. */
@@ -44,6 +47,8 @@ type Preparacao = {ok: false; motivo: string} | {
   origemBloqueio?: "pergunta" | "contexto";
 };
 
+// Valida os trechos recebidos da busca: no máximo 5, campos com tipos corretos,
+// páginas coerentes e no máximo 8.000 caracteres no total.
 /**
  * Valida e copia todos os chunks antes do uso; nunca descarta um malformado.
  * @param {unknown} entrada Dados ja recuperados.
@@ -92,6 +97,8 @@ function validarChunks(entrada: unknown): TrechoDocumental[] {
   return dados as TrechoDocumental[];
 }
 
+// Decide se um único trecho curto e independente pode ser usado sozinho, sem
+// risco de cortar uma condição que estaria em outra frase.
 /**
  * Nao infere independencia. So permite eco de UMA unidade inteira.
  * Qualquer composicao, recorte ou dependencia detectada volta ao documental.
@@ -121,6 +128,8 @@ function contextoLocalIntegral(
   return !dependencia.test(texto) && !/[;:\n\r]/u.test(e.texto);
 }
 
+// Monta a resposta documental local (baseline) e indica se a pergunta ou algum
+// trecho tem dado bloqueado (origemBloqueio).
 /**
  * Preparacao total: entrada invalida/falha inesperada nao escapa como excecao.
  * @param {unknown} pergunta Pergunta somente local.
@@ -160,6 +169,8 @@ export function prepararEvidencias(
   }
 }
 
+// Gerador offline: percorre as mesmas etapas com um cliente simulado, sem
+// chamar provedor nenhum.
 /**
  * Injecao de simulacoes locais, nunca autorizacao para um provedor real.
  * @param {OpcoesOffline} opcoes Cliente de teste e limites.

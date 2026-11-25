@@ -1,6 +1,9 @@
 import {normalizarTexto} from "../rag/recuperacao";
 import {normalizarProcedimentos} from "../rag/assuntos";
 
+// INTENÇÃO: reconhece qual procedimento escolar a pergunta cita (matrícula,
+// rematrícula, transferência...) por expressões regulares. Serve de rótulo para
+// a IA não perguntar de novo o assunto.
 const PROCEDIMENTOS = [
   {padrao: /\brematriculas?\b/u, nome: "renovação de matrícula"},
   {padrao: /\bmatriculas?\b/u, nome: "matrícula"},
@@ -28,6 +31,8 @@ export function identificarProcedimento(
   pergunta: unknown,
 ): ProcedimentoInstitucional | undefined {
   const n = normalizarProcedimentos(normalizarTexto(pergunta));
+  // Só devolve o procedimento se exatamente UM for reconhecido; dois ou mais =
+  // ambíguo.
   const assuntos = PROCEDIMENTOS.filter((item) => item.padrao.test(n));
   return assuntos.length === 1 ? assuntos[0].nome : undefined;
 }

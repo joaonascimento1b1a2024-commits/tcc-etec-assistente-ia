@@ -1,3 +1,12 @@
+// GATEWAY DE GERAÇÃO do fluxo documental (reserva do modo híbrido).
+// Recebe a pergunta e os trechos de documento achados pela busca (RAG) e decide
+// se pode chamar uma IA externa. Toda decisão é fail-closed: na dúvida, NÃO
+// chama a IA e devolve a resposta documental montada localmente (baseline), que
+// só copia trechos oficiais.
+// Etapas: travas de configuração e aprovação -> preparação das evidências ->
+// moderação da entrada -> proposta da IA -> validação contra as evidências ->
+// revisão por um segundo pedido -> moderação da saída -> aviso de que a
+// resposta foi gerada por IA.
 import {classificarEscopo, FORA_ESCOPO,
   ESCLARECER_ESCOPO, SOCIAL_ESCOPO} from "../escopo";
 import {orientarSemEvidencia} from "../encaminhamento";
@@ -26,11 +35,14 @@ import {
 } from "./openrouter";
 import type {CodigoOpenRouter} from "./openrouter";
 
+// Variáveis de ambiente lidas como texto, só do servidor.
 export type AmbienteIA = Readonly<Record<string, string | undefined>>;
 // Identidade de conta ou acesso publico definido pela rota, nunca pelo body.
 export type ContextoGeracao =
   {readonly uid: string; readonly publico?: never} |
   {readonly publico: "visitante"; readonly uid?: never};
+// Eventos de telemetria (só códigos, nunca conteúdo) e todos os motivos
+// possíveis de cair na resposta de reserva.
 export type EventoIA = "GERADA" | "FALLBACK" | "SEGURANCA";
 export type MotivoFallback = CodigoOpenRouter | MotivoProposta | FalhaRevisao |
   "UID_NAO_AUTORIZADO" |
@@ -55,6 +67,8 @@ export interface OpcoesGerador {
   agora?: () => number;
 }
 
+// Lista de contas autorizadas a usar a IA no chat com login
+// (SYLVINHO_IA_UID_ALLOWLIST).
 /**
  * Allowlist privada, exata e fail-closed. Ausente/invalida nao libera ninguem.
  * @param {AmbienteIA} env Configuracao exclusivamente do servidor.
@@ -72,6 +86,8 @@ export function usuarioIAAutorizado(env: AmbienteIA, uid: unknown): boolean {
     new Set(uids).size === uids.length && uids.includes(uid);
 }
 
+// Retenção de dados no provedor: só libera se o operador declarar retenção zero
+// (ZDR) aprovada. Sem isso, nada é enviado.
 /**
  * Politica de retencao nao comprova elegibilidade nem ausencia de dados
  * pessoais.
@@ -96,6 +112,8 @@ export function politicaRetencaoIA(env: AmbienteIA):
   return "bloqueada";
 }
 
+// Cria a função gerarResposta(pergunta, trechos, contexto). Guarda estado por
+// instância: uma geração por vez (ocupado) e limite de chamadas por minuto.
 /**
  * Escolha opt-in; preserva verificacao Auth, RAG, persistencia e HTTP.
  * Flags do operador NAO configuram ZDR ou aprovacao institucional.
@@ -120,6 +138,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
   return async (
     pergunta: unknown, chunks: unknown, contexto?: ContextoGeracao,
   ): Promise<string> => {
+    // Saudação, fora do assunto ou pedido vago: resposta local, sem IA.
     const escopo = classificarEscopo(pergunta);
     if (escopo.resposta) return escopo.resposta;
     let baseline: RespostaDocumental | undefined;
@@ -127,6 +146,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
     const controller = new AbortController();
     let adquiriu = false;
     let alternativa: string | undefined;
+    // Resposta de reserva: o texto alternativo definido no caminho ou a
+    // resposta documental local. Registra o motivo.
     const fallback = (
       motivo: MotivoFallback = "GERACAO_INDISPONIVEL",
     ): string => {
@@ -135,10 +156,14 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       return alternativa ?? baseline.resposta;
     };
     try {
+      // Monta a resposta documental local (baseline) e verifica dados pessoais
+      // na pergunta e nos trechos.
       const preparada = prepararEvidencias(pergunta, chunks);
       if (!preparada.ok) throw new Error("GERACAO_ENTRADA_INVALIDA");
       baseline = preparada.baseline;
       const env = lerAmbiente();
+      // Visitante só usa IA se a liberação pública estiver ligada e o provedor
+      // for o OpenRouter; conta logada precisa estar na lista de autorizados.
       if (contexto?.publico === "visitante" && contexto.uid === undefined) {
         if (env.SYLVINHO_IA_VISITANTE_ENABLED !== "true") {
           return fallback("VISITANTE_IA_DESATIVADA");
@@ -150,6 +175,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       } else if (!usuarioIAAutorizado(env, contexto?.uid)) {
         return fallback("UID_NAO_AUTORIZADO");
       }
+      // Travas de governança: IA ligada, provedor conhecido e aprovações
+      // institucional, de privacidade e de uso por menores marcadas como true.
       const aprovacoes = ["SYLVINHO_IA_INSTITUCIONAL_APROVADA",
         "SYLVINHO_IA_PRIVACIDADE_APROVADA", "SYLVINHO_IA_MENORES_APROVADA"];
       const provedor = env.SYLVINHO_IA_PROVIDER;
@@ -177,6 +204,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         evento("SEGURANCA");
         return fallback("DADOS_BLOQUEADOS");
       }
+      // OpenRouter usa o modo conversacional (respostas mais naturais); os
+      // outros, o modo de afirmações com citação.
       const conversacional = provedor === "openrouter";
       const contextoBloqueado = preparada.origemBloqueio === "contexto";
       if (preparada.origemBloqueio === "pergunta") {
@@ -195,6 +224,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         c.fonte.natureza !== "documental"))) {
         return fallback("EVIDENCIAS_INSUFICIENTES");
       }
+      // Modelo, tempo máximo e limite por minuto também são validados; valor
+      // estranho bloqueia.
       const modelo = (provedor === "openrouter" ? env.OPENROUTER_MODEL :
         provedor === "gemini" ?
           env.GEMINI_MODEL : env.OPENAI_MODEL) || "";
@@ -208,6 +239,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         !Number.isSafeInteger(limite) || limite < 1 || limite > 20) {
         return fallback("CONFIGURACAO_INVALIDA");
       }
+      // Copia os trechos com limite de tamanho e confere que todos vêm de
+      // documentos oficiais ativos e sem IDs repetidos.
       let cs = copiarDadosEstritos(chunks, 24000) as TrechoDocumental[];
       if (cs.some((c) => c.ativo !== true ||
         !FONTES_ORIGINAIS.includes(c.documentoId || "")) ||
@@ -216,6 +249,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       }
       let fontesParciais = false;
       if (conversacional) {
+        // Filtro extra de privacidade dos trechos (contexto.ts); trechos
+        // descartados mudam o aviso da resposta.
         const filtro = filtrarContextosIA(cs);
         emitirDiagnostico(opcoes.registrarDiagnostico, {
           etapa: "CONTEXTO_FILTRADO", avaliados: cs.length,
@@ -240,6 +275,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         c.fonte.natureza === "documental");
       const usarEvidencias = temEvidencias;
       const citacoes = usarEvidencias ? baseline.citacoes : [];
+      // Cada evidência (E1, E2...) precisa ser um pedaço literal de um trecho
+      // enviado; senão, o vínculo é inválido.
       const evidencias = citacoes.map((c, i) => {
         const contexto = cs.findIndex((d) => d.id === c.fonte.chunkId &&
           d.documentoId === c.fonte.documentoId);
@@ -252,6 +289,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         "contexto_indisponivel" : fontesParciais ? "fontes_parciais" :
           !usarEvidencias ? "sem_evidencias" : undefined;
       const procedimento = identificarProcedimento(pergunta);
+      // Pedido congelado enviado ao provedor: pergunta, procedimento
+      // reconhecido, evidências e contextos.
       const pedido: PedidoGeracao = Object.freeze({
         pergunta: pergunta as string,
         ...(procedimento ? {procedimento} : {}),
@@ -262,6 +301,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         ...(situacao ? {situacao} : {}),
       });
       if (conversacional) alternativa ??= RESPOSTA_INDISPONIVEL;
+      // Janela de 1 minuto para o limite local de chamadas.
       if (agora() - inicioJanela >= 60000) {
         inicioJanela = agora(); chamadasNaJanela = 0;
       }
@@ -283,8 +323,10 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       };
       const registrar = opcoes.registrarDiagnostico;
       emitirDiagnostico(registrar, {etapa: "CONTEXTO_PREPARADO", ...resumo});
+      // Operação principal, que corre contra o prazo total (deadline).
       const operacao = async (): Promise<string> => {
         const entrada = [pedido.pergunta, ...pedido.contextos].join("\n\n");
+        // Moderação da entrada: texto inseguro não segue.
         const entradaSegura = await cliente.moderar(
           entrada, controller.signal,
         );
@@ -297,6 +339,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           const recebida = await cliente.conversar(pedido, controller.signal);
           controller.signal.throwIfAborted();
           emitirDiagnostico(registrar, {etapa: "PROPOSTA_RECEBIDA", ...resumo});
+          // Valida o JSON devolvido pela IA: formato, tipo e citações que
+          // existem nas evidências.
           const validacao = validarConversa(recebida, evidencias);
           if (!validacao.resposta) return fallback(validacao.motivo);
           let resposta = validacao.resposta;
@@ -326,6 +370,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           }
           // Mensagens livres nao podem transportar conhecimento geral,
           // mesmo se rotuladas como conversa/esclarecimento/sem_base.
+          // Tipos não documentais nunca levam texto livre da IA: viram
+          // respostas fixas do sistema.
           if (resposta.tipo !== "documental") {
             if (resposta.tipo === "esclarecimento" && procedimento) {
               // O assunto ja esta explicito na pergunta ou foi resolvido
@@ -338,6 +384,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
                 resposta.tipo === "conversa" ? SOCIAL_ESCOPO :
                   orientarSemEvidencia(pergunta as string);
           }
+          // Resposta final: aviso de IA + texto aprovado + resposta documental
+          // com as fontes.
           const corpo = resposta.afirmacoes.map((a) => a.texto).join("\n\n") +
             "\n\n" + baseline!.resposta;
           const aviso = resposta.tipo === "documental" ?
@@ -354,6 +402,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
           evento("GERADA");
           return final;
         }
+        // Modo de afirmações (OpenAI/Gemini): proposta -> validação ->
+        // verificação por um segundo pedido.
         if (!usarEvidencias) return fallback("EVIDENCIAS_INSUFICIENTES");
         const recebida = await cliente.propor(pedido, controller.signal);
         controller.signal.throwIfAborted();
@@ -383,6 +433,8 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
         evento("GERADA");
         return final;
       };
+      // Prazo total: ao estourar, cancela os pedidos em andamento
+      // (AbortController) e usa a reserva.
       const deadline = new Promise<never>((_, reject) => {
         timer = setTimeout(() => {
           controller.abort(new DOMException("Prazo total", "TimeoutError"));
@@ -394,6 +446,7 @@ export function criarGeradorConfiguravel(opcoes: OpcoesGerador = {}) {
       return fallback(controller.signal.aborted ? "GERACAO_TIMEOUT" :
         erro instanceof ErroOpenRouter ? erro.codigo :
           "GERACAO_INDISPONIVEL");
+    // Libera a vaga de geração mesmo em caso de erro.
     } finally {
       if (timer !== undefined) clearTimeout(timer);
       if (adquiriu) ocupado = false;

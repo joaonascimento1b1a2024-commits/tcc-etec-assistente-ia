@@ -1,15 +1,20 @@
 'use strict';
 
+// PRODUÇÃO: constantes do projeto Firebase real e as checagens do modo production-locked.
+// O production-locked é uma trava: mesmo com tudo configurado, o acesso fica desligado (enabled: false). Quem
+// atende em produção é o modo documental.
 const PROJECT_ID = 'tcc-ia-d8891';
 const DATABASE_ID = '(default)';
 const CREDENTIAL_PATH = '/etc/secrets/sylvinho-firebase-admin.json';
 // Planned identity only: no account, key or remote permission is created here.
 const SERVICE_ACCOUNT_EMAIL = 'sylvinho-render-reader@tcc-ia-d8891.iam.gserviceaccount.com';
+// Domínios oficiais do site: os únicos que o CORS aceita em produção.
 const OFFICIAL_ORIGINS = Object.freeze([
     'https://sylvinho.web.app', 'https://sylvinho.firebaseapp.com',
     'https://tcc-ia-d8891.web.app', 'https://tcc-ia-d8891.firebaseapp.com',
 ]);
 
+// SYLVINHO_DEMO_ACADEMICA só aceita true ou false; qualquer outro valor é erro.
 function lerModoDemonstracao(env) {
     const flag = env.SYLVINHO_DEMO_ACADEMICA;
     if (flag !== undefined && !['true', 'false'].includes(flag))
@@ -31,6 +36,7 @@ function validarPlanoProducao(plan) {
     });
 }
 
+// O CORS de produção precisa listar exatamente os quatro domínios oficiais.
 function validarOrigensProducao(origins) {
     const items = typeof origins === 'string' ? origins.split(',').map((value) => value.trim()) : [];
     if (items.length !== OFFICIAL_ORIGINS.length ||
@@ -38,6 +44,7 @@ function validarOrigensProducao(origins) {
         throw new Error('PRODUCTION_CORS_INVALID');
 }
 
+// Lê e confere o plano de produção (mesmas proibições do modo documental).
 function lerPlanoProducao(env) {
     const present = (name) => env[name] !== undefined;
     if (Object.keys(env).some((name) => /EMULATOR/i.test(name) && present(name)))

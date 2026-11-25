@@ -4,6 +4,9 @@ import type {ContextoGeracao, OpcoesGerador} from "../geracao/gateway";
 import {criarBuscaDocumental} from "./busca";
 import {interpretarPerguntaLivre} from "./interpretacao";
 
+// FLUXO DOCUMENTAL COMPLETO (pergunta livre): junta a busca de trechos
+// (recuperarConhecimento) e o gateway de geração (gerarResposta). É o que
+// documental.cjs liga no servidor como reserva do motor curado.
 export interface OpcoesPerguntaLivre {
   readonly fonte: FonteConhecimento;
   readonly geracao?: OpcoesGerador;

@@ -1,9 +1,13 @@
+// ENVIO PENDENTE: se a página cair no meio de uma pergunta, ela fica guardada no sessionStorage (só nesta
+// aba) e é reenviada com o MESMO messageId. O servidor reconhece o ID e devolve a resposta já salva, sem
+// responder duas vezes.
 const prefixo = 'sylvinho:pendente:';
 const descartadasNestaPagina = new Set();
 const idValido = (id) => typeof id === 'string' && /^[A-Za-z0-9_-]{20,80}$/.test(id);
 const armazenamento = (storage) => storage === undefined ? globalThis.sessionStorage : storage;
 const invalida = () => Object.assign(new Error('Pendência inválida.'), { code: 'PENDENCIA_INVALIDA' });
 
+// Lê a pendência da conta e confere o formato; dado inválido é descartado.
 export function carregarEnvioPendente(uid, storage) {
     if (descartadasNestaPagina.has(uid)) return null;
     const raw = armazenamento(storage).getItem(prefixo + uid);

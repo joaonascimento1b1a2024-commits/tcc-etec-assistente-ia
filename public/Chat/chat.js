@@ -5,6 +5,8 @@ import { acordarAssistente } from '../Logado/Home/assistente-config.js';
 // Começa a acordar o servidor do assistente assim que a tela abre.
 acordarAssistente();
 
+// CHAT DE VISITANTE (página Chat/chat.html): tela, envio das perguntas e sessão. Nada é salvo: recarregar a
+// página apaga a conversa.
 const messages = document.querySelector('#messages');
 const welcome = document.querySelector('#welcome');
 const form = document.querySelector('#messageForm');
@@ -17,12 +19,14 @@ let activeRequest = null;
 let unsubscribe;
 let sessionVersion = 0;
 
+// Trava o campo e os botões enquanto uma resposta está chegando.
 function lock(locked) {
     input.disabled = locked;
     form.querySelector('[type="submit"]').disabled = locked;
     suggestions.forEach(button => { button.disabled = locked; });
 }
 
+// "+ Novo chat": limpa a conversa e volta para a tela de boas-vindas.
 function clearChat() {
     activeRequest?.abort();
     activeRequest = null;
@@ -35,6 +39,8 @@ function clearChat() {
     lock(!ready);
 }
 
+// Desenha uma mensagem (da pessoa ou do Sylvinho). As respostas do Sylvinho passam pelo
+// resposta-documental-view.js, que mostra as fontes no "Fonte ▾".
 function addMessage(text, role) {
     const row = document.createElement('div');
     row.className = `message-row ${role}`;
@@ -61,6 +67,8 @@ function addMessage(text, role) {
     return row;
 }
 
+// Envia a pergunta: valida o texto, mostra "digitando", chama o servidor e trata os erros (servidor dormindo,
+// limite, sem internet) com mensagens amigáveis.
 async function sendMessage(text) {
     if (!ready || activeRequest) return;
     const pergunta = text.trim();
@@ -107,6 +115,7 @@ async function sendMessage(text) {
     }
 }
 
+// Prepara o chat: confere a sessão (quem está logado é mandado para o chat com histórico) e libera o envio.
 async function startSession() {
     const version = ++sessionVersion;
     unsubscribe?.();
@@ -143,11 +152,13 @@ async function startSession() {
     } catch { failure(); }
 }
 
+// Eventos: enviar, sugestões prontas, novo chat e tentar de novo.
 form.addEventListener('submit', event => { event.preventDefault(); void sendMessage(input.value); });
 suggestions.forEach(button => button.addEventListener('click', () => void sendMessage(button.dataset.message)));
 document.querySelector('#newChat').addEventListener('click', () => { clearChat(); input.focus(); });
 retry.addEventListener('click', () => void startSession());
 // Limpa também antes do cache de navegação (voltar/avançar do navegador).
+// Ao sair da página, cancela o pedido em andamento e a observação da sessão.
 window.addEventListener('pagehide', () => {
     ++sessionVersion;
     unsubscribe?.();
@@ -158,5 +169,6 @@ window.addEventListener('pageshow', event => { if (event.persisted) void startSe
 void startSession();
 
 // Enter envia; Shift+Enter mantém uma quebra de linha; composição não envia.
+// Enter envia; Shift+Enter quebra a linha.
 const composerField=document.querySelector('#messageInput');
 composerField.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault(); document.querySelector('#messageForm').requestSubmit();}});

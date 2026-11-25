@@ -1,5 +1,10 @@
 'use strict';
 
+// SERVIDOR DA IA no Render (comando: node render-poc/server.cjs).
+// Servidor HTTP do próprio Node, sem Express. Rotas: /health (situação), /perguntarAssistente (chat com
+// login), /perguntarVisitante (chat sem login), /whatsapp/webhook (desligado sem as variáveis) e rotas de
+// diagnóstico locais.
+// As regras do chat ficam em functions/src (compiladas em functions/lib); aqui só se faz a ponte HTTP.
 const http = require('node:http');
 const { criarEndpointAssistente } = require('../functions/lib/assistente/http.js');
 const { criarEndpointVisitante } = require('../functions/lib/assistente/visitante.js');
@@ -12,6 +17,8 @@ const { criarDiagnosticoRag } = require('./rag.cjs');
 const { resolverMotor } = require('./motor-curado.cjs');
 const whatsappModulo = require('./whatsapp.cjs');
 
+// Adaptador: as rotas foram escritas para o formato do Express (res.status().json()); esta função oferece
+// esses métodos em cima do http nativo.
 function respostaExpress(res) {
     const adapter = {
         get headersSent() { return res.headersSent; },
@@ -24,6 +31,8 @@ function respostaExpress(res) {
     return adapter;
 }
 
+// Lê o corpo JSON da requisição com limite de 16 KB; tipo errado ou JSON inválido viram erros tratados
+// (400/413/415).
 async function lerCorpo(req) {
     if (req.method !== 'POST') return undefined;
     if (!(req.headers['content-type'] || '').split(';')[0].trim().match(/^application\/json$/i))
@@ -50,11 +59,15 @@ async function lerCorpo(req) {
     });
 }
 
+// Cria o servidor com a configuração validada. Dependências e motor são preparados uma vez e reaproveitados
+// em todas as requisições.
 function criarServidor({ config = lerConfiguracao(), obterDependencias,
     whatsapp = whatsappModulo.lerConfiguracaoWhatsApp(), transporteWhatsApp } = {}) {
     const validated = validarConfiguracao(config);
     const factory = criarFabricaDependencias(validated, { obterDependencias });
     // Identifica motor e revisão no health do modo documental, sem segredos.
+    // O /health de produção mostra o motor em uso e o commit publicado (RENDER_GIT_COMMIT), sem nenhum
+    // segredo.
     const saudeMotor = validated.mode === 'documental' ? (() => {
         const motor = resolverMotor(process.env);
         const revisao = /^[0-9a-f]{7,40}$/.test(process.env.RENDER_GIT_COMMIT || '') ? process.env.RENDER_GIT_COMMIT.slice(0, 7) : undefined;
@@ -64,6 +77,7 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias,
     const knowledgeDiagnostic = criarDiagnosticoConhecimento(factory, () => validated.origins);
     const ragDiagnostic = criarDiagnosticoRag(factory, () => validated.origins);
     const endpoint = criarEndpointAssistente(factory, () => validated.origins);
+    // Chat sem login: não usa Auth nem grava conversas. Se o motor curado existir, ele responde primeiro.
     const visitante = criarEndpointVisitante(() => {
         const deps = factory();
         return {
@@ -81,9 +95,12 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias,
         ? whatsappModulo.criarWebhookWhatsApp({ config: whatsapp, responder: whatsappModulo.responderComoVisitante(visitante),
             ...(transporteWhatsApp ? { transporte: transporteWhatsApp } : {}) })
         : null;
+    // Tratamento de cada requisição: escolhe a rota pelo caminho e pelo modo; qualquer erro inesperado vira
+    // resposta genérica, sem detalhes internos.
     const server = http.createServer(async (req, res) => {
         const output = respostaExpress(res);
         try {
+            // Modo health: só existe GET /health; todo o resto é 404.
             if (validated.mode === 'health') {
                 if (req.url?.split('?')[0] === '/health' && req.method === 'GET')
                     output.status(200).json({ status: 'ok', service: 'sylvinho-backend' });
@@ -117,12 +134,14 @@ function criarServidor({ config = lerConfiguracao(), obterDependencias,
             if (!res.headersSent && !res.destroyed) output.status(status).json({ error: 'Requisicao nao processada.' });
         }
     });
+    // Limites contra conexões penduradas: 30 s por requisição e 10 s para receber os cabeçalhos.
     server.requestTimeout = 30000;
     server.headersTimeout = 10000;
     if (webhookWhatsApp) server.aguardarWhatsApp = webhookWhatsApp.aguardarPendentes;
     return server;
 }
 
+// Inicialização quando executado diretamente (npm start). Encerra com elegância ao receber SIGTERM do Render.
 if (require.main === module) {
     try {
         const config = lerConfiguracao();

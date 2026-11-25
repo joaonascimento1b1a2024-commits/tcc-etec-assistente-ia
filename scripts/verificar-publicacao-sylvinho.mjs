@@ -1,6 +1,9 @@
 // Smoke somente GET/OPTIONS: não autentica, grava conversas ou chama o modelo.
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
+// VERIFICAÇÃO DA PUBLICAÇÃO (smoke test): depois de publicar, confere com GET e OPTIONS que o servidor
+// responde, que o site publicado tem os arquivos certos e que o CORS aceita os domínios oficiais. Não faz
+// login, não grava conversas e não chama a IA.
 const ORIGENS=['https://sylvinho.web.app','https://sylvinho.firebaseapp.com','https://tcc-ia-d8891.web.app','https://tcc-ia-d8891.firebaseapp.com'];
 const BACKEND='https://sylvinho-backend-poc.onrender.com';
 export async function verificarPublicacao({origem=ORIGENS[0],fetchImpl=fetch}={}){

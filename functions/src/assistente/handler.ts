@@ -1,3 +1,10 @@
+// HANDLER DO CHAT COM LOGIN (rota /perguntarAssistente).
+// Caminho de uma pergunta: 1) confere o token do Firebase; 2) valida o corpo
+// (pergunta, conversationId, messageId); 3) lê a conversa do usuário no
+// Firestore; 4) se a mesma pergunta já foi respondida, devolve a resposta
+// salva; 5) tenta o motor curado (modo híbrido); 6) sem fato aprovado, usa o
+// fluxo documental (classificador, busca nos documentos e geração); 7) grava a
+// resposta do bot numa transação do Firestore.
 import {classificarEscopo} from "./escopo";
 import type {Request, Response} from "express";
 import type {DocumentReference, Firestore} from "firebase-admin/firestore";
@@ -9,6 +16,7 @@ import type {DocumentoPreparado} from "../rag/recuperacao.js";
 import {resolverContextoConversacional} from "./contexto-conversacional.js";
 import type {ContextoGeracao} from "./geracao/gateway";
 
+// Limites: tamanho da pergunta e quantidade de mensagens por conversa.
 export const MAX_PERGUNTA_LENGTH = 1000;
 export const MAX_MENSAGENS = 100;
 export type MotivoFalhaTemporaria = "LIMITE_USO" | "OCUPADO" |
@@ -28,6 +36,9 @@ export class ErroRespostaTemporaria extends Error {
       Math.min(300, Math.max(1, Math.ceil(esperaSegundos))) : 2;
   }
 }
+// Pedidos repetidos ao mesmo tempo (dois cliques, reconexão) compartilham a
+// mesma operação, em vez de gerar duas respostas. WeakMap: o mapa some junto
+// com a instância do Firestore.
 const requisicoesEmAndamento =
   new WeakMap<object, Map<string, Promise<string>>>();
 
@@ -37,6 +48,9 @@ interface MensagemIdentificada {
   messageId?: string;
 }
 
+// Idempotência: o messageId amarra uma pergunta a uma única resposta. Se o
+// mesmo ID aparece com outro texto, é conflito (409); se já tem resposta do
+// bot, ela é devolvida sem chamar a IA de novo.
 /**
  * Vincula o ID a uma unica pergunta imutavel e recupera resposta persistida.
  * @param {unknown[]} mensagens Historico relido.
@@ -62,6 +76,9 @@ function respostaExistente(
   return bots[0]?.texto;
 }
 
+// Tudo o que o handler usa chega por injeção de dependências: assim os testes
+// trocam Firestore, Auth e IA por versões falsas, e o handler não inicializa
+// nada sozinho.
 export interface DependenciasAssistente {
   responderConversa?: (
     pergunta: string, historico: readonly MensagemIdentificada[],
@@ -91,6 +108,7 @@ export interface DependenciasAssistente {
 type RequisicaoAssistente = Pick<Request, "method" | "get" | "body">;
 type RespostaAssistente = Pick<Response, "set" | "status">;
 
+// Prompt do handler JavaScript antigo, mantido para compatibilidade e testes.
 /**
  * Prepara o mesmo prompt utilizado pelo handler JavaScript.
  * @param {string} contextoSecretaria Contexto V1 integral.
@@ -115,6 +133,9 @@ ${insuficiencia}
 `;
 }
 
+// Grava a resposta numa transação: relê a conversa, confere que a pergunta
+// ainda não foi respondida (outra instância pode ter respondido) e só então
+// acrescenta a mensagem do bot.
 /**
  * Acrescenta somente bot ao estado relido na transacao.
  * @param {DocumentReference} conversaRef Referencia autenticada.
@@ -183,6 +204,8 @@ export async function perguntarAssistenteHandler(
       });
     }
 
+    // 1) Autenticação: sem token válido do Firebase, 401. O uid vem SOMENTE do
+    // token, nunca do corpo.
     let decodedToken: {uid: string};
     try {
       decodedToken = await verificarAutenticacao(req, deps.auth);
@@ -199,6 +222,8 @@ export async function perguntarAssistenteHandler(
 
     // usuarioId nao e lido; o caminho depende somente do token validado.
     const corpo = req.body as Record<string, unknown>;
+    // Pedido especial do modo de demonstração acadêmica: lista as perguntas de
+    // exemplo.
     if (Object.prototype.hasOwnProperty.call(corpo, "acao")) {
       if (Object.keys(corpo).length !== 1 ||
         corpo.acao !== "catalogo_demonstracao") {
@@ -211,6 +236,8 @@ export async function perguntarAssistenteHandler(
       return res.status(200).json({perguntas});
     }
     const {conversationId, messageId} = corpo;
+    // Na demonstração, a pergunta vem de um catálogo fixo (perguntaId), não de
+    // texto livre.
     const demo = Object.prototype.hasOwnProperty.call(corpo, "perguntaId");
     let pergunta = corpo.pergunta;
     if (demo) {
@@ -230,6 +257,8 @@ export async function perguntarAssistenteHandler(
       return res.status(400).json({error: "A pergunta deve ser um texto."});
     }
 
+    // 2) Validação do texto e dos identificadores (formatos fixos por expressão
+    // regular).
     const perguntaNormalizada = pergunta.trim();
     if (!perguntaNormalizada) {
       return res.status(400).json({error: "A pergunta não pode estar vazia."});
@@ -256,6 +285,8 @@ export async function perguntarAssistenteHandler(
       });
     }
 
+    // 3) A conversa fica em users/{uid}/conversas/{id}: um usuário só alcança
+    // as próprias conversas.
     const conversaRef = deps.firestore
       .collection("users")
       .doc(decodedToken.uid)
@@ -281,6 +312,8 @@ export async function perguntarAssistenteHandler(
       });
     }
 
+    // 4) Junta pedidos simultâneos iguais (mesmo usuário, conversa e mensagem)
+    // numa só operação.
     let emAndamento = requisicoesEmAndamento.get(deps.firestore);
     if (!emAndamento) {
       emAndamento = new Map();
@@ -311,6 +344,8 @@ export async function perguntarAssistenteHandler(
             conversaRef, gerada, deps, messageId, perguntaNormalizada,
           );
         }
+        // 5) Modo híbrido: o motor curado responde primeiro, com até 24
+        // mensagens anteriores (só texto e remetente, congeladas).
         if (deps.responderConversa) {
           const posicao = atualizadas.findIndex((m) =>
             !!m && typeof m === "object" &&
@@ -341,6 +376,8 @@ export async function perguntarAssistenteHandler(
             );
           }
         }
+        // 6) Fluxo documental: entende perguntas de continuação ("e o prazo?")
+        // ou pede esclarecimento.
         const contexto = (deps.resolverContexto ??
           resolverContextoConversacional)(
           perguntaNormalizada, messageId, atualizadas,
@@ -352,12 +389,16 @@ export async function perguntarAssistenteHandler(
           );
         }
         const consulta = contexto.pergunta!;
+        // Saudação, fora do assunto e perguntas sobre o assistente têm resposta
+        // local, sem IA.
         const escopo = (deps.classificarEscopo ?? classificarEscopo)(consulta);
         if (escopo.resposta) {
           return adicionarRespostaBot(
             conversaRef, escopo.resposta, deps, messageId, perguntaNormalizada,
           );
         }
+        // Busca os trechos de documento mais relevantes (RAG) e pede a resposta
+        // ao gerador.
         const chunks = deps.recuperarConhecimento ?
           await deps.recuperarConhecimento(consulta) :
           await recuperarConhecimentoRelevante(
@@ -381,6 +422,8 @@ export async function perguntarAssistenteHandler(
     const resposta = await operacao;
     return res.status(200).json({resposta});
   } catch (error) {
+    // Erros recuperáveis viram 429/503 com Retry-After; os outros, mensagens
+    // genéricas sem detalhes internos.
     if (error instanceof ErroRespostaTemporaria) {
       res.set("Retry-After", String(error.esperaSegundos));
       return res.status(error.motivo === "LIMITE_USO" ? 429 : 503).json({

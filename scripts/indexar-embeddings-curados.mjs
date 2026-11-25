@@ -19,6 +19,7 @@ import {criarFiltroContatos, elegivel, hashIndice, textoIndice} from '../render-
 const lerJson = caminho => JSON.parse(readFileSync(caminho, 'utf8'));
 const esperar = ms => new Promise(r => setTimeout(r, ms));
 
+// A chave do Gemini vem da variável GEMINI_API_KEY ou do .env do backend antigo; nunca é impressa.
 function lerChave() {
   if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
   const env = '../sylvinho-backend/functions/.env';
@@ -27,6 +28,7 @@ function lerChave() {
   return parse(readFileSync(env)).GEMINI_API_KEY;
 }
 
+// Lê a base e recusa indexar se alguma entrada estiver inválida, vencida ou com dado bloqueado.
 const registros = lerJson('knowledge-local/faq-curada.json');
 const filtro = criarFiltroContatos(lerJson('knowledge-local/contatos-publicos.json'));
 
@@ -43,12 +45,15 @@ const api = criarEmbeddings({lerChave: () => chave});
 // Vetores parciais ficam ligados ao texto de cada entrada (hash do texto indexado):
 // se a entrada mudar, o vetor antigo é ignorado e calculado de novo.
 mkdirSync('.cache', {recursive: true});
+// Progresso salvo por hash do texto: se a cota diária acabar, a próxima execução continua de onde parou, e
+// entradas sem mudança não gastam embedding de novo.
 const arquivoParcial = '.cache/embeddings-parciais.json';
 const parcial = existsSync(arquivoParcial) ? lerJson(arquivoParcial) : {};
 const hashTexto = r => createHash('sha256').update(textoIndice(r)).digest('hex');
 const faltam = registros.filter(r => !parcial[hashTexto(r)]);
 console.log(`entradas: ${registros.length}; já calculadas: ${registros.length - faltam.length}; faltam: ${faltam.length}`);
 
+// Lotes de 5 entradas com pausa entre eles, para respeitar o limite por minuto da chave gratuita.
 for (let i = 0; i < faltam.length; i += 5) {
   const lote = faltam.slice(i, i + 5);
   let vetores;
@@ -69,6 +74,8 @@ for (let i = 0; i < faltam.length; i += 5) {
 }
 
 // Índice final: o hash da base inteira permite ao servidor detectar uma base alterada sem reindexar.
+// Grava o índice com o hash da base: o servidor só usa a busca semântica se o hash bater com a base
+// publicada.
 const indice = {modelo: api.modelo, dimensoes: 768, hash: hashIndice(registros),
   valores: Object.fromEntries(registros.map(r => [r.id, parcial[hashTexto(r)]]))};
 writeFileSync('knowledge-local/embeddings-curados.json', JSON.stringify(indice));

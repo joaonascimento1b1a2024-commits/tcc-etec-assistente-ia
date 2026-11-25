@@ -1,6 +1,8 @@
 import {LIMITES_FASE_A, textoSuspeito, copiarDadosEstritos} from "./contrato";
 import type {Evidencia, PropostaFundamentada, Validacao} from "./contrato";
 
+// VALIDADOR DE PROPOSTAS (formato da fase A): confere o JSON de uma proposta
+// fundamentada com rigor, inclusive chaves duplicadas no texto bruto.
 /**
  * Confere campos exatos em copias estritas, sem coercoes.
  * @param {unknown} value Copia simples.
@@ -15,6 +17,8 @@ function campos(
     keys.every((key) => Object.prototype.hasOwnProperty.call(value, key));
 }
 
+// JSON.parse aceita chaves repetidas e fica só com a última; este leitor de
+// tokens recusa o JSON se alguma chave se repetir no mesmo objeto.
 /**
  * JSON textual nao pode repetir chaves, mesmo usando escapes equivalentes.
  * @param {string} raw JSON ja limitado e sintaticamente valido.
@@ -40,6 +44,9 @@ function chavesUnicas(raw: string): boolean {
   return true;
 }
 
+// Validação completa: tamanho, versão, afirmações, referências existentes e
+// citações literais. Todas as evidências precisam ser usadas
+// (contexto_incompleto).
 /**
  * Prova somente identidade literal. O gateway verifica fechamento local antes.
  * @param {unknown} entrada Objeto estrito ou JSON limitado.

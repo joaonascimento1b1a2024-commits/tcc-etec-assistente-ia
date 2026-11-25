@@ -6,6 +6,8 @@ import {
 import type {RespostaConversa} from "./conversa";
 import type {EvidenciaGeracao, MotivoProposta} from "./contrato";
 
+// REVISÃO EDITORA: um segundo pedido à IA avalia a resposta proposta e decide
+// aprovar, corrigir ou recusar, sempre com um motivo de uma lista fechada.
 const MOTIVOS = ["SEM_PROBLEMA", "CLAREZA", "SEM_SUPORTE", "CONTRADICAO",
   "CONDICAO_RELEVANTE", "ESCOPO_INCORRETO", "PERGUNTA_AMBIGUA",
   "SEGURANCA"] as const;
@@ -26,6 +28,8 @@ export const SCHEMA_REVISAO_EDITORA = {
     respostas: {type: "array", maxItems: 1, items: SCHEMA_CONVERSA},
   },
 };
+// Instrução do revisor: aprova o que está certo, corrige o que dá para corrigir
+// com as fontes e recusa o resto. Nunca inventa.
 export const INSTRUCAO_REVISAO_EDITORA = CRITERIOS_REVISAO_CONVERSA + " " +
   ORIENTACAO_LINGUAGEM +
   "Se uma resposta correta estiver burocratica ou dificil para o aluno, " +
@@ -72,6 +76,9 @@ export function avaliarRevisao(
   entrada: unknown, original: RespostaConversa,
   evidencias: readonly EvidenciaGeracao[],
 ): ResultadoRevisao {
+  // Toda resposta do revisor é conferida localmente: formato exato, decisão
+  // coerente com o motivo e, na correção, as mesmas regras da proposta
+  // original.
   const falhar = (codigo: FalhaRevisao,
     motivo: MotivoDiagnosticoRevisao): ResultadoRevisao =>
     ({resposta: null, codigo, motivo});
@@ -89,9 +96,12 @@ export function avaliarRevisao(
       (r.decisao === "aprovar") !== (r.motivo === "SEM_PROBLEMA")) {
       return invalida();
     }
+    // Recusa: a resposta não é mostrada.
     if (r.decisao === "recusar") {
       return falhar("REVISAO_REPROVADA", r.motivo);
     }
+    // Aprovar mantém a original; corrigir troca pela versão corrigida, que
+    // também precisa passar na validação.
     const validacao = validarConversa(r.decisao === "corrigir" ?
       r.respostas[0] : original, evidencias);
     if (!validacao.resposta) {

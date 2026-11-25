@@ -10,6 +10,9 @@ import type {TrechoDocumental} from "../resposta-documental";
  * @return {object} Fontes restantes e apenas categorias/contagens para log.
  */
 export function filtrarContextosIA(chunks: readonly TrechoDocumental[]) {
+  // Filtro de privacidade dos trechos antes de enviá-los à IA. Se um trecho de
+  // um documento tiver dado pessoal, o documento INTEIRO sai do pedido: nunca
+  // se manda metade de uma regra sem a sua condição.
   const fontesBloqueadas = new Set<string>();
   const motivos = new Set<MotivoTextoBloqueado>();
   let sinalizados = 0;
@@ -29,6 +32,8 @@ export function filtrarContextosIA(chunks: readonly TrechoDocumental[]) {
     }
     if (sinalizado) sinalizados++;
   }
+  // Ficam só os trechos de documentos sem nenhum sinal de risco; os logs
+  // recebem apenas contagens e categorias.
   const permitidos = chunks.filter((c) =>
     !fontesBloqueadas.has(c.documentoId!));
   return {permitidos, sinalizados,

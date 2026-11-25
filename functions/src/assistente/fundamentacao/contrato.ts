@@ -1,6 +1,10 @@
 import type {FonteDocumental} from "../resposta-documental";
 import {isProxy} from "node:util/types";
 
+// CONTRATO DE FUNDAMENTAÇÃO: limites, tipos de evidência e os dois filtros de
+// segurança mais usados no projeto: copiarDadosEstritos (cópia segura de dados
+// não confiáveis) e motivoTextoBloqueado (detector de dados pessoais,
+// credenciais e tentativas de manipular a IA).
 export const LIMITES_FASE_A = Object.freeze({
   afirmacoes: 3, referenciasPorAfirmacao: 1, caracteresCitacao: 480,
   caracteresProposta: 6000, caracteresResposta: 2400,
@@ -27,6 +31,10 @@ export type Validacao =
   {valida: true; proposta: PropostaFundamentada} |
   {valida: false; motivo: string};
 
+// Copia dados vindos de fora (JSON da IA, corpo HTTP) para objetos simples:
+// rejeita Proxy, getters, protótipos estranhos, estruturas grandes ou profundas
+// demais e textos acima do limite. Quem recebe a cópia não executa código
+// escondido no objeto original.
 /**
  * Copia JSON sem executar getters, toJSON, iteradores ou traps de proxies.
  * Falha fechada; nao serializa a entrada. Limites independem de sua estrutura.
@@ -37,6 +45,8 @@ export type Validacao =
 export function copiarDadosEstritos(entrada: unknown, limite = 6000): unknown {
   let nos = 0;
   let caracteres = 0;
+  // Percorre a estrutura recursivamente, contando nós (máx. 512) e níveis (máx.
+  // 12).
   const visitar = (valor: unknown, nivel: number): unknown => {
     if (++nos > 512 || nivel > 12) throw new Error("ESTRUTURA_INVALIDA");
     if (typeof valor === "string") {
@@ -86,10 +96,13 @@ export function copiarDadosEstritos(entrada: unknown, limite = 6000): unknown {
   return visitar(entrada, 0);
 }
 
+// Categorias de bloqueio; os logs mostram só a categoria, nunca o texto.
 export type MotivoTextoBloqueado = "INSTRUCAO_SUSPEITA" | "CREDENCIAL" |
   "DECLARACAO_PESSOAL" | "NOME_PREENCHIDO" | "IDENTIFICADOR_PESSOAL" |
   "CONTATO_OU_IDENTIFICADOR";
 
+// Em documentos oficiais, números como "artigo 83" são normais; aqui se separa
+// isso de identificadores pessoais (RA, matrícula de uma pessoa).
 /**
  * Procura valores de identificacao, sem tratar prosa apos dois-pontos como ID.
  * Numeracao de passos e quantidade de copias nao sao valores preenchidos.
@@ -127,6 +140,10 @@ function identificadorDocumental(texto: string): boolean {
     /\bmatricula\s*[#=]\s*\w+/u.test(texto);
 }
 
+// Detector usado na pergunta, nos trechos e nas respostas. Procura, por
+// expressões regulares: instruções para a IA mudar de papel, pedidos de chave
+// ou token, declarações pessoais, nomes preenchidos, números de documento e
+// identificadores. Devolve o motivo ou null.
 /**
  * Categoria fechada; nunca retorna o trecho ou valor detectado.
  * @param {string} texto Texto ja validado e limitado.
@@ -167,6 +184,8 @@ export function motivoTextoBloqueado(
   const identificadores = new RegExp(
     "\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b|" +
     "\\b\\d{2}\\s?\\d{4,5}[- ]?\\d{4}\\b", "u");
+  // Ordem de checagem: manipulação da IA -> credenciais -> dados pessoais ->
+  // identificadores.
   if (instrucao.test(n) || papeis.test(n)) return "INSTRUCAO_SUSPEITA";
   if (exfiltracao.test(n) || /\bBearer\s+\S+|PRIVATE KEY/iu.test(texto)) {
     return "CREDENCIAL";
@@ -184,6 +203,7 @@ export function motivoTextoBloqueado(
   return null;
 }
 
+// Atalho booleano: o texto tem algum motivo de bloqueio?
 /**
  * Heuristica adicional, nunca anonimiza nem autoriza transmissao externa.
  * @param {string} texto Texto ja validado e limitado.

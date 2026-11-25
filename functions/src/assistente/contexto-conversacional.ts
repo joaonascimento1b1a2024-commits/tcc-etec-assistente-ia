@@ -1,6 +1,10 @@
 import {normalizarTexto} from "../rag/recuperacao";
 import {limparReformulacao, normalizarProcedimentos} from "../rag/assuntos";
 
+// CONTEXTO CONVERSACIONAL do fluxo documental (chat com login): entende
+// continuações curtas ("qual o prazo?", "onde solicito?") usando o assunto da
+// mensagem anterior do próprio usuário. O motor curado tem a sua versão em
+// render-poc/motor-curado/contexto-curado.mjs.
 export const LIMITES_CONTEXTO = Object.freeze({
   mensagens: 6, caracteres: 2000, porMensagem: 700,
 });
@@ -8,6 +12,7 @@ export const ESCLARECER_CONTEXTO =
   "Sobre qual procedimento você quer saber?";
 
 // Vocabulario fechado: nenhum texto do historico vai para a consulta/provedor.
+// Assuntos reconhecidos e os termos que os identificam.
 const ASSUNTOS = [
   {padrao: /^(?:declaracao|declaracao escolar)$/u, nome: "declaração escolar"},
   {padrao: /^matricula(?: inicial)?$/u, nome: "matrícula"},
@@ -20,6 +25,8 @@ const ASSUNTOS = [
     nome: "atendimento da secretaria"},
 ];
 
+// Transforma a continuação num complemento da pergunta (prazo, documentos, onde
+// solicitar, se pode ser pela internet).
 /**
  * Reconhece complementos fechados; qualificadores extras nao sao apagados.
  * @param {string} texto Pergunta atual ou anterior.
@@ -48,6 +55,7 @@ function complemento(texto: string): string | undefined {
   return undefined;
 }
 
+// Assunto da mensagem anterior, só se for reconhecido sem ambiguidade.
 /**
  * Extrai somente assunto de perguntas inteiramente reconhecidas.
  * Nomes, identificadores, condicoes e subtipos desconhecidos impedem heranca.
@@ -66,6 +74,8 @@ function assuntoSeguro(texto: string): string | undefined {
   return ASSUNTOS.find((a) => a.padrao.test(n))?.nome;
 }
 
+// Junta assunto anterior + complemento. Sem assunto seguro, devolve um pedido
+// de esclarecimento em vez de adivinhar.
 /**
  * Usa apenas a janela anterior ao messageId ja validado pelo handler.
  * Nao faz I/O, nao consulta outra conversa e nao guarda estado entre chamadas.
