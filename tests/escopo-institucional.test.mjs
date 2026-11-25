@@ -69,3 +69,17 @@ for (const [q, esperado] of [
 ]) test('sobre o assistente: '+q, () => assert.deepEqual(classificarEscopo(q), {categoria: 'social', resposta: esperado}));
 // Pergunta escolar com "quem fez" não vira resposta sobre os criadores.
 for (const q of ['Quem fez o regimento da escola?', 'Quem é o diretor da escola?']) test('não é sobre o assistente: '+q, () => assert.notEqual(classificarEscopo(q).categoria, 'social'));
+
+// Sofrimento emocional: acolhimento com contatos de ajuda, antes de qualquer outra regra.
+import {APOIO_ESCOPO, ERRO_ESCOPO} from '../functions/lib/assistente/escopo.js';
+for (const q of ['Estou muito triste e pensando em desistir de tudo.', 'não aguento mais', 'quero morrer',
+    'tô muito triste porque reprovei', 'acho que estou com depressão', 'Me sinto sozinha na escola'])
+    test('apoio emocional: ' + q, () => assert.deepEqual(classificarEscopo(q), {categoria: 'social', resposta: APOIO_ESCOPO}));
+test('apoio emocional traz Orientação da ETEC, CVV 188 e SAMU 192', () => {
+    for (const trecho of ['(16) 99716-1071', '188', 'cvv.org.br', '192']) assert.ok(APOIO_ESCOPO.includes(trecho), trecho);
+});
+// Perguntas da escola com palavras parecidas continuam indo para a base.
+for (const q of ['Posso desistir do curso?', 'Como faço para trancar a matrícula?', 'Estou ansioso para a prova do Vestibulinho, quando é?'])
+    test('não é apoio emocional: ' + q, () => assert.notEqual(classificarEscopo(q).resposta, APOIO_ESCOPO));
+for (const q of ['Você pode errar?', 'vc erra?', 'Suas respostas são sempre certas?', 'Você é confiável?'])
+    test('sobre erros do assistente: ' + q, () => assert.deepEqual(classificarEscopo(q), {categoria: 'social', resposta: ERRO_ESCOPO}));

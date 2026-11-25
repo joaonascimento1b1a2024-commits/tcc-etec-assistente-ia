@@ -32,6 +32,24 @@ export const FONTES_ESCOPO =
   "resposta, mas não inventa dados; quando falta confirmação, indico a " +
   "Secretaria Acadêmica.";
 
+export const ERRO_ESCOPO =
+  "Posso errar, sim. Por isso respondo com informações oficiais " +
+  "conferidas, mostro as fontes quando elas existem e, quando falta " +
+  "confirmação, indico a Secretaria Acadêmica. Para decisões importantes, " +
+  "como prazos e documentos, confirme com a Secretaria.";
+
+/** Acolhimento para sofrimento emocional. Contatos: Orientação e Apoio
+ * Educacional da ETEC (fato whatsapp-orientacao da base curada, fonte:
+ * etecmatao.cps.sp.gov.br/contato), CVV 188 e SAMU 192 (serviços públicos
+ * nacionais, gratuitos). Não tenta diagnosticar nem aconselhar. */
+export const APOIO_ESCOPO =
+  "Sinto muito que você esteja se sentindo assim. Você não precisa passar " +
+  "por isso sozinho: converse com alguém de confiança e procure a " +
+  "Orientação e Apoio Educacional da escola, que atende pelo WhatsApp " +
+  "(16) 99716-1071. Se quiser conversar agora, o CVV atende de graça, " +
+  "24 horas, pelo telefone 188 ou em cvv.org.br. Em emergência, ligue 192 " +
+  "(SAMU). Se tiver alguma dúvida sobre a escola, também posso ajudar.";
+
 export interface DecisaoEscopo {
   categoria: "institucional" | "social" | "fora_escopo" | "ambigua";
   resposta?: string;
@@ -45,6 +63,12 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
   const n = typeof entrada === "string" ? entrada.normalize("NFD")
     .replace(/[\u0300-\u036f]/gu, "").toLowerCase()
     .replace(/\s+/gu, " ").trim() : "";
+  // Sofrimento emocional vem antes de tudo: acolhe e indica ajuda humana.
+  // eslint-disable-next-line max-len
+  const sofrimento = /\b(?:quero morrer|vontade de morrer|me matar|suicid\w*|tirar (?:a )?minha (?:propria )?vida|acabar com (?:a )?minha vida|me machucar|me cortar|automutila\w*|desistir de tudo|desistir da vida|nao aguento mais|nao quero (?:mais )?viver|sem vontade de viver|depressao|deprimid[oa]|crise de ansiedade|(?:muito|to|tou|estou|ando|me sinto|sinto) (?:muito )?(?:triste|sozinh[oa]))\b/u;
+  if (sofrimento.test(n)) {
+    return {categoria: "social", resposta: APOIO_ESCOPO};
+  }
   // Objetivos externos prevalecem sobre mencoes institucionais incidentais.
   // eslint-disable-next-line max-len
   const externo = /(?:ignore|desconsidere|esqueca|substitua).{0,100}(?:instruc|regras|papel|sistema)|(?:aja|responda|atue).{0,40}(?:chatgpt|sem restric)|(?:valor|digitos|numero).{0,15}\bpi\b|\bpi\s*\?|\d\s*[+*/=]\s*\d|(?:quanto e|calcule|resolva).{0,50}\d|(?:crie|escreva|gere|implemente|ensine|explique|faca|produza).{0,70}(?:python|codigo|jogo|programa|algoritmo|poema|piada|receita|equacao|matematica)|(?:quem|qual).{0,40}(?:ganhou|venceu).{0,40}(?:copa|mundial)|(?:conte|explique|ensine).{0,50}(?:historia geral|revolucao francesa|segunda guerra)|(?:traduza|traduce|translate)|(?:capital|presidente) d[oa]|\b(?:faz|faca|resolve|resolva)\b.{0,20}\b(?:meu|minha)\s+(?:trabalho|tarefa|licao|dever|exercicio|redacao|atividade)/u;
@@ -58,6 +82,11 @@ export function classificarEscopo(entrada: unknown): DecisaoEscopo {
   const sobreCriadores = /\bquem te (?:criou|fez|desenvolveu|programou)\b|(?:quem|que alunos|qual (?:equipe|grupo))\b.{0,15}\b(?:criou|criaram|fez|fizeram|desenvolveu|desenvolveram|programou|programaram)\b.{0,15}\b(?:sylvinho|voce|vc|site|chat|assistente|projeto|ia|robo|bot)\b/u;
   // eslint-disable-next-line max-len
   const sobreAssistente = /\b(?:quem (?:e|eh) (?:voce|vc|o sylvinho)|o que (?:e o sylvinho|(?:voce|vc) (?:e|faz|sabe fazer|pode fazer))|qual (?:e )?(?:o )?seu nome|como (?:voce|vc) se chama|no que (?:voce|vc) pode (?:me )?ajudar|para que (?:voce|vc) serve)\b/u;
+  // eslint-disable-next-line max-len
+  const sobreErros = /\b(?:(?:voce|vc) (?:pode|consegue|costuma) errar|(?:voce|vc) erra|(?:suas respostas|voce|vc) (?:sao|e|eh|esta|estao) (?:sempre )?(?:certas?|corretas?|confiave(?:l|is)))\b/u;
+  if (sobreErros.test(n)) {
+    return {categoria: "social", resposta: ERRO_ESCOPO};
+  }
   if (sobreFontes.test(n)) {
     return {categoria: "social", resposta: FONTES_ESCOPO};
   }

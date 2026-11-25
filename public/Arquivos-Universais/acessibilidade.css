@@ -27,6 +27,11 @@
 /* Menu recolhido continua estreito: mostra só os ícones. */
 :root[data-fonte][data-sidebar-collapsed='true'] { --sidebar-width: 76px; }
 
+/* Fonte grande em celular estreito (320 px): palavras longas quebram em vez de
+ * sair da tela, e o cabeçalho do chat de visitante passa o "Entrar" para baixo. */
+:root[data-fonte] body { overflow-wrap: anywhere; }
+:root[data-fonte] .guest-header { flex-wrap: wrap; row-gap: 10px; }
+
 /* ============================================================
  * 2. Alto contraste
  * ============================================================
@@ -80,9 +85,10 @@
 
 /* Base: fundo e texto da paleta, sem sombras, transparências nem imagens de fundo decorativas.
  * Ficam de fora: ícones (svg), que já usam a cor do texto; imagens (img);
- * e o widget do VLibras ([vw]), que tem visual próprio do governo federal. */
+ * e o VLibras, que tem visual próprio do governo federal (botão e tradutor da
+ * versão 7, #vlibras-access-wrapper e #vlibras-app-root, e o widget antigo [vw]). */
 :root[data-contraste='alto'] body,
-:root[data-contraste='alto'] body *:not(svg, svg *, img, [vw], [vw] *),
+:root[data-contraste='alto'] body *:not(svg, svg *, img, [vw], [vw] *, #vlibras-access-wrapper, #vlibras-app-root, #vlibras-app-root *),
 :root[data-contraste='alto'] body *:not([vw] *)::before,
 :root[data-contraste='alto'] body *:not([vw] *)::after {
     background-color: var(--ac-fundo) !important;

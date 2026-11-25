@@ -128,6 +128,15 @@ test('acessibilidade: todas as páginas carregam o CSS e o script, depois do tem
     }
 });
 
+// VLibras 7: o script do governo cria o botão sozinho; basta toda página carregá-lo.
+test('acessibilidade: todas as páginas carregam o VLibras', () => {
+    const plugin = '<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>';
+    for (const pagina of paginas()) {
+        const html = fs.readFileSync(pagina, 'utf8');
+        assert.ok(html.includes(plugin), `${path.relative(publico, pagina)}: script do VLibras`);
+    }
+});
+
 // Fonte em px não cresce com o botão "A+"; o site inteiro precisa usar rem/em.
 test('acessibilidade: nenhum CSS define font-size em px', () => {
     const arquivos = (function css(dir) {
