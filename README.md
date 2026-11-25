@@ -26,7 +26,7 @@ O Sylvinho responde dúvidas sobre matrícula, rematrícula, Vestibulinho, curso
 - **Mural de avisos:** os administradores publicam, e cada aviso novo gera um e-mail para as contas.
 - **Configurações:** perfil, tema claro ou escuro e, para administradores, publicação de avisos e promoção de outros administradores.
 - **Acessibilidade:** alto contraste (no tema escuro e no claro) e fonte até 200%, em todas as páginas e antes do login. Detalhes em [docs/ACESSIBILIDADE.md](docs/ACESSIBILIDADE.md).
-- **WhatsApp (demonstração):** o Sylvinho responde no WhatsApp com as mesmas respostas do chat de visitante, pela API oficial da Meta. Detalhes em [docs/WHATSAPP.md](docs/WHATSAPP.md).
+- **WhatsApp da Secretaria:** a página Serviços abre o WhatsApp oficial da Secretaria Acadêmica. A integração da IA com a API da Meta ficou pronta no servidor, mas está desligada: o número de teste da Meta não entrega mensagens no Brasil. Detalhes em [docs/WHATSAPP.md](docs/WHATSAPP.md).
 - **Página Sobre e landing page.**
 
 ## Como a IA responde (modo híbrido)

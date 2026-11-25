@@ -1,14 +1,14 @@
 // ============================================================
-// 1. Configuração do atendimento da IA no WhatsApp
+// 1. WhatsApp oficial da Secretaria Acadêmica
 // ============================================================
-// Informe o número real com DDI + DDD + número, somente dígitos.
-// Enquanto estiver vazio, o botão permanece sem destino e desabilitado.
-// Este número precisa estar conectado ao atendimento da IA no WhatsApp.
-const WHATSAPP_NUMBER = '';
+// Número publicado pela escola em https://etecmatao.cps.sp.gov.br/contato/
+// (o mesmo do fato "whatsapp-secretaria" da base curada do Sylvinho).
+// Formato: DDI + DDD + número, somente dígitos. Vazio = botão desativado.
+const WHATSAPP_NUMBER = '5516996371226';
 
-// Mensagem sugerida: o usuário ainda precisa enviá-la no WhatsApp.
+// Mensagem sugerida: a pessoa completa com a dúvida e decide se envia.
 // Nenhum histórico de conversa, credencial ou dado de perfil é transferido.
-const INITIAL_MESSAGE = 'Olá! Gostaria de conversar com a IA da secretaria da ETEC.';
+const INITIAL_MESSAGE = 'Olá! Vim pelo site do Sylvinho e gostaria de falar com a Secretaria Acadêmica.';
 
 // ============================================================
 // 2. Construção e validação do link de conversa
@@ -17,10 +17,9 @@ function buildWhatsAppUrl(number, message) {
     // Aceita de 8 a 15 dígitos e impede URLs ou caracteres extras no destino.
     if (!/^[1-9]\d{7,14}$/.test(number)) return null;
 
-    const url = new URL(`https://wa.me/${number}`);
-    // Codifica espaços, acentos e pontuação com segurança na mensagem sugerida.
-    url.searchParams.set('text', message);
-    return url.href;
+    // encodeURIComponent troca espaços por %20 (com searchParams viraria "+",
+    // que o WhatsApp pode mostrar literalmente) e codifica acentos e pontuação.
+    return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
 
 // ============================================================
@@ -31,8 +30,11 @@ const whatsappStatus = document.querySelector('#whatsapp-status');
 const whatsappUrl = buildWhatsAppUrl(WHATSAPP_NUMBER, INITIAL_MESSAGE);
 
 if (whatsappUrl) {
-    // Link comum: abre o aplicativo ou o WhatsApp Web conforme o dispositivo.
+    // Link comum: abre o aplicativo ou o WhatsApp Web conforme o dispositivo,
+    // em outra aba, para o site continuar aberto.
     whatsappLink.href = whatsappUrl;
+    whatsappLink.target = '_blank';
+    whatsappLink.rel = 'noopener noreferrer';
     whatsappLink.removeAttribute('aria-disabled');
     whatsappLink.removeAttribute('tabindex');
     whatsappStatus.hidden = true;

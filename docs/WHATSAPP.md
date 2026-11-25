@@ -1,5 +1,7 @@
 # Sylvinho no WhatsApp
 
+> **Situação em 24/11/2026: integração desligada.** Tudo funcionou até a resposta: a Meta entregou a mensagem, o servidor leu, mostrou "digitando…" e gerou a resposta. Mas a Meta bloqueou a entrega (erro 130497), porque o número de teste americano não manda mensagens para celulares do Brasil. As variáveis `WHATSAPP_*` foram retiradas do Render. Hoje o botão da página Serviços abre o WhatsApp oficial da Secretaria Acadêmica, (16) 99637-1226. Para religar a IA, é preciso um número brasileiro (+55); o código não muda.
+
 O Sylvinho também responde no WhatsApp, com as **mesmas respostas do chat de visitante** do site:
 - usa a base curada primeiro e a busca documental depois;
 - não guarda histórico;
@@ -103,6 +105,8 @@ Depois de testar, o botão da página **Serviços** do site recebe o número de 
 | `WHATSAPP_ENVIO_FALHOU` com `codigo` 190 | O token expirou (o temporário dura 24 h) | Gere um token de usuário do sistema que não expira. |
 | `WHATSAPP_ENVIO_FALHOU` com `codigo` 131030 | O celular não está na lista "Para" do número de teste | Cadastre o celular. O servidor já tenta de novo com o nono dígito, porque às vezes a Meta entrega números brasileiros sem ele. |
 | `WHATSAPP_ENTREGA_FALHOU` | A Meta aceitou a resposta, mas não conseguiu entregar no celular. O `codigo` diz o motivo: 131026 costuma ser WhatsApp desatualizado ou termos novos não aceitos no celular, e 131047 é conversa parada há mais de 24 horas | Atualize o WhatsApp do celular e mande uma mensagem nova. |
+| `WHATSAPP_ENTREGA_FALHOU` com `codigo` 130497 | A Meta impede a conta de mandar mensagens para usuários de alguns países. Há vários relatos de que o **número de teste (+1 555…) não entrega para celulares do Brasil**. Visto em 24/11/2026: o Sylvinho gerou a resposta, mas a entrega foi bloqueada | Use um número brasileiro (+55) próprio, cadastrado no Gerenciador do WhatsApp, e troque `WHATSAPP_PHONE_NUMBER_ID` no Render. O código do servidor não muda. |
+| Mensagens chegam ao número, mas nenhuma linha `SYLVINHO_WHATSAPP` aparece no log | A conta do WhatsApp não está inscrita no app (`subscribed_apps` vazio) | No Explorador da Graph API, com o app Sylvinho e a permissão `whatsapp_business_management`, faça `POST <ID da conta do WhatsApp>/subscribed_apps`. A resposta esperada é `success: true`. |
 | `WHATSAPP_CONFIG_INVALIDA` | Falta uma variável ou o formato está errado | Confira as quatro variáveis. O App Secret tem 32 caracteres e o Phone number ID só tem números. |
 | Primeira resposta demora cerca de 1 minuto | O plano gratuito do Render dorme quando fica parado | Antes da demonstração, abra `/health` ou mande uma mensagem de aquecimento. |
 
