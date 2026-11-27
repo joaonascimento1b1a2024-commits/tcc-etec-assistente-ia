@@ -22,22 +22,32 @@
     <body>
         <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
-        <!-- Mantém a navegação pública e a identidade visual da página inicial. -->
-        <header class="header">
-            <div class="logo-group">
-                <img
-                    class="logoEtec"
-                    src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
-                    alt="ETEC Sylvio de Mattos Carvalho" />
-                <img
-                    class="logoEtec"
-                    src="../Arquivos-Universais/logos_cps_governo_com_slogan_horizontal_br.png"
-                    alt="Centro Paula Souza e Governo do Estado de São Paulo" />
-            </div>
-            <nav class="nav-menu" aria-label="Menu principal">
-                <a href="../index.html" class="nav-link">Início</a>
-                <a href="sobre.html" class="nav-link active" aria-current="page">Sobre</a>
-                <a href="../Login/login.html" class="btn-acessar">Acessar</a>
+        <!-- Mantém o cabeçalho alinhado à identidade visual da Landing Page. -->
+        <header class="header landing-header">
+            <a
+                class="landing-brands"
+                href="../index.html"
+                aria-label="ETEC Sylvio de Mattos Carvalho — início">
+                <span class="landing-etec">
+                    <img
+                        src="../Arquivos-Universais/etec_ra_central_matao_sylvio_de_mattos_carvalho_br.png"
+                        width="188"
+                        height="100"
+                        alt="ETEC Sylvio de Mattos Carvalho, Matão" />
+                </span>
+                <span class="landing-government">
+                    <img
+                        src="../Landing-Page/arquivos/figma/marcas-cps-sp.png"
+                        width="2023"
+                        height="734"
+                        alt="Centro Paula Souza e Governo do Estado de São Paulo" />
+                </span>
+            </a>
+            <nav class="nav-menu" aria-label="Navegação principal">
+                <a class="nav-link" href="../index.html">Início</a>
+                <a class="nav-link active" href="sobre.html" aria-current="page">Sobre</a>
+                <a class="nav-link" href="../index.html#servicos">Serviços</a>
+                <a class="btn-acessar" href="../Login/login.html">Acessar</a>
             </nav>
         </header>
 
